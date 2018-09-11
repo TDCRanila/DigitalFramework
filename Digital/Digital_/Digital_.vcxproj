@@ -19,7 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\ECS\ECSComponent.cpp" />
+    <ClCompile Include="Source\ECS\ECSManager.cpp" />
+    <ClCompile Include="Source\ECS\ECSStorage.cpp" />
+    <ClCompile Include="Source\ECS\ECSStorageManager.cpp" />
+    <ClCompile Include="Source\ECS\ECSystem.cpp" />
     <ClCompile Include="Source\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\ECS\ECSComponent.h" />
+    <ClInclude Include="Include\ECS\ECSManager.h" />
+    <ClInclude Include="Include\ECS\ECSStorage.h" />
+    <ClInclude Include="Include\ECS\ECSStorageManager.h" />
+    <ClInclude Include="Include\ECS\ECSystem.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -99,6 +111,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependency;$(SolutionDir)Dependency\GLAD\Include;$(SolutionDir)Dependency\GLFW\Include</AdditionalIncludeDirectories>
       <TreatWarningAsError>false</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependency\GLAD\Lib\$(Platform)\$(Configuration);$(SolutionDir)Dependency\GLFW\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -130,6 +143,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependency;$(SolutionDir)Dependency\GLAD\Include;$(SolutionDir)Dependency\GLFW\Include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
