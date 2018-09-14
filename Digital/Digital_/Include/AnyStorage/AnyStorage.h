@@ -5,17 +5,17 @@
 namespace Digital {
 
     template <class T>
-    class ECSStorage {
+    class AnyStorage {
     public:
-        ECSStorage() {
+		AnyStorage() {
 
         }
 
-        ~ECSStorage() {
+        ~AnyStorage() {
 
         }
 
-        std::vector<T*> component_vector;
+        std::vector<T*> item_vector;
 
     };
 
