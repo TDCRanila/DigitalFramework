@@ -50,5 +50,8 @@
     <ClInclude Include="Include\AnyStorage\AnyStorageManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\AutoFactory\AutoFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

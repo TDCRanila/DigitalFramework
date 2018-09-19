@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClInclude Include="Include\AnyStorage\AnyStorage.h" />
     <ClInclude Include="Include\AnyStorage\AnyStorageManager.h" />
+    <ClInclude Include="Include\AutoFactory\AutoFactory.h" />
     <ClInclude Include="Include\ECS\ECSComponent.h" />
     <ClInclude Include="Include\ECS\ECSManager.h" />
     <ClInclude Include="Include\ECS\ECSystem.h" />
