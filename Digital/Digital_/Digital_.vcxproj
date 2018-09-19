@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Source\AutoFactory\AutoFactory.cpp" />
     <ClCompile Include="Source\ECS\ECSComponent.cpp" />
+    <ClCompile Include="Source\ECS\ECSKeyLockSystem.cpp" />
     <ClCompile Include="Source\ECS\ECSManager.cpp" />
     <ClCompile Include="Source\ECS\ECSystem.cpp" />
     <ClCompile Include="Source\main.cpp" />
@@ -31,6 +32,7 @@
     <ClInclude Include="Include\AutoFactory\AutoFactory.h" />
     <ClInclude Include="Include\Defines\Defines.h" />
     <ClInclude Include="Include\ECS\ECSComponent.h" />
+    <ClInclude Include="Include\ECS\ECSKeyLockSystem.h" />
     <ClInclude Include="Include\ECS\ECSManager.h" />
     <ClInclude Include="Include\ECS\ECSystem.h" />
   </ItemGroup>
