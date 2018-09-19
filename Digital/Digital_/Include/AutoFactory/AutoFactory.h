@@ -4,7 +4,7 @@
 #include <typeindex>
 #include <string>
 
-namespace Factories {
+namespace DFactory {
 	
 	class AutoFactoryInterface {
 	public:
@@ -15,7 +15,7 @@ namespace Factories {
 	typedef std::unordered_map<std::type_index, AutoFactoryInterface*> ClassFactoryMap;
 	typedef std::unordered_map<std::type_index, AutoFactoryInterface*>::iterator ClassFactoryMapIt;
 	
-	// TODO: Static Init Order Fiasco Fix
+	// TODO: Static Init Order Fiasco Fix Problems Occur.
 	static std::unordered_map<std::string, ClassFactoryMap> factories;
 
 	template <class T>
@@ -28,8 +28,8 @@ namespace Factories {
 	};
 
 	static ClassFactoryMap* GetFactoryList(std::string a_list_name) {
-		auto it_list = Factories::factories.find(a_list_name);
-		if (it_list != Factories::factories.end()) {
+		auto it_list = DFactory::factories.find(a_list_name);
+		if (it_list != DFactory::factories.end()) {
 			return &it_list->second;
 		}
 		return nullptr;
@@ -38,8 +38,8 @@ namespace Factories {
 	template <class T>
 	static T* ConstructFromFactory(std::string a_list_name) {
 		// Find List
-		auto it_list = Factories::factories.find(a_list_name);
-		if (it_list != Factories::factories.end()) {
+		auto it_list = DFactory::factories.find(a_list_name);
+		if (it_list != DFactory::factories.end()) {
 			// Find Factory
 			auto it_fac = it_list->second.find(typeid(T));
 			if (it_fac != it_list->second.end()) {
@@ -54,8 +54,8 @@ namespace Factories {
 	template <class T>
 	static AutoFactory<T>* GetFactoryOfType(std::string a_list_name) {
 		// Find List
-		auto it_list = Factories::factories.find(a_list_name);
-		if (it_list != Factories::factories.end()) {
+		auto it_list = DFactory::factories.find(a_list_name);
+		if (it_list != DFactory::factories.end()) {
 			// Find Factory
 			auto it_fac = it_list->second.find(typeid(T));
 			if (it_fac != it_list->second.end()) {
@@ -66,13 +66,11 @@ namespace Factories {
 		return nullptr;
 	}
 
-} // End of namespace ~ Factories
-
 #define REGISTER_TYPE(fclass, list)								\
-class fclass##Factory : public Factories::AutoFactory<fclass> {	\
+class fclass##Factory : public DFactory::AutoFactory<fclass> {	\
 public:															\
 	fclass##Factory() {											\
-		Factories::factories[#list][typeid(fclass)] = this;		\
+		DFactory::factories[#list][typeid(fclass)] = this;		\
 	}															\
 	virtual fclass* Create() override {							\
 		return new fclass();									\
@@ -80,42 +78,4 @@ public:															\
 };																\
 static fclass##Factory global##fclass##FactoryObject;
 
-
-
-
-
-
-
-
-
-
-//#define REGISTER_TYPE(fclass)						\
-//class fclass##Factory : public AutoFactoryObject {	\
-//public:												\
-//	fclass##Factory() {								\
-//		Object::registerType(#fclass, this);		\
-//	}												\
-//	virtual AutoFactoryObject* create() {			\
-//		return new fclass();						\
-//	}												\
-//}													\
-//static fclass##Factory global##flcass##Factory;		\
-//
-//class AutoFactory {
-//public:
-//	virtual AutoFactoryObject* Create() = 0;
-//};
-//
-//class AutoFactoryObject {
-//public:
-//	static void registerType(const std::string& name, AutoFactory* factory) {
-//		factories[name] = factory;
-//	}
-//
-//private:
-//	static std::map<std::string, AutoFactory*> factories;
-//};
-//
-//AutoFactoryObject* AutoFactoryObject::Create(const std::string& name) {
-//	return factories[name]->Create();
-//}
+} // End of namespace ~ DFactory

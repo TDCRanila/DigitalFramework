@@ -6,7 +6,7 @@
 // Storage managers gives a pointer to the storage, containg the components
 // System can then do its thing.
 //
-//namespace Digital {
+//namespace DECS {
 //
 //    class ECSystem {
 //    public:
@@ -22,4 +22,4 @@
 //
 //    };
 //
-//} // End of namespace ~ Digital
+//} // End of namespace ~ DECS

@@ -6,12 +6,12 @@
 #include <functional>
 #include <any>
 
-namespace Digital {
+namespace DAnyStorage {
 
     class AnyStorageManager {
     public:
-		AnyStorageManager();
-        ~AnyStorageManager();
+		AnyStorageManager()		{ /*Empty*/ }
+        ~AnyStorageManager()	{ /*Empty*/ }
 
         template <class T>
         void Subscribe(T* a_item);
@@ -72,4 +72,4 @@ namespace Digital {
 
 #pragma endregion
 
-} // End of namespace ~ Digital
+} // End of namespace ~ DAnyStorage

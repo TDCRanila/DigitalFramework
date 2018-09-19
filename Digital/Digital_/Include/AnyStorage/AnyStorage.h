@@ -2,21 +2,17 @@
 
 #include <vector>
 
-namespace Digital {
+namespace DAnyStorage {
 
     template <class T>
     class AnyStorage {
     public:
-		AnyStorage() {
+		AnyStorage() { /*Empty*/ }
 
-        }
-
-        ~AnyStorage() {
-
-        }
+        ~AnyStorage() { /*Empty*/ }
 
         std::vector<T*> item_vector;
 
     };
 
-} // End of namespace ~ Digital
+} // End of namespace ~ DAnyStorage
