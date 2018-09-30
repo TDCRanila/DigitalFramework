@@ -1,25 +1,42 @@
 #pragma once
 
-// systems of a component type
+#include <memory>
+#include <unordered_map>
 
-// when updating, systems requests its components from the storage manager. 
-// Storage managers gives a pointer to the storage, containg the components
-// System can then do its thing.
-//
-//namespace DECS {
-//
-//    class ECSystem {
-//    public:
-//        ECSystem();
-//        virtual ~ECSystem();
-//
-//        virtual void Init();
-//        virtual void Terminate();
-//
-//        virtual void OnEntry();
-//        virtual void OnUpdate() = 0;
-//        virtual void OnExit();
-//
-//    };
-//
-//} // End of namespace ~ DECS
+namespace DECS {
+
+	// FW Declares
+	class ECSEntity;
+	class ECSManager;
+	class ECSKeyLockSystem;
+	class ECSIDManager;
+
+	class ECSystem {
+	public:
+		ECSystem();
+		~ECSystem();
+
+		// init
+		void Init();
+
+		// update
+		void Update();
+
+		// terminate
+		void Terminate();
+
+		std::weak_ptr<ECSEntity> CreateEntity();
+
+		// vector/map of normal systems
+		
+		// map of entities
+		std::unordered_map<size_t, std::shared_ptr<ECSEntity>> entity_map;
+
+		ECSKeyLockSystem* keylock_system_;
+		ECSIDManager* id_manager_;
+
+
+
+	};
+
+} // End of namespace ~ DECS

@@ -4,6 +4,9 @@
 
 namespace DECS {
 
+	// FW Declares
+	class ECSKeyLockSystem;
+
 	class ECSManager {
 	public:
 		ECSManager();
@@ -22,6 +25,8 @@ namespace DECS {
 		// input system
 
 		// resource managment
+
+
 
 	};
 
