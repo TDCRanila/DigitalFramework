@@ -6,9 +6,7 @@
 
 namespace DECS {
 
-	struct ComponentBitList {
-		int64_t bit_list = 0;
-	};
+	typedef int64_t ComponentBitList;
 
 	class ECSKeyLockSystem {
 	public:
