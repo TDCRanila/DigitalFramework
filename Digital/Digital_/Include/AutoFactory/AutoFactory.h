@@ -1,89 +1,103 @@
 #pragma once
 
-#include <unordered_map>
-#include <typeindex>
+#include <Utility/StringUtility.h>
+
+#include <boost/functional/hash.hpp>
+
+#include <memory>
+#include <algorithm>
+#include <functional>
+#include <utility>
 #include <string>
+#include <typeindex>
+#include <unordered_map>
 
 namespace DFactory {
 		
-	class AutoFactoryInterface;
-
-	typedef std::unordered_map<std::type_index, AutoFactoryInterface*> ClassFactoryMap;
-	typedef std::unordered_map<std::type_index, AutoFactoryInterface*>::iterator ClassFactoryMapIt;
-	
-	class AutoFactoryInterface {
+	template <class Base, class... Args>
+	class AutoFactory {
 	public:
-		AutoFactoryInterface() {/*EMPTY*/ }
-		virtual ~AutoFactoryInterface() {/*EMPTY*/ }
-	};
+		typedef std::function<std::unique_ptr<Base>(Args...)> FuncType;
+		typedef std::pair<std::string, std::type_index> StringTypePair;
+		typedef std::unordered_map< StringTypePair, FuncType, boost::hash<StringTypePair>> FactoryMap;
+		typedef typename std::unordered_map< StringTypePair, FuncType, boost::hash<StringTypePair> >::iterator FactoryMapIt;
 
-	template <class T>
-	class AutoFactory : public AutoFactoryInterface {
-	public:
-		AutoFactory() { /*EMPTY*/ }
-		virtual ~AutoFactory() { /*EMPTY*/ }
+		friend Base;
 
-		virtual T* Create() = 0;
-	};
+		template <class... Args>
+		static std::unique_ptr<Base> Construct(const std::string& a_type_name, Args&&...a_args) {
 
-	// TODO: // Function to get map with class factories.
-	std::unordered_map<std::string, ClassFactoryMap>* GetFactories();
-	
-	// TODO: // Function to get a map of class factories under a given list name identifier.
-	ClassFactoryMap* GetFactoryList(std::string a_list_name);
+			// Create Compare Lambda used to find the type_name in the factories map.
+			auto compare_lambda = [&a_type_name](const std::pair<StringTypePair, FuncType>& a_it_element) {
+				return a_it_element.first.first == a_type_name;
+			};
 
-	// TODO: // Function to construct a class from a factory under a given list name identifier.
-	template <class T>
-	T* ConstructFromFactory(std::string a_list_name);
+			FactoryMap& fac	= GetFactories();
+			FactoryMapIt it = std::find_if(fac.begin(), fac.end(), compare_lambda);
 
-	// TODO: // Function to get get a pointer to a class factory of specified type under a given list name identifier.
-	template <class T>
-	AutoFactory<T>* GetFactoryOfType(std::string a_list_name);
-
-#define REGISTER_TYPE(fclass, list)									\
-class fclass##Factory : public DFactory::AutoFactory<fclass> {		\
-public:																\
-	fclass##Factory() {												\
-		(*DFactory::GetFactories())[list][typeid(fclass)] = this;	\
-	}																\
-	virtual fclass* Create() override {								\
-		return new fclass();										\
-	}																\
-};																	\
-static fclass##Factory global##fclass##FactoryObject;
-
-#pragma region Template Function Implementation
-
-	template <class T>
-	T* ConstructFromFactory(std::string a_list_name) {
-		// Find List
-		auto it_list = DFactory::GetFactories().find(a_list_name);
-		if (it_list != DFactory::GetFactories().end()) {
-			// Find Factory
-			auto it_fac = it_list->second.find(typeid(T));
-			if (it_fac != it_list->second.end()) {
-				// TODO: DEBUG->DynamicCast | RELEASE->StaticCast
-				auto factory = dynamic_cast<AutoFactory<T>*>(it_fac->second);
-				return factory->Create();
+			// Check if type was registered in the map or not.
+			if (it == fac.end()) {
+				_ASSERT(false); // -> Element has not been found in factory_map.
+				return std::unique_ptr<Base>();
+			} else {
+				return it->second(std::forward<Args>(a_args)...);
 			}
 		}
-		return nullptr;
-	}
 
-	template <class T>
-	AutoFactory<T>* GetFactoryOfType(std::string a_list_name) {
-		// Find List
-		auto it_list = DFactory::GetFactories().find(a_list_name);
-		if (it_list != DFactory::GetFactories().end()) {
-			// Find Factory
-			auto it_fac = it_list->second.find(typeid(T));
-			if (it_fac != it_list->second.end()) {
-				// TODO: DEBUG->DynamicCast | RELEASE->StaticCast
-				return dynamic_cast<AutoFactory<T>*>(it_fac->second);
-			}
+		static FactoryMap& GetFactories() {
+			static FactoryMap factory_map;
+			return factory_map;
 		}
-		return nullptr;
-	}
+
+		template <class T>
+		class Registrar : public Base {
+		public:
+			friend T;
+
+			static bool RegisterType() {
+				// Create Factory Construction Lambda for Type T.
+				FuncType constructor_lambda = [](Args... a_args) -> std::unique_ptr<Base> {
+					return std::make_unique<T>(std::forward<Args>(a_args)...);
+				};
+
+				const std::type_index type_id	= typeid(T);
+				std::string type_name			= type_id.name();
+
+				// TODO: MSVC Further Specific Demangling. ~ Implement Other compilers?
+				DUtility::SubtractString(std::string("class "), type_name);
+				DUtility::SubtractString(std::string("struct "), type_name);
+
+				AutoFactory::GetFactories()[std::make_pair(type_name, type_id)] = constructor_lambda;
+
+				return true;
+			}
+
+			static bool registered;
+
+		private:
+			Registrar() : Base(Key{}) { (void)registered; }
+
+		}; // Registrar.
+
+	private:
+		class Key {
+		private:
+			Key() = default;
+			
+			template <class T> friend class Registrar;
+
+		}; // Key.
+
+		AutoFactory() = default;
+
+	};
+
+#pragma region Template Magic
+
+	// Static Variable initialization so we can execute code before main().
+	template <class Base, class... Args>
+	template <class T>
+	bool AutoFactory<Base, Args...>::template Registrar<T>::registered = AutoFactory<Base, Args...>::template Registrar<T>::RegisterType();
 
 #pragma endregion
 

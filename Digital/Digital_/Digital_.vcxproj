@@ -41,6 +41,7 @@
     <ClInclude Include="Include\ECS\ECSManager.h" />
     <ClInclude Include="Include\ECS\ECSSubSystem.h" />
     <ClInclude Include="Include\ECS\ECSystem.h" />
+    <ClInclude Include="Include\Utility\StringUtility.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -117,7 +118,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependency;$(SolutionDir)Dependency\GLAD\Include;$(SolutionDir)Dependency\GLFW\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependency;$(SolutionDir)Dependency\GLAD\Include;$(SolutionDir)Dependency\GLFW\Include;$(SolutionDir)Dependency\boost</AdditionalIncludeDirectories>
       <TreatWarningAsError>false</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
