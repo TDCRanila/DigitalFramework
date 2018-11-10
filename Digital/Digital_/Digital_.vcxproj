@@ -28,6 +28,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AutoFactory\AutoFactory.cpp" />
+    <ClCompile Include="Source\ECS\ECSModule.cpp" />
+    <ClCompile Include="Source\ECS\Managers\ECSComponentManager.cpp" />
+    <ClCompile Include="Source\ECS\Managers\ECSEntityManager.cpp" />
+    <ClCompile Include="Source\ECS\Managers\ECSystemManager.cpp" />
+    <ClCompile Include="Source\ECS\Objects\ECSComponent.cpp" />
+    <ClCompile Include="Source\ECS\Objects\ECSEntity.cpp" />
+    <ClCompile Include="Source\ECS\Objects\ECSystem.cpp" />
+    <ClCompile Include="Source\ECS\Utility\ECSIDManager.cpp" />
+    <ClCompile Include="Source\ECS\Utility\ECSKeyLockSystem.cpp" />
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -41,8 +50,18 @@
     <ClInclude Include="Include\ECS\ECSIDManager.h" />
     <ClInclude Include="Include\ECS\ECSKeyLockSystem.h" />
     <ClInclude Include="Include\ECS\ECSManager.h" />
+    <ClInclude Include="Include\ECS\ECSModule.h" />
     <ClInclude Include="Include\ECS\ECSSubSystem.h" />
     <ClInclude Include="Include\ECS\ECSystem.h" />
+    <ClInclude Include="Include\ECS\Managers\ECSComponentManager.h" />
+    <ClInclude Include="Include\ECS\Managers\ECSEntityManager.h" />
+    <ClInclude Include="Include\ECS\Managers\ECSystemManager.h" />
+    <ClInclude Include="Include\ECS\Objects\ECSComponent.h" />
+    <ClInclude Include="Include\ECS\Objects\ECSEntity.h" />
+    <ClInclude Include="Include\ECS\Objects\ECSystem.h" />
+    <ClInclude Include="Include\ECS\Utility\ECSCompBitList.h" />
+    <ClInclude Include="Include\ECS\Utility\ECSIDManager.h" />
+    <ClInclude Include="Include\ECS\Utility\ECSKeyLockSystem.h" />
     <ClInclude Include="Include\Utility\StringUtility.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
