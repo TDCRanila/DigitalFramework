@@ -44,6 +44,7 @@
     <ClInclude Include="Include\AnyStorage\AnyStorageManager.h" />
     <ClInclude Include="Include\AutoFactory\AutoFactory.h" />
     <ClInclude Include="Include\Defines\Defines.h" />
+    <ClInclude Include="Include\Defines\MathDefines.h" />
     <ClInclude Include="Include\ECS\ECSCompBitList.h" />
     <ClInclude Include="Include\ECS\ECSComponent.h" />
     <ClInclude Include="Include\ECS\ECSEntity.h" />
