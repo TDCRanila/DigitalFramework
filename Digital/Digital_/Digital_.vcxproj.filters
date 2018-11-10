@@ -122,5 +122,8 @@
     <ClInclude Include="Include\ECS\Utility\ECSCompBitList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Defines\MathDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
