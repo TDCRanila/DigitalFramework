@@ -1,11 +1,13 @@
 #pragma once
 
-#include <ECS/Managers/ECSystemManager.h>
-#include <ECS/Managers/ECSEntityManager.h>
-#include <ECS/Managers/ECSComponentManager.h>
-#include <ECS/Utility/ECSIDManager.h>
+#include <memory>
 
 namespace DECS {
+
+	// FW Declares.
+	class ECSystemManager;
+	class ECSEntityManager;
+	class ECSComponentManager;
 
 	class ECSModule final {
 	public:
@@ -33,9 +35,11 @@ namespace DECS {
 		// get		component
 
 	private:
-		//ECSystemManager	system_manager_;
-		//ECSEntityManager	entity_manager_;
-		//ECSComponentManager component_manager_;
+		bool initialized_;
+
+		std::unique_ptr<ECSystemManager>		system_manager_;
+		std::unique_ptr<ECSEntityManager>		entity_manager_;
+		std::unique_ptr<ECSComponentManager>	component_manager_;
 	};
 
 } // End of namespace ~ DECS
