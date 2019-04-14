@@ -41,7 +41,7 @@ namespace
 #endif
 
 // Unused Variable Define
-#define UNUSED(variable) (void)(variable)
+#define UNUSED(a_variable) (void)(a_variable)
 
 // Windows Min & Max Undefs
 #if defined(min) && defined(max)
@@ -68,20 +68,20 @@ namespace
 			return oss.str();
 		}
 
-		const std::string info_label	= "INFO ";
-		const std::string debug_label	= "DEBUG";
-		const std::string error_label	= "ERROR";
+		const std::string INFO_LABEL	= "INFO ";
+		const std::string DEBUG_LABEL	= "DEBUG";
+		const std::string ERROR_LABEL	= "ERROR";
 
 	} // End of namespace
 
 	#define __FILENAME__ (strrchr(__FILE__, DIR_SLASH_CHAR) ? strrchr(__FILE__, DIR_SLASH_CHAR) + 1 : __FILE__)
 
-	#define INFOLOG(message)  std::cout << info_label	<< " | " << __FILENAME__	<< "(" << __LINE__ << "): "  << #message << std::endl;
-	#define DEBUGLOG(message) std::cout << debug_label	<< " | " << __FILENAME__	<< "(" << __LINE__ << "): "  << #message << std::endl;
-	#define ERRORLOG(message) std::cout << error_label	<< " | " << __FILENAME__	<< "(" << __LINE__ << "): "  << #message << std::endl;
+	#define INFOLOG(a_message)  std::cout << INFO_LABEL		<< " | " << __FILENAME__	<< "(" << __LINE__ << "): "  << #a_message << std::endl;
+	#define DEBUGLOG(a_message) std::cout << DEBUG_LABEL	<< " | " << __FILENAME__	<< "(" << __LINE__ << "): "  << #a_message << std::endl;
+	#define ERRORLOG(a_message) std::cout << ERROR_LABEL	<< " | " << __FILENAME__	<< "(" << __LINE__ << "): "  << #a_message << std::endl;
 
 #elif defined(RELEASE64)
-	#define INFOLOG(message)  { /*EMPTY*/ }
-	#define DEBUGLOG(message) { /*EMPTY*/ }
-	#define ERRORLOG(message) { /*EMPTY*/ }
+	#define INFOLOG(a_message)  { /*EMPTY*/ }
+	#define DEBUGLOG(a_message) { /*EMPTY*/ }
+	#define ERRORLOG(a_message) { /*EMPTY*/ }
 #endif
