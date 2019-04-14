@@ -1,13 +1,17 @@
 #pragma once
 
-#include <stdint.h>
+#include <Defines/Defines.h>
 
 namespace DECS 
 {
 
-	typedef int64_t SystemID;
-	typedef int64_t EntityID;
-	typedef int64_t ComponentID;
+	typedef int64 SystemID;
+	typedef int64 EntityID;
+	typedef int64 ComponentID;
+
+	const int64 UNASSIGNED_SYSTEM_ID	= -1;
+	const int64 UNASSIGNED_ENTITY_ID	= -1;
+	const int64 UNASSIGNED_COMPONENT_ID	= -1;
 
 	class ECSIDManager final 
 	{
