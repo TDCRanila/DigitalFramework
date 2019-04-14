@@ -4,53 +4,45 @@
 
 #include <limits>
 
-namespace 
+namespace MD
 {
 
 	// Pi definiton.
-	const float pi			= 3.14159f;
-	const double pi_double	= 3.14159265358979323846f;
+	const float32 pi		= 3.14159f;
+	const float64 pi_double	= 3.14159265358979323846f;
 
 	// Degree <-> Rad Conversion.
-	static inline float DegToRad(float a_degrees) 
+	static inline float32 DegToRad(float32 a_degrees)
 	{
 		return (pi / 180) * a_degrees;
 	}
 
-	static inline float RadToDeg(float a_radians) 
+	static inline float32 RadToDeg(float32 a_radians)
 	{
 		return (180 / pi) * a_radians;
 	}
 
-	static inline float DegToRad(double a_degrees) 
+	static inline float64 DegToRad(float64 a_degrees)
 	{
 		return (pi_double / 180) * a_degrees;
 	}
 
-	static inline float RadToDeg(double a_radians) 
+	static inline float64 RadToDeg(float64 a_radians)
 	{
 		return (180 / pi_double) * a_radians;
 	}
 
-	// Numeric Limits.
-	static inline float GetMinFloat() 
+	// Numeric Limits of type T.
+	template<class T>
+	static inline  T GetMinValueOfType()
 	{
-		return std::numeric_limits<float>::min();
+		return std::numeric_limits<T>::min();
 	}
 
-	static inline float GetMaxFloat() 
+	template<class T>
+	static inline T GetMaxValueOfType()
 	{
-		return std::numeric_limits<float>::max();
+		return std::numeric_limits<T>::max();
 	}
 
-	static inline double GetMinDouble() 
-	{
-		return std::numeric_limits<double>::min();
-	}
-
-	static inline double GetMaxDouble() 
-	{
-		return std::numeric_limits<double>::max();
-	}
-
-} // End of namespace
+} // End of namespace ~ MD
