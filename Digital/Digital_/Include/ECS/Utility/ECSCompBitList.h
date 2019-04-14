@@ -1,10 +1,9 @@
 #pragma once
 
-#include <stdint.h>
+#include <Defines/Defines.h>
 
 namespace DECS 
 {
-
-	typedef int64_t ComponentBitList;
+	typedef int64 ComponentBitList;
 
 } // End of namespace ~ DECS
