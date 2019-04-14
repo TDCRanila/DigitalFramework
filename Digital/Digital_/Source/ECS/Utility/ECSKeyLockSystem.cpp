@@ -11,11 +11,11 @@ namespace DECS
 
 	void ECSKeyLockSystem::GenerateComponentKeys() 
 	{
-		int8_t key_index = 0;
+		int8 key_index = -1;
 
 		for (auto const&[type_pair, fac] : ECSComponent::GetFactories()) 
 		{
-			component_bit_placement_[type_pair.second] = key_index++;
+			component_bit_placement_[type_pair.second] = ++key_index;
 
 			if (key_index > 64) 
 			{ 
