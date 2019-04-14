@@ -12,23 +12,27 @@
 #include <typeindex>
 #include <unordered_map>
 
-namespace DFactory {
+namespace DFactory 
+{
 		
 	template <class Base, class... Args>
-	class AutoFactory {
+	class AutoFactory 
+	{
 	public:
-		typedef std::function<std::unique_ptr<Base>(Args...)> FuncType;
-		typedef std::pair<std::string, std::type_index> StringTypePair;
-		typedef std::unordered_map< StringTypePair, FuncType, boost::hash<StringTypePair>> FactoryMap;
-		typedef typename std::unordered_map< StringTypePair, FuncType, boost::hash<StringTypePair> >::iterator FactoryMapIt;
+		typedef std::function<std::unique_ptr<Base>(Args...)>													FuncType;
+		typedef std::pair<std::string, std::type_index>															StringTypePair;
+		typedef std::unordered_map< StringTypePair, FuncType, boost::hash<StringTypePair>>						FactoryMap;
+		typedef typename std::unordered_map< StringTypePair, FuncType, boost::hash<StringTypePair> >::iterator	FactoryMapIt;
 
 		friend Base;
 
 		template <class... Args>
-		static std::unique_ptr<Base> Construct(const std::string& a_type_name, Args&&...a_args) {
+		static std::unique_ptr<Base> Construct(const std::string& a_type_name, Args&&...a_args) 
+		{
 
 			// Create Compare Lambda used to find the type_name in the factories map.
-			auto compare_lambda = [&a_type_name](const std::pair<StringTypePair, FuncType>& a_it_element) {
+			auto compare_lambda = [&a_type_name](const std::pair<StringTypePair, FuncType>& a_it_element) 
+			{
 				return a_it_element.first.first == a_type_name;
 			};
 
@@ -36,27 +40,34 @@ namespace DFactory {
 			FactoryMapIt it = std::find_if(fac.begin(), fac.end(), compare_lambda);
 
 			// Check if type was registered in the map or not.
-			if (it == fac.end()) {
+			if (it == fac.end()) 
+			{
 				_ASSERT(false); // -> Element has not been found in factory_map.
 				return std::unique_ptr<Base>();
-			} else {
+			} 
+			else 
+			{
 				return it->second(std::forward<Args>(a_args)...);
 			}
 		}
 
-		static FactoryMap& GetFactories() {
+		static FactoryMap& GetFactories() 
+		{
 			static FactoryMap factory_map;
 			return factory_map;
 		}
 
 		template <class T>
-		class Registrar : public Base {
+		class Registrar : public Base 
+		{
 		public:
 			friend T;
 
-			static bool RegisterType() {
+			static bool RegisterType() 
+			{
 				// Create Factory Construction Lambda for Type T.
-				FuncType constructor_lambda = [](Args... a_args) -> std::unique_ptr<Base> {
+				FuncType constructor_lambda = [](Args... a_args) -> std::unique_ptr<Base> 
+				{
 					return std::make_unique<T>(std::forward<Args>(a_args)...);
 				};
 
@@ -80,7 +91,8 @@ namespace DFactory {
 		}; // Registrar.
 
 	private:
-		class Key {
+		class Key 
+		{
 		private:
 			Key() = default;
 			

@@ -6,9 +6,11 @@
 #include <vector>
 #include <typeindex>
 
-namespace DECS {
+namespace DECS 
+{
 
-	class ECSComponentManager final {
+	class ECSComponentManager final 
+	{
 	public:
 		ECSComponentManager();
 		~ECSComponentManager();
@@ -23,7 +25,7 @@ namespace DECS {
 		T& DeleteComponent(EntityID a_entity_id);
 
 	private:
-		std::unordered_map<std::type_index, std::vector<ECSComponent>> component_vectors;
+		std::unordered_map<std::type_index, std::vector<ECSComponent>> component_vectors_;
 
 	};
 

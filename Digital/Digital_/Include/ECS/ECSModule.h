@@ -2,14 +2,16 @@
 
 #include <memory>
 
-namespace DECS {
+namespace DECS 
+{
 
 	// FW Declares.
 	class ECSystemManager;
 	class ECSEntityManager;
 	class ECSComponentManager;
 
-	class ECSModule final {
+	class ECSModule final 
+	{
 	public:
 		ECSModule();
 		~ECSModule();

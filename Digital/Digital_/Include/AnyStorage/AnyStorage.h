@@ -2,10 +2,12 @@
 
 #include <vector>
 
-namespace DAnyStorage {
+namespace DAnyStorage 
+{
 
     template <class T>
-    class AnyStorage {
+    class AnyStorage 
+	{
     public:
 		AnyStorage() { /*Empty*/ }
 

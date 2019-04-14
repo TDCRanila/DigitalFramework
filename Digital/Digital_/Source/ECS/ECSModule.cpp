@@ -5,43 +5,47 @@
 #include <ECS/Managers/ECSComponentManager.h>
 #include <ECS/Utility/ECSIDManager.h>
 
-namespace DECS {
+namespace DECS 
+{
 
 	ECSModule::ECSModule() :
-		initialized_(false)
+		_initialized(false)
 	{ /*EMPTY*/ }
 
 	ECSModule::~ECSModule() { /*EMPTY*/ }
 
-	void ECSModule::InitECS() {
-		if (initialized_) { INFOLOG("ECSModule already initialized") return; }
+	void ECSModule::InitECS() 
+	{
+		if (_initialized) { INFOLOG("ECSModule already initialized") return; }
 
 		// Allocate.
-		system_manager_		= std::make_unique<ECSystemManager>();
-		entity_manager_		= std::make_unique<ECSEntityManager>();
-		component_manager_	= std::make_unique<ECSComponentManager>();
+		_system_manager		= std::make_unique<ECSystemManager>();
+		_entity_manager		= std::make_unique<ECSEntityManager>();
+		_component_manager	= std::make_unique<ECSComponentManager>();
 
 		// Init.
-		system_manager_->Init();
+		_system_manager->Init();
 
-		initialized_ = true;
+		_initialized = true;
 	}
 
-	void ECSModule::TerminateECS() {
-		if (!initialized_) { INFOLOG("ECSModule not initialized. No need for termination.") return; }
+	void ECSModule::TerminateECS() 
+	{
+		if (!_initialized) { INFOLOG("ECSModule not initialized. No need for termination.") return; }
 
 		// Terminate.
-		system_manager_->Terminate();
+		_system_manager->Terminate();
 
 	}
 
-	void ECSModule::UpdateECS() { 
+	void ECSModule::UpdateECS() 
+	{ 
 #if not defined(RELEASE64)
-		if (!initialized_) { ERRORLOG("ECSModule not yes initialized") return; }
+		if (!_initialized) { ERRORLOG("ECSModule not yet initialized") return; }
 #endif
 
 		// Update systems.
-		system_manager_->UpdateSystems(); 
+		_system_manager->UpdateSystems(); 
 	}
 
 } // End of namespace ~ DECS

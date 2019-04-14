@@ -4,9 +4,11 @@
 
 #include <vector>
 
-namespace DECS {
+namespace DECS 
+{
 
-	class ECSEntityManager final {
+	class ECSEntityManager final 
+	{
 	public:
 		ECSEntityManager();
 		~ECSEntityManager();

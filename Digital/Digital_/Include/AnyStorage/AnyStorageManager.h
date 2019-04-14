@@ -2,13 +2,15 @@
 
 #include <AnyStorage/AnyStorage.h>
 
-#include <map>
+#include <unordered_map>
 #include <functional>
 #include <any>
 
-namespace DAnyStorage {
+namespace DAnyStorage 
+{
 
-    class AnyStorageManager {
+    class AnyStorageManager 
+	{
     public:
 		AnyStorageManager()		{ /*Empty*/ }
         ~AnyStorageManager()	{ /*Empty*/ }
@@ -31,13 +33,15 @@ namespace DAnyStorage {
 #pragma region Template Function Implementation
 
     template <class T>
-    void AnyStorageManager::Subscribe(T* a_item) {
+    void AnyStorageManager::Subscribe(T* a_item) 
+	{
         // Search for item vector in storage.
 		AnyStorage<T>* i = nullptr;
         i = GetItemVector<T>();
 
         // If Not ~
-        if (i == nullptr) {
+        if (i == nullptr) 
+		{
             size_t current_hash = typeid(T).hash_code();
             i = AddItemVector<T>(current_hash);
         }
@@ -47,14 +51,16 @@ namespace DAnyStorage {
     }
 
     template <class T>
-	AnyStorage<T>* AnyStorageManager::AddItemVector(size_t a_hash) {
+	AnyStorage<T>* AnyStorageManager::AddItemVector(size_t a_hash) 
+	{
 		AnyStorage<T>* temp = new AnyStorage<T>();
         this->storage.insert(std::make_pair(a_hash, temp));
         return temp;
     }
 
     template <class T>
-	AnyStorage<T>* AnyStorageManager::GetItemVector() {
+	AnyStorage<T>* AnyStorageManager::GetItemVector() 
+	{
         // Check storage is empty. Is faster? How many instructions.
 
         // Hash
@@ -63,7 +69,8 @@ namespace DAnyStorage {
         // Search for item vector in storage.
 		AnyStorage<T>* storage_ptr = nullptr;
         auto it = this->storage.find(current_hash);
-        if (it != this->storage.end()) {
+        if (it != this->storage.end()) 
+		{
             storage_ptr = std::any_cast<AnyStorage<T>*>(it->second);
         }
 

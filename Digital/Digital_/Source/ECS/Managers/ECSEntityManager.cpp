@@ -1,6 +1,7 @@
 #include <ECS/Managers/ECSEntityManager.h>
 
-namespace DECS {
+namespace DECS 
+{
 
 	ECSEntityManager::ECSEntityManager() { /*EMPTY*/ }
 	

@@ -6,9 +6,11 @@
 #include <unordered_map>
 #include <typeindex>
 
-namespace DECS {
+namespace DECS 
+{
 
-	class ECSystemManager final {
+	class ECSystemManager final 
+	{
 	public:
 		ECSystemManager();
 		~ECSystemManager();

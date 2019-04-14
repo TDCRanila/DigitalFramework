@@ -2,13 +2,15 @@
 
 #include <stdint.h>
 
-namespace DECS {
+namespace DECS 
+{
 
 	typedef int64_t SystemID;
 	typedef int64_t EntityID;
 	typedef int64_t ComponentID;
 
-	class ECSIDManager final {
+	class ECSIDManager final 
+	{
 	public:
 		ECSIDManager();
 		~ECSIDManager();

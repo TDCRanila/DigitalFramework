@@ -2,7 +2,8 @@
 
 #include <stdint.h>
 
-namespace DECS {
+namespace DECS 
+{
 
 	typedef int64_t ComponentBitList;
 

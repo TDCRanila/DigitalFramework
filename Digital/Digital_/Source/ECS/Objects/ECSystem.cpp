@@ -2,7 +2,8 @@
 
 #include <ECS/Utility/ECSIDManager.h>
 
-namespace DECS {
+namespace DECS
+{
 
 	ECSystem::ECSystem(Key) :
 		system_id_(ECSIDManager::GetNextSystemID())
@@ -20,7 +21,8 @@ namespace DECS {
 
 	void ECSystem::PostUpdate() { /*EMPTY*/ }
 
-	SystemID ECSystem::GetID() const {
+	SystemID ECSystem::GetID() const 
+	{
 		return system_id_;
 	}
 

@@ -4,9 +4,11 @@
 
 #include <ECS/Utility/ECSIDManager.h>
 
-namespace DECS {
+namespace DECS 
+{
 
-	class ECSystem : public DFactory::AutoFactory<ECSystem> {
+	class ECSystem : public DFactory::AutoFactory<ECSystem> 
+	{
 	public:
 		ECSystem(Key);
 		virtual ~ECSystem();

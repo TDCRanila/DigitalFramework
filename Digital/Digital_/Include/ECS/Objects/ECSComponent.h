@@ -6,11 +6,13 @@
 
 #include <stdint.h>
 
-namespace DECS {
+namespace DECS 
+{
 
 	//class ECSComponentManager;
 
-	class ECSComponent : public DFactory::AutoFactory<ECSComponent> {
+	class ECSComponent : public DFactory::AutoFactory<ECSComponent> 
+	{
 	public:
 		ECSComponent(Key);
 		virtual ~ECSComponent();

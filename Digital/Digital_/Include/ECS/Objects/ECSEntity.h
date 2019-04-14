@@ -3,9 +3,11 @@
 #include <ECS/Utility/ECSIDManager.h>
 #include <ECS/Utility/ECSCompBitList.h>
 
-namespace DECS {
+namespace DECS 
+{
 
-	class ECSEntity final {
+	class ECSEntity final 
+	{
 	public:
 		ECSEntity();
 		~ECSEntity();

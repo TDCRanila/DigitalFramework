@@ -2,7 +2,8 @@
 
 #include <ECS/Utility/ECSIDManager.h>
 
-namespace DECS {
+namespace DECS
+{
 
 	ECSComponent::ECSComponent(Key) :
 		component_id_(ECSIDManager::GetNextComponentID())
@@ -10,7 +11,8 @@ namespace DECS {
 
 	ECSComponent::~ECSComponent() { /*EMPTY*/ }
 
-	ComponentID ECSComponent::GetID() const {
+	ComponentID ECSComponent::GetID() const 
+	{
 		return component_id_;
 	}
 

@@ -1,6 +1,7 @@
 #include <ECS/Utility/ECSIDManager.h>
 
-namespace DECS {
+namespace DECS 
+{
 
 	// Static ID Variables Initialization.
 	SystemID ECSIDManager::next_system_id_			= 0;
@@ -11,7 +12,8 @@ namespace DECS {
 
 	ECSIDManager::~ECSIDManager() { /*EMPTY*/ }
 
-	void ECSIDManager::ResetIDCounters() {
+	void ECSIDManager::ResetIDCounters() 
+	{
 		next_system_id_		= 0;
 		next_entity_id_		= 0;
 		next_component_id_	= 0;

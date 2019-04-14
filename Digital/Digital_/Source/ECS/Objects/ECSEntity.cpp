@@ -2,7 +2,8 @@
 
 #include <ECS/Utility/ECSIDManager.h>
 
-namespace DECS {
+namespace DECS 
+{
 
 	ECSEntity::ECSEntity() :
 		entity_id_(ECSIDManager::GetNextEntityID())
@@ -10,7 +11,8 @@ namespace DECS {
 
 	ECSEntity::~ECSEntity() { /*EMPTY*/ }
 
-	EntityID ECSEntity::GetID() const {
+	EntityID ECSEntity::GetID() const 
+	{
 		return entity_id_;
 	}
 

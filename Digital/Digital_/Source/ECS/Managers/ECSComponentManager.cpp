@@ -1,6 +1,7 @@
 #include <ECS/Managers/ECSComponentManager.h>
 
-namespace DECS {
+namespace DECS 
+{
 
 	ECSComponentManager::ECSComponentManager() { /*EMPTY*/ }
 

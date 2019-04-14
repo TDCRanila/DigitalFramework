@@ -4,13 +4,15 @@
 
 #include <AutoFactory/Autofactory.h>
 
-namespace DECS {
+namespace DECS 
+{
 
 	ECSystemManager::ECSystemManager() { /*EMPTY*/ }
 
 	ECSystemManager::~ECSystemManager() { /*EMPTY*/ }
 
-	void ECSystemManager::Init() {
+	void ECSystemManager::Init() 
+	{
 		// Create the starting list of systems.
 		this->SetupSystemList();
 	}
@@ -19,13 +21,16 @@ namespace DECS {
 
 	void ECSystemManager::UpdateSystems() { /*EMPTY*/ }
 
-	void ECSystemManager::AddSystemInternal(std::type_index a_type_index, std::unique_ptr<ECSystem> a_system_ptr) {
+	void ECSystemManager::AddSystemInternal(std::type_index a_type_index, std::unique_ptr<ECSystem> a_system_ptr) 
+	{
 		// TODO: Set System IDs
 		systems_[a_type_index] = std::move(a_system_ptr);
 	}
 
-	void ECSystemManager::SetupSystemList() {
-		for (auto const&[type_pair, fac] : ECSystem::GetFactories()) {
+	void ECSystemManager::SetupSystemList() 
+	{
+		for (auto const&[type_pair, fac] : ECSystem::GetFactories()) 
+		{
 			this->AddSystemInternal(type_pair.second, fac());
 		}
 	}
