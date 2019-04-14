@@ -20,7 +20,7 @@ namespace DECS
 		void ManageDeletedEntities();
 
 		std::vector<EntityID> entities_;
-		std::vector<EntityID> pending_delete_entities;
+		std::vector<EntityID> pending_delete_entities_;
 
 	};
 

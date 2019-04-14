@@ -9,43 +9,43 @@ namespace DECS
 {
 
 	ECSModule::ECSModule() :
-		_initialized(false)
+		initialized_(false)
 	{ /*EMPTY*/ }
 
 	ECSModule::~ECSModule() { /*EMPTY*/ }
 
 	void ECSModule::InitECS() 
 	{
-		if (_initialized) { INFOLOG("ECSModule already initialized") return; }
+		if (initialized_) { INFOLOG("ECSModule already initialized") return; }
 
 		// Allocate.
-		_system_manager		= std::make_unique<ECSystemManager>();
-		_entity_manager		= std::make_unique<ECSEntityManager>();
-		_component_manager	= std::make_unique<ECSComponentManager>();
+		system_manager_		= std::make_unique<ECSystemManager>();
+		entity_manager_		= std::make_unique<ECSEntityManager>();
+		component_manager_	= std::make_unique<ECSComponentManager>();
 
 		// Init.
-		_system_manager->Init();
+		system_manager_->Init();
 
-		_initialized = true;
+		initialized_ = true;
 	}
 
 	void ECSModule::TerminateECS() 
 	{
-		if (!_initialized) { INFOLOG("ECSModule not initialized. No need for termination.") return; }
+		if (!initialized_) { INFOLOG("ECSModule not initialized. No need for termination.") return; }
 
 		// Terminate.
-		_system_manager->Terminate();
+		system_manager_->Terminate();
 
 	}
 
 	void ECSModule::UpdateECS() 
 	{ 
 #if not defined(RELEASE64)
-		if (!_initialized) { ERRORLOG("ECSModule not yet initialized") return; }
+		if (!initialized_) { ERRORLOG("ECSModule not yet initialized") return; }
 #endif
 
 		// Update systems.
-		_system_manager->UpdateSystems(); 
+		system_manager_->UpdateSystems(); 
 	}
 
 } // End of namespace ~ DECS
