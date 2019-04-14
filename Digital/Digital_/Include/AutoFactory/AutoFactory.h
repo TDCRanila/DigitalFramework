@@ -75,8 +75,8 @@ namespace DFactory
 				std::string type_name			= type_id.name();
 
 				// TODO: MSVC Further Specific Demangling. ~ Implement Other compilers?
-				DUtility::SubtractString(std::string("class "), type_name);
-				DUtility::SubtractString(std::string("struct "), type_name);
+				DUtility::SubtractString(type_name, std::string("class "));
+				DUtility::SubtractString(type_name, std::string("struct "));
 
 				AutoFactory::GetFactories()[std::make_pair(type_name, type_id)] = constructor_lambda;
 
