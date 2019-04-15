@@ -58,7 +58,7 @@ namespace
 
 	namespace 
 	{
-		static inline std::string GetTime() 
+		static inline std::string GetTimeAndDate() 
 		{
 			std::time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 			std::ostringstream oss;
@@ -66,7 +66,25 @@ namespace
 			return oss.str();
 		}
 
-		const std::string INFO_LABEL	= "INFO ";
+		static inline std::string GetTime()
+		{
+			std::string time_and_date = GetTimeAndDate();
+			const auto begin_it(time_and_date.begin());
+			const auto end_it(time_and_date.begin() + 11);
+			time_and_date.erase(begin_it, end_it);
+			return time_and_date;
+		}
+
+		static inline std::string GetDate()
+		{
+			std::string time_and_date = GetTimeAndDate();
+			const auto begin_it(time_and_date.begin() + 10);
+			const auto end_it(time_and_date.end());
+			time_and_date.erase(begin_it, end_it);
+			return time_and_date;
+		}
+
+		const std::string INFO_LABEL	= "INFO";
 		const std::string DEBUG_LABEL	= "DEBUG";
 		const std::string ERROR_LABEL	= "ERROR";
 
