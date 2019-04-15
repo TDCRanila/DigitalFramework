@@ -68,7 +68,7 @@ namespace
 	#define ERRORLOG(...) std::cout << ERROR_LABEL	<< " | " << DUtility::GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
 
 #elif defined(RELEASE64)
-	#define INFOLOG(a_message)  { /*EMPTY*/ }
-	#define DEBUGLOG(a_message) { /*EMPTY*/ }
-	#define ERRORLOG(a_message) { /*EMPTY*/ }
+	#define INFOLOG(...)  { /*EMPTY*/ }
+	#define DEBUGLOG(...) { /*EMPTY*/ }
+	#define ERRORLOG(...) { /*EMPTY*/ }
 #endif
