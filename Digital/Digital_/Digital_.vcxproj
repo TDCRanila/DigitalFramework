@@ -167,7 +167,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependency;$(SolutionDir)Dependency\GLAD\Include;$(SolutionDir)Dependency\GLFW\Include;$(SolutionDir)Dependency\boost</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ForcedIncludeFiles>%(ProjectDir)Defines\Defines.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
