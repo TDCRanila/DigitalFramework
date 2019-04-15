@@ -54,6 +54,9 @@
     <ClCompile Include="Source\Utility\StringUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Utility\TimeUtility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\ECS\ECSComponent.h">
@@ -126,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Defines\MathDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\TimeUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

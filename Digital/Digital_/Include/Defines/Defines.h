@@ -50,51 +50,22 @@ namespace
 // Logging Defines
 #if defined(DEBUG64) || defined(PRERELEASE64)
 
-#include <chrono>
-#include <ctime>
-#include <iomanip>
-#include <sstream>
+#include <Utility/TimeUtility.h>
+
 #include <string>
 
 	namespace 
 	{
-		static inline std::string GetTimeAndDate() 
-		{
-			std::time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-			std::ostringstream oss;
-			oss << std::put_time(localtime(&t), "%F %T");
-			return oss.str();
-		}
-
-		static inline std::string GetTime()
-		{
-			std::string time_and_date = GetTimeAndDate();
-			const auto begin_it(time_and_date.begin());
-			const auto end_it(time_and_date.begin() + 11);
-			time_and_date.erase(begin_it, end_it);
-			return time_and_date;
-		}
-
-		static inline std::string GetDate()
-		{
-			std::string time_and_date = GetTimeAndDate();
-			const auto begin_it(time_and_date.begin() + 10);
-			const auto end_it(time_and_date.end());
-			time_and_date.erase(begin_it, end_it);
-			return time_and_date;
-		}
-
 		const std::string INFO_LABEL	= "INFO";
 		const std::string DEBUG_LABEL	= "DEBUG";
 		const std::string ERROR_LABEL	= "ERROR";
-
 	} // End of namespace
 
 	#define __FILENAME__ (strrchr(__FILE__, DIR_SLASH_CHAR) ? strrchr(__FILE__, DIR_SLASH_CHAR) + 1 : __FILE__)
 
-	#define INFOLOG(...)  std::cout << INFO_LABEL	<< " | " << GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
-	#define DEBUGLOG(...) std::cout << DEBUG_LABEL	<< " | " << GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
-	#define ERRORLOG(...) std::cout << ERROR_LABEL	<< " | " << GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
+	#define INFOLOG(...)  std::cout << INFO_LABEL	<< " | " << DUtility::GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
+	#define DEBUGLOG(...) std::cout << DEBUG_LABEL	<< " | " << DUtility::GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
+	#define ERRORLOG(...) std::cout << ERROR_LABEL	<< " | " << DUtility::GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
 
 #elif defined(RELEASE64)
 	#define INFOLOG(a_message)  { /*EMPTY*/ }

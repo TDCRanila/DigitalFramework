@@ -39,6 +39,7 @@
     <ClCompile Include="Source\ECS\Utility\ECSKeyLockSystem.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Utility\StringUtility.cpp" />
+    <ClCompile Include="Source\Utility\TimeUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\AnyStorage\AnyStorage.h" />
@@ -65,6 +66,7 @@
     <ClInclude Include="Include\ECS\Utility\ECSIDManager.h" />
     <ClInclude Include="Include\ECS\Utility\ECSKeyLockSystem.h" />
     <ClInclude Include="Include\Utility\StringUtility.h" />
+    <ClInclude Include="Include\Utility\TimeUtility.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
