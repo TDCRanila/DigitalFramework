@@ -3,11 +3,9 @@
 #include <ECS/Managers/ECSystemManager.h>
 #include <ECS/Managers/ECSEntityManager.h>
 #include <ECS/Managers/ECSComponentManager.h>
-#include <ECS/Utility/ECSIDManager.h>
 
 namespace DECS 
 {
-
 	ECSModule::ECSModule() :
 		initialized_(false)
 	{ /*EMPTY*/ }
@@ -16,7 +14,11 @@ namespace DECS
 
 	void ECSModule::InitECS() 
 	{
-		if (initialized_) { INFOLOG("ECSModule already initialized") return; }
+		if (initialized_) 
+		{ 
+			INFOLOG("ECSModule already initialized");
+			return; 
+		}
 
 		// Allocate.
 		system_manager_		= std::make_unique<ECSystemManager>();
@@ -31,17 +33,24 @@ namespace DECS
 
 	void ECSModule::TerminateECS() 
 	{
-		if (!initialized_) { INFOLOG("ECSModule not initialized. No need for termination.") return; }
+		if (!initialized_) 
+		{ 
+			INFOLOG("ECSModule not initialized. No need for termination."); 
+			return;
+		}
 
 		// Terminate.
 		system_manager_->Terminate();
-
 	}
 
 	void ECSModule::UpdateECS() 
 	{ 
 #if not defined(RELEASE64)
-		if (!initialized_) { ERRORLOG("ECSModule not yet initialized") return; }
+		if (!initialized_) 
+		{ 
+			ERRORLOG("ECSModule not yet initialized") 
+				return; 
+		}
 #endif
 
 		// Update systems.

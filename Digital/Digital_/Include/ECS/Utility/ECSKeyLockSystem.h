@@ -42,7 +42,8 @@ namespace DECS
 	template <class T>
 	bool ECSKeyLockSystem::IsComponentBitTrue(ComponentBitList& a_bit_var) const 
 	{
-		auto it = component_bit_placement_.find(typeid(T));
+		auto type	= typeid(T);
+		auto it		= component_bit_placement_.find(type);
 		if (it != component_bit_placement_.end()) 
 		{
 			int64 temp = 1;
@@ -50,7 +51,7 @@ namespace DECS
 		} 
 		else 
 		{
-			ERRORLOG("Unable to find ComponentBitPlacement of T: " << #T);
+			ERRORLOG("Unable to find ComponentBitPlacement of T: " << type.name());
 			return false;
 		}
 	}
@@ -72,14 +73,15 @@ namespace DECS
 	template <class T>
 	int8 ECSKeyLockSystem::GetComponentBitPlacement() const 
 	{
-		auto it = component_bit_placement_.find(typeid(T));
+		auto type	= typeid(T);
+		auto it		= component_bit_placement_.find(type);
 		if (it != component_bit_placement_.end())
 		{
 			return it->second;
 		} 
 		else 
 		{
-			ERRORLOG("Unable to find ComponentBitPlacement of T: " << #T);
+			ERRORLOG("Unable to find ComponentBitPlacement of T: " << type.name());
 			return UNASSIGNED_COMPONENT_BIT;
 		}
 	}

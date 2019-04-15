@@ -92,9 +92,9 @@ namespace
 
 	#define __FILENAME__ (strrchr(__FILE__, DIR_SLASH_CHAR) ? strrchr(__FILE__, DIR_SLASH_CHAR) + 1 : __FILE__)
 
-	#define INFOLOG(a_message)  std::cout << INFO_LABEL		<< " | " << __FILENAME__	<< "(" << __LINE__ << "): "  << #a_message << std::endl;
-	#define DEBUGLOG(a_message) std::cout << DEBUG_LABEL	<< " | " << __FILENAME__	<< "(" << __LINE__ << "): "  << #a_message << std::endl;
-	#define ERRORLOG(a_message) std::cout << ERROR_LABEL	<< " | " << __FILENAME__	<< "(" << __LINE__ << "): "  << #a_message << std::endl;
+	#define INFOLOG(...)  std::cout << INFO_LABEL	<< " | " << GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
+	#define DEBUGLOG(...) std::cout << DEBUG_LABEL	<< " | " << GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
+	#define ERRORLOG(...) std::cout << ERROR_LABEL	<< " | " << GetTime() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
 
 #elif defined(RELEASE64)
 	#define INFOLOG(a_message)  { /*EMPTY*/ }
