@@ -33,6 +33,7 @@
     <ClCompile Include="Source\ECS\Managers\ECSEntityManager.cpp" />
     <ClCompile Include="Source\ECS\Managers\ECSystemManager.cpp" />
     <ClCompile Include="Source\ECS\Objects\ECSComponent.cpp" />
+    <ClCompile Include="Source\ECS\Objects\ECSComponentHandle.cpp" />
     <ClCompile Include="Source\ECS\Objects\ECSEntity.cpp" />
     <ClCompile Include="Source\ECS\Objects\ECSystem.cpp" />
     <ClCompile Include="Source\ECS\Utility\ECSIDManager.cpp" />
@@ -60,6 +61,7 @@
     <ClInclude Include="Include\ECS\Managers\ECSEntityManager.h" />
     <ClInclude Include="Include\ECS\Managers\ECSystemManager.h" />
     <ClInclude Include="Include\ECS\Objects\ECSComponent.h" />
+    <ClInclude Include="Include\ECS\Objects\ECSComponentHandle.h" />
     <ClInclude Include="Include\ECS\Objects\ECSEntity.h" />
     <ClInclude Include="Include\ECS\Objects\ECSystem.h" />
     <ClInclude Include="Include\ECS\Utility\ECSCompBitList.h" />
