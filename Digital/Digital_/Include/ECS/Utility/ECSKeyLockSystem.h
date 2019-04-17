@@ -33,6 +33,8 @@ namespace DECS
 		int8 GetComponentBitPlacement() const;
 
 	private:
+		bool generated_component_keys_;
+
 		std::unordered_map<std::type_index, int8> component_bit_placement_;
 
 	};

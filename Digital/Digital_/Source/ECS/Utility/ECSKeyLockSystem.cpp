@@ -6,11 +6,22 @@
 namespace DECS 
 {
 
-	ECSKeyLockSystem::ECSKeyLockSystem() { /*EMPTY*/ }
+	ECSKeyLockSystem::ECSKeyLockSystem() :
+		generated_component_keys_(false)
+	{ 
+		/*EMPTY*/ 
+	}
+
 	ECSKeyLockSystem::~ECSKeyLockSystem() { /*EMPTY*/ }
 
 	void ECSKeyLockSystem::GenerateComponentKeys() 
 	{
+		if (generated_component_keys_)
+		{
+			INFOLOG("KeyLockSystem has already generated the component keys.");
+			return;
+		}
+
 		int8 key_index = -1;
 
 		for (auto const&[type_pair, fac] : ECSComponent::GetFactories()) 
@@ -22,6 +33,8 @@ namespace DECS
 				ERRORLOG("Over 64 Components have been registered for ComponentBitPlacement.") 
 			}
 		}
+
+		generated_component_keys_ = true;
 	}
 
 } // End of namespace ~ DECS
