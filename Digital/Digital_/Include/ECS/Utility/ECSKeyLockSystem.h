@@ -19,6 +19,9 @@ namespace DECS
 		~ECSKeyLockSystem();
 
 		void GenerateComponentKeys();
+
+		template <typename... TArgs>
+		ComponentBitList ConstructorBitList();
 		
 		template <class T>
 		bool IsComponentBitTrue(ComponentBitList& a_bit_var) const;
@@ -33,6 +36,12 @@ namespace DECS
 		int8 GetComponentBitPlacement() const;
 
 	private:
+		template <class T>
+		ComponentBitList InternalConstructorBitList();
+
+		template <class Ta, class Tb, class... TArgs>
+		ComponentBitList InternalConstructorBitList();
+
 		bool generated_component_keys_;
 
 		std::unordered_map<std::type_index, int8> component_bit_placement_;
@@ -41,10 +50,31 @@ namespace DECS
 
 #pragma region Template Function Implementation
 
+	template <typename... TArgs>
+	ComponentBitList ECSKeyLockSystem::ConstructorBitList()
+	{
+		return InternalConstructorBitList<void, TArgs...>();
+	}
+
+	template <class T>
+	ComponentBitList ECSKeyLockSystem::InternalConstructorBitList()
+	{
+		return ComponentBitList(0);
+	}
+
+	template <class Ta, class Tb, class... TArgs>
+	ComponentBitList ECSKeyLockSystem::InternalConstructorBitList()
+	{
+		ComponentBitList comp_bit_list(0);
+		SetComponentBits<Tb>(comp_bit_list);
+		return (comp_bit_list | InternalConstructorBitList<Ta, TArgs...>());
+	}
+
+
 	template <class T>
 	bool ECSKeyLockSystem::IsComponentBitTrue(ComponentBitList& a_bit_var) const 
 	{
-		auto type	= typeid(T);
+		auto& type	= typeid(T);
 		auto it		= component_bit_placement_.find(type);
 		if (it != component_bit_placement_.end()) 
 		{
@@ -75,7 +105,7 @@ namespace DECS
 	template <class T>
 	int8 ECSKeyLockSystem::GetComponentBitPlacement() const 
 	{
-		auto type	= typeid(T);
+		auto& type	= typeid(T);
 		auto it		= component_bit_placement_.find(type);
 		if (it != component_bit_placement_.end())
 		{
