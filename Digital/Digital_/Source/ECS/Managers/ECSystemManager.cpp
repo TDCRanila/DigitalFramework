@@ -11,20 +11,46 @@ namespace DECS
 
 	ECSystemManager::~ECSystemManager() { /*EMPTY*/ }
 
-	void ECSystemManager::Init() 
+	void ECSystemManager::Init(ECSEntityManager* a_entity_manager)
 	{
 		// Create the starting list of systems.
 		this->SetupSystemList();
+
+		// Calling Init of systems.
+		for (auto const&[system_type, system_ptr] : systems_)
+		{
+			system_ptr->InternalInit(a_entity_manager);
+		}
 	}
 
-	void ECSystemManager::Terminate() { /*EMPTY*/ }
+	void ECSystemManager::Terminate() 
+	{ 
+		// Calling Terminiate of systems.
+		for (auto const&[system_type, system_ptr] : systems_)
+		{
+			system_ptr->InternalTerminate();
+		}
+	}
 
-	void ECSystemManager::UpdateSystems() { /*EMPTY*/ }
+	void ECSystemManager::UpdateSystems() 
+	{ 
+		// Calling Init of systems.
+		for (auto const&[system_type, system_ptr] : systems_)
+		{
+			system_ptr->InternalPreUpdate();
+		}
 
-	void ECSystemManager::AddSystemInternal(std::type_index a_type_index, std::unique_ptr<ECSystem> a_system_ptr) 
-	{
-		// TODO: Set System IDs
-		systems_[a_type_index] = std::move(a_system_ptr);
+		// Calling Init of systems.
+		for (auto const&[system_type, system_ptr] : systems_)
+		{
+			system_ptr->InternalUpdate();
+		}
+
+		// Calling Init of systems.
+		for (auto const&[system_type, system_ptr] : systems_)
+		{
+			system_ptr->InternalPostUpdate();
+		}
 	}
 
 	void ECSystemManager::SetupSystemList() 
@@ -37,5 +63,10 @@ namespace DECS
 
 	void ECSystemManager::SortSystemPriority() { /*EMPTY*/ }
 
+	void ECSystemManager::AddSystemInternal(std::type_index a_type_index, std::unique_ptr<ECSystem> a_system_ptr) 
+	{
+		// TODO: Set System IDs
+		systems_[a_type_index] = std::move(a_system_ptr);
+	}
 
 } // End of namespace ~ DECS

@@ -22,7 +22,7 @@ namespace DECS
 
 		void UpdateECS();
 
-	protected:
+	//TODO Make them protected again - Was testing out things: - protected:
 		// friend	world module
 
 		// add		system
@@ -36,12 +36,12 @@ namespace DECS
 		// delete	component
 		// get		component
 
-	private:
+	//TODO Make them private again - Was testing out things - private:
 		bool initialized_;
 
-		std::unique_ptr<ECSystemManager>		system_manager_;
-		std::unique_ptr<ECSEntityManager>		entity_manager_;
-		std::unique_ptr<ECSComponentManager>	component_manager_;
+		ECSystemManager*		system_manager_;
+		ECSEntityManager*		entity_manager_;
+		ECSComponentManager*	component_manager_;
 	};
 
 } // End of namespace ~ DECS

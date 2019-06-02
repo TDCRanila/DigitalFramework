@@ -35,11 +35,13 @@
     <ClCompile Include="Source\ECS\Objects\ECSComponent.cpp" />
     <ClCompile Include="Source\ECS\Objects\ECSComponentHandle.cpp" />
     <ClCompile Include="Source\ECS\Objects\ECSEntity.cpp" />
+    <ClCompile Include="Source\ECS\Objects\ECSEntityData.cpp" />
     <ClCompile Include="Source\ECS\Objects\ECSystem.cpp" />
     <ClCompile Include="Source\ECS\Utility\ECSIDManager.cpp" />
     <ClCompile Include="Source\ECS\Utility\ECSKeyLockSystem.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Utility\StringUtility.cpp" />
+    <ClCompile Include="Source\Utility\TemplateUtility.cpp" />
     <ClCompile Include="Source\Utility\TimeUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -63,11 +65,13 @@
     <ClInclude Include="Include\ECS\Objects\ECSComponent.h" />
     <ClInclude Include="Include\ECS\Objects\ECSComponentHandle.h" />
     <ClInclude Include="Include\ECS\Objects\ECSEntity.h" />
+    <ClInclude Include="Include\ECS\Objects\ECSEntityData.h" />
     <ClInclude Include="Include\ECS\Objects\ECSystem.h" />
     <ClInclude Include="Include\ECS\Utility\ECSCompBitList.h" />
     <ClInclude Include="Include\ECS\Utility\ECSIDManager.h" />
     <ClInclude Include="Include\ECS\Utility\ECSKeyLockSystem.h" />
     <ClInclude Include="Include\Utility\StringUtility.h" />
+    <ClInclude Include="Include\Utility\TemplateUtility.h" />
     <ClInclude Include="Include\Utility\TimeUtility.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -171,7 +175,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependency;$(SolutionDir)Dependency\GLAD\Include;$(SolutionDir)Dependency\GLFW\Include;$(SolutionDir)Dependency\boost</AdditionalIncludeDirectories>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ForcedIncludeFiles>%(ProjectDir)Defines\Defines.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>

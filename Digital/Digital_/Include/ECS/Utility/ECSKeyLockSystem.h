@@ -1,7 +1,9 @@
 #pragma once
 
 #include <ECS/Utility/ECSCompBitList.h>
+#include <ECS/Objects/ECSComponent.h>
 
+#include <Utility/TemplateUtility.h>
 #include <Defines/Defines.h>
 
 #include <unordered_map>
@@ -37,10 +39,15 @@ namespace DECS
 
 	private:
 		template <class T>
-		ComponentBitList InternalConstructorBitList();
+		void InternalConstructorBitList(ComponentBitList& a_component_bit_list);
 
-		template <class Ta, class Tb, class... TArgs>
-		ComponentBitList InternalConstructorBitList();
+		template <class TVoid, class TComponent, class... TArgs>
+		typename std::enable_if<std::is_base_of<ECSComponent, TComponent>::value && !is_same<ECSComponent, TComponent>::value, void>::type
+		InternalConstructorBitList(ComponentBitList& a_component_bit_list);
+
+		template <class TVoid, class TComponent, class... TArgs>
+		typename std::enable_if<!std::is_base_of<ECSComponent, TComponent>::value || is_same<ECSComponent, TComponent>::value, void>::type
+		InternalConstructorBitList(ComponentBitList& a_component_bit_list);
 
 		bool generated_component_keys_;
 
@@ -53,23 +60,32 @@ namespace DECS
 	template <typename... TArgs>
 	ComponentBitList ECSKeyLockSystem::ConstructorBitList()
 	{
-		return InternalConstructorBitList<void, TArgs...>();
+		ComponentBitList comp_bit_list(0);
+		InternalConstructorBitList<void, TArgs...>(comp_bit_list);
+		return comp_bit_list;
 	}
 
 	template <class T>
-	ComponentBitList ECSKeyLockSystem::InternalConstructorBitList()
+	void ECSKeyLockSystem::InternalConstructorBitList(ComponentBitList& a_component_bit_list)
 	{
-		return ComponentBitList(0);
+		return;
 	}
 
-	template <class Ta, class Tb, class... TArgs>
-	ComponentBitList ECSKeyLockSystem::InternalConstructorBitList()
+	template <class TVoid, class TComponent, class... TArgs>
+	typename std::enable_if<std::is_base_of<ECSComponent, TComponent>::value && !is_same<ECSComponent, TComponent>::value, void>::type
+	ECSKeyLockSystem::InternalConstructorBitList(ComponentBitList& a_component_bit_list)
 	{
-		ComponentBitList comp_bit_list(0);
-		SetComponentBits<Tb>(comp_bit_list);
-		return (comp_bit_list | InternalConstructorBitList<Ta, TArgs...>());
+		SetComponentBits<TComponent>(a_component_bit_list);
+		InternalConstructorBitList<TVoid, TArgs...>(a_component_bit_list);
 	}
 
+	template <class TVoid, class TComponent, class... TArgs>
+	typename std::enable_if<!std::is_base_of<ECSComponent, TComponent>::value || is_same<ECSComponent, TComponent>::value, void>::type
+	ECSKeyLockSystem::InternalConstructorBitList(ComponentBitList& a_component_bit_list)
+	{
+		static_assert(always_false<TComponent>::value, __FUNCTION__ " - Trying to construct bitilsit with a Component of type T that isn't derived from DECS::ECSComponent.");
+		return;
+	}
 
 	template <class T>
 	bool ECSKeyLockSystem::IsComponentBitTrue(ComponentBitList& a_bit_var) const 
@@ -78,8 +94,10 @@ namespace DECS
 		auto it		= component_bit_placement_.find(type);
 		if (it != component_bit_placement_.end()) 
 		{
-			int64 temp = 1;
-			return a_bit_var & (temp << it->second);
+			int64 temp (1);
+			temp = (temp << it->second);
+			// TODO - Compare bit, not final value.
+			return (a_bit_var & temp);
 		} 
 		else 
 		{
@@ -91,15 +109,19 @@ namespace DECS
 	template <class T>
 	void ECSKeyLockSystem::SetComponentBits(ComponentBitList& a_bit_var)
 	{
-		int64 temp = 1;
-		(a_bit_var |= (temp << GetComponentBitPlacement<T>()));
+		int64	temp (1);
+		int8	component_bit_placement = GetComponentBitPlacement<T>();
+		temp		= (temp << component_bit_placement);
+		a_bit_var	= (a_bit_var | temp);
 	}
 
 	template <class T>
 	void ECSKeyLockSystem::ResetComponentBits(ComponentBitList& a_bit_var) 
 	{
-		int64 temp = 1;
-		(a_bit_var &= ~(temp << GetComponentBitPlacement<T>()));
+		int64	temp(1);
+		int8	component_bit_placement(GetComponentBitPlacement<T>());
+		temp		= ~(temp << component_bit_placement);
+		a_bit_var	=  (a_bit_var & temp);
 	}
 
 	template <class T>

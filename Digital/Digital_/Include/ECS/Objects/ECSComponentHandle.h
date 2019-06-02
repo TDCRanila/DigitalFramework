@@ -5,7 +5,7 @@
 namespace DECS
 {
 	template <class T>
-	class ECSComponentHandle
+	class ECSComponentHandle final
 	{
 	public:
 		ECSComponentHandle();

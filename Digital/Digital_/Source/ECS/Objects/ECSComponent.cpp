@@ -7,13 +7,20 @@ namespace DECS
 
 	ECSComponent::ECSComponent(Key) :
 		component_id_(ECSIDManager::GetNextComponentID())
-	{ /*EMPTY*/ }
+	{ 
+		/*EMPTY*/ 
+	}
 
 	ECSComponent::~ECSComponent() { /*EMPTY*/ }
 
 	ComponentID ECSComponent::GetID() const 
 	{
 		return component_id_;
+	}
+
+	EntityID ECSComponent::GetOwner() const
+	{
+		return owner_id_;
 	}
 
 } // End of namespace ~ DECS
