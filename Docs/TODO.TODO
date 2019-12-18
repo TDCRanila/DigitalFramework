@@ -1,0 +1,87 @@
+Code Refractor:
+    ✔ Switch PrivateMember Variables to _KappaKeepo. @done(19-04-14 20:50)
+
+    ✔ MathDefines.h -> Used Typedeffed POD for parameter varibles. @done(19-04-14 21:12)
+    ✔ MathDefines.h -> namespace MD. MathDefines. @done(19-04-14 21:13)
+    ✔ ECSIDManager.h -> Used Mathdefines.h typedefs instead of templated PODs. @done(19-04-14 21:40)
+    ✔ ECSCompBitList.h -> Used Mathdefines.h typedefs instead of templated PODs. @done(19-04-14 21:41)
+    ✔ StrinhUtiliy.h -> Move SubtractString to source file instead. @done(19-04-14 22:00)
+    
+    ✔ ECSKeyLockSystem.cpp -> L.14 - Use MathDefines.h @done(19-04-14 22:11)
+    ✔ ECSIDManager.cpp -> PreInrecment instead o PostIncrement for id counting. @done(19-04-14 22:11)
+
+Debug:
+    Project:
+        ✔ Debug Warnings are errors. @done(19-04-15 19:27)
+
+    Debug Defines:
+        ✔ Debug Prints - Only use time for GetTime(); @done(19-04-15 17:21)
+        ✔ Debug Prints - New Function - GetTimeAndDate(); @done(19-04-15 17:21)
+        ✔ Debug Prints - New Function - GetDate(); @done(19-04-15 17:21)
+        ✔ Debug Prints - Arguments for printing; @done(19-04-15 17:21)
+        ☐ Debug Prints - Colouring.
+
+ECS:
+    ☐ ECS -> ECES; Entity Component Event System
+    Systems:
+        ✔ Basic System Loop, Termination, Initialization. @done(19-04-15 21:50)
+        ☐ ECSModule::WithComponents(T...)
+        ☐ ECSModule::Each<>(T..., [](){};)
+        
+        ☐ System Update functions -> DeltaTime.
+        ☐ System Update functions -> EventSystem Handle.
+        ☐ SubrscribeSystem Define regarding DFactory::AutoFactory<DECS::ECSSystem>::Registrar<T>
+        ☐ Dependency between systems. -> Execution Order.
+        ☐ System Update Priority.
+    Component:
+        ✔ ComponentHandle. @done(19-04-17 21:20)
+        ✔ Static Function for getting Component hash id. @done(19-04-17 21:20)
+        ✔ KeyLockSystem -> Check for preventing GenerateComponentKeys. @done(19-04-17 23:23)
+        ☐ Save type_index in component instead of constantly using typeid? -> Hashing
+        ☐ Component Bit Compare with wanted types>?
+        ☐ double unordered_map to unordered_map<type_index, ptr to ComponentContainer<T>>. ComponenContainer gets created by ComponentManager via Factories.
+        ☐ ComponentManager -> Early Bypasses of checking if the entity is valid once entity is already known to be valid in functions such as GetComponents, Has Components, etc.
+    KeyLockSystem:
+        ☐ Turn ComponentBitList into class.
+        ☐ ComponentBitList constructor with T...
+
+ECS Restructure:
+    ☐ Rename all classes. - Remove ECS part. Redundant with namespace. 
+    Component:
+        ☐ Make new system that replaces/reduces typeid usage. (UIDs)
+        ✔ Done. @done(19-04-19 17:16)
+        
+    Entity:
+        ✔ Investigate usage of IDs. @done(19-04-19 18:29)
+        ✔ Done. @done(19-04-19 18:51)
+
+    System:
+        ✔ Done. @done(19-04-19 18:55)
+
+    ComponentBitList:
+        ✘ Turn it into a class. @cancelled(19-04-19 20:26)
+        ✔ Done. @done(19-04-19 20:26)
+
+    KeyLockSystem:
+        ☐ Check for types -> Components when Constructing a bitList. Same as in ComponentManaer.
+        ✔ Make construction function for ComponentBistlists. Learn parameter packs this way. @done(19-04-21 21:16)
+        
+    SystemManager:
+        ✔ Done. @done(19-04-24 16:50)
+
+    EntityManager:
+        ✔ Done. @done(19-04-27 18:34)
+
+    ComponentManager:
+        ☐ Apply same Variadic Template Parameter for ambigious functions as from ECSKeyLockSystem.
+        ☐ Done. 
+
+    ECSModule:
+        ☐ Done.
+
+    IDManager:
+        ☐ Done.
+
+    Iterator:
+        asdf:
+    
