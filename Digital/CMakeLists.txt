@@ -37,3 +37,5 @@ set(CMAKE_SHARED_LINKER_FLAGS_FINAL "")
 
 add_subdirectory(Digital_)
 add_subdirectory(DigitalGame_)
+
+### test
