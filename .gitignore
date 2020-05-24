@@ -1,6 +1,6 @@
 
 # CMAKE
-
+Digital/build
 
 # Created by https://www.gitignore.io/api/c,c++,cmake,visualstudio,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=c,c++,cmake,visualstudio,visualstudiocode
@@ -12,7 +12,7 @@
 # Object files
 *.o
 *.ko
-*.obj
+# *.obj
 *.elf
 
 # Linker output
