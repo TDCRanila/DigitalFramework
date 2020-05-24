@@ -1,3 +1,55 @@
+CMake:
+    Basic setup for CMake:
+        ✔ Basic Dependency Setup. @done(20-05-22 15:16)
+            - C++17
+            - Warning Level 4
+            - VCDirectory includes (Not possible)
+        ✔ Dependencies @done(20-05-24 15:09)
+            - Boost
+            - GLM
+        ✔ Source File Getter/Gather @done(20-05-21 22:24)
+        ✔ Filter/Folders @done(20-05-21 22:24)
+        ✔ Output for different projects. @done(20-05-21 22:24)
+        Forced/Global Include:
+            ✔ Defines/Defines.h @done(20-05-21 23:22)
+        Preprocessors:
+            ✔ Release64 @done(20-05-22 15:16)
+            ✔ PreRelease64 @done(20-05-22 15:16)
+            ✔ Debug64 @done(20-05-22 15:16)
+        Configuratios:
+            ✔ Debug @done(20-05-24 15:09)
+            - /W4 /Zi /Od /Ob0 /RTC1 /MDd /DDEBUG64
+                - warning level 4
+                - optimization disabled
+                - treat warning off wx
+                - mp compile true
+                - preprocessor debug64
+                - assert/debug enabled
+            ✔ PreRelease @done(20-05-24 15:09)
+            - /W4 /Zi /Od /Ob0 /RTC1 /MDd /DPRERELEASE64
+                - warning level 4
+                - optimization enabled
+                - treat warning off wx
+                - mp compile true
+                - preprocessor debug64
+                - assert/debug enabled
+            ✔ Release @done(20-05-24 15:09)
+            - /W4 /WX /O2 /Oi /Ot /MD /DRELEASE64
+                - warning level 4
+                - optimization max speed
+                - treat warning on wx
+                - mp compile true
+                - preprocessor release64
+                - assert/debug disabled
+            ✔ Final @done(20-05-24 15:09)
+            - /W4 /WX /O2 /Oi /Ot /MD /DFINAL64
+                - warning level 4
+                - optimization disabled
+                - treat warning on wx
+                - mp compile true
+                - preprocessor final64
+                - assert/debug disabled
+
 Code Refractor:
     ✔ Switch PrivateMember Variables to _KappaKeepo. @done(19-04-14 20:50)
 
