@@ -1,0 +1,3 @@
+[submodule "Digital/Dependency/External/glm"]
+	path = Digital/Dependency/External/glm
+	url = https://github.com/g-truc/glm.git
