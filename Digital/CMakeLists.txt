@@ -4,6 +4,7 @@ set(PROJECT_NAME ProjectSolution)
 project(${PROJECT_NAME})
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "_PredfinedTargetsFolder")
 
 if(CMAKE_CONFIGURATION_TYPES)
 set(CMAKE_CONFIGURATION_TYPES PreProcessorDebug Debug PreRelease Release Final)
