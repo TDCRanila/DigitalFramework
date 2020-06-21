@@ -70,7 +70,6 @@ int main(int /*argc*/, char** /*argv*/)
 	{
 		DigitalGameApplication app;
 		app.RunApplication();
-
 	}
 	else
 	{
