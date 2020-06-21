@@ -48,14 +48,14 @@ namespace DCore
 
     void ApplicationInstance::UpdateApplication()
     {
-        bool shouldRun(true);
+        bool should_run(true);
         TimeTracker game_timer;
         game_timer.StartTimer();
-        while (shouldRun)
+        while (should_run)
         {
             // Update Game Instance(s)
             if (game_timer.FetchTime() > TimeUnit(5.f))
-                shouldRun = false;
+                should_run = false;
         }
     }
 
