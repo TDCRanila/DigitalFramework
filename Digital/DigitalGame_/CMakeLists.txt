@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.17.2)
 set(EXE_NAME DigitalGame_)
 
 ### Automatically Generate Source File List
-execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFiles.bat ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_source.txt SOURCE_FILES)
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_header.txt HEADER_FILES)
