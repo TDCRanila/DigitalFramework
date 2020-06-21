@@ -92,26 +92,27 @@ int main(int /*argc*/, char** /*argv*/)
 		ecs_module.component_manager_->AddComponent<Z>(e.GetID());
 		ecs_module.component_manager_->AddComponent<X>(e.GetID());
 
-		ecs_module.entity_manager_->GetEntity(0);
-		ecs_module.entity_manager_->GetEntity(1);
+		//ecs_module.entity_manager_->GetEntity(0);
+		//ecs_module.entity_manager_->GetEntity(1);
 
-		//ecs_module.entity_manager_->DeleteEntity(0);
-		//ecs_module.entity_manager_->DeleteEntity(1);
+		////ecs_module.entity_manager_->DeleteEntity(0);
+		////ecs_module.entity_manager_->DeleteEntity(1);
 
-		DECS::ComponentBitList a(0);
-		DECS::ComponentBitList b(0);
-		a = ecs_module.component_manager_->key_lock_system_->ConstructorBitList<X>();
-		b = ecs_module.component_manager_->key_lock_system_->ConstructorBitList<Y, X, Y>();
+		//DECS::ComponentBitList a(0);
+		//DECS::ComponentBitList b(0);
+		//a = ecs_module.component_manager_->key_lock_system_->ConstructorBitList<X>();
+		//b = ecs_module.component_manager_->key_lock_system_->ConstructorBitList<Y, X, Y>();
 
-		ecs_module.component_manager_->AddComponent<Z>(e.GetID());
-		ecs_module.component_manager_->AddComponent<X>(e.GetID());
-		//auto& cbl2 = ecs_module.entity_manager_->GetComponentBitList(e.GetID());
-		//bool atest = ecs_module.component_manager_->HasComponents<X>(e.GetID());
-		//bool btest = ecs_module.component_manager_->HasComponents<X, Y>(e.GetID());
-		//bool ctest = ecs_module.component_manager_->HasComponents<X, Z, Y>(e.GetID());
-		ecs_module.component_manager_->DeleteComponent<Y>(e.GetID());
-		ecs_module.component_manager_->DeleteComponent<X>(e.GetID());
-		ecs_module.component_manager_->GetComponent<X>(e.GetID());
+		//ecs_module.component_manager_->AddComponent<Z>(e.GetID());
+		//ecs_module.component_manager_->AddComponent<Kappa>(e.GetID());
+		//ecs_module.component_manager_->AddComponent<X>(e.GetID());
+		////auto& cbl2 = ecs_module.entity_manager_->GetComponentBitList(e.GetID());
+		////bool atest = ecs_module.component_manager_->HasComponents<X>(e.GetID());
+		////bool btest = ecs_module.component_manager_->HasComponents<X, Y>(e.GetID());
+		////bool ctest = ecs_module.component_manager_->HasComponents<X, Z, Y>(e.GetID());
+		//ecs_module.component_manager_->DeleteComponent<Y>(e.GetID());
+		//ecs_module.component_manager_->DeleteComponent<X>(e.GetID());
+		//ecs_module.component_manager_->GetComponent<X>(e.GetID());
 	}
 
 }
