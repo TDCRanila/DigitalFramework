@@ -33,5 +33,13 @@ set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 set_target_properties(${EXE_NAME} PROPERTIES FOLDER Main)
 
+### Forced Includes
+find_file(DEFINES_FILE NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/Defines")
+if (DEFINES_FILE)
+    if(MSVC)
+        target_compile_options(${EXE_NAME} PRIVATE /FI"${CMAKE_SOURCE_DIR}/Digital_/Source/Defines/Defines.h")
+    endif()
+endif()
+
 ### Project Filters
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ALL_FILES})

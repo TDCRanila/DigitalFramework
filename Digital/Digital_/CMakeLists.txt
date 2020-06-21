@@ -13,14 +13,6 @@ string(REPLACE "\\" "/" SOURCE_FILES    "${SOURCE_FILES}")
 string(REPLACE "\\" "/" HEADER_FILES    "${HEADER_FILES}")
 string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
 
-### Forced Includes
-find_file(DEFINES_FILE NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/Defines")
-if (DEFINES_FILE)
-    if(MSVC)
-        add_compile_options(/FI"${CMAKE_SOURCE_DIR}/Digital_/Source/Defines/Defines.h")
-    endif()
-endif()
-
 ### Digital Library
 add_library(${LIB_NAME} "")
 add_library(LIB:${LIB_NAME} ALIAS ${LIB_NAME})
@@ -34,6 +26,14 @@ target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source
 set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_target_properties(${LIB_NAME} PROPERTIES FOLDER Main)
+
+### Forced Includes
+find_file(DEFINES_FILE NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/Defines")
+if (DEFINES_FILE)
+    if(MSVC)
+        target_compile_options(${LIB_NAME} PRIVATE /FI"${CMAKE_SOURCE_DIR}/Digital_/Source/Defines/Defines.h")
+    endif()
+endif()
 
 ### GLM - https://github.com/g-truc/glm.git
 set(GLM_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glm)
