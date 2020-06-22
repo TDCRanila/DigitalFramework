@@ -37,7 +37,26 @@ endif()
 
 ### bgfx.cmake
 message("Adding SubModule: bgfx")
+set(BGFX_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake)
+set(BGFX_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake/bgfx/include)
+set(BIMG_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake/bimg/include)
+set(BX_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake/bx/include)
+set(BGFX_LIB_NAME bgfx)
+
+find_path(BGFX_FOUND NAMES "bgfx.h" PATHS "${BGFX_INCLUDE_DIR}/bgfx")
+if((NOT BGFX_FOUND) OR (NOT EXISTS ${BGFX_INCLUDE_DIR}))
+    message("Unable to find Submodule: ${BGFX_LIB_NAME} or file bgfx.hpp")
+    execute_process(COMMAND git submodule update --init -- ${BGFX_CMAKE_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+    message("Found Submodule: ${BGFX_LIB_NAME}")
+endif()
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake bgfx.cmake)
+
+target_link_libraries(${LIB_NAME} bgfx)
+target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
+#target_include_directories(${LIB_NAME} PUBLIC "${BIMG_INCLUDE_DIR}")
+#target_include_directories(${LIB_NAME} PUBLIC "${BX_INCLUDE_DIR}")
 
 ### glfw
 message("Adding Submodule: glfw")
