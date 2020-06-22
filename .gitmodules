@@ -1,6 +1,9 @@
 [submodule "Digital/Dependency/External/glm"]
 	path = Digital/Dependency/External/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "Digital/Dependency/External/glfw"]
+	path = Digital/Dependency/External/glfw
+	url = https://github.com/glfw/glfw.git
 [submodule "Digital/Dependency/External/bgfx.cmake"]
 	path = Digital/Dependency/External/bgfx.cmake
 	url = https://github.com/widberg/bgfx.cmake.git
