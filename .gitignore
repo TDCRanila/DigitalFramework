@@ -4,9 +4,6 @@
 # CMAKE
 Digital/build
 
-# Docs
-Docs/Private
-
 ### C ###
 # Prerequisites
 *.d
