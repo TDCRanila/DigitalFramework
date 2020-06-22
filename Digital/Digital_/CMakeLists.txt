@@ -39,6 +39,10 @@ endif()
 message("Adding SubModule: bgfx")
 add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake bgfx.cmake)
 
+### glfw
+message("Adding Submodule: glfw")
+add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/glfw glfw)
+
 ### GLM - https://github.com/g-truc/glm.git
 set(GLM_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glm)
 set(GLM_LIB_NAME glm)
