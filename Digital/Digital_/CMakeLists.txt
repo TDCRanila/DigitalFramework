@@ -60,7 +60,24 @@ target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
 
 ### glfw
 message("Adding Submodule: glfw")
+set(GLFW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glfw/include)
+set(GLFW_LIB_NAME glfw)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+find_path(GLFW_FOUND NAMES "glfw3.h" PATHS "${GLFW_INCLUDE_DIR}/GLFW")
+if((NOT GLFW_FOUND) OR (NOT EXISTS ${GLFW_INCLUDE_DIR}))
+    message("Unable to find Submodule: ${GLFW_LIB_NAME} or file glfw3.hpp")
+    execute_process(COMMAND git submodule update --init -- ${GLM_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+    message("Found Submodule: ${GLFW_LIB_NAME}")
+endif()
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/glfw glfw)
+
+target_link_libraries(${LIB_NAME} glfw)
+target_include_directories(${LIB_NAME} PUBLIC "${GLFW_INCLUDE_DIR}")
 
 ### GLM - https://github.com/g-truc/glm.git
 set(GLM_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glm)
