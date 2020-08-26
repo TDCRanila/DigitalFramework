@@ -20,6 +20,10 @@ target_sources(${LIB_NAME}
     PRIVATE ${SOURCE_FILES}
     PUBLIC ${HEADER_FILES}
 )
+
+### Set Work Directory
+set_property(TARGET ${LIB_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
+
 # target_include_directories(${LIB_NAME} PUBLIC ${HEADER_FILES})
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 

@@ -33,6 +33,9 @@ set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 set_target_properties(${EXE_NAME} PROPERTIES FOLDER Main)
 
+### Set Work Directory
+set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
+
 ### Forced Includes
 find_file(DEFINES_FILE NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/Defines")
 if (DEFINES_FILE)
