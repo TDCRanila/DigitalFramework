@@ -62,6 +62,25 @@ target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
 #target_include_directories(${LIB_NAME} PUBLIC "${BIMG_INCLUDE_DIR}")
 #target_include_directories(${LIB_NAME} PUBLIC "${BX_INCLUDE_DIR}")
 
+### imgui-cmakke
+message("Adding SubModule: Dear ImGui")
+set(IMGUI_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui-cmake)
+set(IMGUI_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui-cmake)
+set(IMGUI_LIB_NAME imgui)
+
+find_path(IMGUI_FOUND NAMES "imgui.h" PATHS "${IMGUI_INCLUDE_DIR}")
+if((NOT IMGUI_FOUND) OR (NOT EXISTS ${IMGUI_INCLUDE_DIR}))
+    message("Unable to find Submodule: ${IMGUI_LIB_NAME} or file imgui.h")
+    execute_process(COMMAND git submodule update --init -- ${IMGUI_CMAKE_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+    message("Found Submodule: ${IMGUI_LIB_NAME}")
+endif()
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/imgui-cmake imgui-cmake)
+
+target_link_libraries(${LIB_NAME} imgui)
+target_include_directories(${LIB_NAME} PUBLIC "${IMGUI_INCLUDE_DIR}")
+
 ### glfw
 message("Adding Submodule: glfw")
 set(GLFW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glfw/include)
