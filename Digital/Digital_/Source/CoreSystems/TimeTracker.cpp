@@ -75,7 +75,7 @@ namespace DCore
         return FetchTime();
     }
 
-    TimeUnit TimeTracker::FetchAndResetTime(bool a_reset_and_start)
+    TimeUnit TimeTracker::ResetAndFetchTime(bool a_reset_and_start)
     {
         const TimeUnit time = FetchTime();
         ResetTimer(a_reset_and_start);

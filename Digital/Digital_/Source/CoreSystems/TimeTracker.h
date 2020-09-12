@@ -21,7 +21,7 @@ namespace DCore
 
         TimeUnit FetchTime() const;
         TimeUnit StopAndFetchTime();
-        TimeUnit FetchAndResetTime(bool a_reset_and_start_timer);
+        TimeUnit ResetAndFetchTime(bool a_reset_and_start_timer);
 
     private:
         std::chrono::high_resolution_clock::time_point start_time_point_;
