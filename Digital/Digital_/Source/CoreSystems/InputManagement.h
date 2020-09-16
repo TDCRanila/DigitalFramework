@@ -26,16 +26,16 @@ namespace DCore
 	{
 		InputData();
 
-		struct BufferedButton
+		struct BufferedKey
 		{
-			BufferedButton(int32 a_button, int32 a_action);
+			BufferedKey(int32 a_key, int32 a_action);
 
-			int32 _button;
+			int32 _key;
 			int32 _action;
 		};
 
-		std::array<bool, 1024> _buttons{false};
-		std::vector<BufferedButton> _buffered_buttons;
+		std::array<bool, 1024> _keys{false};
+		std::vector<BufferedKey> _buffered_keys;
 		std::vector<uint32> _frame_buffered_characters;
 
 		glm::vec2 _cursor_position;
@@ -68,7 +68,7 @@ namespace DCore
 
 		void SendKeyboardEvent(InputUserData* a_input_user_data, int a_key, int a_scancode, int a_action, int a_mods);
 		void SendCharEvent(InputUserData* a_input_user_data, unsigned int a_char);
-		void SendMouseEvent(InputUserData* a_input_user_data, int button, int action, int mods);
+		void SendMouseEvent(InputUserData* a_input_user_data, int a_key, int a_action, int a_mods);
 		void SendCursorEvent(InputUserData* a_input_user_data, double a_x, double a_y);
 		void SendScrollEvent(InputUserData* a_input_user_data, double a_x_offset, double a_y_offset);
 
@@ -101,7 +101,7 @@ namespace DCore
 		
 		struct MouseEvent
 		{
-			MouseEvent(InputUserID a_id, int a_button, int a_action, int a_mods);
+			MouseEvent(InputUserID a_id, int a_key, int a_action, int a_mods);
 
 			InputUserID _user_id;
 			int32 _key;

@@ -16,11 +16,11 @@ namespace DCore
 			_cursor_delta(0.0f),
 			_scroll_offset(0.0f)
 	{
-		_buffered_buttons.reserve(16);
+		_buffered_keys.reserve(16);
 	}
 
-	InputData::BufferedButton::BufferedButton(int32 a_button, int32 a_action)
-		:	_button(a_button),
+	InputData::BufferedKey::BufferedKey(int32 a_key, int32 a_action)
+		:	_key(a_key),
 			_action(a_action)
 	{
 	}
@@ -55,7 +55,7 @@ namespace DCore
 	{
 		for (auto& input_data : _input_data_storage)
 		{
-			input_data.second._buffered_buttons.clear();
+			input_data.second._buffered_keys.clear();
 			input_data.second._frame_buffered_characters.clear();
 		}
 
@@ -73,13 +73,13 @@ namespace DCore
 			{
 			    if (event._action == GLFW_PRESS)
 				{ 
-					input_data._buffered_buttons.emplace_back(event._key, event._action);
-					input_data._buttons[event._key] = true;
+					input_data._buffered_keys.emplace_back(event._key, event._action);
+					input_data._keys[event._key] = true;
 				}
 			    else if (event._action == GLFW_RELEASE)
 				{ 
-					input_data._buffered_buttons.emplace_back(event._key, event._action);
-					input_data._buttons[event._key] = false;
+					input_data._buffered_keys.emplace_back(event._key, event._action);
+					input_data._keys[event._key] = false;
 				}
 				INFOLOG("Key Pressed: " << event._key);
 			}
@@ -108,13 +108,13 @@ namespace DCore
 			{
 				if (event._action == KEY_PRESS) 
 				{ 
-					input_data._buffered_buttons.emplace_back(event._key, event._action);
-					input_data._buttons[event._key] = true; 
+					input_data._buffered_keys.emplace_back(event._key, event._action);
+					input_data._keys[event._key] = true; 
 				}
 				else if (event._action == KEY_RELEASE) 
 				{ 
-					input_data._buffered_buttons.emplace_back(event._key, event._action);
-					input_data._buttons[event._key] = false; 
+					input_data._buffered_keys.emplace_back(event._key, event._action);
+					input_data._keys[event._key] = false; 
 				}
 				INFOLOG("Key Pressed: " << event._key);
 			}
@@ -176,12 +176,12 @@ namespace DCore
 		}
 	}
 
-	void InputManagementSystem::SendMouseEvent(InputUserData* a_input_user_data, int a_button, int a_action, int a_mods)
+	void InputManagementSystem::SendMouseEvent(InputUserData* a_input_user_data, int a_key, int a_action, int a_mods)
 	{
 		if (_is_input_enabled)
 		{
 			_has_input_events_buffered = true;
-			_mouse_event_buffer.emplace_back(a_input_user_data->_user_id, a_button, a_action, a_mods);
+			_mouse_event_buffer.emplace_back(a_input_user_data->_user_id, a_key, a_action, a_mods);
 		}
 	}
 
@@ -218,9 +218,9 @@ namespace DCore
 	{
 	}
 
-	InputManagementSystem::MouseEvent::MouseEvent(InputUserID a_id, int button, int action, int mods)
+	InputManagementSystem::MouseEvent::MouseEvent(InputUserID a_id, int a_key, int action, int mods)
 		:	_user_id(a_id),
-			_key(button),
+			_key(a_key),
 			_action(action),
 			_modifier(mods)
 	{

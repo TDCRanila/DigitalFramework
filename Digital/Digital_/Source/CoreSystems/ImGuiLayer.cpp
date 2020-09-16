@@ -375,20 +375,20 @@ struct OcornutImguiContext
 
 		io.MousePos = ImVec2(a_input_data._cursor_position.x, a_input_data._cursor_position.y);
 
-		for (auto const& [button, action] : a_input_data._buffered_buttons)
+		for (auto const& [key, action] : a_input_data._buffered_keys)
 		{
 			if (action == KEY_PRESS)
-				io.MouseDown[button] = true;
+				io.MouseDown[key] = true;
 			if (action == KEY_RELEASE)
-				io.MouseDown[button] = false;
+				io.MouseDown[key] = false;
 		}
 
-		for (auto const& [button, action] : a_input_data._buffered_buttons)
+		for (auto const& [key, action] : a_input_data._buffered_keys)
 		{
 			if (action == KEY_PRESS)
-				io.KeysDown[button] = true;
+				io.KeysDown[key] = true;
 			if (action == KEY_RELEASE)
-				io.KeysDown[button] = false;
+				io.KeysDown[key] = false;
 		}
 
 		io.MouseWheel	= static_cast<float>(a_input_data._scroll_offset.y - m_lastScroll);

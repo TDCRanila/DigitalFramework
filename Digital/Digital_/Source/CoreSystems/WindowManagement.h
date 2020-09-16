@@ -25,7 +25,7 @@ namespace DCore
         static void glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods);
         static void glfw_char_callback(GLFWwindow* a_window, unsigned int a_char);
         static void glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos);
-        static void glfw_mousebutton_callback(GLFWwindow* a_window, int a_button, int a_action, int a_mods);
+        static void glfw_mousebutton_callback(GLFWwindow* a_window, int a_key, int a_action, int a_mods);
         static void glfw_scroll_callback(GLFWwindow* a_window, double a_x_offset, double a_y_offset);
     } // End of namespace ~ GLFWWindowCallBacks
 

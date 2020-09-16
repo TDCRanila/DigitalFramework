@@ -42,10 +42,10 @@ namespace DCore
             user_data->_input_system_ptr->SendCharEvent(user_data, a_char);
         }
 
-        void glfw_mousebutton_callback(GLFWwindow* a_window, int a_button, int a_action, int a_mods) 
+        void glfw_mousebutton_callback(GLFWwindow* a_window, int a_key, int a_action, int a_mods) 
         {
             InputUserData* user_data = reinterpret_cast<InputUserData*>(glfwGetWindowUserPointer(a_window));
-            user_data->_input_system_ptr->SendMouseEvent(user_data, a_button, a_action, a_mods);
+            user_data->_input_system_ptr->SendMouseEvent(user_data, a_key, a_action, a_mods);
         }
 
         void glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos) 
