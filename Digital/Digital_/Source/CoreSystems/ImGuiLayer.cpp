@@ -337,20 +337,84 @@ struct OcornutImguiContext
 
 	void setupStyle(bool _dark)
 	{
-		// Doug Binks' darl color scheme
-		// https://gist.github.com/dougbinks/8089b4bbaccaaf6fa204236978d165a9
-		ImGuiStyle& style = ImGui::GetStyle();
-		if (_dark)
+		// TODO: add Invert/Light Version
+		UNUSED(_dark);
+		// Style: https://github.com/ocornut/imgui/issues/707#issuecomment-670976818
+		constexpr auto ColourFromBytes = [](uint8 r, uint8 g, uint8 b)
 		{
-			ImGui::StyleColorsDark(&style);
-		}
-		else
-		{
-			ImGui::StyleColorsLight(&style);
-		}
+			return ImVec4(static_cast<float32>(r) / 255.0f, static_cast<float32>(g) / 255.0f, static_cast<float32>(b) / 255.0f, 1.0f);
+		};
 
-		style.FrameRounding = 4.0f;
-		style.WindowBorderSize = 0.0f;
+		ImGuiStyle& style		= ImGui::GetStyle();
+		ImVec4* colours			= style.Colors;
+
+		const ImVec4 bgColor			= ColourFromBytes(30, 30, 31);
+		const ImVec4 lightBgColor		= ColourFromBytes(72, 72, 75);
+		const ImVec4 veryLightBgColor	= ColourFromBytes(80, 80, 85);
+
+		const ImVec4 panelColor			= ColourFromBytes(41, 41, 45);
+		const ImVec4 panelHoverColor	= ColourFromBytes(245, 80, 0);
+		const ImVec4 panelActiveColor	= ColourFromBytes(190, 55, 10);
+
+		const ImVec4 textColor			= ColourFromBytes(255, 255, 255);
+		const ImVec4 textDisabledColor	= ColourFromBytes(151, 151, 151);
+		const ImVec4 borderColor		= ColourFromBytes(78, 78, 78);
+
+		colours[ImGuiCol_Text]					= textColor;
+		colours[ImGuiCol_TextDisabled]			= textDisabledColor;
+		colours[ImGuiCol_TextSelectedBg]		= panelActiveColor;
+		colours[ImGuiCol_WindowBg]				= bgColor;
+		colours[ImGuiCol_ChildBg]				= bgColor;
+		colours[ImGuiCol_PopupBg]				= bgColor;
+		colours[ImGuiCol_Border]				= borderColor;
+		colours[ImGuiCol_BorderShadow]			= borderColor;
+		colours[ImGuiCol_FrameBg]				= panelColor;
+		colours[ImGuiCol_FrameBgHovered]		= panelHoverColor;
+		colours[ImGuiCol_FrameBgActive]			= panelActiveColor;
+		colours[ImGuiCol_TitleBg]				= bgColor;
+		colours[ImGuiCol_TitleBgActive]			= bgColor;
+		colours[ImGuiCol_TitleBgCollapsed]		= bgColor;
+		colours[ImGuiCol_MenuBarBg]				= panelColor;
+		colours[ImGuiCol_ScrollbarBg]			= panelColor;
+		colours[ImGuiCol_ScrollbarGrab]			= lightBgColor;
+		colours[ImGuiCol_ScrollbarGrabHovered]	= veryLightBgColor;
+		colours[ImGuiCol_ScrollbarGrabActive]	= veryLightBgColor;
+		colours[ImGuiCol_CheckMark]				= panelActiveColor;
+		colours[ImGuiCol_SliderGrab]			= panelHoverColor;
+		colours[ImGuiCol_SliderGrabActive]		= panelActiveColor;
+		colours[ImGuiCol_Button]				= panelColor;
+		colours[ImGuiCol_ButtonHovered]			= panelHoverColor;
+		colours[ImGuiCol_ButtonActive]			= panelHoverColor;
+		colours[ImGuiCol_Header]				= panelColor;
+		colours[ImGuiCol_HeaderHovered]			= panelHoverColor;
+		colours[ImGuiCol_HeaderActive]			= panelActiveColor;
+		colours[ImGuiCol_Separator]				= borderColor;
+		colours[ImGuiCol_SeparatorHovered]		= borderColor;
+		colours[ImGuiCol_SeparatorActive]		= borderColor;
+		colours[ImGuiCol_ResizeGrip]			= bgColor;
+		colours[ImGuiCol_ResizeGripHovered]		= panelColor;
+		colours[ImGuiCol_ResizeGripActive]		= lightBgColor;
+		colours[ImGuiCol_PlotLines]				= panelActiveColor;
+		colours[ImGuiCol_PlotLinesHovered]		= panelHoverColor;
+		colours[ImGuiCol_PlotHistogram]			= panelActiveColor;
+		colours[ImGuiCol_PlotHistogramHovered]	= panelHoverColor;
+		colours[ImGuiCol_ModalWindowDarkening]	= bgColor;
+		colours[ImGuiCol_DragDropTarget]		= bgColor;
+		colours[ImGuiCol_NavHighlight]			= bgColor;
+		//colours[ImGuiCol_DockingPreview]		= panelActiveColor;
+		colours[ImGuiCol_Tab]					= bgColor;
+		colours[ImGuiCol_TabActive]				= panelActiveColor;
+		colours[ImGuiCol_TabUnfocused]			= bgColor;
+		colours[ImGuiCol_TabUnfocusedActive]	= panelActiveColor;
+		colours[ImGuiCol_TabHovered]			= panelHoverColor;
+
+		style.WindowRounding	= 0.0f;
+		style.ChildRounding		= 0.0f;
+		style.FrameRounding		= 0.0f;
+		style.GrabRounding		= 0.0f;
+		style.PopupRounding		= 0.0f;
+		style.ScrollbarRounding = 0.0f;
+		style.TabRounding		= 0.0f;
 	}
 
 	void beginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId _viewId)
