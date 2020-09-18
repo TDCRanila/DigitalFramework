@@ -11,6 +11,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_user.h>
 
+#include <CoreSystems/WindowManagement.h>
 #include <CoreSystems/InputManagement.h> 
 #include <CoreSystems/ImGuiLayer.h>
 #include <Defines/InputDefines.h>
@@ -352,7 +353,7 @@ struct OcornutImguiContext
 		style.WindowBorderSize = 0.0f;
 	}
 
-	void beginFrame(const DCore::InputData& a_input_data, int _width, int _height, bgfx::ViewId _viewId)
+	void beginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId _viewId)
 	{
 		m_viewId = _viewId;
 
@@ -365,7 +366,8 @@ struct OcornutImguiContext
 			}
 		}
 
-		io.DisplaySize = ImVec2((float)_width, (float)_height);
+		io.DisplaySize = ImVec2((float)a_window_dimension._current_width, (float)a_window_dimension._current_height);
+		io.DisplayFramebufferScale = ImVec2(a_window_dimension._current_width > 0 ? ((float)a_window_dimension._current_frame_width / a_window_dimension._current_width) : 0, a_window_dimension._current_height > 0 ? ((float)a_window_dimension._current_frame_height / a_window_dimension._current_height) : 0);
 
 		const int64_t now = bx::getHPCounter();
 		const int64_t frameTime = now - m_last;
@@ -449,9 +451,9 @@ void imguiDestroy()
 	s_ctx.destroy();
 }
 
-void imguiBeginFrame(const DCore::InputData& a_input_data, uint16_t _width, uint16_t _height, bgfx::ViewId _viewId)
+void imguiBeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId _viewId)
 {
-	s_ctx.beginFrame(a_input_data, _width, _height, _viewId);
+	s_ctx.beginFrame(a_input_data, a_window_dimension, _viewId);
 }
 
 void imguiEndFrame()

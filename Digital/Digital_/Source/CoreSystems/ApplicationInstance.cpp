@@ -82,7 +82,13 @@ namespace DCore
             _input_management.ProcessInputEvents();
 
             InputData& active_input_data = _input_management._input_data_storage[0];
-            imguiBeginFrame(active_input_data, 1280, 720);
+            WindowInstance& window_instance = _window_management._window_instances[0];
+            WindowDimension& window_dimensions = window_instance._window_dimensions;
+
+            bgfx::reset(window_dimensions._current_width, window_dimensions._current_height);
+            bgfx::setViewRect(0, 0, 0, uint16_t(window_dimensions._current_width), uint16_t(window_dimensions._current_height));
+
+            imguiBeginFrame(active_input_data, window_dimensions);
 
 			bool* show_demo = new bool(true);
 			ImGui::ShowDemoWindow(show_demo);
@@ -94,6 +100,9 @@ namespace DCore
             // Use debug font to print information about this example.
             bgfx::dbgTextClear();
             //bgfx::dbgTextImage(std::max<uint16_t>(uint16_t(width / 2 / 8), 20) - 20, std::max<uint16_t>(uint16_t(height / 2 / 16), 6) - 6, 40, 12, s_logo, 160);
+            bgfx::dbgTextPrintf(120, 0, 0x0f, "fW:%d x fH:%d.", window_dimensions._current_frame_width, window_dimensions._current_frame_height);
+            bgfx::dbgTextPrintf(100, 0, 0x0f, "W:%d x H:%d.", window_dimensions._current_width, window_dimensions._current_height);
+
             bgfx::dbgTextPrintf(0, 0, 0x0f, "Press F1 to toggle stats.");
             bgfx::dbgTextPrintf(0, 1, 0x0f, "Color can be changed with ANSI \x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");
             bgfx::dbgTextPrintf(80, 1, 0x0f, "\x1b[;0m    \x1b[;1m    \x1b[; 2m    \x1b[; 3m    \x1b[; 4m    \x1b[; 5m    \x1b[; 6m    \x1b[; 7m    \x1b[0m");

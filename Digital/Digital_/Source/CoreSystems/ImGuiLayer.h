@@ -29,7 +29,7 @@ namespace bx { struct AllocatorI; }
 void imguiCreate(float _fontSize = 18.0f, bx::AllocatorI* _allocator = NULL);
 void imguiDestroy();
 
-void imguiBeginFrame(const DCore::InputData& a_input_data, uint16_t _width, uint16_t _height, bgfx::ViewId _view = 255);
+void imguiBeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId _view = 255);
 void imguiEndFrame();
 
 namespace entry { class AppI; }
