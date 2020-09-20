@@ -1,0 +1,22 @@
+
+19Sept:
+✘ WindowDimension -> WindowInformation @cancelled(20-09-20 17:27)
+- Do not agree anymore.
+✔ window callbacks @done(20-09-20 17:27)
+- Added callbacks that I will be useful in the future. Event hadling needs to be improved
+✔ imgui styling @done(20-09-20 17:27)
+- Looks nice now :)
+✔ uuid research @done(20-09-20 17:30)
+- Boost:uuids sounds useful and nice, although it will bloat project dependencies a bit more. Potentially looking for my own solution or something smaller.
+
+20Sept:
+✔ boost uuid + DUID class @done(20-09-20 17:27)
+- Decided on boost, implementation was nice, tested it on the Testbench and implemented it right away. Should now look at the project again to replace placeholder ids.
+☐ imgui layer cleanup
+
+
+Unknown:
+☐ application act as a system provider, no store of system ptr in other classes(input, window management)
+
+
+
