@@ -2,6 +2,11 @@
 
 #include <glm/glm.hpp>
 
+#include <Utility/TemplateUtility.h>
+
+#include <Defines/IDDefines.h>
+#include <Defines/InputDefines.h>
+
 #include <array>
 #include <functional>
 
@@ -12,127 +17,133 @@ namespace DCore
 	struct InputData;
 	class InputManagementSystem;
 
-	typedef int64 InputUserID;
-
-	struct InputUserData
-	{
-		InputUserData(InputUserID a_id, InputManagementSystem* a_input_system_ptr);
-
-		InputUserID _user_id;
-		InputManagementSystem* _input_system_ptr;
-	};
-
 	struct InputData
 	{
 		InputData();
 
 		struct BufferedKey
 		{
-			BufferedKey(int32 a_key, int32 a_action);
+			BufferedKey(DKey a_key, DKeyAction a_action);
 
-			int32 _key;
-			int32 _action;
+			DKey		_key;
+			DKeyAction	_action;
 		};
 
-		std::array<bool, 1024> _keys{false};
-		std::vector<BufferedKey> _buffered_keys;
-		std::vector<uint32> _frame_buffered_characters;
+		std::array<bool, 1024>		_keys{false};
+		std::vector<BufferedKey>	_buffered_keys;
+		std::vector<uint32>			_buffered_characters;
 
 		glm::vec2 _cursor_position;
 		glm::vec2 _cursor_position_old;
 		glm::vec2 _cursor_delta;
+
 		glm::vec2 _scroll_offset;
+		glm::vec2 _scroll_offset_old;
+		glm::vec2 _scroll_delta;
 
 	};
 
 	class InputManagementSystem
 	{
+	private:
+		enum class KeyEventType;
+		enum class DirectionalEventType;
+	
 	public:
 
-		InputManagementSystem();
 		~InputManagementSystem();
 
 		void ProcessInputEvents();
-
-		InputUserData* ProvideInputUserData(const WindowInstance* a_window_instance);
-
-		void RegisterKeyEvent(std::string a_key_event , int64 a_key, std::string a_input_profile = "default");
 		
-		void RegisterInput(std::string a_key_event, std::function<void> a_function , std::string a_input_profile = "default");
+		void EnableInput();
+		void DisableInput();
+
+		bool IsKeyPressed(DKey a_key) const;
+		bool IsKeyReleased(DKey a_key) const;
+
+		bool IsKeyPressed(DMouse a_mouse_button) const;
+		bool IsKeyReleased(DMouse a_mouse_button) const;
+
+		bool IsKeyPressed(DJoy a_joykey) const;
+		bool IsKeyReleased(DJoy a_joykey) const;
+
+		bool HasKeyBeenPressed() const;
+		bool HasCursorMoved() const;
+		bool HasScrolled() const;
+
+		void RegisterInputEvent(std::string a_key_event, std::function<void> a_function, std::string a_input_profile = "default");
 
 		void DefaultInputProfile();
 		void ChangeActiveInputProfile(std::string a_new_input_profile);
 
-		void EnableInput();
-		void DisableInput();
-
-		void SendKeyboardEvent(InputUserData* a_input_user_data, int a_key, int a_scancode, int a_action, int a_mods);
-		void SendCharEvent(InputUserData* a_input_user_data, unsigned int a_char);
-		void SendMouseEvent(InputUserData* a_input_user_data, int a_key, int a_action, int a_mods);
-		void SendCursorEvent(InputUserData* a_input_user_data, double a_x, double a_y);
-		void SendScrollEvent(InputUserData* a_input_user_data, double a_x_offset, double a_y_offset);
-
-		// TODO std::string should be some kind of ID
-		std::unordered_map<InputUserID, InputData> _input_data_storage;
-		std::vector<InputUserData> _input_user_data_storage;
+		void SendKeyEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
+		void SendMouseEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
+		void SendCharEvent(WindowID a_id, uint16 a_char);
+		void SendDirectionalEvent(WindowID a_id, float32 a_x_offset, float32 a_y_offset);
+		void SendScrollEvent(WindowID a_id, float32 a_scroll_x_offset, float32 a_scroll_y_offset);
 
 	protected:
 
+		friend class ApplicationInstance;
+
+		InputManagementSystem();
+
+		friend class WindowManagementSystem;
+
+		void RegisterWindow(WindowID a_id);
+
 	private:
-
-		struct KeyboardEvent
+		 
+		enum class KeyEventType
 		{
-			KeyboardEvent(InputUserID a_id, int key, int scancode, int action, int mods);
-
-			InputUserID _user_id;
-			int32 _key;
-			int32 _scancode;
-			int32 _action;
-			int32 _modifier;
+			DEFAULT		= 0,
+			KEYBOARD	= 1,
+			MOUSE		= 2,
+			CHARACTER	= 3,
 		};
 
-		struct CharacterEvent
+		enum class DirectionalEventType
 		{
-			CharacterEvent(InputUserID a_id, unsigned int a_char);
-
-			InputUserID _user_id;
-			uint32 _char;
-		};
-		
-		struct MouseEvent
-		{
-			MouseEvent(InputUserID a_id, int a_key, int a_action, int a_mods);
-
-			InputUserID _user_id;
-			int32 _key;
-			int32 _scancode;
-			int32 _action;
-			int32 _modifier;
+			DEFAULT = 0,
+			CURSOR	= 1,
+			SCROLL	= 2, 
 		};
 
-		struct CursorEvent
+		struct KeyEvent
 		{
-			CursorEvent(InputUserID a_id, double a_x, double a_y);
+			KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier);
+			KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
+			KeyEvent(WindowID a_id, KeyEventType a_event_type, uint16 a_char);
 
-			InputUserID _user_id;
-			float64 _x_pos;
-			float64 _y_pos;
+			KeyEventType	_event_type;
+			WindowID		_user_id;
+
+			int32			_key;
+			int32			_scancode;
+			int32			_action;
+			int32			_modifier;
+			uint32			_char;
 		};
 
-		struct ScrollEvent
+		struct DirectionalEvent
 		{
-			ScrollEvent(InputUserID a_id, double a_x, double a_y);
+			DirectionalEvent(WindowID a_id, DirectionalEventType a_event_type, float32 a_cursor_x_pos, float32 a_cursor_y_pos, float32 a_scroll_x_offset, float32 a_scroll_y_offset);
 
-			InputUserID _user_id;
-			float64 _x_offset;
-			float64 _y_offset;
+			DirectionalEventType _event_type;
+			WindowID _user_id;
+
+			float32 _cursor_x_position;
+			float32 _cursor_y_position;
+			float32 _scroll_x_offset;
+			float32 _scroll_y_offset;
 		};
 
-		std::vector<KeyboardEvent> _keyboard_event_buffer;
-		std::vector<CharacterEvent> _character_event_buffer;
-		std::vector<MouseEvent> _mouse_event_buffer;
-		std::vector<CursorEvent> _cursor_event_buffer;
-		std::vector<ScrollEvent> _scroll_event_buffer;
+		void ClearInputDataBuffers();
+
+		std::unordered_map<WindowID, InputData> _input_data_storage;
+
+		std::vector<KeyEvent>			_key_event_buffer;
+		std::vector<DirectionalEvent>	_dir_event_buffer;
 		
 		bool _has_input_events_buffered;
 		bool _is_input_enabled;

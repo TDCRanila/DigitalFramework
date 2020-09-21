@@ -14,6 +14,7 @@
 #include <CoreSystems/WindowManagement.h>
 #include <CoreSystems/InputManagement.h> 
 #include <CoreSystems/ImGuiLayer.h>
+#include <Utility/TemplateUtility.h>
 #include <Defines/InputDefines.h>
 
  //#define USE_ENTRY 1
@@ -210,29 +211,33 @@ struct OcornutImguiContext
 
 		setupStyle(true);
 
-		io.KeyMap[ImGuiKey_Tab]			= KEY_TAB;
-		io.KeyMap[ImGuiKey_LeftArrow]	= KEY_LEFT;
-		io.KeyMap[ImGuiKey_RightArrow]	= KEY_RIGHT;
-		io.KeyMap[ImGuiKey_UpArrow]		= KEY_UP;
-		io.KeyMap[ImGuiKey_DownArrow]	= KEY_DOWN;
-		io.KeyMap[ImGuiKey_PageUp]		= KEY_PAGE_UP;
-		io.KeyMap[ImGuiKey_PageDown]	= KEY_PAGE_DOWN;
-		io.KeyMap[ImGuiKey_Home]		= KEY_HOME;
-		io.KeyMap[ImGuiKey_End]			= KEY_END;
-		io.KeyMap[ImGuiKey_Insert]		= KEY_INSERT;
-		io.KeyMap[ImGuiKey_Delete]		= KEY_DELETE;
-		io.KeyMap[ImGuiKey_Backspace]	= KEY_BACKSPACE;
-		io.KeyMap[ImGuiKey_Space]		= KEY_SPACE;
-		io.KeyMap[ImGuiKey_Enter]		= KEY_ENTER;
-		io.KeyMap[ImGuiKey_Escape]		= KEY_ESCAPE;
-		io.KeyMap[ImGuiKey_A]			= KEY_A;
-		io.KeyMap[ImGuiKey_C]			= KEY_C;
-		io.KeyMap[ImGuiKey_V]			= KEY_V;
-		io.KeyMap[ImGuiKey_X]			= KEY_X;
-		io.KeyMap[ImGuiKey_Y]			= KEY_Y;
-		io.KeyMap[ImGuiKey_Z]			= KEY_Z;
+		io.KeyMap[ImGuiKey_Tab]			= to_underlying(DKey::TAB);
+		io.KeyMap[ImGuiKey_LeftArrow]	= to_underlying(DKey::LEFT);
+		io.KeyMap[ImGuiKey_RightArrow]	= to_underlying(DKey::RIGHT);
+		io.KeyMap[ImGuiKey_UpArrow]		= to_underlying(DKey::UP);
+		io.KeyMap[ImGuiKey_DownArrow]	= to_underlying(DKey::DOWN);
+		io.KeyMap[ImGuiKey_PageUp]		= to_underlying(DKey::PAGE_UP);
+		io.KeyMap[ImGuiKey_PageDown]	= to_underlying(DKey::PAGE_DOWN);
+		io.KeyMap[ImGuiKey_Home]		= to_underlying(DKey::HOME);
+		io.KeyMap[ImGuiKey_End]			= to_underlying(DKey::END);
+		io.KeyMap[ImGuiKey_Insert]		= to_underlying(DKey::INSERT);
+		io.KeyMap[ImGuiKey_Delete]		= to_underlying(DKey::KDELETE);
+		io.KeyMap[ImGuiKey_Backspace]	= to_underlying(DKey::BACKSPACE);
+		io.KeyMap[ImGuiKey_Space]		= to_underlying(DKey::SPACE);
+		io.KeyMap[ImGuiKey_Enter]		= to_underlying(DKey::ENTER);
+		io.KeyMap[ImGuiKey_Escape]		= to_underlying(DKey::ESCAPE);
+		io.KeyMap[ImGuiKey_A]			= to_underlying(DKey::A);
+		io.KeyMap[ImGuiKey_C]			= to_underlying(DKey::C);
+		io.KeyMap[ImGuiKey_V]			= to_underlying(DKey::V);
+		io.KeyMap[ImGuiKey_X]			= to_underlying(DKey::X);
+		io.KeyMap[ImGuiKey_Y]			= to_underlying(DKey::Y);
+		io.KeyMap[ImGuiKey_Z]			= to_underlying(DKey::Z);
 
 		io.ConfigFlags |= 0 | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_NavEnableKeyboard;
+
+		// TODO Implement Clipboard 
+		// io.SetClipboardTextFn = ImGui_ImplGlfwGL3_SetClipboardText;
+		// io.GetClipboardTextFn = ImGui_ImplGlfwGL3_GetClipboardText;
 
 		//io.NavInputs[ImGuiNavInput_Activate] = (int)entry::Key::GamepadA;
 		//io.NavInputs[ImGuiNavInput_Cancel] = (int)entry::Key::GamepadB;
@@ -422,7 +427,7 @@ struct OcornutImguiContext
 		m_viewId = _viewId;
 
 		ImGuiIO& io = ImGui::GetIO();
-		for (const uint32& c : a_input_data._frame_buffered_characters)
+		for (const uint32& c : a_input_data._buffered_characters)
 		{
 			if (c >= 0)
 			{
@@ -443,27 +448,29 @@ struct OcornutImguiContext
 
 		for (auto const& [key, action] : a_input_data._buffered_keys)
 		{
-			if (action == KEY_PRESS)
-				io.MouseDown[key] = true;
-			if (action == KEY_RELEASE)
-				io.MouseDown[key] = false;
-		}
-
-		for (auto const& [key, action] : a_input_data._buffered_keys)
-		{
-			if (action == KEY_PRESS)
-				io.KeysDown[key] = true;
-			if (action == KEY_RELEASE)
-				io.KeysDown[key] = false;
+			int32 pressed_key	= to_underlying(key);
+			int32 max_mouse_key = to_underlying(DMouse::BUTTON_6);
+			if (action == DKeyAction::PRESSED)
+			{
+				io.KeysDown[pressed_key] = true;
+				if (pressed_key <= max_mouse_key)
+					io.MouseDown[pressed_key] = true;
+			}
+			if (action == DKeyAction::RELEASED)
+			{
+				io.KeysDown[pressed_key] = false;
+				if (pressed_key <= max_mouse_key)
+					io.MouseDown[pressed_key] = false;
+			}
 		}
 
 		io.MouseWheel	= static_cast<float>(a_input_data._scroll_offset.y - m_lastScroll);
-		m_lastScroll	= a_input_data._scroll_offset.y;
+		m_lastScroll	= static_cast<int32_t>(a_input_data._scroll_offset.y);
 
-		io.KeyCtrl		= io.KeysDown[KEY_LEFT_CONTROL]	|| io.KeysDown[KEY_RIGHT_CONTROL];
-		io.KeyShift		= io.KeysDown[KEY_LEFT_SHIFT]	|| io.KeysDown[KEY_RIGHT_SHIFT];
-		io.KeyAlt		= io.KeysDown[KEY_LEFT_ALT]		|| io.KeysDown[KEY_RIGHT_ALT];
-		io.KeySuper		= io.KeysDown[KEY_LEFT_SUPER]	|| io.KeysDown[KEY_RIGHT_SUPER];
+		io.KeyCtrl		= io.KeysDown[to_underlying(DKey::LEFT_CONTROL)]	|| io.KeysDown[to_underlying(DKey::RIGHT_CONTROL)];
+		io.KeyShift		= io.KeysDown[to_underlying(DKey::LEFT_SHIFT)]		|| io.KeysDown[to_underlying(DKey::RIGHT_SHIFT)];
+		io.KeyAlt		= io.KeysDown[to_underlying(DKey::LEFT_ALT)]		|| io.KeysDown[to_underlying(DKey::RIGHT_ALT)];
+		io.KeySuper		= io.KeysDown[to_underlying(DKey::LEFT_SUPER)]		|| io.KeysDown[to_underlying(DKey::RIGHT_SUPER)];
 
 		ImGui::NewFrame();
 

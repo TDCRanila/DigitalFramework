@@ -7,8 +7,9 @@
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 
-#include <Defines/Defines.h>
+#include <CoreSystems/ApplicationInstance.h>
 #include <CoreSystems/InputManagement.h>
+#include <Defines/Defines.h>
 
 namespace DCore
 {
@@ -17,38 +18,34 @@ namespace DCore
     {
         void glfw_error_callback(int error, const char* description)
         {
+            UNUSED(error);
             fprintf(stderr, "GLFW Error: %s\n", description);
         }
 
         static void glfw_window_closed_callback(GLFWwindow* a_window)
         {
-
         }
 
         static void glfw_window_focus_callback(GLFWwindow* a_window, int a_result)
         {
-
         }
 
         static void glfw_window_iconify_callback(GLFWwindow* a_window, int a_result)
         {
-
         }
 
         static void glfw_window_closed_callback(GLFWwindow* a_window, int a_result)
         {
-
         }
 
         static void glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos)
         {
-
         }
 
         static void glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
-            WindowDimension& dim = user_data->_window_dimensions;
+            WindowDimension& dim = user_data->_window_dimension;
             
             dim._current_width = a_width;
             dim._current_height = a_height;
@@ -75,75 +72,80 @@ namespace DCore
         void glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods) 
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
-            user_data->_input_data->_input_system_ptr->SendKeyboardEvent(user_data->_input_data, a_key, a_scancode, a_action, a_mods);
+
+            int32 key       = static_cast<int32>(a_key);
+            int32 scancode  = static_cast<int32>(a_scancode);
+            int32 action    = static_cast<int32>(a_action);
+            int32 modifier  = static_cast<int32>(a_mods);
+
+            ApplicationInstance::ProvideInputManagment()->SendKeyEvent(user_data->_id, key, scancode, action, modifier);
         }
 
         void glfw_char_callback(GLFWwindow* a_window, unsigned int a_char)
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
-            user_data->_input_data->_input_system_ptr->SendCharEvent(user_data->_input_data, a_char);
+
+            uint16 character = static_cast<uint16>(a_char);
+
+            ApplicationInstance::ProvideInputManagment()->SendCharEvent(user_data->_id, character);
         }
 
         void glfw_mousebutton_callback(GLFWwindow* a_window, int a_key, int a_action, int a_mods) 
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
-            user_data->_input_data->_input_system_ptr->SendMouseEvent(user_data->_input_data, a_key, a_action, a_mods);
+
+            int32 key       = static_cast<int32>(a_key);
+            int32 action    = static_cast<int32>(a_action);
+            int32 modifier  = static_cast<int32>(a_mods);
+            int32 undefined = -1;
+
+            ApplicationInstance::ProvideInputManagment()->SendMouseEvent(user_data->_id, key, undefined, action, modifier);
         }
 
         void glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos) 
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
-            user_data->_input_data->_input_system_ptr->SendCursorEvent(user_data->_input_data, a_x_pos, a_y_pos);
+
+            float32 x_pos = static_cast<float32>(a_x_pos);
+            float32 y_pos = static_cast<float32>(a_y_pos);
+
+            ApplicationInstance::ProvideInputManagment()->SendDirectionalEvent(user_data->_id, x_pos, y_pos);
         }
 
         void glfw_scroll_callback(GLFWwindow* a_window, double a_x_offset, double a_y_offset) 
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
-            user_data->_input_data->_input_system_ptr->SendScrollEvent(user_data->_input_data, a_x_offset, a_y_offset);
+
+            float32 x_offset = static_cast<float32>(a_x_offset);
+            float32 y_offset = static_cast<float32>(a_y_offset);
+
+            ApplicationInstance::ProvideInputManagment()->SendScrollEvent(user_data->_id, x_offset, y_offset);
         }
 
     } // End of namespace ~ GLFWWindowCallBacks
 
-    WindowDimension::WindowDimension() :
-        _current_height(1280),
-        _current_width(720),
-        _current_frame_height(1280),
-        _current_frame_width(720),
-        _current_x_pos(0),
-        _current_y_pos(0)
+    WindowDimension::WindowDimension()
+        : _current_height(1280)
+        , _current_width(720)
+        , _current_frame_height(1280)
+        , _current_frame_width(720)
+        , _current_x_pos(0)
+        , _current_y_pos(0)
     {
     }
 
-    WindowInstance::WindowInstance()  :
-        _window(nullptr),
-        _input_data(nullptr),
-        _name(""),
-        _should_be_closed(false),
-        _iconified(false),
-        _focussed(false)
+    WindowInstance::WindowInstance()  
+        : _id(DUIDGenerator::GenerateID())
+        , _window()
+        , _name("")
+        , _should_be_closed(false)
+        , _is_iconified(false)
+        , _is_focussed(false)
     {
-        GLFWwindow* _window;
-        InputUserData* _input_data;
-        std::string _name;
-
-        bool _should_be_closed;
-        bool _iconified;
-        bool _focussed;
-        int32 _current_width, _current_height;
-        int32 _current_x_pos, _current_y_pos; // Point is the the upper-left corner.
     }
 
     WindowManagementSystem::WindowManagementSystem(const std::string a_main_window_name)
-        :   _input_management(nullptr),
-            _default_width(1280),
-            _default_height(720),
-            _default_window_name(a_main_window_name)
-    {
-    }
-
-    WindowManagementSystem::WindowManagementSystem(const char* a_main_window_name)
-        :   _input_management(nullptr),
-            _default_width(1280),
+        :   _default_width(1280),
             _default_height(720),
             _default_window_name(a_main_window_name)
     {
@@ -151,35 +153,10 @@ namespace DCore
 
     WindowManagementSystem::~WindowManagementSystem()
     {
-
-    }
-
-    void WindowManagementSystem::ProvideInputSystem(InputManagementSystem* a_input_system_ptr)
-    {
-        if (!a_input_system_ptr)
-        {
-            ERRORLOG("Window Management System has been provided an invalid input system.");
-        }
-
-        if (_input_management)
-        {
-            WARNLOG("Window Management System already has a valid input system provided.");
-        }
-        else
-        {
-            _input_management = a_input_system_ptr;
-        }
     }
 
     void WindowManagementSystem::InitWindowManagement()
     {
-        if (!_input_management)
-        {
-            ERRORLOG("Window Management System has no valid input system provided.");
-            return;
-        }
-
-        // Setting callbacks
         glfwSetErrorCallback(GLFWWindowCallBacks::glfw_error_callback);
 
         glfwInit();
@@ -189,13 +166,12 @@ namespace DCore
         // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
         bgfx::renderFrame();
         
-        WindowInstance* new_window  = ConstructWindow(_default_width, _default_height, _default_window_name);
-        InputUserData* input_data   = _input_management->ProvideInputUserData(new_window);
-        new_window->_input_data = input_data;
-        glfwSetWindowUserPointer(new_window->_window, new_window);
+        WindowInstance* default_first_window = ConstructWindow(_default_width, _default_height, _default_window_name);
+        glfwSetWindowUserPointer(default_first_window->_window, default_first_window);
+        _default_first_window_id = default_first_window->_id;
 
         bgfx::PlatformData platform_data;
-        platform_data.nwh = glfwGetWin32Window(_window_instances[0]._window);
+        platform_data.nwh = glfwGetWin32Window(default_first_window->_window);
         bgfx::setPlatformData(platform_data);
         
         bgfx::Init bgfx_init;
@@ -217,6 +193,11 @@ namespace DCore
         glfwTerminate();
     }
 
+    const DUID WindowManagementSystem::GetMainWindow() const
+    {
+        return _default_first_window_id;
+    }
+
     WindowInstance* WindowManagementSystem::ConstructWindow(int32 a_width, int32 a_height, std::string  a_name)
     {
         WindowInstance* new_window = ConstructWindow(a_width, a_height, a_name.c_str());
@@ -226,9 +207,12 @@ namespace DCore
     WindowInstance* WindowManagementSystem::ConstructWindow(int32 a_width, int32 a_height, const char* a_name)
     {
         WindowInstance new_window;
+
+        ApplicationInstance::ProvideInputManagment()->RegisterWindow(new_window._id);
+
         GLFWwindow* glfw_window = glfwCreateWindow(a_width, a_height, a_name, NULL, NULL);
-        new_window._window  = glfw_window;
-        new_window._name    = a_name;
+        new_window._window      = glfw_window;
+        new_window._name        = a_name;
 
         glfwSetWindowFocusCallback(glfw_window, GLFWWindowCallBacks::glfw_window_focus_callback);
         glfwSetWindowIconifyCallback(glfw_window, GLFWWindowCallBacks::glfw_window_iconify_callback);
@@ -244,18 +228,24 @@ namespace DCore
         glfwSetCursorPosCallback(glfw_window, GLFWWindowCallBacks::glfw_mouse_callback);
         glfwSetScrollCallback(glfw_window, GLFWWindowCallBacks::glfw_scroll_callback);
 
-        _window_instances[0] = new_window;
-        return &_window_instances[0];
+        auto& [it_pair, result] =_window_instances.emplace(new_window._id, new_window);
+        if (result)
+        {
+            return &(it_pair->second);
+        }
+        else
+        {
+            ERRORLOG("Window Management System couldn't construct a new window.");
+            return nullptr;
+        }
     }
 
-    void WindowManagementSystem::DestructWindow(std::string  a_name)
+    void WindowManagementSystem::DestructWindow(std::string a_name)
     {
-
     }
 
     void WindowManagementSystem::DestructWindow(const char* a_name)
     {
-        
     }
 
     void WindowManagementSystem::ChangeDefaultWindowName(const std::string a_new_default_window_name)

@@ -1,242 +1,241 @@
 #include <CoreSystems/InputManagement.h>
 
-#include <Defines/InputDefines.h>
-
 namespace DCore
 {
-	InputUserData::InputUserData(InputUserID a_id, InputManagementSystem* a_input_system_ptr)
-		:	_user_id(a_id),
-			_input_system_ptr(a_input_system_ptr)
+	InputData::BufferedKey::BufferedKey(DKey a_key, DKeyAction a_action)
+		:	_key(a_key)
+		,	_action(a_action)
 	{
 	}
 
 	InputData::InputData() 
-		:	_cursor_position(0.0f),
-			_cursor_position_old(0.0f),
-			_cursor_delta(0.0f),
-			_scroll_offset(0.0f)
+		: _cursor_position(0.0f)
+		, _cursor_position_old(0.0f)
+		, _cursor_delta(0.0f)
+		, _scroll_offset(0.0f)
+		, _scroll_offset_old(0.0f)
+		, _scroll_delta(0.0f)
 	{
 		_buffered_keys.reserve(16);
 	}
 
-	InputData::BufferedKey::BufferedKey(int32 a_key, int32 a_action)
-		:	_key(a_key),
-			_action(a_action)
-	{
-	}
 
 	InputManagementSystem::InputManagementSystem()
-		:	_has_input_events_buffered(false),
-			_is_input_enabled(true)
+		:	_has_input_events_buffered(false)
+		,	_is_input_enabled(true)
 	{
-		_keyboard_event_buffer.reserve(16);
-		_mouse_event_buffer.reserve(16);
-		_cursor_event_buffer.reserve(16);
-		_scroll_event_buffer.reserve(16);
+		_key_event_buffer.reserve(16);
+		_dir_event_buffer.reserve(16);
 	}
 
 	InputManagementSystem::~InputManagementSystem()
 	{
-
 	}
 
-	InputUserData* InputManagementSystem::ProvideInputUserData(const WindowInstance* a_window_instance)
+	void InputManagementSystem::EnableInput()
 	{
-		// TODO Some kind of proper id/identifer for which window uses what input data
-		InputUserID id = reinterpret_cast<int64>(a_window_instance);
-		_input_data_storage.try_emplace(0/*id*/);
+		_is_input_enabled = true;
+	}
 
-
-		InputUserData* input_user_data = &_input_user_data_storage.emplace_back(0, this);
-		return input_user_data;
+	void InputManagementSystem::DisableInput()
+	{
+		_is_input_enabled = false;
 	}
 
 	void InputManagementSystem::ProcessInputEvents()
 	{
-		for (auto& input_data : _input_data_storage)
-		{
-			input_data.second._buffered_keys.clear();
-			input_data.second._frame_buffered_characters.clear();
-		}
+		ClearInputDataBuffers();
 
 		if (!_has_input_events_buffered || !_is_input_enabled)
 		{
 			return;
 		}
 
-		for (const KeyboardEvent& event : _keyboard_event_buffer)
+		for (const KeyEvent& key_event : _key_event_buffer)
 		{
-			auto it = _input_data_storage.find(event._user_id);
-			InputData& input_data = it->second;
-
-			if ((event._key >= 0) && (event._key < 1024))
+			InputData& data = _input_data_storage[key_event._user_id];
+			switch (key_event._event_type)
 			{
-			    if (event._action == GLFW_PRESS)
-				{ 
-					input_data._buffered_keys.emplace_back(event._key, event._action);
-					input_data._keys[event._key] = true;
+			case (KeyEventType::KEYBOARD):
+			case (KeyEventType::MOUSE):
+			{
+				if (key_event._action == to_underlying(DKeyAction::PRESSED))
+				{
+					DKey defined_key			= static_cast<DKey>(key_event._key);
+					DKeyAction defined_action	= static_cast<DKeyAction>(key_event._action);
+
+					data._buffered_keys.emplace_back(defined_key, defined_action);
+					data._keys[key_event._key] = true;
 				}
-			    else if (event._action == GLFW_RELEASE)
-				{ 
-					input_data._buffered_keys.emplace_back(event._key, event._action);
-					input_data._keys[event._key] = false;
+				else if (key_event._action == to_underlying(DKeyAction::RELEASED))
+				{
+					DKey defined_key			= static_cast<DKey>(key_event._key);
+					DKeyAction defined_action	= static_cast<DKeyAction>(key_event._action);
+
+					data._buffered_keys.emplace_back(defined_key, defined_action);
+					data._keys[key_event._key] = false;
 				}
-				INFOLOG("Key Pressed: " << event._key);
+				break;
+			}
+			case(KeyEventType::CHARACTER):
+			{
+				data._buffered_characters.emplace_back(key_event._char);
+				break;
+			}
+			case (KeyEventType::DEFAULT):
+			default:
+				break;
 			}
 		}
 
-		for (const CharacterEvent& event : _character_event_buffer)
-		{
-			auto it = _input_data_storage.find(event._user_id);
-			InputData& input_data = it->second;
+		_key_event_buffer.clear();
 
-			if (event._char >= 0)
+		for (const DirectionalEvent& dir_event : _dir_event_buffer)
+		{
+			InputData& data = _input_data_storage[dir_event._user_id];
+			switch (dir_event._event_type)
 			{
-				input_data._frame_buffered_characters.emplace_back(event._char);
-				INFOLOG("Char Inserted: " << event._char);
+			case (DirectionalEventType::CURSOR):
+			{
+				data._cursor_position_old.x = data._cursor_position.x;
+				data._cursor_position_old.y = data._cursor_position.y;
+
+				data._cursor_delta.x		= dir_event._cursor_x_position - data._cursor_position.x;
+				data._cursor_delta.y		= dir_event._cursor_y_position - data._cursor_position.y;
+
+				data._cursor_position.x		= dir_event._cursor_x_position;
+				data._cursor_position.y		= dir_event._cursor_y_position;
+				break;
+			}
+			case (DirectionalEventType::SCROLL):
+			{
+				data._scroll_delta.x		= dir_event._scroll_x_offset;
+				data._scroll_delta.y		= dir_event._scroll_y_offset;
+
+				data._scroll_offset_old.x	= data._scroll_offset.x;
+				data._scroll_offset_old.y	= data._scroll_offset.y;
+
+				data._scroll_offset.x		+= dir_event._scroll_x_offset;
+				data._scroll_offset.y		+= dir_event._scroll_y_offset;
+				break;
+			}
+			case (DirectionalEventType::DEFAULT):
+			default:
+				WARNLOG("InputManagement has received an event type it cannot process.");
+				break;
 			}
 		}
 
-		for (const MouseEvent& event : _mouse_event_buffer)
-		{
-			auto it = _input_data_storage.find(event._user_id);
-			InputData& input_data = it->second;
-
-			// TODO Create Key Event to trigger all registered callbacks
-
-			if ((event._key >= 0) && (event._key < 8)) 
-			{
-				if (event._action == KEY_PRESS) 
-				{ 
-					input_data._buffered_keys.emplace_back(event._key, event._action);
-					input_data._keys[event._key] = true; 
-				}
-				else if (event._action == KEY_RELEASE) 
-				{ 
-					input_data._buffered_keys.emplace_back(event._key, event._action);
-					input_data._keys[event._key] = false; 
-				}
-				INFOLOG("Key Pressed: " << event._key);
-			}
-
-		}
-
-		for (const CursorEvent& event : _cursor_event_buffer)
-		{
-			auto it = _input_data_storage.find(event._user_id);
-			InputData& input_data = it->second;
-
-			input_data._cursor_position_old.x = static_cast<float32>(input_data._cursor_position.x);
-			input_data._cursor_position_old.y = static_cast<float32>(input_data._cursor_position.y);
-
-			input_data._cursor_delta.x = static_cast<float32>(static_cast<float32>(event._x_pos) - input_data._cursor_position.x);
-			input_data._cursor_delta.y = static_cast<float32>(static_cast<float32>(event._y_pos) - input_data._cursor_position.y);
-
-			input_data._cursor_position.x = static_cast<float32>(event._x_pos);
-			input_data._cursor_position.y = static_cast<float32>(event._y_pos);
-
-			INFOLOG("X:" << event._x_pos << " -  Y:" << event._y_pos );
-			INFOLOG("XOffset:" << input_data._cursor_delta.x << " -  YOffset:" << input_data._cursor_delta.y);
-		}
-
-		for (const ScrollEvent& event : _scroll_event_buffer)
-		{
-			auto it = _input_data_storage.find(event._user_id);
-			InputData& input_data = it->second;
-
-			input_data._scroll_offset.y += event._y_offset;
-
-			INFOLOG("ScrollXOffset:" << input_data._scroll_offset.x << " -  ScrollYOffset:" << input_data._scroll_offset.y);
-		}
-
-		_keyboard_event_buffer.clear();
-		_character_event_buffer.clear();
-		_mouse_event_buffer.clear();
-		_cursor_event_buffer.clear();
-		_scroll_event_buffer.clear();
+		_dir_event_buffer.clear();
 
 		_has_input_events_buffered = false;
 	}
 
-	void InputManagementSystem::SendKeyboardEvent(InputUserData* a_input_user_data, int a_key, int a_scancode, int a_action, int a_mods)
+	void InputManagementSystem::SendKeyEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
+	{
+		if (_is_input_enabled)
+		{
+			if ((a_key >= 0) && (a_key < 1024))
+			{
+				_has_input_events_buffered = true;
+				_key_event_buffer.emplace_back(a_id, KeyEventType::KEYBOARD, a_key, a_scancode, a_action, a_modifier);
+			}
+		}
+	}
+
+	void InputManagementSystem::SendMouseEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
+	{
+		if (_is_input_enabled)
+		{
+			if ((a_key >= 0) && (a_key < 1024))
+			{
+				_has_input_events_buffered = true;
+				_key_event_buffer.emplace_back(a_id, KeyEventType::MOUSE, a_key, a_scancode, a_action, a_modifier);
+			}
+		}
+	}
+
+	void InputManagementSystem::SendCharEvent(WindowID a_id, uint16 a_char)
+	{
+		if (_is_input_enabled)
+		{
+			if (a_char >= 0)
+			{
+				_has_input_events_buffered = true;
+				_key_event_buffer.emplace_back(a_id, KeyEventType::CHARACTER, a_char);
+			}
+		}
+	}
+
+	void InputManagementSystem::SendDirectionalEvent(WindowID a_id, float32 a_x_offset, float32 a_y_offset)
 	{
 		if (_is_input_enabled)
 		{
 			_has_input_events_buffered = true;
-			_keyboard_event_buffer.emplace_back(a_input_user_data->_user_id, a_key, a_scancode, a_action, a_mods);
+			_dir_event_buffer.emplace_back(a_id, DirectionalEventType::CURSOR, a_x_offset, a_y_offset, 0.0f, 0.0f);
 		}
 	}
 
-	void InputManagementSystem::SendCharEvent(InputUserData* a_input_user_data, unsigned int a_char)
+	void InputManagementSystem::SendScrollEvent(WindowID a_id, float32 a_scroll_x_offset, float32 a_scroll_y_offset)
 	{
 		if (_is_input_enabled)
 		{
 			_has_input_events_buffered = true;
-			_character_event_buffer.emplace_back(a_input_user_data->_user_id, a_char);
+			_dir_event_buffer.emplace_back(a_id, DirectionalEventType::SCROLL, 0.0f, 0.0f, a_scroll_x_offset, a_scroll_y_offset);
 		}
 	}
 
-	void InputManagementSystem::SendMouseEvent(InputUserData* a_input_user_data, int a_key, int a_action, int a_mods)
+	void InputManagementSystem::RegisterWindow(WindowID a_id)
 	{
-		if (_is_input_enabled)
+		_input_data_storage.emplace(a_id, InputData());
+	}
+
+	void InputManagementSystem::ClearInputDataBuffers()
+	{
+		for (auto& [id, input_data] : _input_data_storage)
 		{
-			_has_input_events_buffered = true;
-			_mouse_event_buffer.emplace_back(a_input_user_data->_user_id, a_key, a_action, a_mods);
+			input_data._buffered_keys.clear();
+			input_data._buffered_characters.clear();
 		}
 	}
 
-	void InputManagementSystem::SendCursorEvent(InputUserData* a_input_user_data, double a_x, double a_y)
-	{
-		if (_is_input_enabled)
-		{
-			_has_input_events_buffered = true;
-			_cursor_event_buffer.emplace_back(a_input_user_data->_user_id, a_x, a_y);
-		}
-	}
-
-	void InputManagementSystem::SendScrollEvent(InputUserData* a_input_user_data, double a_x_offset, double a_y_offset)
-	{
-		if (_is_input_enabled)
-		{
-			_has_input_events_buffered = true;
-			_scroll_event_buffer.emplace_back(a_input_user_data->_user_id, a_x_offset, a_y_offset);
-		}
-	}
-
-	InputManagementSystem::KeyboardEvent::KeyboardEvent(InputUserID a_id, int key, int scancode, int action, int mods)
-		:	_user_id(a_id),
-			_key(key),
-			_scancode(scancode),
-			_action(action),
-			_modifier(mods)
+	InputManagementSystem::KeyEvent::KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier)
+		: _user_id(a_id)
+		, _event_type(a_event_type)
+		, _key(a_key)
+		, _char(a_char)
+		, _scancode(a_scancode)
+		, _action(a_action)
+		, _modifier(a_modifier)
 	{
 	}
 
-	InputManagementSystem::CharacterEvent::CharacterEvent(InputUserID a_id, unsigned int a_char)
-		:	_user_id(a_id),
-			_char(a_char)
+	InputManagementSystem::KeyEvent::KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
+		: _user_id(a_id)
+		, _event_type(a_event_type)
+		, _key(a_key)
+		, _scancode(a_scancode)
+		, _action(a_action)
+		, _modifier(a_modifier)
 	{
 	}
 
-	InputManagementSystem::MouseEvent::MouseEvent(InputUserID a_id, int a_key, int action, int mods)
-		:	_user_id(a_id),
-			_key(a_key),
-			_action(action),
-			_modifier(mods)
+	InputManagementSystem::KeyEvent::KeyEvent(WindowID a_id, KeyEventType a_event_type,  uint16 a_char)
+		: _user_id(a_id)
+		, _event_type(a_event_type)
+		, _key(to_underlying(DKey::UNDEFINED))
+		, _char(a_char)
 	{
 	}
 
-	InputManagementSystem::CursorEvent::CursorEvent(InputUserID a_id, double a_x, double a_y) 
-		:	_user_id(a_id),
-			_x_pos(a_x),
-			_y_pos(a_y)
-	{
-	}
-
-	InputManagementSystem::ScrollEvent::ScrollEvent(InputUserID a_id, double a_x_offset, double a_y_offset)
-		:	_user_id(a_id),
-			_x_offset(a_x_offset),
-			_y_offset(a_y_offset)
+	InputManagementSystem::DirectionalEvent::DirectionalEvent(WindowID a_id, DirectionalEventType a_event_type, 
+		float32 a_cursor_x_pos, float32 a_cursor_y_pos, float32 a_scroll_x_offset, float32 a_scroll_y_offset)
+		: _user_id(a_id)
+		, _event_type(a_event_type)
+		, _cursor_x_position(a_cursor_x_pos)
+		, _cursor_y_position(a_cursor_y_pos)
+		, _scroll_x_offset(a_scroll_x_offset)
+		, _scroll_y_offset(a_scroll_y_offset)
 	{
 	}
 

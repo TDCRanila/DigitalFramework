@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Defines/IDDefines.h>
+
 #include <string>
 #include <unordered_map>
 
@@ -7,6 +9,8 @@ struct GLFWwindow;
 
 namespace DCore
 {
+    // Forward Declare(s)
+    struct InputUserData;
 
     namespace GLFWWindowCallBacks 
     {
@@ -33,9 +37,6 @@ namespace DCore
         static void glfw_scroll_callback(GLFWwindow* a_window, double a_x_offset, double a_y_offset);
     } // End of namespace ~ GLFWWindowCallBacks
 
-    struct InputUserData;
-    class InputManagementSystem;
-
     struct WindowDimension
     {
         WindowDimension();
@@ -49,27 +50,27 @@ namespace DCore
     {
         WindowInstance();
 
-        WindowDimension _window_dimensions;
+        WindowDimension _window_dimension;
 
-        GLFWwindow* _window;
-        InputUserData* _input_data;
-        std::string _name;
+        WindowID        _id;
+        std::string     _name;
 
+        GLFWwindow*     _window;
+        
         bool _should_be_closed;
-        bool _iconified;
-        bool _focussed;
+        bool _is_iconified;
+        bool _is_focussed;
     };
 
     class WindowManagementSystem
     {
     public:
-        WindowManagementSystem(const char* a_window_name);
-        WindowManagementSystem(const std::string a_window_name = "DIGITAL");
         ~WindowManagementSystem();
 
-        void ProvideInputSystem(InputManagementSystem* a_input_system_ptr);
         void InitWindowManagement();
         void TerminateWindowManagement();
+
+        const DUID GetMainWindow() const;
 
         WindowInstance* ConstructWindow(const int32 a_width, const int32 a_height, const std::string  a_name);
         WindowInstance* ConstructWindow(const int32 a_width, const int32 a_height, const char*  a_name);
@@ -80,16 +81,19 @@ namespace DCore
         void ChangeDefaultWindowName(const char* a_new_default_window_name);
         void ChangeDefaultWindowName(const std::string a_new_default_window_name);
 
-        void ChangeWindowName(int64 a_window_id, const char* a_new_window_name);
-        void ChangeWindowName(int64 a_window_id, const std::string a_new_window_name);
+        void ChangeWindowName(WindowID a_window_id, const std::string a_new_window_name);
     
-        std::unordered_map<int64, WindowInstance> _window_instances;
+        std::unordered_map<WindowID, WindowInstance> _window_instances;
+    protected:
+        friend class ApplicationInstance;
+
+        WindowManagementSystem(const std::string a_window_name = "DIGITAL");
+
     private:
 
-        std::string window_name;
         std::string _default_window_name;
 
-        InputManagementSystem* _input_management;
+        DUID _default_first_window_id;
 
         int32 _default_width;
         int32 _default_height;

@@ -12,6 +12,10 @@
 
 namespace DCore
 {
+
+    WindowManagementSystem ApplicationInstance::_window_management;
+    InputManagementSystem ApplicationInstance::_input_management;
+
     ApplicationInstance::ApplicationInstance()
     {
     }
@@ -46,6 +50,16 @@ namespace DCore
         INFOLOG(_application_name << " - Terminating Application Complete - Elapsed Time: " << elapsed_termination_time);
     }
 
+    WindowManagementSystem* ApplicationInstance::ProvideWindowManagement()
+    {
+        return &_window_management;
+    }
+
+    InputManagementSystem* ApplicationInstance::ProvideInputManagment()
+    {
+        return &_input_management;
+    }
+
     void ApplicationInstance::PreApplicationLoad()
     {
         
@@ -54,7 +68,6 @@ namespace DCore
     void ApplicationInstance::ApplicationLoad()
     {
         _window_management.ChangeDefaultWindowName(_application_name);
-        _window_management.ProvideInputSystem(&_input_management);
         _window_management.InitWindowManagement();
 
         imguiCreate();
@@ -81,14 +94,15 @@ namespace DCore
             glfwPollEvents();
             _input_management.ProcessInputEvents();
 
-            InputData& active_input_data = _input_management._input_data_storage[0];
-            WindowInstance& window_instance = _window_management._window_instances[0];
-            WindowDimension& window_dimensions = window_instance._window_dimensions;
+            const DUID window_id                = _window_management.GetMainWindow();
+            WindowInstance& window_instance     = _window_management._window_instances[window_id];
+            WindowDimension& window_dimension   = window_instance._window_dimension;
+            InputData& active_input_data        = _input_management._input_data_storage[window_id];
 
-            bgfx::reset(window_dimensions._current_width, window_dimensions._current_height);
-            bgfx::setViewRect(0, 0, 0, uint16_t(window_dimensions._current_width), uint16_t(window_dimensions._current_height));
+            bgfx::reset(window_dimension._current_frame_width, window_dimension._current_frame_height);
+            bgfx::setViewRect(0, 0, 0, uint16_t(window_dimension._current_width), uint16_t(window_dimension._current_height));
 
-            imguiBeginFrame(active_input_data, window_dimensions);
+            imguiBeginFrame(active_input_data, window_dimension);
 
 			bool* show_demo = new bool(true);
 			ImGui::ShowDemoWindow(show_demo);
@@ -100,8 +114,8 @@ namespace DCore
             // Use debug font to print information about this example.
             bgfx::dbgTextClear();
             //bgfx::dbgTextImage(std::max<uint16_t>(uint16_t(width / 2 / 8), 20) - 20, std::max<uint16_t>(uint16_t(height / 2 / 16), 6) - 6, 40, 12, s_logo, 160);
-            bgfx::dbgTextPrintf(120, 0, 0x0f, "fW:%d x fH:%d.", window_dimensions._current_frame_width, window_dimensions._current_frame_height);
-            bgfx::dbgTextPrintf(100, 0, 0x0f, "W:%d x H:%d.", window_dimensions._current_width, window_dimensions._current_height);
+            bgfx::dbgTextPrintf(120, 0, 0x0f, "fW:%d x fH:%d.", window_dimension._current_frame_width, window_dimension._current_frame_height);
+            bgfx::dbgTextPrintf(100, 0, 0x0f, "W:%d x H:%d.", window_dimension._current_width, window_dimension._current_height);
 
             bgfx::dbgTextPrintf(0, 0, 0x0f, "Press F1 to toggle stats.");
             bgfx::dbgTextPrintf(0, 1, 0x0f, "Color can be changed with ANSI \x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");

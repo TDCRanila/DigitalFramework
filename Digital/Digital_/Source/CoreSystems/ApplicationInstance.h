@@ -17,6 +17,9 @@ namespace DCore
         void RunApplication(const char* a_name);
         void RunApplication(const std::string a_name = "DIGITAL");
 
+        static WindowManagementSystem* ProvideWindowManagement();
+        static InputManagementSystem* ProvideInputManagment();
+
     protected:
 
         virtual void PreApplicationLoad();
@@ -27,10 +30,11 @@ namespace DCore
         void UpdateApplication();
         void TerminateApplication();
 
+        static WindowManagementSystem _window_management;
+        static InputManagementSystem _input_management;
+        
         TimeTracker _game_timer;
-        WindowManagementSystem _window_management;
-        InputManagementSystem _input_management;
-
+        
         std::string _application_name;
     };
 
