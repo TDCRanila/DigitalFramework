@@ -1,0 +1,20 @@
+GLOBAL
+
+Mamespace{}
+- namespace D(Namespace) {}
+
+Variables
+- foo_bar;
+
+Struct/Class Declare
+- class FooBar{};
+- class FooBar{};
+
+Class Mebmers Variables
+- _foo_bar;
+
+Class Functions
+- FooBar(Foo a_foo, Bar a_bar){}
+
+Class Enum
+- enum class -> DKey, DJoy
