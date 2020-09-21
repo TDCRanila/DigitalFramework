@@ -1,7 +1,15 @@
 #pragma once
 
+#include <type_traits>
+
 namespace 
 {
+	template <class T>
+	constexpr typename std::underlying_type<T>::type to_underlying(T a_object) noexcept 
+	{
+		return static_cast<typename std::underlying_type<T>::type>(a_object);
+	}
+
 	template <class T>
 	struct always_false : std::false_type
 	{
