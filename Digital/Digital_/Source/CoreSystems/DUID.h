@@ -43,7 +43,8 @@ namespace DCore
 		static DUID GenerateID()
 		{
 			DUID id;
-			id.swap(boost::uuids::random_generator()());
+			boost::uuids::uuid random_id = boost::uuids::random_generator()();
+			id.swap(random_id);
 			return id;
 		}
 	};
