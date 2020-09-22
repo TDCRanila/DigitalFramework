@@ -44,19 +44,19 @@ namespace DCore
 
         static void glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
         {
-            WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
-            WindowDimension& dim = user_data->_window_dimension;
+            WindowInstance* user_data   = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
+            WindowDimension& dim        = user_data->_window_dimension;
             
-            dim._current_width = a_width;
+            dim._current_width  = a_width;
             dim._current_height = a_height;
             
             int framebuffer_width, framebuffer_height;
             glfwGetFramebufferSize(user_data->_window, &framebuffer_width, &framebuffer_height);
-            dim._current_frame_width = framebuffer_width;
-            dim._current_frame_height = framebuffer_height;
+            dim._current_frame_width    = framebuffer_width;
+            dim._current_frame_height   = framebuffer_height;
             
-            INFOLOG("H: " << a_height << " W: " << a_width);
-            INFOLOG("fH: " << framebuffer_height << " fW: " << framebuffer_width);
+            INFOLOG("W: " << a_width << " H: " << a_height);
+            INFOLOG("fW: " << framebuffer_width << " fH: " << framebuffer_height);
         }
 
         static const char* glfw_set_clipboard_string(void* a_user_data, const char* a_text)
@@ -125,8 +125,8 @@ namespace DCore
     } // End of namespace ~ GLFWWindowCallBacks
 
     WindowDimension::WindowDimension()
-        : _current_height(1280)
-        , _current_width(720)
+        : _current_width(1280)
+        , _current_height(720)
         , _current_frame_height(1280)
         , _current_frame_width(720)
         , _current_x_pos(0)
@@ -183,8 +183,7 @@ namespace DCore
 
         // Set view 0 to the same dimensions as the window and to clear the color buffer.
         const bgfx::ViewId kClearView = 0;
-        bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR, 0x00cc6600);
-        bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
+        bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x00cc6600);
     }
 
     void WindowManagementSystem::TerminateWindowManagement()
