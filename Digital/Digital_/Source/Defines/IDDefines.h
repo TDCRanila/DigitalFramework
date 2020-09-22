@@ -8,5 +8,4 @@ namespace DCore
 	typedef DUID EntityID;
 	typedef DUID ComponentID;
 
-
 } // End of namespace ~ DCore
