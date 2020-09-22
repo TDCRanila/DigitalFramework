@@ -18,7 +18,7 @@
 ✔ DUID replacement @done(20-09-21 23:24)
 ✔ Window/Input clean up. @done(20-09-21 23:24)
 ✔ application act as a system provider, no store of system ptr in other classes(input, window management) @done(20-09-22 01:20)
-
+✔ Proper Production for github-mirror/gitlab #2. @done(20-09-22 02:10)
 
 Unknown:
 ☐ imgui layer cleanup
