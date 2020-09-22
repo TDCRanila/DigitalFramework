@@ -1,0 +1,35 @@
+
+19Sept:
+✘ WindowDimension -> WindowInformation @cancelled(20-09-20 17:27)
+- Do not agree anymore.
+✔ window callbacks @done(20-09-20 17:27)
+- Added callbacks that I will be useful in the future. Event hadling needs to be improved
+✔ imgui styling @done(20-09-20 17:27)
+- Looks nice now :)
+✔ uuid research @done(20-09-20 17:30)
+- Boost:uuids sounds useful and nice, although it will bloat project dependencies a bit more. Potentially looking for my own solution or something smaller.
+
+20Sept:
+✔ boost uuid + DUID class @done(20-09-20 17:27)
+- Decided on boost, implementation was nice, tested it on the Testbench and implemented it right away. Should now look at the project again to replace placeholder ids.
+✔ Proper Production for github-mirror/gitlab. @done(20-09-20 20:11)
+
+21Sept:
+✔ DUID replacement @done(20-09-21 23:24)
+✔ Window/Input clean up. @done(20-09-21 23:24)
+✔ application act as a system provider, no store of system ptr in other classes(input, window management) @done(20-09-22 01:20)
+
+
+Unknown:
+☐ imgui layer cleanup
+☐ Frame Loop
+☐ Event System Research
+- https://stackoverflow.com/questions/34154202/simple-event-system-in-c, https://blog.molecular-matters.com/2011/09/19/generic-type-safe-delegates-and-events-in-c/, https://www.gamedev.net/articles/programming/general-and-gameplay-programming/effective-event-handling-in-c-r2459/
+☐ model rendering (voxel)
+☐ texture rendering
+☐ rendering pipeline figured out
+☐ complete warning free
+
+☐ core ecs loop
+
+
