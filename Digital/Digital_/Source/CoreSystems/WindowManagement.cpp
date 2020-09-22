@@ -127,8 +127,8 @@ namespace DCore
     WindowDimension::WindowDimension()
         : _current_width(1280)
         , _current_height(720)
-        , _current_frame_height(1280)
-        , _current_frame_width(720)
+        , _current_frame_width(1280)
+        , _current_frame_height(720)
         , _current_x_pos(0)
         , _current_y_pos(0)
     {
@@ -184,6 +184,7 @@ namespace DCore
         // Set view 0 to the same dimensions as the window and to clear the color buffer.
         const bgfx::ViewId kClearView = 0;
         bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x00cc6600);
+        bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
     }
 
     void WindowManagementSystem::TerminateWindowManagement()
