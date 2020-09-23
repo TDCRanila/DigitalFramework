@@ -1,1 +1,2 @@
-☐ Startup Frame Buffer is wonky.
+✔ Startup Frame Buffer is wonky. @done(20-09-22 21:03)
+- Had to do with proper initialization of window dimensions for the windows.
