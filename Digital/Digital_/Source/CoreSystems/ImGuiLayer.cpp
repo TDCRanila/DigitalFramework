@@ -5,8 +5,10 @@
 #include <bx/math.h>
 #include <bx/timer.h>
 
-#include <CoreSystems/ImGuiLayer.h>
+#include <CoreSystems/WindowManagement.h>
+
 #include <Utility/TemplateUtility.h>
+
 #include <Defines/InputDefines.h>
 
  //#define USE_ENTRY 1
@@ -127,13 +129,19 @@ namespace DCore
 
 		_imgui_context = ImGui::CreateContext();
 
-		ImGuiIO& io = ImGui::GetIO();
+		SetupStyle();
 
+		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize = ImVec2(1280.0f, 720.0f);
 		io.DeltaTime = 1.0f / 60.0f;
 		io.IniFilename = NULL;
 
-		SetupStyle();
+		// CLipbord Callback Hooks
+		io.SetClipboardTextFn = WindowManagementSystem::GLFWWindowCallBacks::glfw_set_clipboard_string;
+		io.GetClipboardTextFn = WindowManagementSystem::GLFWWindowCallBacks::glfw_get_clipboard_string;
+
+		// Key Mappings
+		io.ConfigFlags |= 0 | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_NavEnableKeyboard;
 
 		io.KeyMap[ImGuiKey_Tab] = to_underlying(DKey::TAB);
 		io.KeyMap[ImGuiKey_LeftArrow] = to_underlying(DKey::LEFT);
@@ -156,12 +164,6 @@ namespace DCore
 		io.KeyMap[ImGuiKey_X] = to_underlying(DKey::X);
 		io.KeyMap[ImGuiKey_Y] = to_underlying(DKey::Y);
 		io.KeyMap[ImGuiKey_Z] = to_underlying(DKey::Z);
-
-		io.ConfigFlags |= 0 | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_NavEnableKeyboard;
-
-		// TODO Implement Clipboard 
-		// io.SetClipboardTextFn = ImGui_ImplGlfwGL3_SetClipboardText;
-		// io.GetClipboardTextFn = ImGui_ImplGlfwGL3_GetClipboardText;
 
 		//io.NavInputs[ImGuiNavInput_Activate] = (int)entry::Key::GamepadA;
 		//io.NavInputs[ImGuiNavInput_Cancel] = (int)entry::Key::GamepadB;
