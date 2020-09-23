@@ -13,63 +13,74 @@
 
 namespace DCore
 {
-
-    namespace GLFWWindowCallBacks
-    {
-        void glfw_error_callback(int error, const char* description)
+#pragma region GLFWWindowCallBacks
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_error_callback(int error, const char* description)
         {
             UNUSED(error);
             fprintf(stderr, "GLFW Error: %s\n", description);
         }
 
-        static void glfw_window_closed_callback(GLFWwindow* a_window)
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_closed_callback(GLFWwindow* a_window)
         {
+            WindowInstance* user_data       = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
+            user_data->_should_be_closed    = true;
+
+            ApplicationInstance::ProvideWindowManagement()->DestructWindow(user_data);
         }
 
-        static void glfw_window_focus_callback(GLFWwindow* a_window, int a_result)
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_focus_callback(GLFWwindow* a_window, int a_result)
         {
+            WindowInstance* user_data   = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
+            user_data->_is_focussed     = static_cast<bool>(a_result);
+
+            if (user_data->_is_focussed)
+                ApplicationInstance::ProvideWindowManagement()->SetFocussedWindowID(user_data->_id);
+            else
+                ApplicationInstance::ProvideWindowManagement()->SetFocussedWindowID(WindowID());
+
+            INFOLOG("YELP - result: " << a_result);
         }
 
-        static void glfw_window_iconify_callback(GLFWwindow* a_window, int a_result)
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_minimized_callback(GLFWwindow* a_window, int a_result)
         {
+            WindowInstance* user_data   = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
+            user_data->_is_minimized    = static_cast<bool>(a_result);
         }
 
-        static void glfw_window_closed_callback(GLFWwindow* a_window, int a_result)
-        {
-        }
-
-        static void glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos)
-        {
-        }
-
-        static void glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos)
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
             WindowDimension& dim = user_data->_window_dimension;
+
+            dim._current_x_pos = static_cast<int32>(a_x_pos);
+            dim._current_y_pos = static_cast<int32>(a_y_pos);
+        }
+
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
+        {
+            WindowInstance* user_data   = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
+            WindowDimension& dim        = user_data->_window_dimension;
             
-            dim._current_width = a_width;
-            dim._current_height = a_height;
+            dim._current_width  = static_cast<int32>(a_width);
+            dim._current_height = static_cast<int32>(a_height);
             
             int framebuffer_width, framebuffer_height;
             glfwGetFramebufferSize(user_data->_window, &framebuffer_width, &framebuffer_height);
-            dim._current_frame_width = framebuffer_width;
-            dim._current_frame_height = framebuffer_height;
-            
-            INFOLOG("H: " << a_height << " W: " << a_width);
-            INFOLOG("fH: " << framebuffer_height << " fW: " << framebuffer_width);
+            dim._current_frame_width    = framebuffer_width;
+            dim._current_frame_height   = framebuffer_height;
         }
 
-        static const char* glfw_set_clipboard_string(void* a_user_data, const char* a_text)
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_set_clipboard_string(void* a_user_data, const char* a_text)
         {
             glfwSetClipboardString(reinterpret_cast<GLFWwindow*>(a_user_data), a_text);
         }
 
-        static const char* glfw_get_clipboard_string(void* a_user_data)
+        const char* WindowManagementSystem::GLFWWindowCallBacks::glfw_get_clipboard_string(void* a_user_data)
         {
-            glfwGetClipboardString(reinterpret_cast<GLFWwindow*>(a_user_data));
+            return glfwGetClipboardString(reinterpret_cast<GLFWwindow*>(a_user_data));
         }
 
-        void glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods) 
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods)
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
@@ -81,7 +92,7 @@ namespace DCore
             ApplicationInstance::ProvideInputManagment()->SendKeyEvent(user_data->_id, key, scancode, action, modifier);
         }
 
-        void glfw_char_callback(GLFWwindow* a_window, unsigned int a_char)
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_char_callback(GLFWwindow* a_window, unsigned int a_char)
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
@@ -90,7 +101,7 @@ namespace DCore
             ApplicationInstance::ProvideInputManagment()->SendCharEvent(user_data->_id, character);
         }
 
-        void glfw_mousebutton_callback(GLFWwindow* a_window, int a_key, int a_action, int a_mods) 
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_mousebutton_callback(GLFWwindow* a_window, int a_key, int a_action, int a_mods)
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
@@ -102,7 +113,7 @@ namespace DCore
             ApplicationInstance::ProvideInputManagment()->SendMouseEvent(user_data->_id, key, undefined, action, modifier);
         }
 
-        void glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos) 
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos)
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
@@ -112,7 +123,7 @@ namespace DCore
             ApplicationInstance::ProvideInputManagment()->SendDirectionalEvent(user_data->_id, x_pos, y_pos);
         }
 
-        void glfw_scroll_callback(GLFWwindow* a_window, double a_x_offset, double a_y_offset) 
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_scroll_callback(GLFWwindow* a_window, double a_x_offset, double a_y_offset)
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
@@ -122,13 +133,13 @@ namespace DCore
             ApplicationInstance::ProvideInputManagment()->SendScrollEvent(user_data->_id, x_offset, y_offset);
         }
 
-    } // End of namespace ~ GLFWWindowCallBacks
+#pragma endregion
 
     WindowDimension::WindowDimension()
-        : _current_height(1280)
-        , _current_width(720)
-        , _current_frame_height(1280)
-        , _current_frame_width(720)
+        : _current_width(1280)
+        , _current_height(720)
+        , _current_frame_width(1280)
+        , _current_frame_height(720)
         , _current_x_pos(0)
         , _current_y_pos(0)
     {
@@ -136,10 +147,11 @@ namespace DCore
 
     WindowInstance::WindowInstance()  
         : _id(DUIDGenerator::GenerateID())
-        , _window()
         , _name("")
+        , _window(nullptr)
+        , _input_data(nullptr)
         , _should_be_closed(false)
-        , _is_iconified(false)
+        , _is_minimized(false)
         , _is_focussed(false)
     {
     }
@@ -183,7 +195,7 @@ namespace DCore
 
         // Set view 0 to the same dimensions as the window and to clear the color buffer.
         const bgfx::ViewId kClearView = 0;
-        bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR, 0x00cc6600);
+        bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x00cc6600);
         bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
     }
 
@@ -191,6 +203,11 @@ namespace DCore
     {
         bgfx::shutdown();
         glfwTerminate();
+    }
+
+    bool WindowManagementSystem::HaveAllWindowsBeenClosed() const
+    {
+        return _window_instances.size() <= 0;
     }
 
     const DUID WindowManagementSystem::GetMainWindow() const
@@ -208,14 +225,17 @@ namespace DCore
     {
         WindowInstance new_window;
 
-        ApplicationInstance::ProvideInputManagment()->RegisterWindow(new_window._id);
+        ApplicationInstance::ProvideInputManagment()->RegisterWindow(&new_window);
 
         GLFWwindow* glfw_window = glfwCreateWindow(a_width, a_height, a_name, NULL, NULL);
         new_window._window      = glfw_window;
         new_window._name        = a_name;
+        new_window._is_focussed = true;
+
+        SetFocussedWindowID(new_window._id);
 
         glfwSetWindowFocusCallback(glfw_window, GLFWWindowCallBacks::glfw_window_focus_callback);
-        glfwSetWindowIconifyCallback(glfw_window, GLFWWindowCallBacks::glfw_window_iconify_callback);
+        glfwSetWindowIconifyCallback(glfw_window, GLFWWindowCallBacks::glfw_window_minimized_callback);
 
         glfwSetWindowCloseCallback(glfw_window, GLFWWindowCallBacks::glfw_window_closed_callback);
 
@@ -228,7 +248,7 @@ namespace DCore
         glfwSetCursorPosCallback(glfw_window, GLFWWindowCallBacks::glfw_mouse_callback);
         glfwSetScrollCallback(glfw_window, GLFWWindowCallBacks::glfw_scroll_callback);
 
-        auto& [it_pair, result] =_window_instances.emplace(new_window._id, new_window);
+        auto [it_pair, result] =_window_instances.emplace(new_window._id, new_window);
         if (result)
         {
             return &(it_pair->second);
@@ -240,14 +260,6 @@ namespace DCore
         }
     }
 
-    void WindowManagementSystem::DestructWindow(std::string a_name)
-    {
-    }
-
-    void WindowManagementSystem::DestructWindow(const char* a_name)
-    {
-    }
-
     void WindowManagementSystem::ChangeDefaultWindowName(const std::string a_new_default_window_name)
     {
         ChangeDefaultWindowName(a_new_default_window_name.c_str());
@@ -256,6 +268,65 @@ namespace DCore
     void WindowManagementSystem::ChangeDefaultWindowName(const char* a_new_default_window_name)
     {
         _default_window_name = a_new_default_window_name;
+    }
+
+    const WindowInstance* WindowManagementSystem::CurrentFocussedWindow() const
+    {
+        auto it = _window_instances.find(_current_focussed_window_id);
+        if (it != _window_instances.end())
+        {
+            return &(*it).second;
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    bool WindowManagementSystem::IsWindowFocussed(WindowID a_window_id) const
+    {
+        return a_window_id == _current_focussed_window_id;
+    }
+
+    bool WindowManagementSystem::IsWindowMinimized(const WindowID a_window_id) const
+    {
+        auto it = _window_instances.find(a_window_id);
+        if (it != _window_instances.end())
+        {
+            return (*it).second._is_minimized;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void WindowManagementSystem::DestructWindow(WindowInstance* a_window)
+    {
+        if (a_window->_id == _current_focussed_window_id)
+            SetFocussedWindowID(WindowID());
+
+        glfwDestroyWindow(a_window->_window);
+
+        ApplicationInstance::ProvideInputManagment()->UnregisterWindow(a_window);
+
+        _window_instances.erase(a_window->_id);
+    }
+
+    void WindowManagementSystem::SetFocussedWindowID(WindowID a_window_id)
+    {
+        bool is_first       = _current_focussed_window_id.is_nil();
+        bool is_not_same    = a_window_id != _current_focussed_window_id;
+        if (!is_first && is_not_same)
+        {
+            auto it = _window_instances.find(_current_focussed_window_id);
+            if (it != _window_instances.end())
+            {
+                (*it).second._is_focussed = false;
+            }
+        }
+
+        _current_focussed_window_id = a_window_id;
     }
 
 } // End of namespace ~ DCore

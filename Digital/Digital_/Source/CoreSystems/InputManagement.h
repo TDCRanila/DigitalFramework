@@ -21,17 +21,9 @@ namespace DCore
 	{
 		InputData();
 
-		struct BufferedKey
-		{
-			BufferedKey(DKey a_key, DKeyAction a_action);
-
-			DKey		_key;
-			DKeyAction	_action;
-		};
-
-		std::array<bool, 1024>		_keys{false};
-		std::vector<BufferedKey>	_buffered_keys;
-		std::vector<uint32>			_buffered_characters;
+		std::array<bool, 1024>					_keys{false};
+		std::unordered_map<int32, DKeyAction>	_buffered_keys;
+		std::vector<uint32>						_buffered_characters;
 
 		glm::vec2 _cursor_position;
 		glm::vec2 _cursor_position_old;
@@ -59,15 +51,18 @@ namespace DCore
 		void DisableInput();
 
 		bool IsKeyPressed(DKey a_key) const;
+		bool IsKeyHeld(DKey a_key) const;
 		bool IsKeyReleased(DKey a_key) const;
 
 		bool IsKeyPressed(DMouse a_mouse_button) const;
+		bool IsKeyHeld(DMouse a_mouse_button) const;
 		bool IsKeyReleased(DMouse a_mouse_button) const;
 
-		bool IsKeyPressed(DJoy a_joykey) const;
-		bool IsKeyReleased(DJoy a_joykey) const;
+		bool IsKeyPressed(DJoy a_joykey_key) const;
+		bool IsKeyHeld(DJoy a_joykey_key) const;
+		bool IsKeyReleased(DJoy a_joykey_key) const;
 
-		bool HasKeyBeenPressed() const;
+		bool HasAnyKeyBeenPressed() const;
 		bool HasCursorMoved() const;
 		bool HasScrolled() const;
 
@@ -90,10 +85,11 @@ namespace DCore
 
 		friend class WindowManagementSystem;
 
-		void RegisterWindow(WindowID a_id);
+		void RegisterWindow(WindowInstance* a_window);
+		void UnregisterWindow(WindowInstance* a_window);
 
 	private:
-		 
+		
 		enum class KeyEventType
 		{
 			DEFAULT		= 0,
@@ -138,6 +134,10 @@ namespace DCore
 			float32 _scroll_y_offset;
 		};
 
+		bool IsKeyPressed(int32 a_key) const;
+		bool IsKeyHeld(int32 a_key) const;
+		bool IsKeyReleased(int32 a_key) const;
+		
 		void ClearInputDataBuffers();
 
 		std::unordered_map<WindowID, InputData> _input_data_storage;

@@ -1,13 +1,9 @@
 #include <CoreSystems/InputManagement.h>
 
+#include <CoreSystems/ApplicationInstance.h>
+
 namespace DCore
 {
-	InputData::BufferedKey::BufferedKey(DKey a_key, DKeyAction a_action)
-		:	_key(a_key)
-		,	_action(a_action)
-	{
-	}
-
 	InputData::InputData() 
 		: _cursor_position(0.0f)
 		, _cursor_position_old(0.0f)
@@ -42,6 +38,51 @@ namespace DCore
 		_is_input_enabled = false;
 	}
 
+	bool InputManagementSystem::IsKeyPressed(DKey a_key) const
+	{
+		return IsKeyPressed(to_underlying(a_key));
+	}
+
+	bool InputManagementSystem::IsKeyHeld(DKey a_key) const
+	{
+		return IsKeyHeld(to_underlying(a_key));
+	}
+
+	bool InputManagementSystem::IsKeyReleased(DKey a_key) const
+	{
+		return IsKeyReleased(to_underlying(a_key));
+	}
+
+	bool InputManagementSystem::IsKeyPressed(DMouse a_mouse_button) const
+	{
+		return IsKeyPressed(to_underlying(a_mouse_button));
+	}
+
+	bool InputManagementSystem::IsKeyHeld(DMouse a_mouse_button) const
+	{
+		return IsKeyHeld(to_underlying(a_mouse_button));
+	}
+
+	bool InputManagementSystem::IsKeyReleased(DMouse a_mouse_button) const
+	{
+		return IsKeyReleased(to_underlying(a_mouse_button));
+	}
+
+	bool InputManagementSystem::IsKeyPressed(DJoy a_joykey_key) const
+	{
+		return IsKeyPressed(to_underlying(a_joykey_key));
+	}
+
+	bool InputManagementSystem::IsKeyHeld(DJoy a_joykey_key) const
+	{
+		return IsKeyHeld(to_underlying(a_joykey_key));
+	}
+
+	bool InputManagementSystem::IsKeyReleased(DJoy a_joykey_key) const
+	{
+		return IsKeyReleased(to_underlying(a_joykey_key));
+	}
+
 	void InputManagementSystem::ProcessInputEvents()
 	{
 		ClearInputDataBuffers();
@@ -64,7 +105,7 @@ namespace DCore
 					DKey defined_key			= static_cast<DKey>(key_event._key);
 					DKeyAction defined_action	= static_cast<DKeyAction>(key_event._action);
 
-					data._buffered_keys.emplace_back(defined_key, defined_action);
+					data._buffered_keys.emplace(to_underlying(defined_key), defined_action);
 					data._keys[key_event._key] = true;
 				}
 				else if (key_event._action == to_underlying(DKeyAction::RELEASED))
@@ -72,7 +113,7 @@ namespace DCore
 					DKey defined_key			= static_cast<DKey>(key_event._key);
 					DKeyAction defined_action	= static_cast<DKeyAction>(key_event._action);
 
-					data._buffered_keys.emplace_back(defined_key, defined_action);
+					data._buffered_keys.emplace(to_underlying(defined_key), defined_action);
 					data._keys[key_event._key] = false;
 				}
 				break;
@@ -185,9 +226,67 @@ namespace DCore
 		}
 	}
 
-	void InputManagementSystem::RegisterWindow(WindowID a_id)
+	void InputManagementSystem::RegisterWindow(WindowInstance* a_window)
 	{
-		_input_data_storage.emplace(a_id, InputData());
+		InputData& data = _input_data_storage[a_window->_id];
+		a_window->_input_data = &data;
+	}
+
+	void InputManagementSystem::UnregisterWindow(WindowInstance* a_window)
+	{
+		_input_data_storage.erase(a_window->_id);
+	}
+
+	bool InputManagementSystem::IsKeyPressed(int32 a_key) const
+	{
+		const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
+		if (focussed_window && focussed_window->_input_data)
+		{
+			const InputData& data = *focussed_window->_input_data;
+
+			auto it_key = data._buffered_keys.find(a_key);
+			if (it_key != data._buffered_keys.end())
+			{
+				if ((*it_key).second == DKeyAction::PRESSED)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	bool InputManagementSystem::IsKeyHeld(int32 a_key) const
+	{
+		const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
+		if (focussed_window && focussed_window->_input_data)
+		{
+			const InputData& data = *focussed_window->_input_data;
+			return data._keys[a_key];
+		}
+
+		return false;
+	}
+
+	bool InputManagementSystem::IsKeyReleased(int32 a_key) const
+	{
+		const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
+		if (focussed_window && focussed_window->_input_data)
+		{
+			const InputData& data = *focussed_window->_input_data;
+
+			auto it_key = data._buffered_keys.find(a_key);
+			if (it_key != data._buffered_keys.end())
+			{
+				if ((*it_key).second == DKeyAction::RELEASED)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	void InputManagementSystem::ClearInputDataBuffers()
