@@ -37,8 +37,6 @@ namespace DCore
                 ApplicationInstance::ProvideWindowManagement()->SetFocussedWindowID(user_data->_id);
             else
                 ApplicationInstance::ProvideWindowManagement()->SetFocussedWindowID(WindowID());
-
-            INFOLOG("YELP - result: " << a_result);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_minimized_callback(GLFWwindow* a_window, int a_result)
