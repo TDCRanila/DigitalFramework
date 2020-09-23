@@ -448,7 +448,7 @@ struct OcornutImguiContext
 
 		for (auto const& [key, action] : a_input_data._buffered_keys)
 		{
-			int32 pressed_key	= to_underlying(key);
+			int32 pressed_key	= key;
 			int32 max_mouse_key = to_underlying(DMouse::BUTTON_6);
 			if (action == DKeyAction::PRESSED)
 			{
