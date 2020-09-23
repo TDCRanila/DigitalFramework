@@ -1,38 +1,30 @@
-/*
- * Copyright 2014-2015 Daniel Collin. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
- */
+#include <CoreSystems/ImGuiLayer.h>
 
-#include <bgfx/bgfx.h>
 #include <bgfx/embedded_shader.h>
 #include <bx/allocator.h>
 #include <bx/math.h>
 #include <bx/timer.h>
-#include <imgui/imgui.h>
-#include <imgui/imgui_user.h>
 
-#include <CoreSystems/WindowManagement.h>
-#include <CoreSystems/InputManagement.h> 
 #include <CoreSystems/ImGuiLayer.h>
 #include <Utility/TemplateUtility.h>
 #include <Defines/InputDefines.h>
 
  //#define USE_ENTRY 1
 
-#ifndef USE_ENTRY
-#	define USE_ENTRY 0
-#endif // USE_ENTRY
-
-#if USE_ENTRY
-#	include "../entry/entry.h"
-#	include "../entry/input.h"
-#endif // USE_ENTRY
+//#ifndef USE_ENTRY
+//#	define USE_ENTRY 0
+//#endif // USE_ENTRY
+//
+//#if USE_ENTRY
+//#	include "../entry/entry.h"
+//#	include "../entry/input.h"
+//#endif // USE_ENTRY
 
 #include <imgui/resources/vs_ocornut_imgui.bin.h>
 #include <imgui/resources/fs_ocornut_imgui.bin.h>
 #include <imgui/resources/vs_imgui_image.bin.h>
 #include <imgui/resources/fs_imgui_image.bin.h>
-
+ 
 #include <imgui/resources/roboto_regular.ttf.h>
 #include <imgui/resources/robotomono_regular.ttf.h>
 #include <imgui/resources/icons_kenney.ttf.h>
@@ -67,9 +59,6 @@ static FontRangeMerge s_fontRangeMerge[] =
 	{ s_iconsFontAwesomeTtf, sizeof(s_iconsFontAwesomeTtf), { ICON_MIN_FA, ICON_MAX_FA, 0 } },
 };
 
-static void* memAlloc(size_t _size, void* _userData);
-static void memFree(void* _ptr, void* _userData);
-
 /// Returns true if both internal transient index and vertex buffer have
 /// enough space.
 ///
@@ -84,124 +73,59 @@ inline bool checkAvailTransientBuffers(uint32_t _numVertices, const bgfx::Vertex
 		;
 }
 
-struct OcornutImguiContext
+static void* memAlloc(size_t _size, void* _userData)
 {
-	void render(ImDrawData* _drawData)
+	BX_UNUSED(_userData);
+	return BX_ALLOC(DCore::ImGuiLayer::_imgui_context._allocator, _size);
+}
+
+static void memFree(void* _ptr, void* _userData)
+{
+	BX_UNUSED(_userData);
+	BX_FREE(DCore::ImGuiLayer::_imgui_context._allocator, _ptr);
+}
+
+namespace DCore
+{
+	OcornutImguiContext ImGuiLayer::_imgui_context;
+
+	void ImGuiLayer::CreateContext(float32 a_fontSize, bx::AllocatorI* a_allocator)
 	{
-		const ImGuiIO& io = ImGui::GetIO();
-		const float width = io.DisplaySize.x;
-		const float height = io.DisplaySize.y;
-
-		bgfx::setViewName(m_viewId, "ImGui");
-		bgfx::setViewMode(m_viewId, bgfx::ViewMode::Sequential);
-
-		const bgfx::Caps* caps = bgfx::getCaps();
-		{
-			float ortho[16];
-			bx::mtxOrtho(ortho, 0.0f, width, height, 0.0f, 0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
-			bgfx::setViewTransform(m_viewId, NULL, ortho);
-			bgfx::setViewRect(m_viewId, 0, 0, uint16_t(width), uint16_t(height));
-		}
-
-		// Render command lists
-		for (int32_t ii = 0, num = _drawData->CmdListsCount; ii < num; ++ii)
-		{
-			bgfx::TransientVertexBuffer tvb;
-			bgfx::TransientIndexBuffer tib;
-
-			const ImDrawList* drawList = _drawData->CmdLists[ii];
-			uint32_t numVertices = (uint32_t)drawList->VtxBuffer.size();
-			uint32_t numIndices = (uint32_t)drawList->IdxBuffer.size();
-
-			if (!checkAvailTransientBuffers(numVertices, m_layout, numIndices))
-			{
-				// not enough space in transient buffer just quit drawing the rest...
-				break;
-			}
-
-			bgfx::allocTransientVertexBuffer(&tvb, numVertices, m_layout);
-			bgfx::allocTransientIndexBuffer(&tib, numIndices);
-
-			ImDrawVert* verts = (ImDrawVert*)tvb.data;
-			bx::memCopy(verts, drawList->VtxBuffer.begin(), numVertices * sizeof(ImDrawVert));
-
-			ImDrawIdx* indices = (ImDrawIdx*)tib.data;
-			bx::memCopy(indices, drawList->IdxBuffer.begin(), numIndices * sizeof(ImDrawIdx));
-
-			uint32_t offset = 0;
-			for (const ImDrawCmd* cmd = drawList->CmdBuffer.begin(), *cmdEnd = drawList->CmdBuffer.end(); cmd != cmdEnd; ++cmd)
-			{
-				if (cmd->UserCallback)
-				{
-					cmd->UserCallback(drawList, cmd);
-				}
-				else if (0 != cmd->ElemCount)
-				{
-					uint64_t state = 0
-						| BGFX_STATE_WRITE_RGB
-						| BGFX_STATE_WRITE_A
-						| BGFX_STATE_MSAA
-						;
-
-					bgfx::TextureHandle th = m_texture;
-					bgfx::ProgramHandle program = m_program;
-
-					if (NULL != cmd->TextureId)
-					{
-						union { ImTextureID ptr; struct { bgfx::TextureHandle handle; uint8_t flags; uint8_t mip; } s; } texture = { cmd->TextureId };
-						state |= 0 != (IMGUI_FLAGS_ALPHA_BLEND & texture.s.flags)
-							? BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
-							: BGFX_STATE_NONE
-							;
-						th = texture.s.handle;
-						if (0 != texture.s.mip)
-						{
-							const float lodEnabled[4] = { float(texture.s.mip), 1.0f, 0.0f, 0.0f };
-							bgfx::setUniform(u_imageLodEnabled, lodEnabled);
-							program = m_imageProgram;
-						}
-					}
-					else
-					{
-						state |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
-					}
-
-					const uint16_t xx = uint16_t(bx::max(cmd->ClipRect.x, 0.0f));
-					const uint16_t yy = uint16_t(bx::max(cmd->ClipRect.y, 0.0f));
-					bgfx::setScissor(xx, yy
-						, uint16_t(bx::min(cmd->ClipRect.z, 65535.0f) - xx)
-						, uint16_t(bx::min(cmd->ClipRect.w, 65535.0f) - yy)
-					);
-
-					bgfx::setState(state);
-					bgfx::setTexture(0, s_tex, th);
-					bgfx::setVertexBuffer(0, &tvb, 0, numVertices);
-					bgfx::setIndexBuffer(&tib, offset, cmd->ElemCount);
-					bgfx::submit(m_viewId, program);
-				}
-
-				offset += cmd->ElemCount;
-			}
-		}
+		_imgui_context.Create(a_fontSize, a_allocator);
 	}
 
-	void create(float _fontSize, bx::AllocatorI* _allocator)
+	void ImGuiLayer::DestroyContext()
 	{
-		m_allocator = _allocator;
+		_imgui_context.Destroy();
+	}
+
+	void ImGuiLayer::BeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId a_view_id)
+	{
+		_imgui_context.BeginFrame(a_input_data, a_window_dimension, a_view_id);
+	}
+
+	void ImGuiLayer::EndFrame()
+	{
+		_imgui_context.EndFrame();
+	}
+
+	void OcornutImguiContext::Create(float32 a_font_size, bx::AllocatorI* a_allocator)
+	{
+		_allocator = a_allocator;
 
 		if (NULL == _allocator)
 		{
 			static bx::DefaultAllocator allocator;
-			m_allocator = &allocator;
+			_allocator = &allocator;
 		}
 
-		m_viewId = 255;
-		m_lastScroll = 0;
-		m_last = bx::getHPCounter();
+		_view_id = 255;
+		_last_scroll = 0;
+		_last = bx::getHPCounter();
 
 		ImGui::SetAllocatorFunctions(memAlloc, memFree, NULL);
 
-		m_imgui = ImGui::CreateContext();
+		_imgui_context = ImGui::CreateContext();
 
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -209,29 +133,29 @@ struct OcornutImguiContext
 		io.DeltaTime = 1.0f / 60.0f;
 		io.IniFilename = NULL;
 
-		setupStyle(true);
+		SetupStyle();
 
-		io.KeyMap[ImGuiKey_Tab]			= to_underlying(DKey::TAB);
-		io.KeyMap[ImGuiKey_LeftArrow]	= to_underlying(DKey::LEFT);
-		io.KeyMap[ImGuiKey_RightArrow]	= to_underlying(DKey::RIGHT);
-		io.KeyMap[ImGuiKey_UpArrow]		= to_underlying(DKey::UP);
-		io.KeyMap[ImGuiKey_DownArrow]	= to_underlying(DKey::DOWN);
-		io.KeyMap[ImGuiKey_PageUp]		= to_underlying(DKey::PAGE_UP);
-		io.KeyMap[ImGuiKey_PageDown]	= to_underlying(DKey::PAGE_DOWN);
-		io.KeyMap[ImGuiKey_Home]		= to_underlying(DKey::HOME);
-		io.KeyMap[ImGuiKey_End]			= to_underlying(DKey::END);
-		io.KeyMap[ImGuiKey_Insert]		= to_underlying(DKey::INSERT);
-		io.KeyMap[ImGuiKey_Delete]		= to_underlying(DKey::KDELETE);
-		io.KeyMap[ImGuiKey_Backspace]	= to_underlying(DKey::BACKSPACE);
-		io.KeyMap[ImGuiKey_Space]		= to_underlying(DKey::SPACE);
-		io.KeyMap[ImGuiKey_Enter]		= to_underlying(DKey::ENTER);
-		io.KeyMap[ImGuiKey_Escape]		= to_underlying(DKey::ESCAPE);
-		io.KeyMap[ImGuiKey_A]			= to_underlying(DKey::A);
-		io.KeyMap[ImGuiKey_C]			= to_underlying(DKey::C);
-		io.KeyMap[ImGuiKey_V]			= to_underlying(DKey::V);
-		io.KeyMap[ImGuiKey_X]			= to_underlying(DKey::X);
-		io.KeyMap[ImGuiKey_Y]			= to_underlying(DKey::Y);
-		io.KeyMap[ImGuiKey_Z]			= to_underlying(DKey::Z);
+		io.KeyMap[ImGuiKey_Tab] = to_underlying(DKey::TAB);
+		io.KeyMap[ImGuiKey_LeftArrow] = to_underlying(DKey::LEFT);
+		io.KeyMap[ImGuiKey_RightArrow] = to_underlying(DKey::RIGHT);
+		io.KeyMap[ImGuiKey_UpArrow] = to_underlying(DKey::UP);
+		io.KeyMap[ImGuiKey_DownArrow] = to_underlying(DKey::DOWN);
+		io.KeyMap[ImGuiKey_PageUp] = to_underlying(DKey::PAGE_UP);
+		io.KeyMap[ImGuiKey_PageDown] = to_underlying(DKey::PAGE_DOWN);
+		io.KeyMap[ImGuiKey_Home] = to_underlying(DKey::HOME);
+		io.KeyMap[ImGuiKey_End] = to_underlying(DKey::END);
+		io.KeyMap[ImGuiKey_Insert] = to_underlying(DKey::INSERT);
+		io.KeyMap[ImGuiKey_Delete] = to_underlying(DKey::KDELETE);
+		io.KeyMap[ImGuiKey_Backspace] = to_underlying(DKey::BACKSPACE);
+		io.KeyMap[ImGuiKey_Space] = to_underlying(DKey::SPACE);
+		io.KeyMap[ImGuiKey_Enter] = to_underlying(DKey::ENTER);
+		io.KeyMap[ImGuiKey_Escape] = to_underlying(DKey::ESCAPE);
+		io.KeyMap[ImGuiKey_A] = to_underlying(DKey::A);
+		io.KeyMap[ImGuiKey_C] = to_underlying(DKey::C);
+		io.KeyMap[ImGuiKey_V] = to_underlying(DKey::V);
+		io.KeyMap[ImGuiKey_X] = to_underlying(DKey::X);
+		io.KeyMap[ImGuiKey_Y] = to_underlying(DKey::Y);
+		io.KeyMap[ImGuiKey_Z] = to_underlying(DKey::Z);
 
 		io.ConfigFlags |= 0 | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_NavEnableKeyboard;
 
@@ -257,20 +181,20 @@ struct OcornutImguiContext
 		//		io.NavInputs[ImGuiNavInput_TweakFast]   = (int)entry::Key::;
 
 		bgfx::RendererType::Enum type = bgfx::getRendererType();
-		m_program = bgfx::createProgram(
+		_program = bgfx::createProgram(
 			bgfx::createEmbeddedShader(s_embeddedShaders, type, "vs_ocornut_imgui")
 			, bgfx::createEmbeddedShader(s_embeddedShaders, type, "fs_ocornut_imgui")
 			, true
 		);
 
 		u_imageLodEnabled = bgfx::createUniform("u_imageLodEnabled", bgfx::UniformType::Vec4);
-		m_imageProgram = bgfx::createProgram(
+		_image_program = bgfx::createProgram(
 			bgfx::createEmbeddedShader(s_embeddedShaders, type, "vs_imgui_image")
 			, bgfx::createEmbeddedShader(s_embeddedShaders, type, "fs_imgui_image")
 			, true
 		);
 
-		m_layout
+		_layout
 			.begin()
 			.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
 			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
@@ -289,11 +213,11 @@ struct OcornutImguiContext
 			//			config.MergeGlyphCenterV = true;
 
 			const ImWchar* ranges = io.Fonts->GetGlyphRangesCyrillic();
-			m_font[ImGui::Font::Regular] = io.Fonts->AddFontFromMemoryTTF((void*)s_robotoRegularTtf, sizeof(s_robotoRegularTtf), _fontSize, &config, ranges);
-			m_font[ImGui::Font::Mono] = io.Fonts->AddFontFromMemoryTTF((void*)s_robotoMonoRegularTtf, sizeof(s_robotoMonoRegularTtf), _fontSize - 3.0f, &config, ranges);
+			_font[ImGui::Font::Regular] = io.Fonts->AddFontFromMemoryTTF((void*)s_robotoRegularTtf, sizeof(s_robotoRegularTtf), a_font_size, &config, ranges);
+			_font[ImGui::Font::Mono] = io.Fonts->AddFontFromMemoryTTF((void*)s_robotoMonoRegularTtf, sizeof(s_robotoMonoRegularTtf), a_font_size - 3.0f, &config, ranges);
 
 			config.MergeMode = true;
-			config.DstFont = m_font[ImGui::Font::Regular];
+			config.DstFont = _font[ImGui::Font::Regular];
 
 			for (uint32_t ii = 0; ii < BX_COUNTOF(s_fontRangeMerge); ++ii)
 			{
@@ -301,7 +225,7 @@ struct OcornutImguiContext
 
 				io.Fonts->AddFontFromMemoryTTF((void*)frm.data
 					, (int)frm.size
-					, _fontSize - 3.0f
+					, a_font_size - 3.0f
 					, &config
 					, frm.ranges
 				);
@@ -310,7 +234,7 @@ struct OcornutImguiContext
 
 		io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
 
-		m_texture = bgfx::createTexture2D(
+		_texture_handle = bgfx::createTexture2D(
 			(uint16_t)width
 			, (uint16_t)height
 			, false
@@ -319,112 +243,129 @@ struct OcornutImguiContext
 			, 0
 			, bgfx::copy(data, width * height * 4)
 		);
-		
+
 		// TODO ImGui Dock
 		//ImGui::InitDockContext();
 	}
 
-	void destroy()
+	void OcornutImguiContext::Destroy()
 	{
 		// TODO ImGui Dock
 		//ImGui::ShutdownDockContext();
-		ImGui::DestroyContext(m_imgui);
+		ImGui::DestroyContext(_imgui_context);
 
 		bgfx::destroy(s_tex);
-		bgfx::destroy(m_texture);
+		bgfx::destroy(_texture_handle);
 
 		bgfx::destroy(u_imageLodEnabled);
-		bgfx::destroy(m_imageProgram);
-		bgfx::destroy(m_program);
+		bgfx::destroy(_image_program);
+		bgfx::destroy(_program);
 
-		m_allocator = NULL;
+		_allocator = NULL;
 	}
-
-	void setupStyle(bool _dark)
+	
+	void OcornutImguiContext::Render(ImDrawData* a_draw_data)
 	{
-		// TODO: add Invert/Light Version
-		UNUSED(_dark);
-		// Style: https://github.com/ocornut/imgui/issues/707#issuecomment-670976818
-		constexpr auto ColourFromBytes = [](uint8 r, uint8 g, uint8 b)
+		const ImGuiIO& io = ImGui::GetIO();
+		const float width = io.DisplaySize.x;
+		const float height = io.DisplaySize.y;
+
+		bgfx::setViewName(_view_id, "ImGui");
+		bgfx::setViewMode(_view_id, bgfx::ViewMode::Sequential);
+
+		const bgfx::Caps* caps = bgfx::getCaps();
 		{
-			return ImVec4(static_cast<float32>(r) / 255.0f, static_cast<float32>(g) / 255.0f, static_cast<float32>(b) / 255.0f, 1.0f);
-		};
+			float ortho[16];
+			bx::mtxOrtho(ortho, 0.0f, width, height, 0.0f, 0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
+			bgfx::setViewTransform(_view_id, NULL, ortho);
+			bgfx::setViewRect(_view_id, 0, 0, uint16_t(width), uint16_t(height));
+		}
 
-		ImGuiStyle& style		= ImGui::GetStyle();
-		ImVec4* colours			= style.Colors;
+		// Render command lists
+		for (int32_t ii = 0, num = a_draw_data->CmdListsCount; ii < num; ++ii)
+		{
+			bgfx::TransientVertexBuffer tvb;
+			bgfx::TransientIndexBuffer tib;
 
-		const ImVec4 bgColor			= ColourFromBytes(30, 30, 31);
-		const ImVec4 lightBgColor		= ColourFromBytes(72, 72, 75);
-		const ImVec4 veryLightBgColor	= ColourFromBytes(80, 80, 85);
+			const ImDrawList* drawList = a_draw_data->CmdLists[ii];
+			uint32_t numVertices = (uint32_t)drawList->VtxBuffer.size();
+			uint32_t numIndices = (uint32_t)drawList->IdxBuffer.size();
 
-		const ImVec4 panelColor			= ColourFromBytes(41, 41, 45);
-		const ImVec4 panelHoverColor	= ColourFromBytes(245, 80, 0);
-		const ImVec4 panelActiveColor	= ColourFromBytes(190, 55, 10);
+			if (!checkAvailTransientBuffers(numVertices, _layout, numIndices))
+			{
+				// not enough space in transient buffer just quit drawing the rest...
+				break;
+			}
 
-		const ImVec4 textColor			= ColourFromBytes(255, 255, 255);
-		const ImVec4 textDisabledColor	= ColourFromBytes(151, 151, 151);
-		const ImVec4 borderColor		= ColourFromBytes(78, 78, 78);
+			bgfx::allocTransientVertexBuffer(&tvb, numVertices, _layout);
+			bgfx::allocTransientIndexBuffer(&tib, numIndices);
 
-		colours[ImGuiCol_Text]					= textColor;
-		colours[ImGuiCol_TextDisabled]			= textDisabledColor;
-		colours[ImGuiCol_TextSelectedBg]		= panelActiveColor;
-		colours[ImGuiCol_WindowBg]				= bgColor;
-		colours[ImGuiCol_ChildBg]				= bgColor;
-		colours[ImGuiCol_PopupBg]				= bgColor;
-		colours[ImGuiCol_Border]				= borderColor;
-		colours[ImGuiCol_BorderShadow]			= borderColor;
-		colours[ImGuiCol_FrameBg]				= panelColor;
-		colours[ImGuiCol_FrameBgHovered]		= panelHoverColor;
-		colours[ImGuiCol_FrameBgActive]			= panelActiveColor;
-		colours[ImGuiCol_TitleBg]				= bgColor;
-		colours[ImGuiCol_TitleBgActive]			= bgColor;
-		colours[ImGuiCol_TitleBgCollapsed]		= bgColor;
-		colours[ImGuiCol_MenuBarBg]				= panelColor;
-		colours[ImGuiCol_ScrollbarBg]			= panelColor;
-		colours[ImGuiCol_ScrollbarGrab]			= lightBgColor;
-		colours[ImGuiCol_ScrollbarGrabHovered]	= veryLightBgColor;
-		colours[ImGuiCol_ScrollbarGrabActive]	= veryLightBgColor;
-		colours[ImGuiCol_CheckMark]				= panelActiveColor;
-		colours[ImGuiCol_SliderGrab]			= panelHoverColor;
-		colours[ImGuiCol_SliderGrabActive]		= panelActiveColor;
-		colours[ImGuiCol_Button]				= panelColor;
-		colours[ImGuiCol_ButtonHovered]			= panelHoverColor;
-		colours[ImGuiCol_ButtonActive]			= panelHoverColor;
-		colours[ImGuiCol_Header]				= panelColor;
-		colours[ImGuiCol_HeaderHovered]			= panelHoverColor;
-		colours[ImGuiCol_HeaderActive]			= panelActiveColor;
-		colours[ImGuiCol_Separator]				= borderColor;
-		colours[ImGuiCol_SeparatorHovered]		= borderColor;
-		colours[ImGuiCol_SeparatorActive]		= borderColor;
-		colours[ImGuiCol_ResizeGrip]			= bgColor;
-		colours[ImGuiCol_ResizeGripHovered]		= panelColor;
-		colours[ImGuiCol_ResizeGripActive]		= lightBgColor;
-		colours[ImGuiCol_PlotLines]				= panelActiveColor;
-		colours[ImGuiCol_PlotLinesHovered]		= panelHoverColor;
-		colours[ImGuiCol_PlotHistogram]			= panelActiveColor;
-		colours[ImGuiCol_PlotHistogramHovered]	= panelHoverColor;
-		colours[ImGuiCol_ModalWindowDarkening]	= bgColor;
-		colours[ImGuiCol_DragDropTarget]		= bgColor;
-		colours[ImGuiCol_NavHighlight]			= bgColor;
-		//colours[ImGuiCol_DockingPreview]		= panelActiveColor;
-		colours[ImGuiCol_Tab]					= bgColor;
-		colours[ImGuiCol_TabActive]				= panelActiveColor;
-		colours[ImGuiCol_TabUnfocused]			= bgColor;
-		colours[ImGuiCol_TabUnfocusedActive]	= panelActiveColor;
-		colours[ImGuiCol_TabHovered]			= panelHoverColor;
+			ImDrawVert* verts = (ImDrawVert*)tvb.data;
+			bx::memCopy(verts, drawList->VtxBuffer.begin(), numVertices * sizeof(ImDrawVert));
 
-		style.WindowRounding	= 0.0f;
-		style.ChildRounding		= 0.0f;
-		style.FrameRounding		= 0.0f;
-		style.GrabRounding		= 0.0f;
-		style.PopupRounding		= 0.0f;
-		style.ScrollbarRounding = 0.0f;
-		style.TabRounding		= 0.0f;
+			ImDrawIdx* indices = (ImDrawIdx*)tib.data;
+			bx::memCopy(indices, drawList->IdxBuffer.begin(), numIndices * sizeof(ImDrawIdx));
+
+			uint32_t offset = 0;
+			for (const ImDrawCmd* cmd = drawList->CmdBuffer.begin(), *cmdEnd = drawList->CmdBuffer.end(); cmd != cmdEnd; ++cmd)
+			{
+				if (cmd->UserCallback)
+				{
+					cmd->UserCallback(drawList, cmd);
+				}
+				else if (0 != cmd->ElemCount)
+				{
+					uint64_t state = 0
+						| BGFX_STATE_WRITE_RGB
+						| BGFX_STATE_WRITE_A
+						| BGFX_STATE_MSAA
+						;
+
+					bgfx::TextureHandle th = _texture_handle;
+					bgfx::ProgramHandle program = _program;
+
+					if (NULL != cmd->TextureId)
+					{
+						union { ImTextureID ptr; struct { bgfx::TextureHandle handle; uint8_t flags; uint8_t mip; } s; } texture = { cmd->TextureId };
+						state |= 0 != (IMGUI_FLAGS_ALPHA_BLEND & texture.s.flags)
+							? BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
+							: BGFX_STATE_NONE
+							;
+						th = texture.s.handle;
+						if (0 != texture.s.mip)
+						{
+							const float lodEnabled[4] = { float(texture.s.mip), 1.0f, 0.0f, 0.0f };
+							bgfx::setUniform(u_imageLodEnabled, lodEnabled);
+							program = _image_program;
+						}
+					}
+					else
+					{
+						state |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
+					}
+
+					const uint16_t xx = uint16_t(bx::max(cmd->ClipRect.x, 0.0f));
+					const uint16_t yy = uint16_t(bx::max(cmd->ClipRect.y, 0.0f));
+					bgfx::setScissor(xx, yy
+						, uint16_t(bx::min(cmd->ClipRect.z, 65535.0f) - xx)
+						, uint16_t(bx::min(cmd->ClipRect.w, 65535.0f) - yy)
+					);
+
+					bgfx::setState(state);
+					bgfx::setTexture(0, s_tex, th);
+					bgfx::setVertexBuffer(0, &tvb, 0, numVertices);
+					bgfx::setIndexBuffer(&tib, offset, cmd->ElemCount);
+					bgfx::submit(_view_id, program);
+				}
+
+				offset += cmd->ElemCount;
+			}
+		}
 	}
 
-	void beginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId _viewId)
+	void OcornutImguiContext::BeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId a_view_id)
 	{
-		m_viewId = _viewId;
+		_view_id = a_view_id;
 
 		ImGuiIO& io = ImGui::GetIO();
 		for (const uint32& c : a_input_data._buffered_characters)
@@ -439,8 +380,8 @@ struct OcornutImguiContext
 		io.DisplayFramebufferScale = ImVec2(a_window_dimension._current_width > 0 ? ((float)a_window_dimension._current_frame_width / a_window_dimension._current_width) : 0, a_window_dimension._current_height > 0 ? ((float)a_window_dimension._current_frame_height / a_window_dimension._current_height) : 0);
 
 		const int64_t now = bx::getHPCounter();
-		const int64_t frameTime = now - m_last;
-		m_last = now;
+		const int64_t frameTime = now - _last;
+		_last = now;
 		const double freq = double(bx::getHPFrequency());
 		io.DeltaTime = float(frameTime / freq);
 
@@ -448,7 +389,7 @@ struct OcornutImguiContext
 
 		for (auto const& [key, action] : a_input_data._buffered_keys)
 		{
-			int32 pressed_key	= key;
+			int32 pressed_key = key;
 			int32 max_mouse_key = to_underlying(DMouse::BUTTON_6);
 			if (action == DKeyAction::PRESSED)
 			{
@@ -464,13 +405,13 @@ struct OcornutImguiContext
 			}
 		}
 
-		io.MouseWheel	= static_cast<float>(a_input_data._scroll_offset.y - m_lastScroll);
-		m_lastScroll	= static_cast<int32_t>(a_input_data._scroll_offset.y);
+		io.MouseWheel = static_cast<float>(a_input_data._scroll_offset.y - _last_scroll);
+		_last_scroll = static_cast<int32_t>(a_input_data._scroll_offset.y);
 
-		io.KeyCtrl		= io.KeysDown[to_underlying(DKey::LEFT_CONTROL)]	|| io.KeysDown[to_underlying(DKey::RIGHT_CONTROL)];
-		io.KeyShift		= io.KeysDown[to_underlying(DKey::LEFT_SHIFT)]		|| io.KeysDown[to_underlying(DKey::RIGHT_SHIFT)];
-		io.KeyAlt		= io.KeysDown[to_underlying(DKey::LEFT_ALT)]		|| io.KeysDown[to_underlying(DKey::RIGHT_ALT)];
-		io.KeySuper		= io.KeysDown[to_underlying(DKey::LEFT_SUPER)]		|| io.KeysDown[to_underlying(DKey::RIGHT_SUPER)];
+		io.KeyCtrl = io.KeysDown[to_underlying(DKey::LEFT_CONTROL)] || io.KeysDown[to_underlying(DKey::RIGHT_CONTROL)];
+		io.KeyShift = io.KeysDown[to_underlying(DKey::LEFT_SHIFT)] || io.KeysDown[to_underlying(DKey::RIGHT_SHIFT)];
+		io.KeyAlt = io.KeysDown[to_underlying(DKey::LEFT_ALT)] || io.KeysDown[to_underlying(DKey::RIGHT_ALT)];
+		io.KeySuper = io.KeysDown[to_underlying(DKey::LEFT_SUPER)] || io.KeysDown[to_underlying(DKey::RIGHT_SUPER)];
 
 		ImGui::NewFrame();
 
@@ -478,67 +419,152 @@ struct OcornutImguiContext
 		//ImGuizmo::BeginFrame();
 	}
 
-	void endFrame()
+	void OcornutImguiContext::EndFrame()
 	{
 		ImGui::Render();
-		render(ImGui::GetDrawData());
+		Render(ImGui::GetDrawData());
 	}
 
-	ImGuiContext* m_imgui;
-	bx::AllocatorI* m_allocator;
-	bgfx::VertexLayout  m_layout;
-	bgfx::ProgramHandle m_program;
-	bgfx::ProgramHandle m_imageProgram;
-	bgfx::TextureHandle m_texture;
-	bgfx::UniformHandle s_tex;
-	bgfx::UniformHandle u_imageLodEnabled;
-	ImFont* m_font[ImGui::Font::Count];
-	int64_t m_last;
-	int32_t m_lastScroll;
-	bgfx::ViewId m_viewId;
-};
+	void OcornutImguiContext::SetupStyle()
+	{
+		// TODO: add Invert/Light Version
 
-static OcornutImguiContext s_ctx;
+		// Style: https://github.com/ocornut/imgui/issues/707#issuecomment-670976818
+		constexpr auto ColourFromBytes = [](uint8 r, uint8 g, uint8 b)
+		{
+			return ImVec4(static_cast<float32>(r) / 255.0f, static_cast<float32>(g) / 255.0f, static_cast<float32>(b) / 255.0f, 1.0f);
+		};
 
-static void* memAlloc(size_t _size, void* _userData)
-{
-	BX_UNUSED(_userData);
-	return BX_ALLOC(s_ctx.m_allocator, _size);
-}
+		ImGuiStyle& style = ImGui::GetStyle();
+		ImVec4* colours = style.Colors;
 
-static void memFree(void* _ptr, void* _userData)
-{
-	BX_UNUSED(_userData);
-	BX_FREE(s_ctx.m_allocator, _ptr);
-}
+		const ImVec4 bgColor = ColourFromBytes(30, 30, 31);
+		const ImVec4 lightBgColor = ColourFromBytes(72, 72, 75);
+		const ImVec4 veryLightBgColor = ColourFromBytes(80, 80, 85);
 
-void imguiCreate(float _fontSize, bx::AllocatorI* _allocator)
-{
-	s_ctx.create(_fontSize, _allocator);
-}
+		const ImVec4 panelColor = ColourFromBytes(41, 41, 45);
+		const ImVec4 panelHoverColor = ColourFromBytes(245, 80, 0);
+		const ImVec4 panelActiveColor = ColourFromBytes(190, 55, 10);
 
-void imguiDestroy()
-{
-	s_ctx.destroy();
-}
+		const ImVec4 textColor = ColourFromBytes(255, 255, 255);
+		const ImVec4 textDisabledColor = ColourFromBytes(151, 151, 151);
+		const ImVec4 borderColor = ColourFromBytes(78, 78, 78);
 
-void imguiBeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId _viewId)
-{
-	s_ctx.beginFrame(a_input_data, a_window_dimension, _viewId);
-}
+		colours[ImGuiCol_Text] = textColor;
+		colours[ImGuiCol_TextDisabled] = textDisabledColor;
+		colours[ImGuiCol_TextSelectedBg] = panelActiveColor;
+		colours[ImGuiCol_WindowBg] = bgColor;
+		colours[ImGuiCol_ChildBg] = bgColor;
+		colours[ImGuiCol_PopupBg] = bgColor;
+		colours[ImGuiCol_Border] = borderColor;
+		colours[ImGuiCol_BorderShadow] = borderColor;
+		colours[ImGuiCol_FrameBg] = panelColor;
+		colours[ImGuiCol_FrameBgHovered] = panelHoverColor;
+		colours[ImGuiCol_FrameBgActive] = panelActiveColor;
+		colours[ImGuiCol_TitleBg] = bgColor;
+		colours[ImGuiCol_TitleBgActive] = bgColor;
+		colours[ImGuiCol_TitleBgCollapsed] = bgColor;
+		colours[ImGuiCol_MenuBarBg] = panelColor;
+		colours[ImGuiCol_ScrollbarBg] = panelColor;
+		colours[ImGuiCol_ScrollbarGrab] = lightBgColor;
+		colours[ImGuiCol_ScrollbarGrabHovered] = veryLightBgColor;
+		colours[ImGuiCol_ScrollbarGrabActive] = veryLightBgColor;
+		colours[ImGuiCol_CheckMark] = panelActiveColor;
+		colours[ImGuiCol_SliderGrab] = panelHoverColor;
+		colours[ImGuiCol_SliderGrabActive] = panelActiveColor;
+		colours[ImGuiCol_Button] = panelColor;
+		colours[ImGuiCol_ButtonHovered] = panelHoverColor;
+		colours[ImGuiCol_ButtonActive] = panelHoverColor;
+		colours[ImGuiCol_Header] = panelColor;
+		colours[ImGuiCol_HeaderHovered] = panelHoverColor;
+		colours[ImGuiCol_HeaderActive] = panelActiveColor;
+		colours[ImGuiCol_Separator] = borderColor;
+		colours[ImGuiCol_SeparatorHovered] = borderColor;
+		colours[ImGuiCol_SeparatorActive] = borderColor;
+		colours[ImGuiCol_ResizeGrip] = bgColor;
+		colours[ImGuiCol_ResizeGripHovered] = panelColor;
+		colours[ImGuiCol_ResizeGripActive] = lightBgColor;
+		colours[ImGuiCol_PlotLines] = panelActiveColor;
+		colours[ImGuiCol_PlotLinesHovered] = panelHoverColor;
+		colours[ImGuiCol_PlotHistogram] = panelActiveColor;
+		colours[ImGuiCol_PlotHistogramHovered] = panelHoverColor;
+		colours[ImGuiCol_ModalWindowDarkening] = bgColor;
+		colours[ImGuiCol_DragDropTarget] = bgColor;
+		colours[ImGuiCol_NavHighlight] = bgColor;
+		//colours[ImGuiCol_DockingPreview]		= panelActiveColor;
+		colours[ImGuiCol_Tab] = bgColor;
+		colours[ImGuiCol_TabActive] = panelActiveColor;
+		colours[ImGuiCol_TabUnfocused] = bgColor;
+		colours[ImGuiCol_TabUnfocusedActive] = panelActiveColor;
+		colours[ImGuiCol_TabHovered] = panelHoverColor;
 
-void imguiEndFrame()
-{
-	s_ctx.endFrame();
-}
+		style.WindowRounding = 0.0f;
+		style.ChildRounding = 0.0f;
+		style.FrameRounding = 0.0f;
+		style.GrabRounding = 0.0f;
+		style.PopupRounding = 0.0f;
+		style.ScrollbarRounding = 0.0f;
+		style.TabRounding = 0.0f;
+	}
+
+} // End of namespace ~ DCore.
 
 namespace ImGui
 {
+	ImTextureID ToID(bgfx::TextureHandle a_handle, uint8 a_flags, uint8 a_mip)
+	{
+		union
+		{
+			struct
+			{
+				bgfx::TextureHandle handle;
+				uint8 flags;
+				uint8 mip;
+			}
+			s; ImTextureID id;
+		} tex;
+
+		tex.s.handle = a_handle;
+		tex.s.flags = a_flags;
+		tex.s.mip = a_mip;
+		return tex.id;
+	}
+
+	// Helper function for passing bgfx::TextureHandle to ImGui::Image.
+	void Image(bgfx::TextureHandle a_handle, uint8 a_flags, uint8 a_mip, const ImVec2& a_size, const ImVec2& a_uv0, const ImVec2& a_uv1
+		, const ImVec4& a_tint_colour, const ImVec4& a_border_colour)
+	{
+		Image(ToID(a_handle, a_flags, a_mip), a_size, a_uv0, a_uv1, a_tint_colour, a_border_colour);
+	}
+
+	// Helper function for passing bgfx::TextureHandle to ImGui::Image.
+	void Image(bgfx::TextureHandle a_handle, const ImVec2& a_size, const ImVec2& a_uv0, const ImVec2& a_uv1
+		, const ImVec4& a_tint_colour, const ImVec4& a_border_colour)
+	{
+		Image(a_handle, IMGUI_FLAGS_ALPHA_BLEND, 0, a_size, a_uv0, a_uv1, a_tint_colour, a_border_colour);
+	}
+
+	// Helper function for passing bgfx::TextureHandle to ImGui::ImageButton.
+	bool ImageButton(bgfx::TextureHandle a_handle, uint8 a_flags, uint8 a_mip, const ImVec2& a_size
+		, const ImVec2& a_uv0, const ImVec2& a_uv1, int32 a_frame_padding
+		, const ImVec4& a_backgroundg_colour, const ImVec4& a_tint_colour)
+	{
+		return ImageButton(ToID(a_handle, a_flags, a_mip), a_size, a_uv0, a_uv1, a_frame_padding, a_backgroundg_colour, a_tint_colour);
+	}
+
+	// Helper function for passing bgfx::TextureHandle to ImGui::ImageButton.
+	bool ImageButton(bgfx::TextureHandle a_handle, const ImVec2& a_size, const ImVec2& a_uv0, const ImVec2& a_uv1, int32 a_frame_padding
+		, const ImVec4& a_backgroundg_colour, const ImVec4& a_tint_colour)
+	{
+		return ImageButton(a_handle, IMGUI_FLAGS_ALPHA_BLEND, 0, a_size, a_uv0, a_uv1, a_frame_padding, a_backgroundg_colour, a_tint_colour);
+	}
+
 	void PushFont(Font::Enum _font)
 	{
-		PushFont(s_ctx.m_font[_font]);
+		PushFont(DCore::ImGuiLayer::_imgui_context._font[_font]);
 	}
-} // namespace ImGui
+
+} // End of namespace ~ ImGui.
 
 BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4505); // error C4505: '' : unreferenced local function has been removed
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wunused-function"); // warning: 'int rect_width_compare(const void*, const void*)' defined but not used

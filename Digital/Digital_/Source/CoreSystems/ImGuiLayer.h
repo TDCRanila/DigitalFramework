@@ -1,119 +1,119 @@
-/*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
- */
-
 #pragma once
 
 #include <bgfx/bgfx.h>
+
 #include <imgui/imgui.h>
-#include <imgui/resources/icons_kenney.h>
-#include <imgui/resources/icons_font_awesome.h>
+#include <imgui/imgui_user.h>
 
-#define IMGUI_MBUT_LEFT   0x01
-#define IMGUI_MBUT_RIGHT  0x02
-#define IMGUI_MBUT_MIDDLE 0x04
+#include <CoreSystems/InputManagement.h> 
+#include <CoreSystems/WindowManagement.h>
 
-inline uint32_t imguiRGBA(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a = 255)
+//#include <imgui/resources/icons_kenney.h>
+//#include <imgui/resources/icons_font_awesome.h>
+
+namespace bx 
+{ 
+	struct AllocatorI; 
+} // End of namespace ~ bx.
+
+namespace DCore
 {
-	return 0
-		| (uint32_t(_r) << 0)
-		| (uint32_t(_g) << 8)
-		| (uint32_t(_b) << 16)
-		| (uint32_t(_a) << 24)
-		;
-}
+	struct OcornutImguiContext;
 
-namespace bx { struct AllocatorI; }
+	class ImGuiLayer
+	{
+	public:
+		ImGuiLayer() = default;
 
-void imguiCreate(float _fontSize = 18.0f, bx::AllocatorI* _allocator = NULL);
-void imguiDestroy();
+		void CreateContext(float32 a_fontSize = 18.0f, bx::AllocatorI* a_allocator = NULL);
+		void DestroyContext();
 
-void imguiBeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId _view = 255);
-void imguiEndFrame();
+		void BeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId a_view_id = 255);
+		void EndFrame();
+	
+		static OcornutImguiContext _imgui_context;
 
-namespace entry { class AppI; }
-void showExampleDialog(entry::AppI* _app, const char* _errorText = NULL);
+	};
+
+	struct OcornutImguiContext
+	{
+		void Create(float32 a_fontSize, bx::AllocatorI* a_allocator);
+		void Destroy();
+
+		void Render(ImDrawData* a_draw_data);
+
+		void BeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension, bgfx::ViewId a_viewId);
+		void EndFrame();
+
+		void SetupStyle();
+
+		ImGuiContext*		_imgui_context;
+		bx::AllocatorI*		_allocator;
+
+		bgfx::VertexLayout  _layout;
+		
+		bgfx::ProgramHandle _program;
+		bgfx::ProgramHandle _image_program;
+		
+		bgfx::ViewId		_view_id;
+
+		bgfx::TextureHandle _texture_handle;
+		bgfx::UniformHandle s_tex;
+		bgfx::UniformHandle u_imageLodEnabled;
+		
+		ImFont*				_font[::ImGui::Font::Count];
+		
+		int64				_last;
+		int32				_last_scroll;
+		
+	};
+
+} // End of namespace ~ DCore.
 
 namespace ImGui
 {
+
 #define IMGUI_FLAGS_NONE        UINT8_C(0x00)
 #define IMGUI_FLAGS_ALPHA_BLEND UINT8_C(0x01)
 
-	inline ImTextureID toId(bgfx::TextureHandle _handle, uint8_t _flags, uint8_t _mip)
-	{
-		union { struct { bgfx::TextureHandle handle; uint8_t flags; uint8_t mip; } s; ImTextureID id; } tex;
-		tex.s.handle = _handle;
-		tex.s.flags = _flags;
-		tex.s.mip = _mip;
-		return tex.id;
-	}
+	ImTextureID ToID(bgfx::TextureHandle a_handle, uint8 a_flags, uint8 a_mip);
 
 	// Helper function for passing bgfx::TextureHandle to ImGui::Image.
-	inline void Image(bgfx::TextureHandle _handle
-		, uint8_t _flags
-		, uint8_t _mip
-		, const ImVec2& _size
-		, const ImVec2& _uv0 = ImVec2(0.0f, 0.0f)
-		, const ImVec2& _uv1 = ImVec2(1.0f, 1.0f)
-		, const ImVec4& _tintCol = ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
-		, const ImVec4& _borderCol = ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
-	)
-	{
-		Image(toId(_handle, _flags, _mip), _size, _uv0, _uv1, _tintCol, _borderCol);
-	}
+	void Image(bgfx::TextureHandle a_handle
+		, uint8 a_flags
+		, uint8 a_mip
+		, const ImVec2& a_size
+		, const ImVec2& a_uv0 = ImVec2(0.0f, 0.0f)
+		, const ImVec2& a_uv1 = ImVec2(1.0f, 1.0f)
+		, const ImVec4& a_tint_colour	= ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+		, const ImVec4& a_border_colour = ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 	// Helper function for passing bgfx::TextureHandle to ImGui::Image.
-	inline void Image(bgfx::TextureHandle _handle
-		, const ImVec2& _size
-		, const ImVec2& _uv0 = ImVec2(0.0f, 0.0f)
-		, const ImVec2& _uv1 = ImVec2(1.0f, 1.0f)
-		, const ImVec4& _tintCol = ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
-		, const ImVec4& _borderCol = ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
-	)
-	{
-		Image(_handle, IMGUI_FLAGS_ALPHA_BLEND, 0, _size, _uv0, _uv1, _tintCol, _borderCol);
-	}
+	void Image(bgfx::TextureHandle a_handle
+		, const ImVec2& a_size
+		, const ImVec2& a_uv0 = ImVec2(0.0f, 0.0f)
+		, const ImVec2& a_uv1 = ImVec2(1.0f, 1.0f)
+		, const ImVec4& a_tint_colour	= ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+		, const ImVec4& a_border_colour = ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 	// Helper function for passing bgfx::TextureHandle to ImGui::ImageButton.
-	inline bool ImageButton(bgfx::TextureHandle _handle
-		, uint8_t _flags
-		, uint8_t _mip
-		, const ImVec2& _size
-		, const ImVec2& _uv0 = ImVec2(0.0f, 0.0f)
-		, const ImVec2& _uv1 = ImVec2(1.0f, 1.0f)
-		, int _framePadding = -1
-		, const ImVec4& _bgCol = ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
-		, const ImVec4& _tintCol = ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
-	)
-	{
-		return ImageButton(toId(_handle, _flags, _mip), _size, _uv0, _uv1, _framePadding, _bgCol, _tintCol);
-	}
+	bool ImageButton(bgfx::TextureHandle a_handle
+		, uint8 a_flags
+		, uint8 a_mip
+		, const ImVec2& a_size
+		, const ImVec2& a_uv0	= ImVec2(0.0f, 0.0f)
+		, const ImVec2& a_uv1	= ImVec2(1.0f, 1.0f)
+		, int32 a_frame_padding = -1
+		, const ImVec4& a_backgroundg_colour	= ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
+		, const ImVec4& a_tint_colour			= ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	// Helper function for passing bgfx::TextureHandle to ImGui::ImageButton.
-	inline bool ImageButton(bgfx::TextureHandle _handle
-		, const ImVec2& _size
-		, const ImVec2& _uv0 = ImVec2(0.0f, 0.0f)
-		, const ImVec2& _uv1 = ImVec2(1.0f, 1.0f)
-		, int _framePadding = -1
-		, const ImVec4& _bgCol = ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
-		, const ImVec4& _tintCol = ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
-	)
-	{
-		return ImageButton(_handle, IMGUI_FLAGS_ALPHA_BLEND, 0, _size, _uv0, _uv1, _framePadding, _bgCol, _tintCol);
-	}
+	bool ImageButton(bgfx::TextureHandle a_handle
+		, const ImVec2& a_size
+		, const ImVec2& a_uv0	= ImVec2(0.0f, 0.0f)
+		, const ImVec2& a_uv1	= ImVec2(1.0f, 1.0f)
+		, int32 a_frame_padding = -1
+		, const ImVec4& a_backgroundg_colour	= ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
+		, const ImVec4& a_tint_colour			= ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-	inline void NextLine()
-	{
-		SetCursorPosY(GetCursorPosY() + GetTextLineHeightWithSpacing());
-	}
-
-	inline bool MouseOverArea()
-	{
-		return false
-			|| ImGui::IsAnyItemHovered()
-			|| ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)
-			;
-	}
-
-} // namespace ImGui
+} // End of namespace ~ ImGui.

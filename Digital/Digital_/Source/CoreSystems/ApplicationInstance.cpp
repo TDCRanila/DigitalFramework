@@ -69,7 +69,7 @@ namespace DCore
         _window_management.ChangeDefaultWindowName(_application_name);
         _window_management.InitWindowManagement();
 
-        imguiCreate();
+        _imgui.CreateContext();
     }
 
     void ApplicationInstance::InitApplication()
@@ -106,12 +106,12 @@ namespace DCore
                 bgfx::reset(window_dimension._current_frame_width, window_dimension._current_frame_height);
                 bgfx::setViewRect(0, 0, 0, uint16_t(window_dimension._current_width), uint16_t(window_dimension._current_height));
 
-                imguiBeginFrame(active_input_data, window_dimension);
+                _imgui.BeginFrame(active_input_data, window_dimension);
 
                 bool* show_demo = new bool(true);
                 ImGui::ShowDemoWindow(show_demo);
 
-                imguiEndFrame();
+                _imgui.EndFrame();
 
                 bgfx::touch(0);
 
