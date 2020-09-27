@@ -8,6 +8,7 @@
 #include <CoreSystems/WindowManagement.h>
 #include <Utility/TemplateUtility.h>
 #include <Defines/InputDefines.h>
+#include <Defines/MathDefines.h>
 
 #include <imgui/resources/vs_ocornut_imgui.bin.h>
 #include <imgui/resources/fs_ocornut_imgui.bin.h>
@@ -319,12 +320,11 @@ namespace DCore
 						state |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
 					}
 
-					const uint16 xx = uint16(bx::max(cmd->ClipRect.x, 0.0f));
-					const uint16 yy = uint16(bx::max(cmd->ClipRect.y, 0.0f));
-					bgfx::setScissor(xx, yy
-						, uint16(bx::min(cmd->ClipRect.z, static_cast<float>(DLimits::uint16_max)) - xx)
-						, uint16(bx::min(cmd->ClipRect.w, static_cast<float>(DLimits::uint16_max)) - yy)
-					);
+					const uint16 xx = bx::max(static_cast<::uint16>(cmd->ClipRect.x), DMath::uint16_min);
+					const uint16 yy = bx::max(static_cast<::uint16>(cmd->ClipRect.y), DMath::uint16_min);
+					const uint16 ww	= bx::min(static_cast<::uint16>(cmd->ClipRect.z), static_cast<::uint16>(DMath::uint16_max - xx));
+					const uint16 hh	= bx::min(static_cast<::uint16>(cmd->ClipRect.w), static_cast<::uint16>(DMath::uint16_max - yy));
+					bgfx::setScissor(xx, yy, ww, hh);
 
 					bgfx::setState(state);
 					bgfx::setTexture(0, s_tex, th);
