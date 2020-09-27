@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <limits>
 #include <stdint.h>
 
 // POD Typedefs
@@ -18,6 +19,36 @@ namespace
 	typedef uint16_t	uint16;
 	typedef uint32_t	uint32;
 	typedef uint64_t	uint64;
+	
+	namespace DLimits
+	{
+		const float32 float32_min		= std::numeric_limits<float32>::min();
+		const float32 float32_max		= std::numeric_limits<float32>::max();
+		const float32 float32_epsilon	= std::numeric_limits<float32>::epsilon();
+
+		const float64 float64_min		= std::numeric_limits<float64>::min();
+		const float64 float64_max		= std::numeric_limits<float64>::max();
+		const float64 float64_epsilon	= std::numeric_limits<float64>::epsilon();
+
+		const int8  int8_min			= std::numeric_limits<uint8>::min();
+		const int8  int8_max			= std::numeric_limits<uint8>::max();
+		const int16 int16_min			= std::numeric_limits<uint16>::min();
+		const int16 int16_max			= std::numeric_limits<uint16>::max();
+		const int32 int32_min			= std::numeric_limits<uint32>::min();
+		const int32 int32_max			= std::numeric_limits<uint32>::max();
+		const int64 int64_min			= std::numeric_limits<uint64>::min();
+		const int64 int64_max			= std::numeric_limits<uint64>::max();
+
+		const uint8  uint8_min			= std::numeric_limits<uint8>::min();
+		const uint8  uint8_max			= std::numeric_limits<uint8>::max();
+		const uint16 uint16_min			= std::numeric_limits<uint16>::min();
+		const uint16 uint16_max			= std::numeric_limits<uint16>::max();
+		const uint32 uint32_min			= std::numeric_limits<uint32>::min();
+		const uint32 uint32_max			= std::numeric_limits<uint32>::max();
+		const uint64 uint64_min			= std::numeric_limits<uint64>::min();
+		const uint64 uint64_max			= std::numeric_limits<uint64>::max();
+
+	} // End of namespace DLimits
 
 } // End of namespace
 
