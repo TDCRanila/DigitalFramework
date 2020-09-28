@@ -51,15 +51,15 @@ namespace DCore
 		void DisableInput();
 
 		bool IsKeyPressed(DKey a_key) const;
-		bool IsKeyHeld(DKey a_key) const;
+		bool IsKeyDown(DKey a_key) const;
 		bool IsKeyReleased(DKey a_key) const;
 
 		bool IsKeyPressed(DMouse a_mouse_button) const;
-		bool IsKeyHeld(DMouse a_mouse_button) const;
+		bool IsKeyDown(DMouse a_mouse_button) const;
 		bool IsKeyReleased(DMouse a_mouse_button) const;
 
 		bool IsKeyPressed(DJoy a_joykey_key) const;
-		bool IsKeyHeld(DJoy a_joykey_key) const;
+		bool IsKeyDown(DJoy a_joykey_key) const;
 		bool IsKeyReleased(DJoy a_joykey_key) const;
 
 		bool HasAnyKeyBeenPressed() const;
@@ -135,7 +135,7 @@ namespace DCore
 		};
 
 		bool IsKeyPressed(int32 a_key) const;
-		bool IsKeyHeld(int32 a_key) const;
+		bool IsKeyDown(int32 a_key) const;
 		bool IsKeyReleased(int32 a_key) const;
 		
 		void ClearInputDataBuffers();
