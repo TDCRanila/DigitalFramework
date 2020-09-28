@@ -26,21 +26,36 @@
 ✔ WindowInstance Destruction @done(20-09-23 13:14)
 
 23Sept:
-✔ Window Callback @done(20-09-23 16:51)
-☐ ImGui Layer Cleanup
-☐ Frame Loop Control
+✔ Window Callbacks @done(20-09-23 16:51)
+✔ ImGui Layer Cleanup1 @done(20-09-24 01:26)
+✔ More Simple Input Reading. @done(20-09-24 01:27)
+- Released, Pressed, Held implemented.
+
+27Sept:
+✔ ImGui Layer Cleanup2 @done(20-09-28 00:05)
+✔ ImGui, get rid of imgui-cmake and fork imgui entirely and add cmake stuff to it. @done(20-09-28 14:47)
+☐ ImGui Docking Integration
 
 Unknown:
+☐ The Cherno Engine Videos - research
+☐ Fix ImGui Extensions
+- Look into some other ImGui features that might be interesting, such as docking
+☐ Frame Loop Control
+☐ Simple Editor
+- Implement BaseClasses & Rendering of ImGuiEditorElements: Titlebar, Level Editor/Viewport, Template for Console, Template for (Debug) Logger, Splashscreen?, Template for Input Register(Like Unity), Menu for EditorSystems->BT,Input,Scripter,ContentExplorer, Entity & Component Creators, Project Settings, Editor Settings.
 ☐ Event System Research
 ☐ Joy Stick Input Management
 ☐ Input Event Callbacks & Registration
 - https://stackoverflow.com/questions/34154202/simple-event-system-in-c, https://blog.molecular-matters.com/2011/09/19/generic-type-safe-delegates-and-events-in-c/, https://www.gamedev.net/articles/programming/general-and-gameplay-programming/effective-event-handling-in-c-r2459/
 ☐ complete warning free
+
 ☐ core ecs loop
-☐ console & logging
+☐ Debugger
+☐ Implement Console(~) & Editor Logging
+- To file as well, as in editor.
 
 ☐ texture rendering
-☐ model rendering (voxel)
+☐ model rendering (voxel/textures/pixel art)
 ☐ rendering pipeline figured out
 
 
