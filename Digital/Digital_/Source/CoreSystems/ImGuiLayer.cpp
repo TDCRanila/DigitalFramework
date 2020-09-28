@@ -194,8 +194,8 @@ namespace DCore
 			config.MergeMode			= false;
 
 			const ImWchar* ranges = io.Fonts->GetGlyphRangesCyrillic();
-			_font[ImGui::Font::Regular] = io.Fonts->AddFontFromMemoryTTF((void*)s_robotoRegularTtf		, sizeof(s_robotoRegularTtf)	, a_font_size		, &config, ranges);
-			_font[ImGui::Font::Mono]	= io.Fonts->AddFontFromMemoryTTF((void*)s_robotoMonoRegularTtf	, sizeof(s_robotoMonoRegularTtf), a_font_size - 3.0f, &config, ranges);
+			//_font[ImGui::Font::Regular] = io.Fonts->AddFontFromMemoryTTF((void*)s_robotoRegularTtf		, sizeof(s_robotoRegularTtf)	, a_font_size		, &config, ranges);
+			//_font[ImGui::Font::Mono]	= io.Fonts->AddFontFromMemoryTTF((void*)s_robotoMonoRegularTtf	, sizeof(s_robotoMonoRegularTtf), a_font_size - 3.0f, &config, ranges);
 
 			config.MergeMode = true;
 			config.DstFont	= _font[ImGui::Font::Regular];
@@ -203,7 +203,7 @@ namespace DCore
 			for (uint32 ii = 0; ii < BX_COUNTOF(detail::s_fontRangeMerge); ++ii)
 			{
 				const detail::FontRangeMerge& frm = detail::s_fontRangeMerge[ii];
-				io.Fonts->AddFontFromMemoryTTF((void*)frm.data, static_cast<int>(frm.size), a_font_size - 3.0f, &config, frm.ranges);
+				//io.Fonts->AddFontFromMemoryTTF((void*)frm.data, static_cast<int>(frm.size), a_font_size - 3.0f, &config, frm.ranges);
 			}
 		}
 
