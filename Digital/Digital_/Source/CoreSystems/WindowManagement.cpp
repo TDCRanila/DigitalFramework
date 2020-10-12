@@ -61,11 +61,20 @@ namespace DCore
             
             dim._current_width  = static_cast<int32>(a_width);
             dim._current_height = static_cast<int32>(a_height);
-            
-            int framebuffer_width, framebuffer_height;
-            glfwGetFramebufferSize(user_data->_window, &framebuffer_width, &framebuffer_height);
-            dim._current_frame_width    = framebuffer_width;
-            dim._current_frame_height   = framebuffer_height;
+
+            glfwGetWindowFrameSize(a_window, &dim._window_frame_left, &dim._window_frame_top, &dim._window_frame_right, &dim._window_frame_bottom);
+        }
+
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_framebuffer_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
+        {
+            WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
+            WindowDimension& dim = user_data->_window_dimension;
+
+            dim._current_frame_width    = static_cast<int32>(a_width);
+            dim._current_frame_height   = static_cast<int32>(a_height);
+
+            bgfx::reset(a_width, a_height);
+            bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_set_clipboard_string(void* a_user_data, const char* a_text)
@@ -138,8 +147,12 @@ namespace DCore
         , _current_height(720)
         , _current_frame_width(1280)
         , _current_frame_height(720)
-        , _current_x_pos(0)
-        , _current_y_pos(0)
+        , _current_x_pos(32)
+        , _current_y_pos(32)
+        , _window_frame_left(0)
+        , _window_frame_top(0)
+        , _window_frame_right(0)
+        , _window_frame_bottom(0)
     {
     }
 
@@ -239,6 +252,7 @@ namespace DCore
 
         glfwSetWindowPosCallback(glfw_window, GLFWWindowCallBacks::glfw_window_position_callback);
         glfwSetWindowSizeCallback(glfw_window, GLFWWindowCallBacks::glfw_window_resize_callback);
+        glfwSetFramebufferSizeCallback(glfw_window, GLFWWindowCallBacks::glfw_framebuffer_resize_callback);
 
         glfwSetKeyCallback(glfw_window, GLFWWindowCallBacks::glfw_key_callback);
         glfwSetCharCallback(glfw_window, GLFWWindowCallBacks::glfw_char_callback);
