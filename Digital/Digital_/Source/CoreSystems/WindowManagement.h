@@ -19,6 +19,7 @@ namespace DCore
         int32 _current_frame_width, _current_frame_height;
         int32 _current_width, _current_height;
         int32 _current_x_pos, _current_y_pos; // Point is the the upper-left corner.
+        int32 _window_frame_left, _window_frame_top, _window_frame_right, _window_frame_bottom;
     };
 
     struct WindowInstance
@@ -52,6 +53,7 @@ namespace DCore
 
             static void glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos);
             static void glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height);
+            static void glfw_framebuffer_resize_callback(GLFWwindow* a_window, int a_width, int a_height);
 
             static void glfw_framebuffer_resize_callback();
             static void glfw_window_refresh_callback();
