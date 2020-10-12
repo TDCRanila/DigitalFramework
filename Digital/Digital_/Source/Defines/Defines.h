@@ -1,25 +1,22 @@
 #pragma once
 
 #include <iostream>
+#include <limits>
 #include <stdint.h>
 
 // POD Typedefs
-namespace 
-{
-	typedef float_t		float32;
-	typedef double_t	float64;
+typedef float_t		float32;
+typedef double_t	float64;
 	
-	typedef int8_t		int8;
-	typedef int16_t		int16;
-	typedef int32_t		int32;
-	typedef int64_t		int64;
+typedef int8_t		int8;
+typedef int16_t		int16;
+typedef int32_t		int32;
+typedef int64_t		int64;
 	
-	typedef uint8_t		uint8;
-	typedef uint16_t	uint16;
-	typedef uint32_t	uint32;
-	typedef uint64_t	uint64;
-
-} // End of namespace
+typedef uint8_t		uint8;
+typedef uint16_t	uint16;
+typedef uint32_t	uint32;
+typedef uint64_t	uint64;
 
 // Debug Assert Defines
 #if defined(DEBUG64) || defined(PRERELEASE64)

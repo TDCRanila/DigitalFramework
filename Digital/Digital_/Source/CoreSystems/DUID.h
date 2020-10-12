@@ -8,6 +8,15 @@
 
 namespace DCore
 {
+	class InvalidDUID : public boost::uuids::uuid
+	{
+	public:
+		InvalidDUID()
+			: boost::uuids::uuid(boost::uuids::nil_generator()())
+		{
+		}
+	};
+
 	class DUID : public boost::uuids::uuid
 	{
 	public:

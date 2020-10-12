@@ -3,6 +3,7 @@
 #include <CoreSystems/TimeTracker.h>
 #include <CoreSystems/WindowManagement.h>
 #include <CoreSystems/InputManagement.h>
+#include <CoreSystems/ImGui/ImGuiLayer.h>
 
 #include <string>
 
@@ -33,8 +34,10 @@ namespace DCore
         static WindowManagementSystem _window_management;
         static InputManagementSystem _input_management;
         
+        ImGuiLayer _imgui;
+ 
         TimeTracker _game_timer;
-        
+
         std::string _application_name;
     };
 

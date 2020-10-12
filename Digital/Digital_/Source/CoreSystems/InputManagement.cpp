@@ -43,9 +43,9 @@ namespace DCore
 		return IsKeyPressed(to_underlying(a_key));
 	}
 
-	bool InputManagementSystem::IsKeyHeld(DKey a_key) const
+	bool InputManagementSystem::IsKeyDown(DKey a_key) const
 	{
-		return IsKeyHeld(to_underlying(a_key));
+		return IsKeyDown(to_underlying(a_key));
 	}
 
 	bool InputManagementSystem::IsKeyReleased(DKey a_key) const
@@ -58,9 +58,9 @@ namespace DCore
 		return IsKeyPressed(to_underlying(a_mouse_button));
 	}
 
-	bool InputManagementSystem::IsKeyHeld(DMouse a_mouse_button) const
+	bool InputManagementSystem::IsKeyDown(DMouse a_mouse_button) const
 	{
-		return IsKeyHeld(to_underlying(a_mouse_button));
+		return IsKeyDown(to_underlying(a_mouse_button));
 	}
 
 	bool InputManagementSystem::IsKeyReleased(DMouse a_mouse_button) const
@@ -73,9 +73,9 @@ namespace DCore
 		return IsKeyPressed(to_underlying(a_joykey_key));
 	}
 
-	bool InputManagementSystem::IsKeyHeld(DJoy a_joykey_key) const
+	bool InputManagementSystem::IsKeyDown(DJoy a_joykey_key) const
 	{
-		return IsKeyHeld(to_underlying(a_joykey_key));
+		return IsKeyDown(to_underlying(a_joykey_key));
 	}
 
 	bool InputManagementSystem::IsKeyReleased(DJoy a_joykey_key) const
@@ -257,7 +257,7 @@ namespace DCore
 		return false;
 	}
 
-	bool InputManagementSystem::IsKeyHeld(int32 a_key) const
+	bool InputManagementSystem::IsKeyDown(int32 a_key) const
 	{
 		const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
 		if (focussed_window && focussed_window->_input_data)
