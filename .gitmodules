@@ -7,6 +7,3 @@
 [submodule "Digital/Dependency/External/bgfx.cmake"]
 	path = Digital/Dependency/External/bgfx.cmake
 	url = https://github.com/widberg/bgfx.cmake.git
-[submodule "Digital/Dependency/External/digital-imgui"]
-	path = Digital/Dependency/External/digital-imgui
-	url = https://github.com/TDCRanila/Digital-ImGui.git
