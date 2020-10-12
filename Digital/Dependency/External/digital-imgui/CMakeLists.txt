@@ -36,6 +36,7 @@ if (WIN32)
 endif()
 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
+set(CUSTOM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/digital-imgui)
 set(EXAMPLES_DIR ${SOURCE_DIR}/examples)
 set(FONTS_DIR ${SOURCE_DIR}/misc/fonts)
 
@@ -51,18 +52,20 @@ set(HEADERS_CXX_FILES
     ${SOURCE_DIR}/imstb_textedit.h
     ${SOURCE_DIR}/imstb_truetype.h
 
-    ${SOURCE_DIR}/resources/fs_imgui_image.bin.h
-    ${SOURCE_DIR}/resources/fs_ocornut_imgui.bin.h
-    ${SOURCE_DIR}/resources/vs_imgui_image.bin.h
-    ${SOURCE_DIR}/resources/vs_ocornut_imgui.bin.h
+    ${CUSTOM_SOURCE_DIR}/imgui_user.h
 
-    ${SOURCE_DIR}/resources/icons_font_awesome.h
-    ${SOURCE_DIR}/resources/icons_font_awesome.ttf.h
-    ${SOURCE_DIR}/resources/icons_kenney.h
-    ${SOURCE_DIR}/resources/icons_kenney.ttf.h
+    ${CUSTOM_SOURCE_DIR}/resources/fs_imgui_image.bin.h
+    ${CUSTOM_SOURCE_DIR}/resources/fs_ocornut_imgui.bin.h
+    ${CUSTOM_SOURCE_DIR}/resources/vs_imgui_image.bin.h
+    ${CUSTOM_SOURCE_DIR}/resources/vs_ocornut_imgui.bin.h
 
-    ${SOURCE_DIR}/resources/roboto_regular.ttf.h
-    ${SOURCE_DIR}/resources/robotomono_regular.ttf.h
+    ${CUSTOM_SOURCE_DIR}/resources/icons_font_awesome.h
+    ${CUSTOM_SOURCE_DIR}/resources/icons_font_awesome.ttf.h
+    ${CUSTOM_SOURCE_DIR}/resources/icons_kenney.h
+    ${CUSTOM_SOURCE_DIR}/resources/icons_kenney.ttf.h
+
+    ${CUSTOM_SOURCE_DIR}/resources/roboto_regular.ttf.h
+    ${CUSTOM_SOURCE_DIR}/resources/robotomono_regular.ttf.h
 )
 
 set(SOURCES_CXX_FILES 
