@@ -15,8 +15,8 @@ namespace DECS
 	{
 		if (!a_entity_manager)
 		{
-			ERRORLOG("Passing an invalid Entity Manager to ComponentManager");
-			DASSERT(false);
+			DFW_ERRORLOG("Passing an invalid Entity Manager to ComponentManager");
+			DFW_ASSERT(false);
 		}
 		else
 		{

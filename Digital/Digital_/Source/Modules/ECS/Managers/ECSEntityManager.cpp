@@ -39,7 +39,7 @@ namespace DECS
 		const auto& it = this->entities_.find(a_entity_id);
 		if (it == this->entities_.end())
 		{
-			INFOLOG("Trying to query Entity with ID: " << a_entity_id << " - but cannot be found.");
+			DFW_INFOLOG("Trying to query Entity with ID: " << a_entity_id << " - but cannot be found.");
 			return ECSEntity();
 		}
 		else
@@ -53,7 +53,7 @@ namespace DECS
 		const auto& it = this->entities_.find(a_entity_id);
 		if (it == this->entities_.end())
 		{
-			INFOLOG("Trying to query Entity with ID: " << a_entity_id << " - but cannot be found.");
+			DFW_INFOLOG("Trying to query Entity with ID: " << a_entity_id << " - but cannot be found.");
 			return nullptr;
 		}
 		else
@@ -92,9 +92,9 @@ namespace DECS
 		{
 			if (pending_delete_entities_.empty())
 			{
-				ERRORLOG("Dirty Flag enabled the management of the entities, but there are none to manage.");
+				DFW_ERRORLOG("Dirty Flag enabled the management of the entities, but there are none to manage.");
 				// TODO. Remove? Needs Testing.
-				DASSERT(false);
+				DFW_ASSERT(false);
 			}
 			ManageDeletedEntities();
 			manage_deleted_entities_flag_ = false;

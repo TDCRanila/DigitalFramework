@@ -43,14 +43,14 @@ namespace DCore
 
 } // End of namespace ~ DCore
 
-#define DIGIAPP_ENTRY()                         \
+#define DFW_APP_ENTRY()                         \
     int main(int /*argc*/, char** /*argv*/)     \
     {                                           \
     DCore::ApplicationInstance app;             \
     app.RunApplication();                       \
     }                                           \
 
-#define DIGIAPP_NAMED_ENTRY(a_name)             \
+#define DFW_NAMED_APP_ENTRY(a_name)             \
     int main(int /*argc*/, char** /*argv*/)     \
     {                                           \
     DCore::ApplicationInstance app;             \

@@ -72,7 +72,7 @@ namespace DECS
 		}
 		else
 		{
-			ERRORLOG("Unable to pause System of T: " << type.name());
+			DFW_ERRORLOG("Unable to pause System of T: " << type.name());
 			return;
 		}
 	}
@@ -88,7 +88,7 @@ namespace DECS
 		}
 		else
 		{
-			ERRORLOG("Unable to find System of T: " << type.name());
+			DFW_ERRORLOG("Unable to find System of T: " << type.name());
 			return true;
 		}
 	}

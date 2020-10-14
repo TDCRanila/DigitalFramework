@@ -11,6 +11,14 @@ set(CMAKE_CONFIGURATION_TYPES PreProcessorDebug Debug PreRelease Release Final)
 set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}")
 endif()
 
+if(WIN32 AND NOT UNIX AND NOT APPLE)
+add_compile_definitions(DFW_PLATFORM_WINDOWS)
+elseif(UNIX AND NOT WIN32 AND NOT APPLE)
+add_compile_definitions(DFW_PLATFORM_UNIX)
+else()
+add_compile_definitions(DFW_PLATFORM_UNSUPPORTED)
+endif()
+
 ### PreProcessorDebug Config
 set(CMAKE_CXX_FLAGS_PREPROCESSORDEBUG "/W4 /Zi /Od /Ob0 /RTC1 /MDd /P /DPDEBUG64")
 set(CMAKE_EXE_LINKER_FLAGS_PREPROCESSORDEBUG "/DEBUG:FULL")

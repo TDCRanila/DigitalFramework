@@ -21,9 +21,9 @@ typedef uint64_t	uint64;
 // Debug Assert Defines
 #if defined(DEBUG64) || defined(PRERELEASE64)
 	#include <assert.h>
-	#define DASSERT(...) assert(__VA_ARGS__)
+	#define DFW_ASSERT(...) assert(__VA_ARGS__)
 #elif defined(RELEASE64)
-	#define DASSERT(...) { /*EMPTY*/ }
+	#define DFW_ASSERT(...) { /*EMPTY*/ }
 #endif
 
 // Directory Slashes Defines
@@ -61,14 +61,14 @@ typedef uint64_t	uint64;
 
 	#define __FILENAME__ (strrchr(__FILE__, DIR_SLASH_CHAR) ? strrchr(__FILE__, DIR_SLASH_CHAR) + 1 : __FILE__)
 
-	#define DEBUGLOG(...) std::cout << DEBUG_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
-	#define INFOLOG(...)  std::cout << INFO_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
-	#define WARNLOG(...)  std::cout << WARN_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
-	#define ERRORLOG(...) std::cout << ERROR_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
+	#define DFW_DEBUGLOG(...) std::cout << DEBUG_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
+	#define DFW_INFOLOG(...)  std::cout << INFO_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
+	#define DFW_WARNLOG(...)  std::cout << WARN_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
+	#define DFW_ERRORLOG(...) std::cout << ERROR_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
 
 #elif defined(RELEASE64)
-	#define DEBUGLOG(...)	{ /*EMPTY*/ }
-	#define INFOLOG(...)	{ /*EMPTY*/ }
-	#define WARNLOG(...)	{ /*EMPTY*/ }
-	#define ERRORLOG(...)	{ /*EMPTY*/ }
+	#define DFW_DEBUGLOG(...)	{ /*EMPTY*/ }
+	#define DFW_INFOLOG(...)	{ /*EMPTY*/ }
+	#define DFW_WARNLOG(...)	{ /*EMPTY*/ }
+	#define DFW_ERRORLOG(...)	{ /*EMPTY*/ }
 #endif

@@ -101,7 +101,7 @@ namespace DECS
 		} 
 		else 
 		{
-			ERRORLOG("Unable to find ComponentBitPlacement of T: " << type.name());
+			DFW_ERRORLOG("Unable to find ComponentBitPlacement of T: " << type.name());
 			return false;
 		}
 	}
@@ -135,7 +135,7 @@ namespace DECS
 		} 
 		else 
 		{
-			ERRORLOG("Unable to find ComponentBitPlacement of T: " << type.name());
+			DFW_ERRORLOG("Unable to find ComponentBitPlacement of T: " << type.name());
 			return UNASSIGNED_COMPONENT_BIT;
 		}
 	}

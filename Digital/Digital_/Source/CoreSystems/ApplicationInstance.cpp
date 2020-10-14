@@ -32,20 +32,20 @@ namespace DCore
         _application_name = a_name;
 
         TimeTracker application_timer;
-        INFOLOG(_application_name << " - Init Application.");
+        DFW_INFOLOG(_application_name << " - Init Application.");
         application_timer.StartTimer();
         InitApplication();
         const TimeUnit elapsed_init_time = application_timer.ResetAndFetchTime(false);
-        INFOLOG(_application_name << " - Init Application Complete. - Elapsed Time: " << elapsed_init_time);
+        DFW_INFOLOG(_application_name << " - Init Application Complete. - Elapsed Time: " << elapsed_init_time);
 
-        INFOLOG(_application_name << " - Running Application.");
+        DFW_INFOLOG(_application_name << " - Running Application.");
         UpdateApplication();
         
-        INFOLOG(_application_name << " - Terminating Application.");
+        DFW_INFOLOG(_application_name << " - Terminating Application.");
         application_timer.StartTimer();
         TerminateApplication();
         const TimeUnit elapsed_termination_time = application_timer.ResetAndFetchTime(false);
-        INFOLOG(_application_name << " - Terminating Application Complete - Elapsed Time: " << elapsed_termination_time);
+        DFW_INFOLOG(_application_name << " - Terminating Application Complete - Elapsed Time: " << elapsed_termination_time);
     }
 
     WindowManagementSystem* ApplicationInstance::ProvideWindowManagement()

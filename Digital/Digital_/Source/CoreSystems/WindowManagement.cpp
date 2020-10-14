@@ -267,7 +267,7 @@ namespace DCore
         }
         else
         {
-            ERRORLOG("Window Management System couldn't construct a new window.");
+            DFW_ERRORLOG("Window Management System couldn't construct a new window.");
             return nullptr;
         }
     }
