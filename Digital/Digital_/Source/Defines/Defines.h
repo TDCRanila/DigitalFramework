@@ -19,15 +19,15 @@ typedef uint32_t	uint32;
 typedef uint64_t	uint64;
 
 // Debug Assert Defines
-#if defined(DEBUG64) || defined(PRERELEASE64)
+#if defined(DFW_PDEBUG64) || defined(DFW_DEBUG64) || defined(DFW_PRERELEASE64)
 	#include <assert.h>
 	#define DFW_ASSERT(...) assert(__VA_ARGS__)
-#elif defined(RELEASE64)
+#elif defined(DFW_RELEASE64) || defined(DFW_FINAL64)
 	#define DFW_ASSERT(...) { /*EMPTY*/ }
 #endif
 
 // Directory Slashes Defines
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#if defined(DFW_PLATFORM_WINDOWS) && defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(DFW_PLATFORM_UNIX) && !defined(__CYGWIN__)
 	#define DIR_SLASH_CHAR	'\\'
 	#define DIR_SLASH		"\\"
 #else
@@ -45,7 +45,7 @@ typedef uint64_t	uint64;
 #endif
 
 // Logging Defines
-#if defined(DEBUG64) || defined(PRERELEASE64)
+#if defined(DFW_PDEBUG64) || defined(DFW_DEBUG64) || defined(DFW_PRERELEASE64)
 
 #include <Utility/TimeUtility.h>
 
@@ -66,7 +66,7 @@ typedef uint64_t	uint64;
 	#define DFW_WARNLOG(...)  std::cout << WARN_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
 	#define DFW_ERRORLOG(...) std::cout << ERROR_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
 
-#elif defined(RELEASE64)
+#elif defined(DFW_RELEASE64) || defined(DFW_FINAL64)
 	#define DFW_DEBUGLOG(...)	{ /*EMPTY*/ }
 	#define DFW_INFOLOG(...)	{ /*EMPTY*/ }
 	#define DFW_WARNLOG(...)	{ /*EMPTY*/ }
