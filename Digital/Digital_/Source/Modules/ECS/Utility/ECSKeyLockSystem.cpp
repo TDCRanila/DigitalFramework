@@ -4,6 +4,8 @@
 
 #include <Modules/ECS/Objects/ECSComponent.h>
 
+#include <CoreSystems/Logger.h>
+
 namespace DECS 
 {
 
@@ -31,7 +33,7 @@ namespace DECS
 
 			if (key_index > 64) 
 			{ 
-				DFW_ERRORLOG("Over 64 Components have been registered for ComponentBitPlacement.") 
+				DFW_ERRORLOG("Over 64 Components have been registered for ComponentBitPlacement.");
 			}
 		}
 

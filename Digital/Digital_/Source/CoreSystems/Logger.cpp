@@ -1,0 +1,59 @@
+#include <CoreSystems/Logger.h>
+
+namespace DCore
+{
+	spdlog::logger Logger::_main_logger("Main Log");
+
+	std::shared_ptr<spdlog::sinks::wincolor_stdout_sink_st> Logger::_console_sink;
+	std::shared_ptr<spdlog::sinks::basic_file_sink_st> Logger::_file_sink;
+
+	Logger::Logger()
+	{
+	}
+
+	Logger::~Logger()
+	{
+	}
+
+	void Logger::Init(bool a_enable_automatic_flush, int32 a_flush_interval_in_ms)
+	{
+		//trace		= SPDLOG_LEVEL_TRACE,
+		//debug		= SPDLOG_LEVEL_DEBUG,
+		//info		= SPDLOG_LEVEL_INFO,
+		//warn		= SPDLOG_LEVEL_WARN,
+		//err		= SPDLOG_LEVEL_ERROR,
+		//critical	= SPDLOG_LEVEL_CRITICAL,
+		//off		= SPDLOG_LEVEL_OFF,
+
+		_console_sink	= std::make_shared<spdlog::sinks::wincolor_stdout_sink_st>();
+		// TODO Proper File Path Set
+		// TODO filesystem Check if file exist for debuglog#000.txt, find suitable number
+		_file_sink		= std::make_shared<spdlog::sinks::basic_file_sink_st>("logs/debuglog.txt");
+
+		_main_logger.sinks().emplace_back(_console_sink);
+		_console_sink->set_level(spdlog::level::debug);
+		_console_sink->set_pattern("[%H:%M:%S] [%n] [%^%l%$] %v (%s@%#)"); // "[23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
+
+		_main_logger.sinks().emplace_back(_file_sink);
+		_file_sink->set_level(spdlog::level::trace);
+		_file_sink->set_pattern("[%D %H:%M:%S] [%n] [%l] %v (%s@%#)"); //"[2014-10-31 23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
+
+		if (a_enable_automatic_flush)
+		{
+			_main_logger.flush_on(spdlog::level::trace);
+			spdlog::flush_every(std::chrono::seconds(static_cast<int32>(a_flush_interval_in_ms * 0.001f)));
+		}
+
+	}
+
+	void Logger::ManuelFlush()
+	{
+		_main_logger.flush();
+	}
+
+	spdlog::logger& Logger::ProvideMainLogger()
+	{
+		return _main_logger;
+	}
+
+} // End of namespace ~ DCore.

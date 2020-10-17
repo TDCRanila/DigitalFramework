@@ -7,6 +7,8 @@
 
 #include <Utility/TemplateUtility.h>
 
+#include <CoreSystems/Logger.h>
+
 #include <unordered_map>
 #include <typeindex>
 
@@ -101,7 +103,7 @@ namespace DECS
 		} 
 		else 
 		{
-			DFW_ERRORLOG("Unable to find ComponentBitPlacement of T: " << type.name());
+			DFW_ERRORLOG("Unable to find ComponentBitPlacement of T: ", type.name());
 			return false;
 		}
 	}
@@ -135,7 +137,7 @@ namespace DECS
 		} 
 		else 
 		{
-			DFW_ERRORLOG("Unable to find ComponentBitPlacement of T: " << type.name());
+			DFW_ERRORLOG("Unable to find ComponentBitPlacement of T: ", type.name());
 			return UNASSIGNED_COMPONENT_BIT;
 		}
 	}

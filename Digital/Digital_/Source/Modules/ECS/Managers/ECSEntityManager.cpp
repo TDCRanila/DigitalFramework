@@ -2,6 +2,8 @@
 
 #include <Modules/ECS/Objects/ECSEntity.h>
 
+#include <CoreSystems/Logger.h>
+
 namespace DECS 
 {
 
@@ -39,7 +41,7 @@ namespace DECS
 		const auto& it = this->entities_.find(a_entity_id);
 		if (it == this->entities_.end())
 		{
-			DFW_INFOLOG("Trying to query Entity with ID: " << a_entity_id << " - but cannot be found.");
+			DFW_INFOLOG("Trying to query Entity with ID: {} - but cannot be found.", a_entity_id);
 			return ECSEntity();
 		}
 		else
@@ -53,7 +55,7 @@ namespace DECS
 		const auto& it = this->entities_.find(a_entity_id);
 		if (it == this->entities_.end())
 		{
-			DFW_INFOLOG("Trying to query Entity with ID: " << a_entity_id << " - but cannot be found.");
+			DFW_INFOLOG("Trying to query Entity with ID: {} - but cannot be found.", a_entity_id);
 			return nullptr;
 		}
 		else

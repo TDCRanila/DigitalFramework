@@ -4,6 +4,8 @@
 #include <Modules/ECS/Managers/ECSEntityManager.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
 
+#include <CoreSystems/Logger.h>
+
 namespace DECS 
 {
 	ECSModule::ECSModule() :

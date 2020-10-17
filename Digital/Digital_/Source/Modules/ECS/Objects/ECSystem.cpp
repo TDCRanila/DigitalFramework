@@ -2,6 +2,8 @@
 
 #include <Modules/ECS/Utility/ECSIDManager.h>
 
+#include <CoreSystems/Logger.h>
+
 namespace DECS
 {
 
@@ -32,7 +34,7 @@ namespace DECS
 
 	void ECSystem::InternalInit(ECSEntityManager* a_entity_manager)
 	{
-		DFW_INFOLOG("Initialization System: " << system_id_ << " - " << system_name_);
+		DFW_INFOLOG("Initialization System: {} - {}", system_id_, system_name_);
 
 		if (!a_entity_manager)
 		{
@@ -49,26 +51,26 @@ namespace DECS
 
 	void ECSystem::InternalTerminate()
 	{
-		DFW_INFOLOG("Terminating System: " << system_id_ << " - " << system_name_);
+		DFW_INFOLOG("Terminating System: {} - {}", system_id_, system_name_);
 		this->Terminate(entity_manager_);
 	}
 
 	void ECSystem::InternalPreUpdate()
 	{
-		DFW_INFOLOG("PreUpdate System: " << system_id_ << " - " << system_name_);
+		DFW_INFOLOG("PreUpdate System: {} - {}", system_id_, system_name_);
 		this->PreUpdate(entity_manager_);
 	}
 
 	void ECSystem::InternalUpdate()
 	{
-		DFW_INFOLOG("Update System: " << system_id_ << " - " << system_name_);
+		DFW_INFOLOG("Update System: {} - {}", system_id_, system_name_);
 		// TODO.
 		this->Update(entity_manager_, float32(0.0f));
 	}
 
 	void ECSystem::InternalPostUpdate()
 	{
-		DFW_INFOLOG("PostUpdate System: " << system_id_ << " - " << system_name_);
+		DFW_INFOLOG("PostUpdate System: {} - {}", system_id_, system_name_);
 		this->PostUpdate(entity_manager_);
 	}
 

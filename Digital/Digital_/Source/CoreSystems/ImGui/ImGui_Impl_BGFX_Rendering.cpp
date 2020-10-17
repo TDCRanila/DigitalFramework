@@ -100,8 +100,8 @@ namespace DImGui
         //a_draw_data->OwnerViewport->PlatformRequestMove = true;
         //a_draw_data->OwnerViewport->PlatformRequestResize = true;
 
-        //DFW_INFOLOG("ViewID: " << a_view_id << " DrawData DisplayPos: " << a_draw_data->DisplayPos.x << " - " << a_draw_data->DisplayPos.y << " --- " << a_draw_data->DisplaySize.x << " - " << a_draw_data->DisplaySize.y);
-        //DFW_INFOLOG("ViewID: " << a_view_id << " DrawData DisplaySize:);
+        //OLD_DFW_INFOLOG("ViewID: " << a_view_id << " DrawData DisplayPos: " << a_draw_data->DisplayPos.x << " - " << a_draw_data->DisplayPos.y << " --- " << a_draw_data->DisplaySize.x << " - " << a_draw_data->DisplaySize.y);
+        //OLD_DFW_INFOLOG("ViewID: " << a_view_id << " DrawData DisplaySize:);
 
         int left, top, right, bottom;
         glfwGetWindowFrameSize((GLFWwindow*)a_draw_data->OwnerViewport->PlatformHandle, &left, &top, &right, &bottom);

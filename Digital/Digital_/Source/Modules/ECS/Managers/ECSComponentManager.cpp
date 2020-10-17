@@ -1,5 +1,7 @@
 #include <Modules/ECS/Managers/ECSComponentManager.h>
 
+#include <CoreSystems/Logger.h>
+
 namespace DECS 
 {
 	ECSComponentManager::ECSComponentManager() :

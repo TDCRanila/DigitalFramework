@@ -43,32 +43,3 @@ typedef uint64_t	uint64;
 	#undef min
 	#undef max
 #endif
-
-// Logging Defines
-#if defined(DFW_PDEBUG64) || defined(DFW_DEBUG64) || defined(DFW_PRERELEASE64)
-
-#include <Utility/TimeUtility.h>
-
-#include <string>
-
-	namespace 
-	{
-		const std::string DEBUG_LABEL	= "DEBUG";
-		const std::string INFO_LABEL	= "INFO";
-		const std::string WARN_LABEL	= "WARNING";
-		const std::string ERROR_LABEL	= "ERROR";
-	} // End of namespace
-
-	#define __FILENAME__ (strrchr(__FILE__, DIR_SLASH_CHAR) ? strrchr(__FILE__, DIR_SLASH_CHAR) + 1 : __FILE__)
-
-	#define DFW_DEBUGLOG(...) std::cout << DEBUG_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
-	#define DFW_INFOLOG(...)  std::cout << INFO_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
-	#define DFW_WARNLOG(...)  std::cout << WARN_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
-	#define DFW_ERRORLOG(...) std::cout << ERROR_LABEL	<< " | " << DUtility::GetTimeStamp() << " | " << __FILENAME__ << "(" << __LINE__ << "): "  << __VA_ARGS__ << std::endl;
-
-#elif defined(DFW_RELEASE64) || defined(DFW_FINAL64)
-	#define DFW_DEBUGLOG(...)	{ /*EMPTY*/ }
-	#define DFW_INFOLOG(...)	{ /*EMPTY*/ }
-	#define DFW_WARNLOG(...)	{ /*EMPTY*/ }
-	#define DFW_ERRORLOG(...)	{ /*EMPTY*/ }
-#endif

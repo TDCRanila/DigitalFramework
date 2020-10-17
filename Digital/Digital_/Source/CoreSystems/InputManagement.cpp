@@ -2,6 +2,8 @@
 
 #include <CoreSystems/ApplicationInstance.h>
 
+#include <CoreSystems/Logger.h>
+
 namespace DCore
 {
 	InputData::InputData() 
