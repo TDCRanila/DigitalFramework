@@ -29,7 +29,7 @@ target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source
 
 set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
-set_target_properties(${LIB_NAME} PROPERTIES FOLDER Main)
+set_target_properties(${LIB_NAME} PROPERTIES FOLDER _MainTargets)
 
 ### Forced Includes
 find_file(DEFINES_FILE NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/Defines")
@@ -38,6 +38,8 @@ if (DEFINES_FILE)
         target_compile_options(${LIB_NAME} PRIVATE /FI"${CMAKE_SOURCE_DIR}/Digital_/Source/Defines/Defines.h")
     endif()
 endif()
+
+message("\nConfiguring Subodules & Includes:\n")
 
 ### bgfx.cmake
 message("Adding SubModule: bgfx")
@@ -56,6 +58,8 @@ else()
 endif()
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake bgfx.cmake)
+
+message("\n")
 
 target_link_libraries(${LIB_NAME} bgfx)
 target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
@@ -81,6 +85,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/digital-imgui digital-i
 target_link_libraries(${LIB_NAME} imgui)
 target_include_directories(${LIB_NAME} PUBLIC "${IMGUI_INCLUDE_DIR}")
 
+message("\n")
+
 ### glfw
 message("Adding Submodule: glfw")
 set(GLFW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glfw/include)
@@ -102,7 +108,10 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/glfw glfw)
 target_link_libraries(${LIB_NAME} glfw)
 target_include_directories(${LIB_NAME} PUBLIC "${GLFW_INCLUDE_DIR}")
 
+message("\n")
+
 ### GLM - https://github.com/g-truc/glm.git
+message("Adding Submodule: glm")
 set(GLM_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glm)
 set(GLM_LIB_NAME glm)
 find_path(GLM_FOUND NAMES "glm.hpp" PATHS "${GLM_INCLUDE_DIR}/glm")
@@ -115,10 +124,33 @@ endif()
 
 target_include_directories(${LIB_NAME} PUBLIC "${GLM_INCLUDE_DIR}")
 
+message("\n")
+
+### spdlog
+message("Adding Submodule: spdlog")
+set(SPDLOG_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/spdlog)
+set(SPDLOG_LIB_NAME spdlog)
+find_path(SPDLOG_FOUND NAMES "spdlog.h" PATHS "${SPDLOG_INCLUDE_DIR}/include/spdlog")
+if((NOT SPDLOG_FOUND) OR (NOT EXISTS ${SPDLOG_INCLUDE_DIR}))
+    message("Unable to find Submodule: ${SPDLOG_LIB_NAME} or file spdlog.h")
+    execute_process(COMMAND git submodule update --init -- ${SPDLOG_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+message("Found Submodule: ${SPDLOG_LIB_NAME}")
+endif()
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/spdlog spdlog)
+set_target_properties(spdlog  PROPERTIES FOLDER spdlog)
+
+target_include_directories(${LIB_NAME} PUBLIC "${SPDLOG_INCLUDE_DIR}/include")
+
+message("\n")
+
 ### Boost - 
+message("Adding Files: boost")
 set(BOOST_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/boost)
 set(BOOST_LIB_NAME Boost)
 target_include_directories(${LIB_NAME} PUBLIC "${BOOST_INCLUDE_DIR}")
 
 ### Project Filters
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ALL_FILES})
+

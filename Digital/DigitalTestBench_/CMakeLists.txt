@@ -31,7 +31,7 @@ target_link_libraries(${EXE_NAME} LIB:Digital_)
 set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 
-set_target_properties(${EXE_NAME} PROPERTIES FOLDER Main)
+set_target_properties(${EXE_NAME} PROPERTIES FOLDER _MainTargets)
 
 ### Set Work Directory
 set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
