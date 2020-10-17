@@ -10,3 +10,6 @@
 [submodule "Digital/Dependency/External/digital-imgui/imgui"]
 	path = Digital/Dependency/External/digital-imgui/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "Digital/Dependency/External/spdlog"]
+	path = Digital/Dependency/External/spdlog
+	url = https://github.com/gabime/spdlog.git
