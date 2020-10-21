@@ -5,7 +5,9 @@ namespace DCore
 	spdlog::logger Logger::_main_logger("Main Log");
 
 	std::shared_ptr<spdlog::sinks::wincolor_stdout_sink_st> Logger::_console_sink;
+	std::shared_ptr<DFWSink_st> Logger::_dfw_sink;
 	std::shared_ptr<spdlog::sinks::basic_file_sink_st> Logger::_file_sink;
+	std::vector<LogSubscriberMessageFunc> Logger::_dfw_sink_subscribers;
 
 	Logger::Logger()
 	{
@@ -26,6 +28,7 @@ namespace DCore
 		//off		= SPDLOG_LEVEL_OFF,
 
 		_console_sink	= std::make_shared<spdlog::sinks::wincolor_stdout_sink_st>();
+		_dfw_sink		= std::make_shared<DFWSink_st>();
 		// TODO Proper File Path Set
 		// TODO filesystem Check if file exist for debuglog#000.txt, find suitable number
 		_file_sink		= std::make_shared<spdlog::sinks::basic_file_sink_st>("logs/debuglog.txt");
@@ -33,6 +36,10 @@ namespace DCore
 		_main_logger.sinks().emplace_back(_console_sink);
 		_console_sink->set_level(spdlog::level::debug);
 		_console_sink->set_pattern("[%H:%M:%S] [%n] [%^%l%$] %v (%s@%#)"); // "[23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
+
+		_main_logger.sinks().emplace_back(_dfw_sink);
+		_dfw_sink->set_level(spdlog::level::debug);
+		_dfw_sink->set_pattern("[%H:%M:%S] [%n] [%^%l%$] %v (%s@%#)"); // "[23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
 
 		_main_logger.sinks().emplace_back(_file_sink);
 		_file_sink->set_level(spdlog::level::trace);
@@ -54,6 +61,11 @@ namespace DCore
 	spdlog::logger& Logger::ProvideMainLogger()
 	{
 		return _main_logger;
+	}
+
+	void Logger::AddSubscriber(const LogSubscriberMessageFunc& a_func)
+	{
+		_dfw_sink_subscribers.emplace_back(a_func);
 	}
 
 } // End of namespace ~ DCore.
