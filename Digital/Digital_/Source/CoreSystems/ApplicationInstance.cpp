@@ -6,6 +6,7 @@
 
 // TODO REMOVE - Replace with some sort of EZ Use for Input
 #include <Defines/InputDefines.h>
+#include <CoreSystems/Logger.h>
 
 #include <array>
 
@@ -31,21 +32,23 @@ namespace DCore
     {
         _application_name = a_name;
 
+        Logger::Init(true, 5000);
+
         TimeTracker application_timer;
-        INFOLOG(_application_name << " - Init Application.");
+        DFW_INFOLOG("{} - Init Application.", _application_name);
         application_timer.StartTimer();
         InitApplication();
         const TimeUnit elapsed_init_time = application_timer.ResetAndFetchTime(false);
-        INFOLOG(_application_name << " - Init Application Complete. - Elapsed Time: " << elapsed_init_time);
+        DFW_INFOLOG("{} - Init Application Complete - Elapsed Time: {}", _application_name, elapsed_init_time);
 
-        INFOLOG(_application_name << " - Running Application.");
+        DFW_INFOLOG("{} - Running Application.", _application_name);
         UpdateApplication();
         
-        INFOLOG(_application_name << " - Terminating Application.");
+        DFW_INFOLOG("{} - Terminating Application.", _application_name);
         application_timer.StartTimer();
         TerminateApplication();
         const TimeUnit elapsed_termination_time = application_timer.ResetAndFetchTime(false);
-        INFOLOG(_application_name << " - Terminating Application Complete - Elapsed Time: " << elapsed_termination_time);
+        DFW_INFOLOG("{} - Terminating Application Complete - Elapsed Time: {}", _application_name, elapsed_termination_time);
     }
 
     WindowManagementSystem* ApplicationInstance::ProvideWindowManagement()

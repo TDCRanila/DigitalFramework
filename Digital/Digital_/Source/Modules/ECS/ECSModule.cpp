@@ -4,6 +4,8 @@
 #include <Modules/ECS/Managers/ECSEntityManager.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
 
+#include <CoreSystems/Logger.h>
+
 namespace DECS 
 {
 	ECSModule::ECSModule() :
@@ -19,11 +21,11 @@ namespace DECS
 	{
 		if (initialized_) 
 		{ 
-			INFOLOG("ECSModule already initialized");
+			DFW_INFOLOG("ECSModule already initialized");
 			return; 
 		}
 
-		INFOLOG("Initializing ECS Module.");
+		DFW_INFOLOG("Initializing ECS Module.");
 
 		// Allocate.
 		entity_manager_		= new ECSEntityManager();
@@ -42,11 +44,11 @@ namespace DECS
 	{
 		if (!initialized_) 
 		{ 
-			INFOLOG("ECSModule not initialized. No need for termination."); 
+			DFW_INFOLOG("ECSModule not initialized. No need for termination."); 
 			return;
 		}
 
-		INFOLOG("Terminating ECS Module.");
+		DFW_INFOLOG("Terminating ECS Module.");
 
 		// Terminate.
 		system_manager_->Terminate();
@@ -57,7 +59,7 @@ namespace DECS
 #if !defined(RELEASE64)
 		if (!initialized_) 
 		{ 
-			ERRORLOG("ECSModule not yet initialized");
+			DFW_ERRORLOG("ECSModule not yet initialized");
 			return; 
 		}
 #endif

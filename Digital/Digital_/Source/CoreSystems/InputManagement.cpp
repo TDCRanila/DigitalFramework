@@ -2,6 +2,8 @@
 
 #include <CoreSystems/ApplicationInstance.h>
 
+#include <CoreSystems/Logger.h>
+
 namespace DCore
 {
 	InputData::InputData() 
@@ -162,7 +164,7 @@ namespace DCore
 			}
 			case (DirectionalEventType::DEFAULT):
 			default:
-				WARNLOG("InputManagement has received an event type it cannot process.");
+				DFW_WARNLOG("InputManagement has received an event type it cannot process.");
 				break;
 			}
 		}

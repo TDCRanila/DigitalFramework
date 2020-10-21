@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <typeindex>
 
+#include <CoreSystems/Logger.h>
+
 namespace DECS 
 {
 	class ECSEntityManager;
@@ -72,7 +74,7 @@ namespace DECS
 		}
 		else
 		{
-			ERRORLOG("Unable to pause System of T: " << type.name());
+			DFW_ERRORLOG("Unable to pause System of T: {}", type.name());
 			return;
 		}
 	}
@@ -88,7 +90,7 @@ namespace DECS
 		}
 		else
 		{
-			ERRORLOG("Unable to find System of T: " << type.name());
+			DFW_ERRORLOG("Unable to find System of T: {}", type.name());
 			return true;
 		}
 	}

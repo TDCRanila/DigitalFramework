@@ -9,6 +9,7 @@
 
 #include <CoreSystems/ApplicationInstance.h>
 #include <CoreSystems/InputManagement.h>
+#include <CoreSystems/Logger.h>
 #include <Defines/Defines.h>
 
 namespace DCore
@@ -267,7 +268,7 @@ namespace DCore
         }
         else
         {
-            ERRORLOG("Window Management System couldn't construct a new window.");
+            DFW_ERRORLOG("Window Management System couldn't construct a new window.");
             return nullptr;
         }
     }

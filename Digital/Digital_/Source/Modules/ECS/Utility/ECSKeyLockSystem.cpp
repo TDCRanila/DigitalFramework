@@ -4,6 +4,8 @@
 
 #include <Modules/ECS/Objects/ECSComponent.h>
 
+#include <CoreSystems/Logger.h>
+
 namespace DECS 
 {
 
@@ -19,7 +21,7 @@ namespace DECS
 	{
 		if (generated_component_keys_)
 		{
-			INFOLOG("KeyLockSystem has already generated the component keys.");
+			DFW_INFOLOG("KeyLockSystem has already generated the component keys.");
 			return;
 		}
 
@@ -31,7 +33,7 @@ namespace DECS
 
 			if (key_index > 64) 
 			{ 
-				ERRORLOG("Over 64 Components have been registered for ComponentBitPlacement.") 
+				DFW_ERRORLOG("Over 64 Components have been registered for ComponentBitPlacement.");
 			}
 		}
 
