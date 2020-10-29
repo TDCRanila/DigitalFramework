@@ -42,47 +42,62 @@ namespace DCore
 
 	bool InputManagementSystem::IsKeyPressed(DKey a_key) const
 	{
-		return IsKeyPressed(to_underlying(a_key));
+		return IsKeyPressedInternal(to_underlying(a_key));
+	}
+
+	bool InputManagementSystem::IsKeyRepeated(DKey a_key) const
+	{
+		return IsKeyRepeatedInternal(to_underlying(a_key));
 	}
 
 	bool InputManagementSystem::IsKeyDown(DKey a_key) const
 	{
-		return IsKeyDown(to_underlying(a_key));
+		return IsKeyDownInternal(to_underlying(a_key));
 	}
 
 	bool InputManagementSystem::IsKeyReleased(DKey a_key) const
 	{
-		return IsKeyReleased(to_underlying(a_key));
+		return IsKeyReleasedInternal(to_underlying(a_key));
 	}
 
 	bool InputManagementSystem::IsKeyPressed(DMouse a_mouse_button) const
 	{
-		return IsKeyPressed(to_underlying(a_mouse_button));
+		return IsKeyPressedInternal(to_underlying(a_mouse_button));
+	}
+
+	bool InputManagementSystem::IsKeyRepeated(DMouse a_mouse_button) const
+	{
+		return IsKeyRepeatedInternal(to_underlying(a_mouse_button));
 	}
 
 	bool InputManagementSystem::IsKeyDown(DMouse a_mouse_button) const
 	{
-		return IsKeyDown(to_underlying(a_mouse_button));
+		return IsKeyDownInternal(to_underlying(a_mouse_button));
 	}
 
 	bool InputManagementSystem::IsKeyReleased(DMouse a_mouse_button) const
 	{
-		return IsKeyReleased(to_underlying(a_mouse_button));
+		return IsKeyReleasedInternal(to_underlying(a_mouse_button));
 	}
 
-	bool InputManagementSystem::IsKeyPressed(DJoy a_joykey_key) const
+	bool InputManagementSystem::IsKeyPressed(DGamePad a_gamepad_key) const
 	{
-		return IsKeyPressed(to_underlying(a_joykey_key));
+		return IsKeyPressedInternal(to_underlying(a_gamepad_key));
 	}
 
-	bool InputManagementSystem::IsKeyDown(DJoy a_joykey_key) const
+	bool InputManagementSystem::IsKeyRepeated(DGamePad a_gamepad_key) const
 	{
-		return IsKeyDown(to_underlying(a_joykey_key));
+		return IsKeyRepeatedInternal(to_underlying(a_gamepad_key));
 	}
 
-	bool InputManagementSystem::IsKeyReleased(DJoy a_joykey_key) const
+	bool InputManagementSystem::IsKeyDown(DGamePad a_gamepad_key) const
 	{
-		return IsKeyReleased(to_underlying(a_joykey_key));
+		return IsKeyDownInternal(to_underlying(a_gamepad_key));
+	}
+
+	bool InputManagementSystem::IsKeyReleased(DGamePad a_gamepad_key) const
+	{
+		return IsKeyReleasedInternal(to_underlying(a_gamepad_key));
 	}
 
 	void InputManagementSystem::ProcessInputEvents()
@@ -102,22 +117,13 @@ namespace DCore
 			case (KeyEventType::KEYBOARD):
 			case (KeyEventType::MOUSE):
 			{
-				if (key_event._action == to_underlying(DKeyAction::PRESSED))
-				{
-					DKey defined_key			= static_cast<DKey>(key_event._key);
-					DKeyAction defined_action	= static_cast<DKeyAction>(key_event._action);
+				// TODO Special Event Callbacks for Ctrl C & Ctrl V that send a message to Application
+				DKey defined_key			= static_cast<DKey>(key_event._key);
+				DKeyAction defined_action	= static_cast<DKeyAction>(key_event._action);
+				
+				data._keys[key_event._key] = defined_action;
+				data._buffered_keys.emplace(to_underlying(defined_key), defined_action);
 
-					data._buffered_keys.emplace(to_underlying(defined_key), defined_action);
-					data._keys[key_event._key] = true;
-				}
-				else if (key_event._action == to_underlying(DKeyAction::RELEASED))
-				{
-					DKey defined_key			= static_cast<DKey>(key_event._key);
-					DKeyAction defined_action	= static_cast<DKeyAction>(key_event._action);
-
-					data._buffered_keys.emplace(to_underlying(defined_key), defined_action);
-					data._keys[key_event._key] = false;
-				}
 				break;
 			}
 			case(KeyEventType::CHARACTER):
@@ -164,7 +170,7 @@ namespace DCore
 			}
 			case (DirectionalEventType::DEFAULT):
 			default:
-				DFW_WARNLOG("InputManagement has received an event type it cannot process.");
+				DFW_WARNLOG("InputManagement has received an event type that it cannot process.");
 				break;
 			}
 		}
@@ -239,52 +245,54 @@ namespace DCore
 		_input_data_storage.erase(a_window->_id);
 	}
 
-	bool InputManagementSystem::IsKeyPressed(int32 a_key) const
+	bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
+	{
+		const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
+		const InputData& data = *focussed_window->_input_data;
+		const DKeyAction& key_action = data._keys[a_key];
+		return (key_action == DKeyAction::PRESSED);
+
+		return false;
+	}
+
+	bool InputManagementSystem::IsKeyRepeatedInternal(int32 a_key) const
 	{
 		const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
 		if (focussed_window && focussed_window->_input_data)
 		{
-			const InputData& data = *focussed_window->_input_data;
-
-			auto it_key = data._buffered_keys.find(a_key);
-			if (it_key != data._buffered_keys.end())
-			{
-				if ((*it_key).second == DKeyAction::PRESSED)
-				{
-					return true;
-				}
-			}
+			const InputData& data			= *focussed_window->_input_data;
+			const DKeyAction& key_action	= data._keys[a_key];
+			return (key_action == DKeyAction::REPEATED);
 		}
 
 		return false;
 	}
 
-	bool InputManagementSystem::IsKeyDown(int32 a_key) const
+	bool InputManagementSystem::IsKeyDownInternal(int32 a_key) const
 	{
 		const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
 		if (focussed_window && focussed_window->_input_data)
 		{
-			const InputData& data = *focussed_window->_input_data;
-			return data._keys[a_key];
+			const InputData& data			= *focussed_window->_input_data;
+			const DKeyAction& key_action	= data._keys[a_key];
+			return (key_action == DKeyAction::PRESSED) || (key_action == DKeyAction::REPEATED);
 		}
 
 		return false;
 	}
 
-	bool InputManagementSystem::IsKeyReleased(int32 a_key) const
+	bool InputManagementSystem::IsKeyReleasedInternal(int32 a_key) const
 	{
 		const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
 		if (focussed_window && focussed_window->_input_data)
 		{
 			const InputData& data = *focussed_window->_input_data;
-
 			auto it_key = data._buffered_keys.find(a_key);
 			if (it_key != data._buffered_keys.end())
 			{
-				if ((*it_key).second == DKeyAction::RELEASED)
-				{
-					return true;
-				}
+				const DKeyAction& key_action	= data._keys[a_key];
+				return (key_action == DKeyAction::RELEASED);
+
 			}
 		}
 
