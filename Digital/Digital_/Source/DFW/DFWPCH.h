@@ -26,6 +26,7 @@
 #include <memory>
 #include <functional>
 #include <limits>
+#include <utility>
 
 #include <typeindex>
 #include <typeinfo>

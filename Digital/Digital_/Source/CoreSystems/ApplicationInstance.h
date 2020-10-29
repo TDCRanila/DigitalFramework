@@ -1,11 +1,12 @@
 #pragma once
 
 #include <CoreSystems/TimeTracker.h>
-#include <CoreSystems/WindowManagement.h>
 #include <CoreSystems/InputManagement.h>
-#include <CoreSystems/ImGui/ImGuiLayer.h>
+#include <CoreSystems/Window/WindowManagement.h>
 
-#include <string>
+#include <CoreSystems/Events/EventImplementation.h>
+
+#include <CoreSystems/ImGui/ImGuiLayer.h>
 
 namespace DCore
 {
@@ -30,6 +31,8 @@ namespace DCore
         void InitApplication();
         void UpdateApplication();
         void TerminateApplication();
+
+        void OnApplicationEvent(BaseEvent& a_event);
 
         static WindowManagementSystem _window_management;
         static InputManagementSystem _input_management;

@@ -2,43 +2,17 @@
 
 #include <Defines/IDDefines.h>
 
-#include <string>
-#include <unordered_map>
+#include <CoreSystems/Events/ApplicationEvents.h>
 
+#include <CoreSystems/Window/WindowData.h>
+
+#include <CoreSystems/TimeTracker.h>
+
+// Forward Declare(s)
 struct GLFWwindow;
 
 namespace DCore
 {
-    // Forward Declare(s)
-    struct InputData;
-
-    struct WindowDimension
-    {
-        WindowDimension();
-
-        int32 _current_frame_width, _current_frame_height;
-        int32 _current_width, _current_height;
-        int32 _current_x_pos, _current_y_pos; // Point is the the upper-left corner.
-        int32 _window_frame_left, _window_frame_top, _window_frame_right, _window_frame_bottom;
-    };
-
-    struct WindowInstance
-    {
-        WindowInstance();
-
-        WindowDimension _window_dimension;
-
-        WindowID        _id;
-        std::string     _name;
-
-        GLFWwindow*     _window;
-        InputData*      _input_data;
-        
-        bool _should_be_closed;
-        bool _is_minimized;
-        bool _is_focussed;
-    };
-
     class WindowManagementSystem
     {
     public:
@@ -61,6 +35,8 @@ namespace DCore
             static void glfw_set_clipboard_string(void* a_user_data, const char* a_text);
             static const char* glfw_get_clipboard_string(void* a_user_data);
 
+            static void glfw_set_item_drop_callback(GLFWwindow* a_window, int a_count, const char** a_paths);
+
             static void glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods);
             static void glfw_char_callback(GLFWwindow* a_window, unsigned int a_char);
             static void glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos);
@@ -73,7 +49,7 @@ namespace DCore
     public:
         ~WindowManagementSystem();
 
-        void InitWindowManagement();
+        void InitWindowManagement(const EventCallbackFunc& a_event_callback_func);
         void TerminateWindowManagement();
 
         bool HaveAllWindowsBeenClosed() const;
@@ -99,7 +75,6 @@ namespace DCore
 
         WindowManagementSystem(const std::string a_window_name = "DIGITAL");
         
-
         std::unordered_map<WindowID, WindowInstance> _window_instances;
 
     private:
@@ -108,6 +83,8 @@ namespace DCore
         void SetFocussedWindowID(const WindowID a_window_id);
 
         std::string _default_window_name;
+
+        EventCallbackFunc _application_event_callback_func;
 
         WindowID _default_first_window_id;
         WindowID _current_focussed_window_id;
