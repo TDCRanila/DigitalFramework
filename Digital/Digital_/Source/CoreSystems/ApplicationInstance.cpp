@@ -69,7 +69,7 @@ namespace DCore
     void ApplicationInstance::ApplicationLoad()
     {
         _window_management.ChangeDefaultWindowName(_application_name);
-        _window_management.InitWindowManagement();
+        _window_management.InitWindowManagement(DFW_BIND_EVENT_FUNC(ApplicationInstance::OnApplicationEvent));
 
         const DUID window_id = _window_management.GetMainWindow();
         WindowInstance& window_instance = _window_management._window_instances.at(window_id);
@@ -175,6 +175,16 @@ namespace DCore
     void ApplicationInstance::TerminateApplication()
     {
         _window_management.TerminateWindowManagement();
+    }
+
+    void ApplicationInstance::OnApplicationEvent(BaseEvent& a_event)
+    {
+        DFW_INFOLOG("ApplicationEvent Received: {}", a_event.GetDebugString());
+
+        EventDispatcher dispatcher(a_event);
+        
+        // TODO Send events to all modules attached to application
+
     }
 
 } // End of namespace ~ DCore

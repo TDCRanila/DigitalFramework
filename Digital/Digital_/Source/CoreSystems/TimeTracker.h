@@ -18,6 +18,7 @@ namespace DCore
         void StartTimer();
         void StopTimer();
         void ResetTimer(bool a_reset_and_start_timer);
+        bool IsRunning() const;
 
         TimeUnit FetchTime() const;
         TimeUnit StopAndFetchTime();

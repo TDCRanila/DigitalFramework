@@ -9,11 +9,7 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/details/null_mutex.h>
 
-#include <memory>
 #include <mutex>
-#include <functional>
-#include <vector>
-#include <string>
 
 namespace DCore
 {
@@ -77,6 +73,7 @@ namespace DCore
 
 #elif defined(DFW_RELEASE64) || defined(DFW_FINAL64)
 
+#define DFW_LOG(...)		{ /*EMPTY*/ }
 #define DFW_DEBUGLOG(...)	{ /*EMPTY*/ }
 #define DFW_INFOLOG(...)	{ /*EMPTY*/ }
 #define DFW_WARNLOG(...)	{ /*EMPTY*/ }

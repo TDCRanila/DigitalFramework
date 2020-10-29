@@ -1,7 +1,7 @@
 #pragma once
 
 #include <CoreSystems/InputManagement.h>
-#include <CoreSystems/WindowManagement.h>
+#include <CoreSystems/Window/WindowManagement.h>
 
 namespace bgfx
 {

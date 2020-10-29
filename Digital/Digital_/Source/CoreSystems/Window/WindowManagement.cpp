@@ -1,4 +1,4 @@
-#include <CoreSystems/WindowManagement.h>
+#include <CoreSystems/Window/WindowManagement.h>
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3.h>
@@ -26,6 +26,9 @@ namespace DCore
             WindowInstance* user_data       = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
             user_data->_should_be_closed    = true;
 
+            WindowCloseEvent event;
+            user_data->_event_callback_func(event);
+
             ApplicationInstance::ProvideWindowManagement()->DestructWindow(user_data);
         }
 
@@ -33,6 +36,9 @@ namespace DCore
         {
             WindowInstance* user_data   = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
             user_data->_is_focussed     = static_cast<bool>(a_result);
+
+            WindowFocusEvent event(user_data->_is_focussed);
+            user_data->_event_callback_func(event);
 
             if (user_data->_is_focussed)
                 ApplicationInstance::ProvideWindowManagement()->SetFocussedWindowID(user_data->_id);
@@ -44,15 +50,24 @@ namespace DCore
         {
             WindowInstance* user_data   = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
             user_data->_is_minimized    = static_cast<bool>(a_result);
+
+            WindowMinimizedEvent event(user_data->_is_focussed);
+            user_data->_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos)
         {
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
             WindowDimension& dim = user_data->_window_dimension;
+            
+            const int32 old_x_pos = dim._current_x_pos;
+            const int32 old_y_pos = dim._current_y_pos;
 
             dim._current_x_pos = static_cast<int32>(a_x_pos);
             dim._current_y_pos = static_cast<int32>(a_y_pos);
+
+            WindowMoveEvent event(old_x_pos, old_y_pos, dim._current_x_pos, dim._current_y_pos);
+            user_data->_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
@@ -60,10 +75,16 @@ namespace DCore
             WindowInstance* user_data   = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
             WindowDimension& dim        = user_data->_window_dimension;
             
+            const int32 old_width     = dim._current_width;
+            const int32 old_height    = dim._current_height;
+
             dim._current_width  = static_cast<int32>(a_width);
             dim._current_height = static_cast<int32>(a_height);
 
             glfwGetWindowFrameSize(a_window, &dim._window_frame_left, &dim._window_frame_top, &dim._window_frame_right, &dim._window_frame_bottom);
+
+            WindowResizeEvent event(old_width, old_height, dim._current_width, dim._current_height);
+            user_data->_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_framebuffer_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
@@ -71,21 +92,39 @@ namespace DCore
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
             WindowDimension& dim = user_data->_window_dimension;
 
+            const int32 old_frame_width   = dim._current_frame_width;
+            const int32 old_frame_height  = dim._current_frame_height;
+
             dim._current_frame_width    = static_cast<int32>(a_width);
             dim._current_frame_height   = static_cast<int32>(a_height);
 
             bgfx::reset(a_width, a_height);
             bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
+
+            WindowFramebufferResizeEvent event(old_frame_width, old_frame_height, dim._current_frame_width, dim._current_frame_height);
+            user_data->_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_set_clipboard_string(void* a_user_data, const char* a_text)
         {
+            WindowInstance* user_data = reinterpret_cast<WindowInstance*>(a_user_data);
             glfwSetClipboardString(reinterpret_cast<GLFWwindow*>(a_user_data), a_text);
+
+            InputClipboardEvent event(a_text);
+            user_data->_event_callback_func(event);
         }
 
         const char* WindowManagementSystem::GLFWWindowCallBacks::glfw_get_clipboard_string(void* a_user_data)
         {
             return glfwGetClipboardString(reinterpret_cast<GLFWwindow*>(a_user_data));
+        }
+
+        void WindowManagementSystem::GLFWWindowCallBacks::glfw_set_item_drop_callback(GLFWwindow* a_window, int a_count, const char** a_paths)
+        {
+            WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
+
+            InputItemDropEvent event(a_count, a_paths);
+            user_data->_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods)
@@ -143,35 +182,10 @@ namespace DCore
 
 #pragma endregion
 
-    WindowDimension::WindowDimension()
-        : _current_width(1280)
-        , _current_height(720)
-        , _current_frame_width(1280)
-        , _current_frame_height(720)
-        , _current_x_pos(32)
-        , _current_y_pos(32)
-        , _window_frame_left(0)
-        , _window_frame_top(0)
-        , _window_frame_right(0)
-        , _window_frame_bottom(0)
-    {
-    }
-
-    WindowInstance::WindowInstance()  
-        : _id(DUIDGenerator::GenerateID())
-        , _name("")
-        , _window(nullptr)
-        , _input_data(nullptr)
-        , _should_be_closed(false)
-        , _is_minimized(false)
-        , _is_focussed(false)
-    {
-    }
-
     WindowManagementSystem::WindowManagementSystem(const std::string a_main_window_name)
-        :   _default_width(1280),
-            _default_height(720),
-            _default_window_name(a_main_window_name)
+        : _default_width(1280)
+        , _default_height(720)
+        , _default_window_name(a_main_window_name)
     {
     }
 
@@ -179,8 +193,10 @@ namespace DCore
     {
     }
 
-    void WindowManagementSystem::InitWindowManagement()
+    void WindowManagementSystem::InitWindowManagement(const EventCallbackFunc& a_event_callback_func)
     {
+        _application_event_callback_func = a_event_callback_func;
+        
         glfwSetErrorCallback(GLFWWindowCallBacks::glfw_error_callback);
 
         glfwInit();
@@ -239,10 +255,11 @@ namespace DCore
 
         ApplicationInstance::ProvideInputManagment()->RegisterWindow(&new_window);
 
-        GLFWwindow* glfw_window = glfwCreateWindow(a_width, a_height, a_name, NULL, NULL);
-        new_window._window      = glfw_window;
-        new_window._name        = a_name;
-        new_window._is_focussed = true;
+        GLFWwindow* glfw_window         = glfwCreateWindow(a_width, a_height, a_name, NULL, NULL);
+        new_window._window              = glfw_window;
+        new_window._event_callback_func = _application_event_callback_func;
+        new_window._name                = a_name;
+        new_window._is_focussed         = true;
 
         SetFocussedWindowID(new_window._id);
 
@@ -254,6 +271,8 @@ namespace DCore
         glfwSetWindowPosCallback(glfw_window, GLFWWindowCallBacks::glfw_window_position_callback);
         glfwSetWindowSizeCallback(glfw_window, GLFWWindowCallBacks::glfw_window_resize_callback);
         glfwSetFramebufferSizeCallback(glfw_window, GLFWWindowCallBacks::glfw_framebuffer_resize_callback);
+
+        glfwSetDropCallback(glfw_window, GLFWWindowCallBacks::glfw_set_item_drop_callback);
 
         glfwSetKeyCallback(glfw_window, GLFWWindowCallBacks::glfw_key_callback);
         glfwSetCharCallback(glfw_window, GLFWWindowCallBacks::glfw_char_callback);

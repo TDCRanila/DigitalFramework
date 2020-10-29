@@ -54,6 +54,11 @@ namespace DCore
         }
     }
 
+    bool TimeTracker::IsRunning() const
+    {
+        return is_tracking_time_;
+    }
+
     TimeUnit TimeTracker::FetchTime() const
     {
         TimeUnit delta_time(0.0f);
