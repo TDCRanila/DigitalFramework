@@ -197,10 +197,6 @@ namespace DCore
     {
         _application_event_callback_func = a_event_callback_func;
         
-        // TODO REMOVE
-        //WindowFocusEvent a;
-       // _application_event_callback_func(a);
-
         glfwSetErrorCallback(GLFWWindowCallBacks::glfw_error_callback);
 
         glfwInit();
