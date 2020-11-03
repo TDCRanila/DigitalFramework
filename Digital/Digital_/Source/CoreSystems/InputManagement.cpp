@@ -248,9 +248,12 @@ namespace DCore
 	bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
 	{
 		const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
-		const InputData& data = *focussed_window->_input_data;
-		const DKeyAction& key_action = data._keys[a_key];
-		return (key_action == DKeyAction::PRESSED);
+		if (focussed_window && focussed_window->_input_data)
+		{
+			const InputData& data			= *focussed_window->_input_data;
+			const DKeyAction& key_action	= data._keys[a_key];
+			return (key_action == DKeyAction::PRESSED);
+		}
 
 		return false;
 	}
