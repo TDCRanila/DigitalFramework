@@ -43,3 +43,6 @@ typedef uint64_t	uint64;
 	#undef min
 	#undef max
 #endif
+
+// std::bind replacement macro
+#define DFW_BIND_FUNC(func) [this](auto&&... a_args) -> decltype(auto) { return this->func(std::forward<decltype(a_args)>(a_args)...); }

@@ -57,8 +57,6 @@ namespace DCore
 									virtual AppEvent GetType() const override		{ return GetStaticType(); }		\
 									virtual std::string GetName() const override	{ return #a_type; }				
 
-#define DFW_BIND_EVENT_FUNC(func) [this](auto&&... a_args) -> decltype(auto) { return this->func(std::forward<decltype(a_args)>(a_args)...); }
-
 } // End of namespace ~ Dcore.
 
 #pragma region Template Implementation
