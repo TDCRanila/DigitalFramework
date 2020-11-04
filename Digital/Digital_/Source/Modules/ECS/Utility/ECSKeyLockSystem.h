@@ -7,7 +7,7 @@
 
 #include <Utility/TemplateUtility.h>
 
-#include <CoreSystems/Logger.h>
+#include <CoreSystems/Logging/Logger.h>
 
 #include <unordered_map>
 #include <typeindex>

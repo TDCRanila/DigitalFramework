@@ -5,8 +5,8 @@
 #include <bgfx/bgfx.h>
 
 // TODO REMOVE - Replace with some sort of EZ Use for Input
+#include <CoreSystems/Logging/Logger.h>
 #include <Defines/InputDefines.h>
-#include <CoreSystems/Logger.h>
 
 #include <array>
 

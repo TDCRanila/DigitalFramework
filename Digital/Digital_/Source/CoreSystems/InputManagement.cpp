@@ -2,7 +2,7 @@
 
 #include <CoreSystems/ApplicationInstance.h>
 
-#include <CoreSystems/Logger.h>
+#include <CoreSystems/Logging/Logger.h>
 
 namespace DCore
 {

@@ -9,7 +9,7 @@
 
 #include <CoreSystems/ApplicationInstance.h>
 #include <CoreSystems/InputManagement.h>
-#include <CoreSystems/Logger.h>
+#include <CoreSystems/Logging/Logger.h>
 #include <Defines/Defines.h>
 
 namespace DCore
