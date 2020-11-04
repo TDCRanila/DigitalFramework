@@ -10,6 +10,8 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/details/null_mutex.h>
 
+#include <CoreSystems/Logging/CustomTypes.h>
+
 #include <mutex>
 
 namespace DCore
