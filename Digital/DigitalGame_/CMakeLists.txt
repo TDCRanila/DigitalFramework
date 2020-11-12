@@ -23,7 +23,8 @@ endif()
 
 ### Executable
 add_executable(${EXE_NAME} ${ALL_FILES})
-target_include_directories(${EXE_NAME} PRIVATE ${HEADER_FILES})
+#target_include_directories(${EXE_NAME} PRIVATE ${HEADER_FILES})
+target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
 target_link_libraries(${EXE_NAME} LIB:Digital_)
 # target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source)
