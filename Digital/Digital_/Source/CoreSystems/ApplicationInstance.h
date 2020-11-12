@@ -31,10 +31,11 @@ namespace DCore
         StageStackController& ProvideStackController();
 
         virtual void PreApplicationLoad();
-        virtual void ApplicationLoad();
+        virtual void PostApplicationLoad();
 
     private:
         void InitApplication();
+        void ApplicationLoad();
         void UpdateApplication();
         void TerminateApplication();
 
@@ -55,16 +56,11 @@ namespace DCore
 
 } // End of namespace ~ DCore
 
-#define DFW_APP_ENTRY()                         \
+#define DFW_APP_ENTRY(a_name, a_app_class)      \
     int main(int /*argc*/, char** /*argv*/)     \
     {                                           \
-    DCore::ApplicationInstance app;             \
-    app.RunApplication();                       \
+    a_app_class app;                            \
+    app.RunApplication(#a_name);                \
     }                                           \
 
-#define DFW_NAMED_APP_ENTRY(a_name)             \
-    int main(int /*argc*/, char** /*argv*/)     \
-    {                                           \
-    DCore::ApplicationInstance app;             \
-    app.RunApplication(#a_name);                \
-    }    
+ 

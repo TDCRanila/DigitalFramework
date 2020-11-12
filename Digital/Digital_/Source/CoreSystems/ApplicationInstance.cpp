@@ -79,6 +79,11 @@ namespace DCore
         
     }
 
+    void ApplicationInstance::PostApplicationLoad()
+    {
+
+    }
+
     void ApplicationInstance::ApplicationLoad()
     {
         _window_management.ChangeDefaultWindowName(_application_name);
@@ -95,8 +100,10 @@ namespace DCore
         PreApplicationLoad();
         
         ApplicationLoad();
-
         bgfx::setDebug(BGFX_DEBUG_TEXT);
+
+        PostApplicationLoad();
+
     }
 
     void ApplicationInstance::UpdateApplication()
