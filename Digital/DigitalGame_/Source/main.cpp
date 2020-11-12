@@ -1,3 +1,5 @@
 #include <CoreSystems/ApplicationInstance.h>
 
-DFW_NAMED_APP_ENTRY(Zynthurism)
+#include <Zynthurism/GameApplication.h>
+
+DFW_APP_ENTRY(Zynthurism, DGame::GameApplication);
