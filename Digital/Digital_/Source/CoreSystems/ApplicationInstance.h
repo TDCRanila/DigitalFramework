@@ -2,14 +2,17 @@
 
 #include <CoreSystems/TimeTracker.h>
 #include <CoreSystems/InputManagement.h>
-#include <CoreSystems/Window/WindowManagement.h>
-
 #include <CoreSystems/Events/EventImplementation.h>
+#include <CoreSystems/Stage/StageStackController.h>
+#include <CoreSystems/Window/WindowManagement.h>
 
 #include <CoreSystems/ImGui/ImGuiLayer.h>
 
 namespace DCore
 {
+    // FW Declare.
+    class StageStackCommunicator;
+
     class ApplicationInstance
     {
     public:
@@ -24,11 +27,15 @@ namespace DCore
 
     protected:
 
+        void RegisterStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
+        StageStackController& ProvideStackController();
+
         virtual void PreApplicationLoad();
-        virtual void ApplicationLoad();
+        virtual void PostApplicationLoad();
 
     private:
         void InitApplication();
+        void ApplicationLoad();
         void UpdateApplication();
         void TerminateApplication();
 
@@ -41,21 +48,19 @@ namespace DCore
  
         TimeTracker _game_timer;
 
+        StageStackController _stage_stack_controller;
+        std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;
+
         std::string _application_name;
     };
 
 } // End of namespace ~ DCore
 
-#define DFW_APP_ENTRY()                         \
+#define DFW_APP_ENTRY(a_name, a_app_class)      \
     int main(int /*argc*/, char** /*argv*/)     \
     {                                           \
-    DCore::ApplicationInstance app;             \
-    app.RunApplication();                       \
+    a_app_class app;                            \
+    app.RunApplication(#a_name);                \
     }                                           \
 
-#define DFW_NAMED_APP_ENTRY(a_name)             \
-    int main(int /*argc*/, char** /*argv*/)     \
-    {                                           \
-    DCore::ApplicationInstance app;             \
-    app.RunApplication(#a_name);                \
-    }    
+ 

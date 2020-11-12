@@ -2,12 +2,15 @@
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
+#include <spdlog/common.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/logger.h>
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/details/null_mutex.h>
+
+#include <CoreSystems/Logging/CustomTypes.h>
 
 #include <mutex>
 

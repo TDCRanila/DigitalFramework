@@ -1,4 +1,4 @@
-#include <CoreSystems/Logger.h>
+#include <CoreSystems/Logging/Logger.h>
 
 namespace DCore
 {
@@ -32,6 +32,8 @@ namespace DCore
 		// TODO Proper File Path Set
 		// TODO filesystem Check if file exist for debuglog#000.txt, find suitable number
 		_file_sink		= std::make_shared<spdlog::sinks::basic_file_sink_st>("logs/debuglog.txt");
+
+		_main_logger.set_level(spdlog::level::trace);
 
 		_main_logger.sinks().emplace_back(_console_sink);
 		_console_sink->set_level(spdlog::level::debug);

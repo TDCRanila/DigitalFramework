@@ -5,22 +5,30 @@
 #include <bgfx/bgfx.h>
 
 // TODO REMOVE - Replace with some sort of EZ Use for Input
+#include <CoreSystems/Logging/Logger.h>
 #include <Defines/InputDefines.h>
-#include <CoreSystems/Logger.h>
 
 #include <array>
 
 namespace DCore
-{
+{    
     WindowManagementSystem ApplicationInstance::_window_management;
     InputManagementSystem ApplicationInstance::_input_management;
 
     ApplicationInstance::ApplicationInstance()
+        : _stage_stack_communicator(nullptr)
+        , _application_name("")
     {
+        _stage_stack_controller._stack_communicator = _stage_stack_communicator;
     }
 
     ApplicationInstance::~ApplicationInstance()
     {
+    }
+
+    void ApplicationInstance::RegisterStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator)
+    {
+        _stage_stack_communicator = a_stack_communicator;
     }
 
     void ApplicationInstance::RunApplication(const std::string a_name)
@@ -61,15 +69,25 @@ namespace DCore
         return &_input_management;
     }
 
+    StageStackController& ApplicationInstance::ProvideStackController()
+    {
+        return _stage_stack_controller;
+    }
+
     void ApplicationInstance::PreApplicationLoad()
     {
         
     }
 
+    void ApplicationInstance::PostApplicationLoad()
+    {
+
+    }
+
     void ApplicationInstance::ApplicationLoad()
     {
         _window_management.ChangeDefaultWindowName(_application_name);
-        _window_management.InitWindowManagement(DFW_BIND_EVENT_FUNC(ApplicationInstance::OnApplicationEvent));
+        _window_management.InitWindowManagement(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
 
         const DUID window_id = _window_management.GetMainWindow();
         WindowInstance& window_instance = _window_management._window_instances.at(window_id);
@@ -82,8 +100,10 @@ namespace DCore
         PreApplicationLoad();
         
         ApplicationLoad();
-
         bgfx::setDebug(BGFX_DEBUG_TEXT);
+
+        PostApplicationLoad();
+
     }
 
     void ApplicationInstance::UpdateApplication()
@@ -153,11 +173,25 @@ namespace DCore
                 }
 
                 // Main
+                const std::vector<StageBase*>& _stages = _stage_stack_controller.GetStages();
+                for (StageBase* stage : _stages)
+                {
+                    if (!stage->IsDisabled())
+                        stage->Update();
+                }
+
                 InputData& active_input_data = _input_management._input_data_storage.at(window_id);
                 _imgui.BeginFrame(active_input_data, window_dimension);
 
+                // TODO Remove eventually or atleast make it toggle-able via the editor.
                 bool* show_demo = new bool(true);
                 ImGui::ShowDemoWindow(show_demo);
+
+                for (StageBase* stage : _stages)
+                {
+                    if (!stage->IsDisabled())
+                        stage->RenderImGui();
+                }
 
                 _imgui.EndFrame();
 
@@ -174,6 +208,10 @@ namespace DCore
 
     void ApplicationInstance::TerminateApplication()
     {
+        // Gracefully remove attached stages.
+        _stage_stack_controller.RemoveAttachedStages();
+        _stage_stack_controller.DeleteAttachedStages();
+
         _window_management.TerminateWindowManagement();
     }
 
@@ -183,7 +221,14 @@ namespace DCore
 
         EventDispatcher dispatcher(a_event);
         
-        // TODO Send events to all modules attached to application
+        // TODO Send events to all stages attached to application
+        const std::vector<StageBase*>& _stages = _stage_stack_controller.GetStages();
+        for (auto stage_it = _stages.rbegin(); stage_it != _stages.rend(); ++stage_it)
+        {
+            StageBase* stage_ptr = (*stage_it);
+            if (!stage_ptr->IsDisabled())
+                stage_ptr->OnApplicationEvent(a_event);
+        }
 
     }
 

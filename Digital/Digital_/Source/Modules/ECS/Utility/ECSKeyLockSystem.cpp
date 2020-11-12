@@ -4,7 +4,7 @@
 
 #include <Modules/ECS/Objects/ECSComponent.h>
 
-#include <CoreSystems/Logger.h>
+#include <CoreSystems/Logging/Logger.h>
 
 namespace DECS 
 {
@@ -31,6 +31,7 @@ namespace DECS
 		{
 			component_bit_placement_[type_pair.second] = ++key_index;
 
+			// TODO Magic Number 64
 			if (key_index > 64) 
 			{ 
 				DFW_ERRORLOG("Over 64 Components have been registered for ComponentBitPlacement.");

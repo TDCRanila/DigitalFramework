@@ -1,6 +1,6 @@
 #include <Modules/ECS/Managers/ECSComponentManager.h>
 
-#include <CoreSystems/Logger.h>
+#include <CoreSystems/Logging/Logger.h>
 
 namespace DECS 
 {

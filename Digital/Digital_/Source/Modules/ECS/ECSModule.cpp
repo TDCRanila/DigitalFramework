@@ -4,7 +4,7 @@
 #include <Modules/ECS/Managers/ECSEntityManager.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
 
-#include <CoreSystems/Logger.h>
+#include <CoreSystems/Logging/Logger.h>
 
 namespace DECS 
 {

@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <typeindex>
 
-#include <CoreSystems/Logger.h>
+#include <CoreSystems/Logging/Logger.h>
 
 namespace DECS 
 {

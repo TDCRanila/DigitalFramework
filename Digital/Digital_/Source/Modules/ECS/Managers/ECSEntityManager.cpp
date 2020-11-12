@@ -2,7 +2,7 @@
 
 #include <Modules/ECS/Objects/ECSEntity.h>
 
-#include <CoreSystems/Logger.h>
+#include <CoreSystems/Logging/Logger.h>
 
 namespace DECS 
 {
