@@ -18,7 +18,7 @@ namespace DCore
 	/// <summary>
 	/// Window Events
 	/// </summary>
-	class WindowCloseEvent : public BaseEvent
+	class WindowCloseEvent : public ApplicationEvent
 	{
 	public:
 		WindowCloseEvent() = default;
@@ -26,7 +26,7 @@ namespace DCore
 		DFW_REGISTER_EVENT(WindowCloseEvent);
 	};
 
-	class WindowFocusEvent : public BaseEvent
+	class WindowFocusEvent : public ApplicationEvent
 	{
 	public:
 		WindowFocusEvent(bool a_is_focussed)
@@ -48,7 +48,7 @@ namespace DCore
 		const bool _is_focussed;
 	};
 
-	class WindowMinimizedEvent : public BaseEvent
+	class WindowMinimizedEvent : public ApplicationEvent
 	{
 	public:
 		WindowMinimizedEvent(bool a_is_minimized)
@@ -70,7 +70,7 @@ namespace DCore
 		const bool _is_minimized;
 	};
 
-	class WindowMoveEvent : public BaseEvent
+	class WindowMoveEvent : public ApplicationEvent
 	{
 	public:
 		WindowMoveEvent(int32 a_old_x_pos, int32 a_old_y_pos, int32 a_new_x_pos, int32 a_new_y_pos)
@@ -107,7 +107,7 @@ namespace DCore
 		const int32 _new_y_pos;
 	};
 
-	class WindowResizeEvent : public BaseEvent
+	class WindowResizeEvent : public ApplicationEvent
 	{
 	public:
 		WindowResizeEvent(int32 a_old_width, int32 a_old_height, int32 a_new_width, int32 a_new_height) 
@@ -158,7 +158,7 @@ namespace DCore
 	/// <summary>
 	/// General Application Events
 	/// </summary>
-	class ApplicationCloseEvent : public BaseEvent
+	class ApplicationCloseEvent : public ApplicationEvent
 	{
 	public:
 		ApplicationCloseEvent() = default;
@@ -166,7 +166,7 @@ namespace DCore
 		DFW_REGISTER_EVENT(ApplicationCloseEvent);
 	};
 
-	class ApplicationResetEvent : public BaseEvent
+	class ApplicationResetEvent : public ApplicationEvent
 	{
 	public:
 		ApplicationResetEvent() = default;
@@ -174,7 +174,7 @@ namespace DCore
 		DFW_REGISTER_EVENT(ApplicationResetEvent);
 	};
 
-	class ApplicationSettingsSavedEvent : public BaseEvent
+	class ApplicationSettingsSavedEvent : public ApplicationEvent
 	{
 	public:
 		ApplicationSettingsSavedEvent() = default;
@@ -185,7 +185,7 @@ namespace DCore
 	/// <summary>
 	/// Game Events
 	/// </summary>
-	class GameStartEvent : public BaseEvent
+	class GameStartEvent : public ApplicationEvent
 	{
 	public:
 		GameStartEvent() = default;
@@ -193,7 +193,7 @@ namespace DCore
 		DFW_REGISTER_EVENT(GameStartEvent);
 	};
 
-	class GamePauseEvent : public BaseEvent
+	class GamePauseEvent : public ApplicationEvent
 	{
 	public:
 		GamePauseEvent(bool a_paused)
@@ -205,7 +205,7 @@ namespace DCore
 		const bool _paused;
 	};
 
-	class GameResetEvent : public BaseEvent
+	class GameResetEvent : public ApplicationEvent
 	{
 	public:
 		GameResetEvent() = default;
@@ -216,7 +216,7 @@ namespace DCore
 	/// <summary>
 	/// Input Events
 	/// </summary>
-	class InputReceivedEvent : public BaseEvent
+	class InputReceivedEvent : public ApplicationEvent
 	{
 	public:
 		InputReceivedEvent() = default;
@@ -224,7 +224,7 @@ namespace DCore
 		DFW_REGISTER_EVENT(InputReceivedEvent);
 	};
 
-	class InputClipboardEvent : public BaseEvent
+	class InputClipboardEvent : public ApplicationEvent
 	{
 	public:
 		InputClipboardEvent(const char* a_clipboard_input) 
@@ -247,7 +247,7 @@ namespace DCore
 		const char* const _clipboard_input;
 	};
 
-	class InputItemDropEvent : public BaseEvent
+	class InputItemDropEvent : public ApplicationEvent
 	{
 	public:
 		InputItemDropEvent(int32 a_item_count, const char** a_item_paths) 

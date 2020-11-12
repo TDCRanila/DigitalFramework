@@ -5,6 +5,8 @@ namespace DCore
 
 	class BaseEvent;
 
+	typedef BaseEvent ApplicationEvent;
+
 	typedef std::function<void(BaseEvent&)> EventCallbackFunc;
 
 	enum class AppEvent
@@ -33,7 +35,7 @@ namespace DCore
 		{
 			return GetName();
 		}
-
+				
 	private:
 		bool _is_event_dead;
 

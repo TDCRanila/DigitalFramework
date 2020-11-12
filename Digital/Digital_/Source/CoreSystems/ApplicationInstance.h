@@ -2,14 +2,17 @@
 
 #include <CoreSystems/TimeTracker.h>
 #include <CoreSystems/InputManagement.h>
-#include <CoreSystems/Window/WindowManagement.h>
-
 #include <CoreSystems/Events/EventImplementation.h>
+#include <CoreSystems/Stage/StageStackController.h>
+#include <CoreSystems/Window/WindowManagement.h>
 
 #include <CoreSystems/ImGui/ImGuiLayer.h>
 
 namespace DCore
 {
+    // FW Declare.
+    class StageStackCommunicator;
+
     class ApplicationInstance
     {
     public:
@@ -23,6 +26,9 @@ namespace DCore
         static InputManagementSystem* ProvideInputManagment();
 
     protected:
+
+        void RegisterStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
+        StageStackController& ProvideStackController();
 
         virtual void PreApplicationLoad();
         virtual void ApplicationLoad();
@@ -40,6 +46,9 @@ namespace DCore
         ImGuiLayer _imgui;
  
         TimeTracker _game_timer;
+
+        StageStackController _stage_stack_controller;
+        std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;
 
         std::string _application_name;
     };
