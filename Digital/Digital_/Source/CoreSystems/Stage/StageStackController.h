@@ -106,7 +106,7 @@ namespace DCore
 	/*StageID*/ StageStackController::AttachStageBack(Args&&... a_args)
 	{
 		StageBase*& stage_ptr	= _stages.emplace_back();
-		stage_ptr				= new TStage(std::forward(a_args));
+		stage_ptr				= new TStage(std::forward<Args>(a_args)...);
 		stage_ptr->_stage_stack_communicator = _stack_communicator;
 
 		DFW_INFOLOG("Attaching New Stage at back - ID: {}", stage_ptr->GetID());
