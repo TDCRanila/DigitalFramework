@@ -11,7 +11,7 @@ include(CMakeImplFiles.cmake)
 # Setup
 ##################################################################################################################
 project(imgui
-        VERSION 1.82WIP
+        VERSION 1.82
         LANGUAGES CXX
         DESCRIPTION "ImGui library."
 )
