@@ -11,7 +11,7 @@ include(CMakeImplFiles.cmake)
 # Setup
 ##################################################################################################################
 project(imgui
-        VERSION 1.71
+        VERSION 1.82WIP
         LANGUAGES CXX
         DESCRIPTION "ImGui library."
 )
@@ -71,6 +71,7 @@ set(HEADERS_CXX_FILES
 set(SOURCES_CXX_FILES 
     ${SOURCE_DIR}/imgui.cpp
     ${SOURCE_DIR}/imgui_draw.cpp
+    ${SOURCE_DIR}/imgui_tables.cpp
     ${SOURCE_DIR}/imgui_widgets.cpp
     ${SOURCE_DIR}/imgui_demo.cpp
 )

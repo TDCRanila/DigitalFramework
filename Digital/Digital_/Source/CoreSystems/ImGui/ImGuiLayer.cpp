@@ -8,7 +8,7 @@
 
 #include <ImGui/imgui.h>
 
-#include <ImGui/examples/imgui_impl_glfw.h>
+#include <ImGui/backends/imgui_impl_glfw.h>
 
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Window.h>
@@ -189,7 +189,7 @@ namespace DCore
 		colours[ImGuiCol_PlotLinesHovered]		= panelHoverColor;
 		colours[ImGuiCol_PlotHistogram]			= panelActiveColor;
 		colours[ImGuiCol_PlotHistogramHovered]	= panelHoverColor;
-		colours[ImGuiCol_ModalWindowDarkening]	= bgColor;
+		colours[ImGuiCol_ModalWindowDimBg]		= bgColor;
 		colours[ImGuiCol_DragDropTarget]		= bgColor;
 		colours[ImGuiCol_NavHighlight]			= bgColor;
 		//colours[ImGuiCol_DockingPreview]		= panelActiveColor;

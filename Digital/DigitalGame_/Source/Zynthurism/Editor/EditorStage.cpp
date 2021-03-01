@@ -29,8 +29,8 @@ namespace DEditor
         if (opt_fullscreen)
         {
             ImGuiViewport* viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->GetWorkPos());
-            ImGui::SetNextWindowSize(viewport->GetWorkSize());
+            ImGui::SetNextWindowPos(viewport->Pos);
+            ImGui::SetNextWindowSize(viewport->Size);
             ImGui::SetNextWindowViewport(viewport->ID);
             ImGui::SetNextWindowBgAlpha(1.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
