@@ -13,7 +13,7 @@ namespace DUtility
 		std::ostringstream oss;
 		tm time_struct;
 		localtime_s(&time_struct, &t);
-		oss << std::put_time(&time_struct, "%F %T");
+		oss << std::put_time(&time_struct, "%F-%T");
 		return oss.str();
 	}
 
