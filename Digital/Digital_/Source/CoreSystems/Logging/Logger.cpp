@@ -1,5 +1,9 @@
 #include <CoreSystems/Logging/Logger.h>
 
+#include <Utility/FileSystemUtility.h>
+#include <Utility/StringUtility.h>
+#include <Utility/TimeUtility.h>
+
 namespace DCore
 {
 	spdlog::logger Logger::_main_logger("Main Log");
@@ -31,7 +35,19 @@ namespace DCore
 		_dfw_sink		= std::make_shared<DFWSink_st>();
 		// TODO Proper File Path Set
 		// TODO filesystem Check if file exist for debuglog#000.txt, find suitable number
-		_file_sink		= std::make_shared<spdlog::sinks::basic_file_sink_st>("logs/debuglog.txt");
+
+		std::string log_folder_name = std::string("logs");
+		if (!DUtility::CreateNewDirectory("logs"))
+		{
+			DFW_ERRORLOG("Cannot create new directory named 'logs'.");
+		}
+
+		std::string log_file_type	= std::string(".txt");
+		std::string log_file_date	= DUtility::GetTimeAndDateStamp();
+		DUtility::FindAndRemoveChar(log_file_date, ':');
+		std::string log_file_name	= std::string("DFW-debuglog-" + log_file_date + log_file_type);
+
+		_file_sink		= std::make_shared<spdlog::sinks::basic_file_sink_st>(std::string(log_folder_name + DIR_SLASH + log_file_name));
 
 		_main_logger.set_level(spdlog::level::trace);
 
