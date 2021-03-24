@@ -183,10 +183,6 @@ namespace DCore
                 InputData& active_input_data = _input_management._input_data_storage.at(window_id);
                 _imgui.BeginFrame(active_input_data, window_dimension);
 
-                // TODO Remove eventually or atleast make it toggle-able via the editor.
-                bool* show_demo = new bool(true);
-                ImGui::ShowDemoWindow(show_demo);
-
                 for (StageBase* stage : _stages)
                 {
                     if (!stage->IsDisabled())

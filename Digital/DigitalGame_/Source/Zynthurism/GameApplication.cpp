@@ -1,8 +1,9 @@
 #include <Zynthurism/GameApplication.h>
 
-#include <Zynthurism/GameMaster.h>
+#include <Editor/MainDockStage.h>
+#include <Editor/Console/MainConsole.h>
 
-#include <Zynthurism/Editor/EditorStage.h>
+#include <Zynthurism/GameMaster.h>
 
 namespace DGame
 {
@@ -15,9 +16,10 @@ namespace DGame
 	{
 		RegisterStackCommunicator(std::make_shared<DGame::GameMaster>());
 
-		ProvideStackController().AttachStage<DEditor::EditorStage>("Editor", false);
-		ProvideStackController().AttachStage<DCore::StageExample>("StageOne", false);
-		ProvideStackController().AttachStage<DCore::StageExample>("StageTwo", false);
+		ProvideStackController().AttachStage<DEditor::DockerStage>("MainDockSpace", false);
+		ProvideStackController().AttachStage<DEditor::MainConsole>("Console", false);
+		//ProvideStackController().AttachStage<DCore::StageExample>("StageOne", false);
+		//ProvideStackController().AttachStage<DCore::StageExample>("StageTwo", false);
 
 	}
 
