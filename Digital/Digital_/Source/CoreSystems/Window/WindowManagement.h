@@ -49,9 +49,11 @@ namespace DCore
     public:
         ~WindowManagementSystem();
 
-        void InitWindowManagement(const EventCallbackFunc& a_event_callback_func);
+        void InitWindowManagement();
         void TerminateWindowManagement();
 
+        void BindApplicationEventFunc(const EventCallbackFunc& a_event_callback_func);
+        
         bool HaveAllWindowsBeenClosed() const;
 
         const DUID GetMainWindow() const;

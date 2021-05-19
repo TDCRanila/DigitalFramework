@@ -193,10 +193,8 @@ namespace DCore
     {
     }
 
-    void WindowManagementSystem::InitWindowManagement(const EventCallbackFunc& a_event_callback_func)
-    {
-        _application_event_callback_func = a_event_callback_func;
-        
+    void WindowManagementSystem::InitWindowManagement()
+    {        
         glfwSetErrorCallback(GLFWWindowCallBacks::glfw_error_callback);
 
         glfwInit();
@@ -231,6 +229,11 @@ namespace DCore
     {
         bgfx::shutdown();
         glfwTerminate();
+    }
+
+    void WindowManagementSystem::BindApplicationEventFunc(const EventCallbackFunc& a_event_callback_func)
+    {
+        _application_event_callback_func = a_event_callback_func;
     }
 
     bool WindowManagementSystem::HaveAllWindowsBeenClosed() const

@@ -87,7 +87,8 @@ namespace DCore
     void ApplicationInstance::ApplicationLoad()
     {
         _window_management.ChangeDefaultWindowName(_application_name);
-        _window_management.InitWindowManagement(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
+        _window_management.BindApplicationEventFunc(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
+        _window_management.InitWindowManagement();
 
         const DUID window_id = _window_management.GetMainWindow();
         WindowInstance& window_instance = _window_management._window_instances.at(window_id);
