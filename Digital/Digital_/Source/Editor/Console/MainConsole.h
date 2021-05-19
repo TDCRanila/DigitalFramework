@@ -14,7 +14,7 @@ namespace DEditor
 	public:
 		MainConsole(std::string a_stage_name, bool a_start_disabled = false);
 
-		~MainConsole() = default;
+		~MainConsole();
 
 		virtual void RenderImGui() override;
 

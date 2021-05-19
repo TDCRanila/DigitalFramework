@@ -13,6 +13,7 @@
 #include <CoreSystems/Logging/CustomTypes.h>
 
 #include <mutex>
+#include <unordered_map>
 
 namespace DCore
 {
@@ -47,12 +48,13 @@ namespace DCore
 
 		// TODO Find a way to clean this function up some more, to avoid having the user to call std::bind(func, object, placeholder)
 		// Could then also force the user to use a shared_ptr to an object?
-		static void AddSubscriber(const LogSubscriberMessageFunc& a_func);
+		static void AddSubscriber(DUID a_subscriber_id, const LogSubscriberMessageFunc& a_func);
+		static void RemoveSubscriber(DUID a_subscriber_id, const LogSubscriberMessageFunc& a_func);
 
 	protected:
 		friend DFWSink_mt;
 		friend DFWSink_st;
-		static std::vector<LogSubscriberMessageFunc> _dfw_sink_subscribers;
+		static std::unordered_map<DUID, LogSubscriberMessageFunc> _dfw_sink_subscribers;
 
 	private:
 		static spdlog::logger _main_logger;
@@ -107,7 +109,7 @@ namespace DCore
 		base_sink<Mutex>::formatter_->format(msg, formatted);
 		formatted_string = fmt::to_string(formatted);
 		
-		for (const LogSubscriberMessageFunc& func: Logger::_dfw_sink_subscribers)
+		for (const auto&[id, func] : Logger::_dfw_sink_subscribers)
 		{
 			func(formatted_string);
 		}

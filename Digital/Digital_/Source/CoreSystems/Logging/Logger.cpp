@@ -11,7 +11,7 @@ namespace DCore
 	std::shared_ptr<spdlog::sinks::wincolor_stdout_sink_st> Logger::_console_sink;
 	std::shared_ptr<DFWSink_st> Logger::_dfw_sink;
 	std::shared_ptr<spdlog::sinks::basic_file_sink_st> Logger::_file_sink;
-	std::vector<LogSubscriberMessageFunc> Logger::_dfw_sink_subscribers;
+	std::unordered_map<DUID, LogSubscriberMessageFunc> Logger::_dfw_sink_subscribers;
 
 	Logger::Logger()
 	{
@@ -81,9 +81,24 @@ namespace DCore
 		return _main_logger;
 	}
 
-	void Logger::AddSubscriber(const LogSubscriberMessageFunc& a_func)
+	void Logger::AddSubscriber(DUID a_subscriber_id, const LogSubscriberMessageFunc& a_func)
 	{
-		_dfw_sink_subscribers.emplace_back(a_func);
+		DFW_INFOLOG("Adding logging subscriber with ID: {}", a_subscriber_id);
+		_dfw_sink_subscribers.emplace(a_subscriber_id, a_func);
+	}
+
+	void Logger::RemoveSubscriber(DUID a_subscriber_id, const LogSubscriberMessageFunc& a_func)
+	{
+		auto it_result = _dfw_sink_subscribers.find(a_subscriber_id);
+		if (it_result == _dfw_sink_subscribers.end())
+		{
+			DFW_INFOLOG("Couldn't find logging subscriber with ID: {} when trying to remove it.", a_subscriber_id);
+		}
+		else
+		{
+			DFW_INFOLOG("Removing logging subscriber with ID: {}", a_subscriber_id);
+			_dfw_sink_subscribers.erase(it_result);
+		}
 	}
 
 } // End of namespace ~ DCore.

@@ -12,10 +12,16 @@ namespace DEditor
         , _auto_scroll(true)
     {
         // Subscribe to the logger.
-        DCore::Logger::AddSubscriber(DFW_BIND_FUNC(LogMessageCallback));
+        DCore::Logger::AddSubscriber(this->GetID(), DFW_BIND_FUNC(LogMessageCallback));
 
         _log_history.reserve(_current_history_limit);
 
+    }
+
+    MainConsole::~MainConsole()
+    {
+        // Formally unsubscribe from the logger.
+        DCore::Logger::RemoveSubscriber(this->GetID(), DFW_BIND_FUNC(LogMessageCallback));
     }
 
 	void MainConsole::RenderImGui()
