@@ -46,7 +46,7 @@ namespace DCore
         DFW_INFOLOG("{} - Init Application.", _application_name);
         application_timer.StartTimer();
         InitApplication();
-        const TimeUnit elapsed_init_time = application_timer.ResetAndFetchTime(false);
+        const TimeUnit elapsed_init_time = application_timer.ResetAndFetchElapsedTime(false);
         DFW_INFOLOG("{} - Init Application Complete - Elapsed Time: {}", _application_name, elapsed_init_time);
 
         DFW_INFOLOG("{} - Running Application.", _application_name);
@@ -55,7 +55,7 @@ namespace DCore
         DFW_INFOLOG("{} - Terminating Application.", _application_name);
         application_timer.StartTimer();
         TerminateApplication();
-        const TimeUnit elapsed_termination_time = application_timer.ResetAndFetchTime(false);
+        const TimeUnit elapsed_termination_time = application_timer.ResetAndFetchElapsedTime(false);
         DFW_INFOLOG("{} - Terminating Application Complete - Elapsed Time: {}", _application_name, elapsed_termination_time);
     }
 
