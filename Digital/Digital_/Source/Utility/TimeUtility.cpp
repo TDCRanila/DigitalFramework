@@ -7,6 +7,16 @@
 
 namespace DUtility
 {
+	DCore::TimeUnit SecondsToMilliseconds(const DCore::TimeUnit a_time)
+	{
+		return a_time * 1000;
+	}
+
+	DCore::TimeUnit MillisecondsToSeconds(const DCore::TimeUnit a_time)
+	{
+		return a_time * 0.001f;
+	}
+
 	std::string GetTimeAndDateStamp()
 	{
 		std::time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
