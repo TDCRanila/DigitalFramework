@@ -18,6 +18,8 @@ namespace DCore
     ApplicationInstance::ApplicationInstance()
         : _stage_stack_communicator(nullptr)
         , _application_name("")
+        , _game_clock_log_timer(true)
+        , _game_clock(5.0f)
     {
         _stage_stack_controller._stack_communicator = _stage_stack_communicator;
     }
@@ -104,29 +106,37 @@ namespace DCore
         bgfx::setDebug(BGFX_DEBUG_TEXT);
 
         PostApplicationLoad();
-
     }
 
     void ApplicationInstance::UpdateApplication()
-    {
-        _game_timer.StartTimer();
-         
+    {         
         bool should_run(true);
         while (should_run)
         {
             glfwPollEvents();
             _input_management.ProcessInputEvents();
 
+            float32 dt = _game_clock.GetLastFrameDeltaTime();
+
+            float32 game_clock_log_interval(5.0f);
+            if (_game_clock_log_timer.FetchElapsedTime() > game_clock_log_interval)
+            {
+                _game_clock_log_timer.ResetTimer(true);
+                DFW_INFOLOG("DeltaTime(s): {} - FPS: {} - Cycles: {}", dt, (1/dt), _game_clock.GetElapsedCycleCount());
+            }
+
+            _game_clock.BeginGameFrame();
+            
             // Update Game Instance(s)
-            if (_game_timer.FetchTime() > TimeUnit(600.f) || _window_management.HaveAllWindowsBeenClosed())
+            if (_window_management.HaveAllWindowsBeenClosed())
             {
                 should_run = false;
             }
             else
-            {
-                const DUID window_id                = _window_management.GetMainWindow();
-                WindowDimension& window_dimension   = _window_management._window_instances.at(window_id)._window_dimension;
-                
+            {            
+                const DUID window_id = _window_management.GetMainWindow();
+                WindowDimension& window_dimension = _window_management._window_instances.at(window_id)._window_dimension;
+
                 // This dummy draw call is here to make sure that view 0 is cleared
                 // if no other draw calls are submitted to view 0.
                 bgfx::touch(0);
@@ -152,9 +162,9 @@ namespace DCore
                 bgfx::dbgTextPrintf(0, 5, 0x0f, "\x1b[;8m    \x1b[;9m    \x1b[;10m    \x1b[;11m    \x1b[;12m    \x1b[;13m    \x1b[;14m    \x1b[;15m    \x1b[0m");
 
                 // Enable stats or debug text.
-                static bool show_stats      = false;
+                static bool show_stats = false;
                 static bool show_debug_info = true;
-                static uint32 bgfx_debug    = BGFX_DEBUG_TEXT;
+                static uint32 bgfx_debug = BGFX_DEBUG_TEXT;
 
                 bool key_f1_pressed = _input_management.IsKeyReleased(DKey::F1);
                 if (key_f1_pressed)
@@ -178,7 +188,7 @@ namespace DCore
                 for (StageBase* stage : _stages)
                 {
                     if (!stage->IsDisabled())
-                        stage->Update();
+                        stage->Update(/*dt*/);
                 }
 
                 InputData& active_input_data = _input_management._input_data_storage.at(window_id);
@@ -200,6 +210,8 @@ namespace DCore
                 // Advance to next frame. Process submitted rendering primitives.
                 bgfx::frame();
             }
+
+            _game_clock.EndGameFrame();
         }
     }
 

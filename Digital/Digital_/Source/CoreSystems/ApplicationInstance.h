@@ -1,5 +1,6 @@
 #pragma once
 
+#include <CoreSystems/GameClock.h>
 #include <CoreSystems/TimeTracker.h>
 #include <CoreSystems/InputManagement.h>
 #include <CoreSystems/Events/EventImplementation.h>
@@ -46,7 +47,8 @@ namespace DCore
         
         ImGuiLayer _imgui;
  
-        TimeTracker _game_timer;
+        TimeTracker _game_clock_log_timer;
+        GameClock _game_clock;
 
         StageStackController _stage_stack_controller;
         std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;
