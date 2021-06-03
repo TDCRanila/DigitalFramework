@@ -16,6 +16,7 @@ namespace DCore
 
         float32 GetLastFrameDeltaTime() const;
         uint64 GetElapsedCycleCount() const;
+        float32 GetElapsedTimeInSeconds() const;
 
         void AdvanceSingleTick(bool a_override_pause = true);
 

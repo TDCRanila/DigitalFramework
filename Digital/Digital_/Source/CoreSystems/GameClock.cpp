@@ -70,6 +70,11 @@ namespace DCore
         return _elapsed_cpu_cycles;
     }
 
+    float32 GameClock::GetElapsedTimeInSeconds() const
+    {
+        return CPUCyclesToSeconds(_elapsed_cpu_cycles);
+    }
+
     void GameClock::UpdateClock()
     {
         if      (_has_requested_single_step)
