@@ -40,7 +40,8 @@ namespace DCore
     protected:
         friend class WindowManagementSystem;
 
-        EventCallbackFunc _event_callback_func;
+        ApplicationEventCallbackFunc _application_event_callback_func;
+
     };
 
 } // End of namespace ~ DCore.

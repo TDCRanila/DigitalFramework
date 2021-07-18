@@ -3,16 +3,12 @@
 namespace DCore
 {
 
-	BaseEvent::BaseEvent() :
-		_is_event_dead(false)
+	BaseEvent::BaseEvent() 
+		: _is_event_dead(false)
 	{
 	}
 
-	BaseEvent::~BaseEvent()
-	{
-	}
-
-	void BaseEvent::SetDead()
+	void BaseEvent::DeclareDead()
 	{
 		_is_event_dead = true;
 	}
@@ -22,18 +18,19 @@ namespace DCore
 		return _is_event_dead;
 	}
 	
+	std::string BaseEvent::GetName() const
+	{
+		return "UNSPECIFIED EVENT NAME";
+	}
+
 	std::string BaseEvent::GetDebugString() const
 	{
-		return GetName();
+		return std::string();
 	}
 
-	EventDispatcher::EventDispatcher(BaseEvent& a_event)
-		: _owned_event(a_event)
+	int16 BaseEvent::GetEventTypeID() const
 	{
+		return _event_type_id;
 	}
 	
-	EventDispatcher::~EventDispatcher()
-	{
-	}
-
 } // End of namespace ~ DCore.

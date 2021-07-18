@@ -2,18 +2,29 @@
 
 #include <CoreSystems/Events/EventImplementation.h>
 
-#include <CoreSystems/Window/WindowData.h>
-
 #include <sstream>
+#include <functional>
 
 namespace DCore
 {
-	/* enum class AppEvent
+	enum class ApplicationEvents
+	{
 		WindowCloseEvent, WindowFocusEvent, WindowMinimizedEvent, WindowMoveEvent, WindowResizeEvent, WindowFramebufferResizeEvent,
 		ApplicationCloseEvent, ApplicationResetEvent, ApplicationSettingsSavedEvent,
 		GameStartEvent, GamePauseEvent, GameUnpauseEvent, GameResetEvent,
-		InputReceivedEvent, InputClipboardEvent, InputItemDropEvent
-	*/
+		InputReceivedEvent, InputClipboardEvent, InputItemDropEvent,
+		StageAttachedEvent, StageRemovedEvent, StageEnabledEvent, StageDisabledEvent,
+	};
+
+	class ApplicationEvent : public Event
+	{
+	public:
+		ApplicationEvent() = default;
+		~ApplicationEvent() = default;
+
+	};
+
+	typedef std::function<void(ApplicationEvent&)> ApplicationEventCallbackFunc;
 
 	/// <summary>
 	/// Window Events
@@ -23,7 +34,7 @@ namespace DCore
 	public:
 		WindowCloseEvent() = default;
 
-		DFW_REGISTER_EVENT(WindowCloseEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowCloseEvent);
 	};
 
 	class WindowFocusEvent : public ApplicationEvent
@@ -33,7 +44,7 @@ namespace DCore
 			: _is_focussed(a_is_focussed)
 		{}			
 
-		DFW_REGISTER_EVENT(WindowFocusEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowFocusEvent);
 
 		std::string GetDebugString() const override 
 		{
@@ -55,7 +66,7 @@ namespace DCore
 			: _is_minimized(a_is_minimized)
 		{}
 
-		DFW_REGISTER_EVENT(WindowMinimizedEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowMinimizedEvent);
 
 		std::string GetDebugString() const override
 		{
@@ -80,7 +91,7 @@ namespace DCore
 			, _new_y_pos(a_new_y_pos)
 		{}
 
-		DFW_REGISTER_EVENT(WindowMoveEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowMoveEvent);
 
 		std::string GetDebugString() const override
 		{
@@ -117,7 +128,7 @@ namespace DCore
 			, new_height(a_new_height)
 		{}
 
-		DFW_REGISTER_EVENT(WindowResizeEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowResizeEvent);
 
 		std::string GetDebugString() const override
 		{
@@ -151,7 +162,7 @@ namespace DCore
 			: WindowResizeEvent(a_old_width, a_old_height, a_new_width, a_new_height)
 		{}
 
-		DFW_REGISTER_EVENT(WindowFramebufferResizeEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowFramebufferResizeEvent);
 
 	};
 
@@ -163,7 +174,7 @@ namespace DCore
 	public:
 		ApplicationCloseEvent() = default;
 
-		DFW_REGISTER_EVENT(ApplicationCloseEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, ApplicationCloseEvent);
 	};
 
 	class ApplicationResetEvent : public ApplicationEvent
@@ -171,7 +182,7 @@ namespace DCore
 	public:
 		ApplicationResetEvent() = default;
 
-		DFW_REGISTER_EVENT(ApplicationResetEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, ApplicationResetEvent);
 	};
 
 	class ApplicationSettingsSavedEvent : public ApplicationEvent
@@ -179,7 +190,7 @@ namespace DCore
 	public:
 		ApplicationSettingsSavedEvent() = default;
 
-		DFW_REGISTER_EVENT(ApplicationSettingsSavedEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, ApplicationSettingsSavedEvent);
 	};
 
 	/// <summary>
@@ -190,7 +201,7 @@ namespace DCore
 	public:
 		GameStartEvent() = default;
 
-		DFW_REGISTER_EVENT(GameStartEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, GameStartEvent);
 	};
 
 	class GamePauseEvent : public ApplicationEvent
@@ -200,7 +211,7 @@ namespace DCore
 			: _paused(a_paused)
 		{}
 
-		DFW_REGISTER_EVENT(GamePauseEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, GamePauseEvent);
 
 		const bool _paused;
 	};
@@ -210,7 +221,7 @@ namespace DCore
 	public:
 		GameResetEvent() = default;
 
-		DFW_REGISTER_EVENT(GameResetEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, GameResetEvent);
 	};
 
 	/// <summary>
@@ -221,7 +232,7 @@ namespace DCore
 	public:
 		InputReceivedEvent() = default;
 
-		DFW_REGISTER_EVENT(InputReceivedEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, InputReceivedEvent);
 	};
 
 	class InputClipboardEvent : public ApplicationEvent
@@ -231,7 +242,7 @@ namespace DCore
 			: _clipboard_input(a_clipboard_input)
 		{}
 
-		DFW_REGISTER_EVENT(InputClipboardEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, InputClipboardEvent);
 
 		std::string GetDebugString() const override
 		{
@@ -255,7 +266,7 @@ namespace DCore
 			, _item_paths(a_item_paths)
 		{}
 
-		DFW_REGISTER_EVENT(InputItemDropEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, InputItemDropEvent);
 
 		std::string GetDebugString() const override
 		{

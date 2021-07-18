@@ -4,73 +4,101 @@ namespace DCore
 {
 
 	StageStackController::StageStackController()
-		: _stack_communicator(nullptr)
-		, _stage_insert_index(0)
+		:  _stage_insert_index(0)
 	{
 		_stages.reserve(MAX_SUPPORTED_STAGES);
 	}
 
 	StageStackController::~StageStackController()
 	{
-		RemoveAttachedStages();
-		DeleteAttachedStages();
+		RemoveAllAttachedStages();
+		DeleteAllAttachedStages();
 	}
 
-	void StageStackController::RemoveAttachedStages()
+	void StageStackController::SetStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_communicator)
 	{
-		for (StageBase*& it : _stages)
-		{	
-			RemoveStage(it->GetID());
+		_stage_stack_communicator = a_communicator;
+
+		for (auto stage_it = this->rbegin(); stage_it != this->rend(); ++stage_it)
+		{
+			(*stage_it)->SetStageStackCommunicator(a_communicator);
+			(*stage_it)->BindStageEventFunc(DFW_BIND_FUNC(_stage_stack_communicator->OnStageEventReceived));
 		}
 	}
 
-	void StageStackController::DeleteAttachedStages()
+	void StageStackController::RemoveAllAttachedStages()
 	{
-		for (StageBase*& it : _stages)
+		bool has_deleted_stage;
+		for (int32 it = 0; it < _stages.size();)
 		{
-			if (it != nullptr)
+			has_deleted_stage = RemoveStage(_stages[it]->GetID());
+			if (!has_deleted_stage)
+				++it;
+		}
+	}
+
+	void StageStackController::DeleteAllAttachedStages()
+	{
+		// Cleanup anything that is left-over, however, this shouldn't be the case.
+		for (StageBase*& stage_ptr : _stages)
+		{
+			if (stage_ptr != nullptr)
 			{
-				DFW_LOG("Deleting Stage with ID: {}", it->GetID());
-				delete it;
-				it = nullptr;
+				DFW_LOG("Deleting Stage with ID: {}", stage_ptr->GetID());
+				delete stage_ptr;
+				stage_ptr = nullptr;
 			}
 		}
 
 		_stages.clear();
 	}
 
-	void StageStackController::RemoveStage(StageID a_id)
+	bool StageStackController::RemoveStage(StageID a_id)
 	{
 		const auto it = std::find_if(_stages.begin(), _stages.end(), [a_id](const StageBase* a_stage) { return a_stage->GetID() == a_id; });
 		if (it != _stages.end())
 		{
+			DFW_INFOLOG("Removing attached Stage with ID: {}", a_id);
 			StageBase* stage_ptr = (*it);
+			stage_ptr->OnRemoved();
+
+			StageRemovedEvent event(stage_ptr->GetID(), stage_ptr->GetName(), stage_ptr->IsDisabled());
+			_stage_stack_communicator->OnStageEventReceived(event);
+			
 			delete stage_ptr;
-			DFW_INFOLOG("Removing attached Stage - ID: {}", a_id);
 
 			_stages.erase(it);
 			--_stage_insert_index;
+			return true;
 		}
 		else
 		{
 			DFW_WARNLOG("Trying to remove unknown stage with ID: {}.", a_id);
+			return false;
 		}
 	}
 
-	void StageStackController::RemoveStageBack(StageID a_id)
+	bool StageStackController::RemoveStageBack(StageID a_id)
 	{
 		const auto it = std::find_if(_stages.begin(), _stages.end(), [a_id](const StageBase* a_stage) { return a_stage->GetID() == a_id; });
 		if (it != _stages.end())
 		{
+			DFW_INFOLOG("Removing attached Stage with ID: {}", a_id);
 			StageBase* stage_ptr = (*it);
+			stage_ptr->OnRemoved();
+
+			StageRemovedEvent event(stage_ptr->GetID(), stage_ptr->GetName(), stage_ptr->IsDisabled());
+			_stage_stack_communicator->OnStageEventReceived(event);
+
 			delete stage_ptr;
-			DFW_INFOLOG("Removing attached Stage - ID: {}", a_id);
 
 			_stages.erase(it);
+			return true;
 		}
 		else
 		{
-			DFW_WARNLOG("Trying to remove unknown back-stage with ID: {}.", a_id);
+			DFW_WARNLOG("Trying to remove unknown stage at back with ID: {}.", a_id);
+			return false;
 		}
 	}
 

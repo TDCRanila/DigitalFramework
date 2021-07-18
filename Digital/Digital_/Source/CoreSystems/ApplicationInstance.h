@@ -5,15 +5,13 @@
 #include <CoreSystems/InputManagement.h>
 #include <CoreSystems/Events/EventImplementation.h>
 #include <CoreSystems/Stage/StageStackController.h>
+#include <CoreSystems/Stage/StageStackCommunicator.h>
 #include <CoreSystems/Window/WindowManagement.h>
 
 #include <CoreSystems/ImGui/ImGuiLayer.h>
 
 namespace DCore
 {
-    // FW Declare.
-    class StageStackCommunicator;
-
     class ApplicationInstance
     {
     public:
@@ -27,9 +25,9 @@ namespace DCore
         static InputManagementSystem* ProvideInputManagment();
 
     protected:
-
         void RegisterStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
-        StageStackController& ProvideStackController();
+
+        StageStackController& ProvideStageStackController();
 
         virtual void PreApplicationLoad();
         virtual void PostApplicationLoad();
@@ -40,7 +38,7 @@ namespace DCore
         void UpdateApplication();
         void TerminateApplication();
 
-        void OnApplicationEvent(BaseEvent& a_event);
+        void OnApplicationEvent(ApplicationEvent& a_event);
 
         static WindowManagementSystem _window_management;
         static InputManagementSystem _input_management;
@@ -64,5 +62,3 @@ namespace DCore
     a_app_class app;                            \
     app.RunApplication(#a_name);                \
     }                                           \
-
- 

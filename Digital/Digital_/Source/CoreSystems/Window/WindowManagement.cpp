@@ -27,7 +27,7 @@ namespace DCore
             user_data->_should_be_closed    = true;
 
             WindowCloseEvent event;
-            user_data->_event_callback_func(event);
+            user_data->_application_event_callback_func(event);
 
             ApplicationInstance::ProvideWindowManagement()->DestructWindow(user_data);
         }
@@ -38,7 +38,7 @@ namespace DCore
             user_data->_is_focussed     = static_cast<bool>(a_result);
 
             WindowFocusEvent event(user_data->_is_focussed);
-            user_data->_event_callback_func(event);
+            user_data->_application_event_callback_func(event);
 
             if (user_data->_is_focussed)
                 ApplicationInstance::ProvideWindowManagement()->SetFocussedWindowID(user_data->_id);
@@ -52,7 +52,7 @@ namespace DCore
             user_data->_is_minimized    = static_cast<bool>(a_result);
 
             WindowMinimizedEvent event(user_data->_is_focussed);
-            user_data->_event_callback_func(event);
+            user_data->_application_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos)
@@ -67,7 +67,7 @@ namespace DCore
             dim._current_y_pos = static_cast<int32>(a_y_pos);
 
             WindowMoveEvent event(old_x_pos, old_y_pos, dim._current_x_pos, dim._current_y_pos);
-            user_data->_event_callback_func(event);
+            user_data->_application_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
@@ -84,7 +84,7 @@ namespace DCore
             glfwGetWindowFrameSize(a_window, &dim._window_frame_left, &dim._window_frame_top, &dim._window_frame_right, &dim._window_frame_bottom);
 
             WindowResizeEvent event(old_width, old_height, dim._current_width, dim._current_height);
-            user_data->_event_callback_func(event);
+            user_data->_application_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_framebuffer_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
@@ -102,7 +102,7 @@ namespace DCore
             bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
 
             WindowFramebufferResizeEvent event(old_frame_width, old_frame_height, dim._current_frame_width, dim._current_frame_height);
-            user_data->_event_callback_func(event);
+            user_data->_application_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_set_clipboard_string(void* a_user_data, const char* a_text)
@@ -111,7 +111,7 @@ namespace DCore
             glfwSetClipboardString(reinterpret_cast<GLFWwindow*>(a_user_data), a_text);
 
             InputClipboardEvent event(a_text);
-            user_data->_event_callback_func(event);
+            user_data->_application_event_callback_func(event);
         }
 
         const char* WindowManagementSystem::GLFWWindowCallBacks::glfw_get_clipboard_string(void* a_user_data)
@@ -124,7 +124,7 @@ namespace DCore
             WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
             InputItemDropEvent event(a_count, a_paths);
-            user_data->_event_callback_func(event);
+            user_data->_application_event_callback_func(event);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods)
@@ -231,7 +231,7 @@ namespace DCore
         glfwTerminate();
     }
 
-    void WindowManagementSystem::BindApplicationEventFunc(const EventCallbackFunc& a_event_callback_func)
+    void WindowManagementSystem::BindApplicationEventFunc(const ApplicationEventCallbackFunc& a_event_callback_func)
     {
         _application_event_callback_func = a_event_callback_func;
     }
@@ -258,11 +258,11 @@ namespace DCore
 
         ApplicationInstance::ProvideInputManagment()->RegisterWindow(&new_window);
 
-        GLFWwindow* glfw_window         = glfwCreateWindow(a_width, a_height, a_name, NULL, NULL);
-        new_window._window              = glfw_window;
-        new_window._event_callback_func = _application_event_callback_func;
-        new_window._name                = a_name;
-        new_window._is_focussed         = true;
+        GLFWwindow* glfw_window                     = glfwCreateWindow(a_width, a_height, a_name, NULL, NULL);
+        new_window._window                          = glfw_window;
+        new_window._application_event_callback_func = _application_event_callback_func;
+        new_window._name                            = a_name;
+        new_window._is_focussed                     = true;
 
         SetFocussedWindowID(new_window._id);
 

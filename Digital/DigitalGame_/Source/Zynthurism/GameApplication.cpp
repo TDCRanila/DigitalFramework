@@ -5,21 +5,23 @@
 
 #include <Zynthurism/GameMaster.h>
 
+#include <Zynthurism/Game/GameStage.h>
+
 namespace DGame
 {
 
 	void GameApplication::PreApplicationLoad()
 	{
+		RegisterStackCommunicator(std::make_shared<DGame::GameMaster>());
 	}
 
 	void GameApplication::PostApplicationLoad()
 	{
-		RegisterStackCommunicator(std::make_shared<DGame::GameMaster>());
-
-		ProvideStackController().AttachStage<DEditor::DockerStage>("MainDockSpace", false);
-		ProvideStackController().AttachStage<DEditor::MainConsole>("Console", false);
-		//ProvideStackController().AttachStage<DCore::StageExample>("StageOne", false);
-		//ProvideStackController().AttachStage<DCore::StageExample>("StageTwo", false);
+		ProvideStageStackController().AttachStage<DEditor::DockerStage>("MainDockSpace", false);
+		ProvideStageStackController().AttachStage<DEditor::MainConsole>("Console", false);
+		//ProvideStageStackController().AttachStage<DCore::StageExample>("StageOne", false);
+		//ProvideStageStackController().AttachStage<DCore::StageExample>("StageTwo", false);
+		ProvideStageStackController().AttachStage<DGame::GameTestStage>("Game Test", false);
 
 	}
 

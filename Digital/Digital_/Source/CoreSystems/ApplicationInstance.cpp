@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <bgfx/bgfx.h>
 
+#include <CoreSystems/Events/EventLibrary.h>
 // TODO REMOVE - Replace with some sort of EZ Use for Input
 #include <CoreSystems/Logging/Logger.h>
 #include <Defines/InputDefines.h>
@@ -21,16 +22,10 @@ namespace DCore
         , _game_clock_log_timer(true)
         , _game_clock(5.0f)
     {
-        _stage_stack_controller._stack_communicator = _stage_stack_communicator;
     }
 
     ApplicationInstance::~ApplicationInstance()
     {
-    }
-
-    void ApplicationInstance::RegisterStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator)
-    {
-        _stage_stack_communicator = a_stack_communicator;
     }
 
     void ApplicationInstance::RunApplication(const std::string a_name)
@@ -71,9 +66,20 @@ namespace DCore
         return &_input_management;
     }
 
-    StageStackController& ApplicationInstance::ProvideStackController()
+    StageStackController& ApplicationInstance::ProvideStageStackController()
     {
         return _stage_stack_controller;
+    }
+
+    void ApplicationInstance::RegisterStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator)
+    {
+        if (auto ptr = a_stack_communicator.get())
+        {
+            _stage_stack_communicator = a_stack_communicator;
+
+            _stage_stack_communicator->SetStageStackController(_stage_stack_controller);
+            _stage_stack_controller.SetStageStackCommunicator(_stage_stack_communicator);
+        }
     }
 
     void ApplicationInstance::PreApplicationLoad()
@@ -83,16 +89,21 @@ namespace DCore
 
     void ApplicationInstance::PostApplicationLoad()
     {
-
+        
     }
 
     void ApplicationInstance::ApplicationLoad()
     {
+        DCore::EventLibrary::ProcessEventCollection<DCore::StageEvent>();
+
+        if (_stage_stack_communicator == nullptr)
+            DFW_WARNLOG("Potentially not registering a stage stack communicator before application load. This might cause issues.");
+
         _window_management.ChangeDefaultWindowName(_application_name);
         _window_management.BindApplicationEventFunc(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
         _window_management.InitWindowManagement();
 
-        const DUID window_id = _window_management.GetMainWindow();
+        const DUID window_id            = _window_management.GetMainWindow();
         WindowInstance& window_instance = _window_management._window_instances.at(window_id);
 
         _imgui.InitImGuiLayer(window_instance);
@@ -122,7 +133,7 @@ namespace DCore
             if (_game_clock_log_timer.FetchElapsedTime() > game_clock_log_interval)
             {
                 _game_clock_log_timer.ResetTimer(true);
-                DFW_INFOLOG("DeltaTime(s): {} - FPS: {} - Cycles: {}", dt, (1/dt), _game_clock.GetElapsedCycleCount());
+                DFW_INFOLOG("DeltaTime(s): {} - FPS: {} - Cycles: {} - Sec: {}", dt, (1/dt), _game_clock.GetElapsedCycleCount(), _game_clock.GetElapsedTimeInSeconds());
             }
 
             _game_clock.BeginGameFrame();
@@ -218,19 +229,16 @@ namespace DCore
     void ApplicationInstance::TerminateApplication()
     {
         // Gracefully remove attached stages.
-        _stage_stack_controller.RemoveAttachedStages();
-        _stage_stack_controller.DeleteAttachedStages();
+        _stage_stack_controller.RemoveAllAttachedStages();
+        _stage_stack_controller.DeleteAllAttachedStages();
 
         _window_management.TerminateWindowManagement();
     }
 
-    void ApplicationInstance::OnApplicationEvent(BaseEvent& a_event)
+    void ApplicationInstance::OnApplicationEvent(ApplicationEvent& a_event)
     {
         DFW_INFOLOG("ApplicationEvent Received: {}", a_event.GetDebugString());
 
-        EventDispatcher dispatcher(a_event);
-        
-        // TODO Send events to all stages attached to application
         const std::vector<StageBase*>& _stages = _stage_stack_controller.GetStages();
         for (auto stage_it = _stages.rbegin(); stage_it != _stages.rend(); ++stage_it)
         {
@@ -238,7 +246,6 @@ namespace DCore
             if (!stage_ptr->IsDisabled())
                 stage_ptr->OnApplicationEvent(a_event);
         }
-
     }
 
 } // End of namespace ~ DCore

@@ -2,11 +2,7 @@
 
 #include <Defines/IDDefines.h>
 
-#include <CoreSystems/Events/ApplicationEvents.h>
-
 #include <CoreSystems/Window/WindowData.h>
-
-#include <CoreSystems/TimeTracker.h>
 
 // Forward Declare(s)
 struct GLFWwindow;
@@ -49,11 +45,6 @@ namespace DCore
     public:
         ~WindowManagementSystem();
 
-        void InitWindowManagement();
-        void TerminateWindowManagement();
-
-        void BindApplicationEventFunc(const EventCallbackFunc& a_event_callback_func);
-        
         bool HaveAllWindowsBeenClosed() const;
 
         const DUID GetMainWindow() const;
@@ -76,6 +67,11 @@ namespace DCore
         friend class ApplicationInstance;
 
         WindowManagementSystem(const std::string a_window_name = "DIGITAL");
+
+        void InitWindowManagement();
+        void TerminateWindowManagement();
+
+        void BindApplicationEventFunc(const ApplicationEventCallbackFunc& a_event_callback_func);
         
         std::unordered_map<WindowID, WindowInstance> _window_instances;
 
@@ -86,7 +82,7 @@ namespace DCore
 
         std::string _default_window_name;
 
-        EventCallbackFunc _application_event_callback_func;
+        ApplicationEventCallbackFunc _application_event_callback_func;
 
         WindowID _default_first_window_id;
         WindowID _current_focussed_window_id;
