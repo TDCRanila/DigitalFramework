@@ -106,7 +106,7 @@ namespace DCore
 		spdlog::memory_buf_t formatted;
 		std::string formatted_string;
 
-		base_sink<Mutex>::formatter_->format(msg, formatted);
+		spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
 		formatted_string = fmt::to_string(formatted);
 		
 		for (const auto&[id, func] : Logger::_dfw_sink_subscribers)
