@@ -29,7 +29,7 @@ target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Sourc
 target_link_libraries(${EXE_NAME} LIB:Digital_)
 # target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
-set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD 20)
 set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 set_target_properties(${EXE_NAME} PROPERTIES FOLDER _MainTargets)
