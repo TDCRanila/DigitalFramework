@@ -34,6 +34,11 @@ namespace DECS
 
 	void ECSystemManager::UpdateSystems() 
 	{ 
+		if (systems_.empty())
+		{
+			return;
+		}
+
 		// Calling Init of systems.
 		for (auto const&[system_type, system_ptr] : systems_)
 		{
