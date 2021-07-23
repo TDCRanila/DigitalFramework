@@ -3,6 +3,7 @@
 
 # CMAKE
 Digital/build
+Digital/build-clean
 
 ### C ###
 # Prerequisites
