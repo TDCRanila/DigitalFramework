@@ -2,8 +2,6 @@
 
 #include <spdlog/fmt/ostr.h>
 
-#include <CoreSystems/DObject.h>
-
 #include <Defines/IDDefines.h>
 
 #pragma region CoreTypes
