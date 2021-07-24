@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CoreSystems/Events/ApplicationEvents.h>
+#include <CoreSystems/ApplicationEvents.h>
 #include <CoreSystems/Stage/StageEvents.h>
 
 #include <Defines/IDDefines.h>
