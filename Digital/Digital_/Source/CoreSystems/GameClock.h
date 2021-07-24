@@ -11,9 +11,6 @@ namespace DCore
         GameClock(float32 a_start_time_in_seconds = 0.0f, bool a_start_paused = false);
         ~GameClock() = default;
 
-        void BeginGameFrame();
-        void EndGameFrame();
-
         float32 GetLastFrameDeltaTime() const;
         uint64 GetElapsedCycleCount() const;
         float32 GetElapsedTimeInSeconds() const;
@@ -28,6 +25,14 @@ namespace DCore
 
         float32 GetTimeModifier() const;
         void SetTimeModifier(float32 a_new_time_modifier);
+
+        void DebugLog() const;
+
+    protected:
+        friend class ApplicationInstance;
+
+        void BeginGameFrame();
+        void EndGameFrame();
 
     private:
 

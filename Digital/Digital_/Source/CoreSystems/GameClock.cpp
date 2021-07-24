@@ -144,4 +144,11 @@ namespace DCore
         _timescale_modifier = a_new_time_modifier;
     }
 
+    void GameClock::DebugLog() const
+    {
+        auto& dt = _last_frame_delta_time;
+        DFW_INFOLOG("DeltaTime(s): {} - FPS: {} - Cycles: {} - Sec: {}"
+            , dt, (1 / dt), GetElapsedCycleCount(), GetElapsedTimeInSeconds());
+    }
+
 } // End of namespace ~ DCore.

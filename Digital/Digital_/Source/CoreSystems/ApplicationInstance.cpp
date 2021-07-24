@@ -20,7 +20,6 @@ namespace DCore
         : _stage_stack_communicator(nullptr)
         , _application_name("")
         , _game_clock_log_timer(true)
-        , _game_clock(5.0f)
     {
     }
 
@@ -133,7 +132,7 @@ namespace DCore
             if (_game_clock_log_timer.FetchElapsedTime() > game_clock_log_interval)
             {
                 _game_clock_log_timer.ResetTimer(true);
-                DFW_INFOLOG("DeltaTime(s): {} - FPS: {} - Cycles: {} - Sec: {}", dt, (1/dt), _game_clock.GetElapsedCycleCount(), _game_clock.GetElapsedTimeInSeconds());
+                _game_clock.DebugLog();
             }
 
             _game_clock.BeginGameFrame();
