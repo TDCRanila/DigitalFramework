@@ -1,5 +1,7 @@
 #include <CoreSystems/ApplicationInstance.h>
 
+#include <CoreSystems/CoreServices.h>
+
 #include <imgui/imgui.h>
 #include <GLFW/glfw3.h>
 #include <bgfx/bgfx.h>
@@ -37,6 +39,7 @@ namespace DCore
         _application_name = a_name;
 
         Logger::Init(true, 5000);
+        CoreService::ProvideGameClock(&_game_clock);
 
         TimeTracker application_timer;
         DFW_INFOLOG("{} - Init Application.", _application_name);
@@ -198,7 +201,7 @@ namespace DCore
                 for (StageBase* stage : _stages)
                 {
                     if (!stage->IsDisabled())
-                        stage->Update(/*dt*/);
+                        stage->Update();
                 }
 
                 InputData& active_input_data = _input_management._input_data_storage.at(window_id);
