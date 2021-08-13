@@ -33,9 +33,8 @@ namespace DCore
 
 		_console_sink	= std::make_shared<spdlog::sinks::wincolor_stdout_sink_st>();
 		_dfw_sink		= std::make_shared<DFWSink_st>();
-		// TODO Proper File Path Set
-		// TODO filesystem Check if file exist for debuglog#000.txt, find suitable number
 
+		// TODO Proper File Path Set
 		std::string log_folder_name = std::string("logs");
 		if (!DUtility::CreateNewDirectory("logs"))
 		{
@@ -47,7 +46,7 @@ namespace DCore
 		DUtility::FindAndRemoveChar(log_file_date, ':');
 		std::string log_file_name	= std::string("DFW-debuglog-" + log_file_date + log_file_type);
 
-		_file_sink		= std::make_shared<spdlog::sinks::basic_file_sink_st>(std::string(log_folder_name + DIR_SLASH + log_file_name));
+		_file_sink = std::make_shared<spdlog::sinks::basic_file_sink_st>(std::string(log_folder_name + DIR_SLASH + log_file_name));
 
 		_main_logger.set_level(spdlog::level::trace);
 
@@ -60,7 +59,7 @@ namespace DCore
 		_dfw_sink->set_pattern("[%H:%M:%S] [%n] [%^%l%$] %v (%s@%#)"); // "[23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
 
 		_main_logger.sinks().emplace_back(_file_sink);
-		_file_sink->set_level(spdlog::level::trace);
+		_file_sink->set_level(spdlog::level::debug);
 		_file_sink->set_pattern("[%D %H:%M:%S] [%n] [%l] %v (%s@%#)"); //"[2014-10-31 23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
 
 		if (a_enable_automatic_flush)
@@ -79,6 +78,49 @@ namespace DCore
 	spdlog::logger& Logger::ProvideMainLogger()
 	{
 		return _main_logger;
+	}
+
+	void Logger::AdjustLoggingLevel(LogType a_logger, LogLevel a_log_level)
+	{
+		spdlog::level::level_enum new_log_level;
+		switch (a_log_level)
+		{
+			case LogLevel::None:	new_log_level = spdlog::level::off;		break;
+			case LogLevel::Trace:	new_log_level = spdlog::level::trace;	break;
+			case LogLevel::Debug:	new_log_level = spdlog::level::debug;	break;
+			case LogLevel::Info:	new_log_level = spdlog::level::info;	break;
+			case LogLevel::Warning:	new_log_level = spdlog::level::warn;	break;
+			case LogLevel::Error:	new_log_level = spdlog::level::err;		break;
+			default: DFW_WARNLOG("Trying to adjust the log level of a log type to something that is invalid."); break;
+		}
+
+		switch (a_logger)
+		{
+			case LogType::PlatformConsole: 
+			{
+				if (_console_sink->level() != new_log_level);
+					_console_sink->set_level(new_log_level);
+				break;
+			}
+			case LogType::FrameworkLogger:
+			{
+				if (_dfw_sink->level() != new_log_level);
+					_dfw_sink->set_level(new_log_level);
+				break;
+			}
+			case LogType::FileLogger:
+			{
+				if (_file_sink->level() != new_log_level);
+					_file_sink->set_level(new_log_level);
+				break;
+			}
+			case LogType::None:
+			default: 
+			{
+				DFW_WARNLOG("Trying to adjust the log level of a log type that is invalid.");
+				break;
+			}
+		}
 	}
 
 	void Logger::AddSubscriber(DUID a_subscriber_id, const LogSubscriberMessageFunc& a_func)

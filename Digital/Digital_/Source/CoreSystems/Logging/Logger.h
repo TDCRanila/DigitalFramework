@@ -17,6 +17,23 @@
 
 namespace DCore
 {
+	enum class LogLevel
+	{
+		None = 0,	//off		= SPDLOG_LEVEL_OFF,
+		Trace,		//trace		= SPDLOG_LEVEL_TRACE,
+		Debug,		//debug		= SPDLOG_LEVEL_DEBUG,
+		Info,		//info		= SPDLOG_LEVEL_INFO,
+		Warning,	//warn		= SPDLOG_LEVEL_WARN,
+		Error,		//err		= SPDLOG_LEVEL_ERROR,
+	};
+
+	enum class LogType
+	{
+		None = 0,
+		PlatformConsole,
+		FrameworkLogger, 
+		FileLogger,
+	};
 
 	template<class Mutex>
 	class DFWSinkImpl : public spdlog::sinks::base_sink <Mutex>
@@ -45,6 +62,7 @@ namespace DCore
 		static void ManuelFlush();
 
 		static spdlog::logger& ProvideMainLogger();
+		static void AdjustLoggingLevel(LogType a_logger, LogLevel a_log_level);
 
 		// TODO Find a way to clean this function up some more, to avoid having the user to call std::bind(func, object, placeholder)
 		// Could then also force the user to use a shared_ptr to an object?
