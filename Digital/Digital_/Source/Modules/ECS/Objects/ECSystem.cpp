@@ -7,10 +7,11 @@
 namespace DECS
 {
 
-	ECSystem::ECSystem(Key) :
-		system_id_(ECSIDManager::GetNextSystemID()),
-		entity_manager_(nullptr),
-		system_name_("Base System Name.")
+	ECSystem::ECSystem(Key) 
+		: _system_id(-1) // TODO Proper Unitialized value.
+		, _entity_manager(nullptr)
+		, _system_name("Default System Name.")
+		, _paused(false)
 	{ 
 		/*EMPTY*/
 	}
@@ -29,12 +30,14 @@ namespace DECS
 
 	bool ECSystem::IsSystemPaused()
 	{
-		return paused_;
+		return _paused;
 	}
 
 	void ECSystem::InternalInit(ECSEntityManager* a_entity_manager)
 	{
-		DFW_INFOLOG("Initialization System: {} - {}", system_id_, system_name_);
+		_system_id = ECSIDManager::GetNextSystemID();
+
+		DFW_INFOLOG("Initialization System: {} - {}", _system_id, _system_name);
 
 		if (!a_entity_manager)
 		{
@@ -43,45 +46,45 @@ namespace DECS
 		}
 		else
 		{
-			entity_manager_ = a_entity_manager;
+			_entity_manager = a_entity_manager;
 		}
 
-		this->Init(entity_manager_);
+		this->Init(_entity_manager);
 	}
 
 	void ECSystem::InternalTerminate()
 	{
-		DFW_INFOLOG("Terminating System: {} - {}", system_id_, system_name_);
-		this->Terminate(entity_manager_);
+		DFW_INFOLOG("Terminating System: {} - {}", _system_id, _system_name);
+		this->Terminate(_entity_manager);
 	}
 
 	void ECSystem::InternalPreUpdate()
 	{
-		DFW_INFOLOG("PreUpdate System: {} - {}", system_id_, system_name_);
-		this->PreUpdate(entity_manager_);
+		DFW_LOG("PreUpdate System: {} - {}", _system_id, _system_name);
+		this->PreUpdate(_entity_manager);
 	}
 
 	void ECSystem::InternalUpdate()
 	{
-		DFW_INFOLOG("Update System: {} - {}", system_id_, system_name_);
+		DFW_LOG("Update System: {} - {}", _system_id, _system_name);
 		// TODO.
-		this->Update(entity_manager_, float32(0.0f));
+		this->Update(_entity_manager, float32(0.0f));
 	}
 
 	void ECSystem::InternalPostUpdate()
 	{
-		DFW_INFOLOG("PostUpdate System: {} - {}", system_id_, system_name_);
-		this->PostUpdate(entity_manager_);
+		DFW_LOG("PostUpdate System: {} - {}", _system_id, _system_name);
+		this->PostUpdate(_entity_manager);
 	}
 
 	void ECSystem::InternalPauseSystem(bool a_pause_on_true)
 	{
-		this->paused_ = a_pause_on_true;
+		this->_paused = a_pause_on_true;
 	}
 
 	SystemID ECSystem::GetID() const 
 	{
-		return system_id_;
+		return _system_id;
 	}
 
 } // End of namespace ~ DECS

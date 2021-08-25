@@ -28,7 +28,7 @@ namespace DECS
 		bool IsSystemPaused();
 
 	protected:
-		std::string system_name_;
+		std::string _system_name;
 
 	private:
 		friend class ECSystemManager;
@@ -43,9 +43,10 @@ namespace DECS
 		void InternalPauseSystem(bool a_pause_on_true);
 
 	private:
-		SystemID system_id_;
-		ECSEntityManager* entity_manager_;
-		bool paused_;
+		ComponentBitList _system_lock;
+		SystemID _system_id;
+		ECSEntityManager* _entity_manager;
+		bool _paused;
 	
 	};
 
