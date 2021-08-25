@@ -134,7 +134,7 @@ namespace DCore
 		auto it_result = _dfw_sink_subscribers.find(a_subscriber_id);
 		if (it_result == _dfw_sink_subscribers.end())
 		{
-			DFW_INFOLOG("Couldn't find logging subscriber with ID: {} when trying to remove it.", a_subscriber_id);
+			DFW_LOG("Couldn't find logging subscriber with ID: {} when trying to remove it.", a_subscriber_id);
 		}
 		else
 		{

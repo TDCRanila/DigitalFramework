@@ -96,7 +96,7 @@ namespace DCore
 			: _owned_event(a_event)
 		{
 			// TODO DEBUG TAG/IfElse.
-			DFW_INFOLOG("Starting EventDispatcher with type: {}", typeid(OwnedEventType).name());
+			DFW_LOG("Starting EventDispatcher with type: {}", typeid(OwnedEventType).name());
 		}
 
 		~EventDispatcher() = default;
@@ -166,7 +166,7 @@ namespace DCore
 		}
 
 		// TODO DEBUG TAG/IfElse.
-		DFW_INFOLOG("Attemping to dispatch with configuration: Result; {}, ReceivingEvent; {}, CompareEvent; {} - CallFunc; {}",
+		DFW_LOG("Attemping to dispatch with configuration: Result; {}, ReceivingEvent; {}, CompareEvent; {} - CallFunc; {}",
 			comparison_result, typeid(OwnedEventType).name(), typeid(EventType).name(), typeid(Func).name());
 
 		if (comparison_result)

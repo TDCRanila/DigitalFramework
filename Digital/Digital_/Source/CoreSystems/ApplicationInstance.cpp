@@ -131,7 +131,7 @@ namespace DCore
 
             float32 dt = _game_clock.GetLastFrameDeltaTime();
 
-            float32 game_clock_log_interval(5.0f);
+            float32 game_clock_log_interval(10.0f);
             if (_game_clock_log_timer.FetchElapsedTime() > game_clock_log_interval)
             {
                 _game_clock_log_timer.ResetTimer(true);
@@ -239,7 +239,7 @@ namespace DCore
 
     void ApplicationInstance::OnApplicationEvent(ApplicationEvent& a_event)
     {
-        DFW_INFOLOG("ApplicationEvent Received: {}", a_event.GetDebugString());
+        DFW_LOG("ApplicationEvent Received: {}", a_event.GetDebugString());
 
         const std::vector<StageBase*>& _stages = _stage_stack_controller.GetStages();
         for (auto stage_it = _stages.rbegin(); stage_it != _stages.rend(); ++stage_it)
