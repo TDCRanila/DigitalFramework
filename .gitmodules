@@ -13,3 +13,6 @@
 [submodule "Digital/Dependency/External/spdlog"]
 	path = Digital/Dependency/External/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "Digital/Dependency/External/entt"]
+	path = Digital/Dependency/External/entt
+	url = https://github.com/skypjack/entt.git

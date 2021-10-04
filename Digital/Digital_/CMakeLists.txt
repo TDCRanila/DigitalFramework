@@ -93,6 +93,23 @@ target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
 #target_include_directories(${LIB_NAME} PUBLIC "${BIMG_INCLUDE_DIR}")
 #target_include_directories(${LIB_NAME} PUBLIC "${BX_INCLUDE_DIR}")
 
+## entt
+message("Adding SubModule: entt")
+set(ENTT_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/entt)
+set(ENTT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/entt/src)
+set(ENTT_LIB_NAME entt)
+
+find_path(ENTT_FOUND NAMES "entt.hpp" PATHS "${ENTT_INCLUDE_DIR}/entt")
+if((NOT ENTT_FOUND) OR (NOT EXISTS ${ENTT_INCLUDE_DIR}))
+    message("Unable to find Submodule: ${ENTT_LIB_NAME} or file entt.hpp")
+    execute_process(COMMAND git submodule update --init -- ${ENTT_CMAKE_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+    message("Found Submodule: ${ENTT_LIB_NAME}")
+endif()
+target_include_directories(${LIB_NAME} PUBLIC "${ENTT_INCLUDE_DIR}")
+
+message("\n")
+
 ## digital-imgui
 message("Adding SubModule: Digital/Dear ImGui")
 set(IMGUI_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/digital-imgui)
