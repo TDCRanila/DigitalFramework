@@ -6,10 +6,10 @@ DCore::GameClock* CoreService::_gc_service = nullptr;
 
 DCore::GameClock* CoreService::GetGameClock()
 {
-    // TODO: Should provide some game clock null service instead.
-    if (_gc_service == nullptr)
-        DFW_ASSERT(true, "No GameClock Provided.");
-        
+    // TODO: Could provide some game clock null-service instead.
+    // maybe not needed for a gameclock but other services such as audio
+    // could be useful.
+    DFW_ASSERT(_gc_service && "No Game Clock provided.");      
     return _gc_service;
 }
 
