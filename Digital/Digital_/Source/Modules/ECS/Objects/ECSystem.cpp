@@ -5,7 +5,7 @@
 namespace DECS
 {
 	ECSystem::ECSystem(Key) 
-		: _id(DCore::InvalidDUID())
+		: _id(DCore::DFW_INVALID_DUID)
 		, _entity_manager(nullptr)
 		, _name("Default System Name.")
 		, _paused(false)

@@ -18,7 +18,7 @@ namespace DCore
     }
 
     WindowInstance::WindowInstance()
-        : _id(DUIDGenerator::GenerateID())
+        : _id(DCore::DFW_INVALID_DUID)
         , _name("")
         , _window(nullptr)
         , _input_data(nullptr)

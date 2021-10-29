@@ -89,7 +89,7 @@ namespace DECS
 			std::shared_ptr<SystemType> system_ptr = std::make_shared<SystemType>(std::forward<TArgs>(a_args)...);
 
 			system_ptr->_name			= type.name();
-			system_ptr->_id				= DCore::DUIDGenerator::GenerateID();
+			system_ptr->_id				= DCore::GenerateDUID();
 			system_ptr->_entity_manager	= CoreService::GetECS()->EntityManager();
 
 			_systems[type]				= system_ptr;

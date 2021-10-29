@@ -98,7 +98,7 @@ namespace DECS
 			{
 				ComponentType& component	= a_entity._universe->_registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
 				component._owner			= a_entity;
-				component._id				= DCore::DUIDGenerator::GenerateID();
+				component._id				= DCore::GenerateDUID();
 
 				// Special Case for Entity Registration Component.
 				// TODO: Not all that nice, could look in an alternative.

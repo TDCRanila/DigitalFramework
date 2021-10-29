@@ -13,7 +13,7 @@ namespace DECS
     {
         ECSEntityRegistrationComponent()
             : name("")
-            , id(DCore::InvalidDUID())
+            , id(DCore::DFW_INVALID_DUID)
             , comp_list(0)
         {
         }

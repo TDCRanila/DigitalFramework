@@ -67,7 +67,6 @@ namespace DECS
 			return EntityType();
 		}
 
-		DCore::DUID id		= DCore::DUIDGenerator::GenerateID();
 		entt::entity handle	= a_universe->_registry.create();
 
 		EntityType entity(std::forward<TArgs>(a_args)...);
@@ -78,7 +77,8 @@ namespace DECS
 		// entity_data_ptr->type_id = TypeID<EntityType>::Get();
 
 		a_universe->_entities.emplace_back(handle);
-		a_universe->_entity_data_registration.emplace(handle, AddComponent<ECSEntityRegistrationComponent>(entity, id, "Default Entity Name"));
+		a_universe->_entity_data_registration.emplace(handle, 
+			AddComponent<ECSEntityRegistrationComponent>(entity, DCore::GenerateDUID(), "Default Entity Name"));
 
 		// TODO - Should be in something like a WorldManager -  Add any additional default components here; e.g. transform, name component
 		// _component_manager.AddComponent<TransformComponent>(entity, a_universe);

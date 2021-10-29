@@ -5,7 +5,7 @@ namespace DECS
 
 	ECSComponent::ECSComponent(Key)
 		: _owner()
-		, _id(DCore::InvalidDUID())
+		, _id(DCore::DFW_INVALID_DUID)
 	{ 
 	}
 

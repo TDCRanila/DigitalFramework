@@ -256,9 +256,8 @@ namespace DCore
     {
         WindowInstance new_window;
 
-        ApplicationInstance::ProvideInputManagment()->RegisterWindow(&new_window);
-
         GLFWwindow* glfw_window                     = glfwCreateWindow(a_width, a_height, a_name, NULL, NULL);
+        new_window._id                              = DCore::GenerateDUID();
         new_window._window                          = glfw_window;
         new_window._application_event_callback_func = _application_event_callback_func;
         new_window._name                            = a_name;
@@ -282,6 +281,8 @@ namespace DCore
         glfwSetMouseButtonCallback(glfw_window, GLFWWindowCallBacks::glfw_mousebutton_callback);
         glfwSetCursorPosCallback(glfw_window, GLFWWindowCallBacks::glfw_mouse_callback);
         glfwSetScrollCallback(glfw_window, GLFWWindowCallBacks::glfw_scroll_callback);
+        
+        ApplicationInstance::ProvideInputManagment()->RegisterWindow(&new_window);
 
         auto [it_pair, result] =_window_instances.emplace(new_window._id, new_window);
         if (result)

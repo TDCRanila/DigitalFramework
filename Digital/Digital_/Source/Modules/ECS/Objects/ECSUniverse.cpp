@@ -5,7 +5,7 @@
 namespace DECS
 {
     ECSUniverse::ECSUniverse()
-        : _id(DCore::DUIDGenerator::GenerateID())
+        : _id(DCore::GenerateDUID())
     {
         _registry.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
         _entity_data_registration.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
