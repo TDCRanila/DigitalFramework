@@ -8,18 +8,12 @@
 
 namespace DECS 
 {
-
-	ECSKeyLockSystem::ECSKeyLockSystem() :
-		generated_component_keys_(false)
-	{ 
-		/*EMPTY*/ 
-	}
-
-	ECSKeyLockSystem::~ECSKeyLockSystem() { /*EMPTY*/ }
+	bool ECSKeyLockSystem::_generated_component_keys = false;
+	std::unordered_map<std::type_index, int8> ECSKeyLockSystem::_component_bit_placement;
 
 	void ECSKeyLockSystem::GenerateComponentKeys() 
 	{
-		if (generated_component_keys_)
+		if (_generated_component_keys)
 		{
 			DFW_INFOLOG("KeyLockSystem has already generated the component keys.");
 			return;
@@ -29,16 +23,15 @@ namespace DECS
 
 		for (auto const&[type_pair, fac] : ECSComponent::GetFactories()) 
 		{
-			component_bit_placement_[type_pair.second] = ++key_index;
+			_component_bit_placement[type_pair.second] = ++key_index;
 
-			// TODO Magic Number 64
-			if (key_index > 64) 
+			if (key_index > DFW_MAX_REGISTERED_COMPONENTS)
 			{ 
-				DFW_ERRORLOG("Over 64 Components have been registered for ComponentBitPlacement.");
+				DFW_ERRORLOG("Over {} Components have been registered for ComponentBitPlacement.", DFW_MAX_REGISTERED_COMPONENTS);
 			}
 		}
 
-		generated_component_keys_ = true;
+		_generated_component_keys = true;
 	}
 
 } // End of namespace ~ DECS

@@ -1,47 +1,57 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
+#include <string>
+
+// FW Declares.
+namespace DCore
+{
+	class ApplicationInstance;
+} // End of namespace ~ DCore.
 
 namespace DECS 
 {
-
 	// FW Declares.
 	class ECSystemManager;
 	class ECSEntityManager;
-	class ECSComponentManager;
+	class ECSEventHandler;
+	class ECSUniverse;
 
 	class ECSModule final 
 	{
 	public:
-		ECSModule();
-		~ECSModule();
+		~ECSModule() = default;
 			   
+		ECSystemManager* const SystemManager() const;
+		ECSEntityManager* const EntityManager() const;
+		ECSEventHandler* const EventHandler() const;
+
+		ECSUniverse* RegisterUniverse(std::string const& a_universe_name);
+		ECSUniverse* const GetUniverse(std::string const& a_universe_name);
+		ECSUniverse* const CurrentUniverse();
+
+	protected:
+		friend DCore::ApplicationInstance;
+
+		ECSModule();
+
 		void InitECS();
-
 		void TerminateECS();
-
 		void UpdateECS();
 
-	//TODO Make them protected again - Was testing out things: - protected:
-		// friend	world module
+	private:
+		
+		ECSystemManager*	_system_manager;
+		ECSEntityManager*	_entity_manager;
+		ECSEventHandler*	_event_handler;
+		ECSUniverse*		_current_universe;
+		
+		std::unordered_map<std::string, ECSUniverse*> _universes;
 
-		// add		system
-		// remove	system
-		// get		system
+		bool				_initialized;
 
-		// create	entity
-		// delete	entity
-
-		// create	component
-		// delete	component
-		// get		component
-
-	//TODO Make them private again - Was testing out things - private:
-		bool initialized_;
-
-		ECSystemManager*		system_manager_;
-		ECSEntityManager*		entity_manager_;
-		ECSComponentManager*	component_manager_;
 	};
 
 } // End of namespace ~ DECS
+

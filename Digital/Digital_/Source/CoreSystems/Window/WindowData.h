@@ -2,7 +2,7 @@
 
 #include <Defines/IDDefines.h>
 
-#include <CoreSystems/Events/ApplicationEvents.h>
+#include <CoreSystems/ApplicationEvents.h>
 
 // Forward Declare(s)
 struct GLFWwindow;

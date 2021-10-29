@@ -12,8 +12,8 @@ namespace DGame
 		~GameApplication() = default;
 		
 	private:
-		virtual void PreApplicationLoad() override;
-		virtual void PostApplicationLoad() override;
+		virtual void PreApplicationInit() override;
+		virtual void PostApplicationInit() override;
 
 	};
 

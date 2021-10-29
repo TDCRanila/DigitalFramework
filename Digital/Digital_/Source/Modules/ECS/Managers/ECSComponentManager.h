@@ -1,184 +1,146 @@
 #pragma once
 
-#include <Modules/ECS/Managers/ECSEntityManager.h>
 #include <Modules/ECS/Utility/ECSKeyLockSystem.h>
-
 #include <Modules/ECS/Objects/ECSEntity.h>
 #include <Modules/ECS/Objects/ECSComponent.h>
-#include <Modules/ECS/Objects/ECSComponentHandle.h>
+#include <Modules/ECS/Objects/ECSUniverse.h>
 
 #include <Utility/TemplateUtility.h>
-
-#include <memory>
-#include <unordered_map>
-#include <vector>
-#include <typeindex>
-#include <type_traits>
+#include <CoreSystems/DUID.h>
 
 namespace DECS 
 {
+	// FW Declare
+	class ECSEntityManager;
+
+	// Concepts
+	template <typename ComponentType>
+	concept IsValidComponentType = IsDerivedFrom<ComponentType, ECSComponent>;
+
 	class ECSComponentManager final 
 	{
 	public:
+		~ECSComponentManager() = default;
+
+		template <typename ComponentType> 
+		ComponentType* const GetComponent(ECSEntity const& a_entity) const;
+
+		template <typename... TArgs>
+		bool HasComponents(ECSEntity const& a_entity) const;
+
+		template <typename ComponentType, typename ...TArgs>
+		ComponentType* const AddComponent(ECSEntity const& a_entity, TArgs&&...a_args) const;
+
+		template <typename ComponentType>
+		bool DeleteComponent(ECSEntity const& a_entity) const;
+
+	protected: 
+		friend ECSEntityManager;
+
 		ECSComponentManager();
-		~ECSComponentManager();
 
-		void Init(ECSEntityManager* a_entity_manager);
-
-		void Terminate();
-
-	// TODO Make them protected again - Was testing out things: - protected:
-		template <class T> 
-		typename std::enable_if<std::is_base_of<ECSComponent, T>::value && !is_same<ECSComponent, T>::value, ECSComponentHandle<T>>::type
-		GetComponent(EntityID a_entity_id) const;
-
-		template <class T>
-		typename std::enable_if<!std::is_base_of<ECSComponent, T>::value || is_same<ECSComponent, T>::value, ECSComponentHandle<T>>::type
-		GetComponent(EntityID a_entity_id) const;
-
-		template <class ...TArgs>
-		bool HasComponents(EntityID a_entity_id) const;
-
-		template <class T>
-		typename std::enable_if<std::is_base_of<ECSComponent, T>::value && !is_same<ECSComponent, T>::value, ECSComponentHandle<T>>::type
-		AddComponent(EntityID a_entity_id);
-
-		template <class T>
-		typename std::enable_if<!std::is_base_of<ECSComponent, T>::value || is_same<ECSComponent, T>::value, ECSComponentHandle<T>>::type
-		AddComponent(EntityID a_entity_id);
-
-		template <class T>
-		typename std::enable_if<std::is_base_of<ECSComponent, T>::value, bool>::type
-		DeleteComponent(EntityID a_entity_id);
-
-		template <class T>
-		typename std::enable_if<!std::is_base_of<ECSComponent, T>::value, bool>::type
-		DeleteComponent(EntityID a_entity_id);
-
-	// TODO Make them private again - Was testing out things: - private:
-		template <class T>
-		typename std::enable_if<std::is_base_of<ECSComponent, T>::value, bool>::type
-		InternalHasComponents(EntityID a_entity_id) const;
-
-		template <class T>
-		typename std::enable_if<!std::is_base_of<ECSComponent, T>::value, bool>::type
-		InternalHasComponents(EntityID a_entity_id) const;
-
-		template <class Ta, class Tb, class... TArgs>
-		bool InternalHasComponents(EntityID a_entity_id) const;
-
-		ECSEntityManager* entity_manager_;
-		std::unique_ptr<ECSKeyLockSystem>	key_lock_system_;
-
-		std::unordered_map<std::type_index, std::unordered_map<EntityID, ECSComponent*>> component_vectors_;
+	private:
+		ECSKeyLockSystem _keylock_system;
 
 	};
 
 #pragma region Template Function Implementation
 
-	template <class T>
-	typename std::enable_if<std::is_base_of<ECSComponent, T>::value && !is_same<ECSComponent, T>::value, ECSComponentHandle<T>>::type
-	ECSComponentManager::GetComponent(EntityID a_entity_id) const
+	template <typename ComponentType>
+	ComponentType* const ECSComponentManager::GetComponent(ECSEntity const& a_entity) const
 	{
-		const auto& handle = entity_manager_->GetEntity(a_entity_id);
-		if (!handle.IsEntityValid())
+		if constexpr (not IsValidComponentType<ComponentType>)
 		{
-			return ECSComponentHandle<T>(nullptr);
+			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to get a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
+			return nullptr;
 		}
-		else
+		else if constexpr (IsValidComponentType<ComponentType>)
 		{
-			if (!HasComponents<T>(a_entity_id))
-			{
-				return ECSComponentHandle<T>(nullptr);
-			}
-			else
-			{
-				const ECSComponent* component_ptr(component_vectors_.at(typeid(T)).at(handle.GetID()));
-				return ECSComponentHandle<T>(static_cast<const T*>(component_ptr));
-			}
+			DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component to an invalid entity.");
+			ComponentType* component = a_entity._universe->_registry.try_get<ComponentType>(a_entity);
+			return component;
 		}
 	}
 
-	template <class T>
-	typename std::enable_if<!std::is_base_of<ECSComponent, T>::value || is_same<ECSComponent, T>::value, ECSComponentHandle<T>>::type
-	ECSComponentManager::GetComponent(EntityID /*a_entity_id*/) const
+	template <typename... TArgs>
+	bool ECSComponentManager::HasComponents(ECSEntity const& a_entity) const
 	{
-		static_assert(always_false<T>::value, __FUNCTION__ " - Trying to get a Component of type T that isn't derived from DECS::ECSComponent.");
-		return ECSComponentHandle<T>(nullptr);
-	}
-
-	template <class ...TArgs>
-	bool ECSComponentManager::HasComponents(EntityID a_entity_id) const
-	{
-		// TODO. ECSComponent when checkinf BitComponent returns false.
-		return InternalHasComponents<ECSComponent, TArgs...>(a_entity_id);
-	}
-	
-	template <class T>
-	typename std::enable_if<std::is_base_of<ECSComponent, T>::value, bool>::type
-	ECSComponentManager::InternalHasComponents(EntityID a_entity_id) const
-	{
-		if (is_same<ECSComponent, T>())
+		if constexpr (sizeof...(TArgs) <= 0)
 		{
-			return true;
+			static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check the presence of a Component, but no template arguments provided.");
+			return false;
 		}
-
-		const auto& entity = entity_manager_->GetEntity(a_entity_id);
-		if (!entity.IsEntityValid())
+		else if constexpr ( (not IsValidComponentType<TArgs> || ...))
 		{
+			static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check for a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
 			return false;
 		}
 		else
 		{
-			ComponentBitList& entity_bit_list(entity_manager_->GetComponentBitList(a_entity_id));
-			return key_lock_system_->IsComponentBitTrue<T>(entity_bit_list);
+			DFW_ASSERT(a_entity.IsEntityValid() && "Trying to read component data from an invalid entity.");			
+			bool result = a_entity._universe->_registry.all_of<TArgs...>(a_entity);
+			return result;
 		}
 	}
-
-	template <class T>
-	typename std::enable_if<!std::is_base_of<ECSComponent, T>::value, bool>::type
-	ECSComponentManager::InternalHasComponents(EntityID /*a_entity_id*/) const
+	
+	template <typename ComponentType, typename... TArgs>
+	ComponentType* const ECSComponentManager::AddComponent(ECSEntity const& a_entity, TArgs&&... a_args) const
 	{
-		static_assert(always_false<T>::value, __FUNCTION__ " - Trying to check for a Component of type T that isn't derived from DECS::ECSComponent.");
-		return false;
+		if constexpr (not IsValidComponentType<ComponentType>)
+		{
+			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to add a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
+			return nullptr;
+		}
+		else if constexpr (IsValidComponentType<ComponentType>)
+		{
+			DFW_ASSERT(a_entity.IsEntityValid() && "Trying to add a component to an invalid entity.");
+			if (!HasComponents<ComponentType>(a_entity))
+			{
+				ComponentType& component	= a_entity._universe->_registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
+				component._owner			= a_entity;
+				component._id				= DCore::GenerateDUID();
+
+				// Special Case for Entity Registration Component.
+				// TODO: Not all that nice, could look in an alternative.
+				if constexpr (AreSameTypes<ECSEntityRegistrationComponent, ComponentType>)
+				{
+					_keylock_system.SetComponentBits<ComponentType>(component.comp_list);
+				}
+				else
+				{
+					auto const reg_comp = a_entity._universe->_entity_data_registration[a_entity._handle];
+					_keylock_system.SetComponentBits<ComponentType>(reg_comp->comp_list);
+				}
+
+				return &component;
+			}
+		}
+
+		return nullptr;
 	}
 
-	template <class Ta, class Tb, class... TArgs>
-	bool ECSComponentManager::InternalHasComponents(EntityID a_entity_id) const
+	template <typename ComponentType>
+	bool ECSComponentManager::DeleteComponent(ECSEntity const& a_entity) const
 	{
-		return InternalHasComponents<Tb>(a_entity_id) && InternalHasComponents<Ta, TArgs...>(a_entity_id);
-	}
+		if constexpr (not IsValidComponentType<ComponentType>)
+		{
+			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to delete a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
+			return false;
+		}
+		else if constexpr (IsValidComponentType<ComponentType>)
+		{
+			DFW_ASSERT(a_entity.IsEntityValid() && "Trying to remove a component from an invalid entity.");
+			if (HasComponents<ComponentType>(a_entity))
+			{
+				a_entity._universe->_registry.remove<ComponentType>(a_entity);
 
-	template <class T>
-	typename std::enable_if<std::is_base_of<ECSComponent, T>::value && !is_same<ECSComponent, T>::value, ECSComponentHandle<T>>::type
-	ECSComponentManager::AddComponent(EntityID a_entity_id)
-	{
-		// TODO - Find Component in storage.
-		key_lock_system_->SetComponentBits<T>(entity_manager_->GetComponentBitList(a_entity_id));
-		return ECSComponentHandle<T>(nullptr);
-	}
+				auto const reg_comp = a_entity._universe->_entity_data_registration[a_entity._handle];
+				_keylock_system.ResetComponentBits<ComponentType>(reg_comp->comp_list);
 
-	template <class T>
-	typename std::enable_if<!std::is_base_of<ECSComponent, T>::value || is_same<ECSComponent, T>::value, ECSComponentHandle<T>>::type
-	ECSComponentManager::AddComponent(EntityID /*a_entity_id*/)
-	{
-		static_assert(always_false<T>::value, __FUNCTION__ " - Trying to add a Component of type T that isn't derived from DECS::ECSComponent.");
-		return ECSComponentHandle<T>(nullptr);
-	}
+				return true;
+			}
+		}
 
-	template <class T>
-	typename std::enable_if<std::is_base_of<ECSComponent, T>::value, bool>::type
-	ECSComponentManager::DeleteComponent(EntityID /*a_entity_id*/)
-	{
-		// TODO
-		return false;
-	}
-
-	template <class T>
-	typename std::enable_if<!std::is_base_of<ECSComponent, T>::value, bool>::type
-	ECSComponentManager::DeleteComponent(EntityID /*a_entity_id*/)
-	{
-		static_assert(always_false<T>::value, __FUNCTION__ " - Trying to delete a Component of type T that isn't derived from DECS::ECSComponent.");
 		return false;
 	}
 

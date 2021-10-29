@@ -7,7 +7,7 @@ namespace DCore
 
 	StageBase::StageBase(std::string a_stage_name, bool a_start_disabled)
 		: _name(a_stage_name)
-		, _id(DUIDGenerator::GenerateID())
+		, _id(DCore::GenerateDUID())
 		, _is_disabled(a_start_disabled)
 	{
 	}

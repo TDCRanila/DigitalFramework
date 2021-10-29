@@ -1,111 +1,69 @@
 #include <Modules/ECS/Managers/ECSEntityManager.h>
 
-#include <Modules/ECS/Objects/ECSEntity.h>
-
 #include <CoreSystems/Logging/Logger.h>
+
+#include <vector>
 
 namespace DECS 
 {
-
-	ECSEntityManager::ECSEntityManager() :
-		manage_deleted_entities_flag_(false),
-		entitymap_reservation_amount_(1000)
-	{ /*EMPTY*/ }
-	
-	ECSEntityManager::~ECSEntityManager() { /*EMPTY*/ }
-
-	ECSEntity ECSEntityManager::CreateEntity()
+	ECSEntity ECSEntityManager::CreateEntity(ECSUniverse* a_universe) const
 	{
-		const EntityID new_id(ECSIDManager::GetNextEntityID());
-		entities_.emplace(new_id, ECSEntityData(new_id));	
-		return ECSEntity (new_id, this);;
+		return CreateEntity<ECSEntity>(a_universe);
 	}
 
-	void ECSEntityManager::DeleteEntity(EntityID a_entity_id)
+	void ECSEntityManager::DestroyEntity(ECSEntity const& a_entity) const
 	{
-		ECSEntityData* entity_data			= GetEntityData(a_entity_id);
-		const ECSEntity entity_to_delete	= GetEntity(a_entity_id);
-		if (entity_to_delete.IsEntityValid() && !entity_to_delete.IsPendingDeletion())
+		if (!a_entity.IsEntityValid())
 		{
-			entity_data->pending_delete = true;
-			pending_delete_entities_.emplace(a_entity_id, (*entity_data));
-		}
-		else
-		{
+			DFW_WARNLOG("Attempting to delete an entity that is not valid.");
 			return;
 		}
+		
+		std::vector<EntityHandle>& vec = a_entity._universe->_deleted_entities;
+		if (auto const it = std::find(vec.begin(), vec.end(), a_entity._handle); it != vec.end())
+		{
+			DFW_LOG("Attemping to delete an entity that is already marked for deletion.");
+			return;
+		}
+
+		vec.emplace_back(a_entity._handle);
 	}
 
-	ECSEntity ECSEntityManager::GetEntity(EntityID a_entity_id)
+	ECSEntity ECSEntityManager::GetEntity(DCore::DUID a_entity_id, ECSUniverse* a_universe) const
 	{
-		const auto& it = this->entities_.find(a_entity_id);
-		if (it == this->entities_.end())
-		{
-			DFW_INFOLOG("Trying to query Entity with ID: {} - but cannot be found.", a_entity_id);
+		// TODO : If function becomes used very frequently - might need to rework this function/container. 
+		// (Adding a separate container or a bi map; DUID - EntityHandle)
+		DFW_ASSERT(a_universe && "Attempting to find an entity in an invalid universe.");
+
+		auto const& result = std::find_if(a_universe->_entity_data_registration.begin(), a_universe->_entity_data_registration.end()
+									, [&a_entity_id](auto const& it) { return it.second->id == a_entity_id; });
+
+		if (result != a_universe->_entity_data_registration.end())
+			return ECSEntity(result->first, a_universe);
+		else
 			return ECSEntity();
-		}
-		else
+	}
+
+	void ECSEntityManager::ManageDeletedEntities(ECSUniverse* a_universe)
+	{
+		DFW_ASSERT(a_universe && "Attempting to manage entities, but the universe is invalid.");
+
+		if (a_universe->_deleted_entities.size() == 0)
+			return;
+
+		for (EntityHandle const& const handle : a_universe->_deleted_entities)
 		{
-			return ECSEntity(a_entity_id, this);
+			// TODO Destroy Entity Event Broadcast.
+
+			a_universe->_entity_data_registration.erase(handle);
+
+			auto const& it = std::find(a_universe->_entities.begin(), a_universe->_entities.end(), handle);
+			a_universe->_entities.erase(it);
+
+			a_universe->_registry.destroy(handle);
 		}
-	}
-
-	ECSEntityData* ECSEntityManager::GetEntityData(EntityID a_entity_id)
-	{
-		const auto& it = this->entities_.find(a_entity_id);
-		if (it == this->entities_.end())
-		{
-			DFW_INFOLOG("Trying to query Entity with ID: {} - but cannot be found.", a_entity_id);
-			return nullptr;
-		}
-		else
-		{
-			return &it->second;
-		}
-	}
-
-	bool ECSEntityManager::IsEntityPendingDeletion(EntityID a_entity_id)
-	{
-		// TODO Safety Assert or Resolve
-		return GetEntityData(a_entity_id)->pending_delete;
-	}
-
-	ComponentBitList& ECSEntityManager::GetComponentBitList(EntityID a_entity_id)
-	{
-		// TODO Safety Assert or Resolve
-		return GetEntityData(a_entity_id)->component_bit_list;
-	}
-
-	void ECSEntityManager::Init()
-	{
-		entities_.reserve(entitymap_reservation_amount_);
-		pending_delete_entities_.reserve(entitymap_reservation_amount_);
-	}
-
-	void ECSEntityManager::Terminate()
-	{
-		entities_.clear();
-		pending_delete_entities_.clear();
-	}
-
-	void ECSEntityManager::ManageEntities()
-	{
-		if (manage_deleted_entities_flag_)
-		{
-			if (pending_delete_entities_.empty())
-			{
-				DFW_ERRORLOG("Dirty Flag enabled the management of the entities, but there are none to manage.");
-				// TODO. Remove? Needs Testing.
-				DFW_ASSERT(false);
-			}
-			ManageDeletedEntities();
-			manage_deleted_entities_flag_ = false;
-		}
-	}
-
-	void ECSEntityManager::ManageDeletedEntities()
-	{
-		// TODO.
+			
+		a_universe->_deleted_entities.clear();
 	}
 
 } // End of namespace ~ DECS

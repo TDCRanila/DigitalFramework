@@ -6,11 +6,11 @@
 
 namespace DGame
 {
-    class GameTestStage : public GameStageBase
+    class TestStage : public GameStageBase
     {
     public:
-        GameTestStage(std::string a_stage_name, bool a_start_disabled = false);
-        virtual ~GameTestStage() = default;
+        TestStage(std::string a_stage_name, bool a_start_disabled = false);
+        virtual ~TestStage() = default;
 
         virtual void RenderImGui() override;
 
@@ -22,7 +22,8 @@ namespace DGame
 
     private: 
 
-        DECS::ECSModule ecs;
+        DECS::ECSModule* ecs;
+        DECS::ECSUniverse* _universe;
 
     };
 
