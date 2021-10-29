@@ -50,6 +50,9 @@ namespace DECS
 
 		DFW_INFOLOG("Terminating ECS Module.");
 
+		for (auto const& [name, ptr] : _universes)
+			delete ptr;
+
 		// Terminate.
 		_system_manager->Terminate();
 		_event_handler->Terminate();
