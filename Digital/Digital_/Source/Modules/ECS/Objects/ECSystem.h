@@ -2,51 +2,57 @@
 
 #include <Autofactory/AutoFactory.h>
 
-#include <Modules/ECS/Utility/ECSIDManager.h>
+#include <CoreSystems/DUID.h>
 
 #include <string>
 
 namespace DECS 
 {
+	// FW Declare
+	class ECSModule;
+	class ECSUniverse;
 	class ECSEntityManager;
+	class ECSystemManager;
 
 	class ECSystem : public DFactory::AutoFactory<ECSystem> 
 	{
 	public:
 		ECSystem(Key);
-		virtual ~ECSystem();
+		virtual ~ECSystem() = default;
 
-		SystemID GetID() const;
+		DCore::DUID GetID() const;
+		std::string GetName() const;
 
-		virtual void Init(ECSEntityManager* a_entity_manager);
-		virtual void Terminate(ECSEntityManager* a_entity_manager);
+		virtual void Init();
+		virtual void Terminate();
 
-		virtual void PreUpdate(ECSEntityManager* a_entity_manager);
-		virtual void Update(ECSEntityManager* a_entity_manager, float32 a_delta_time);
-		virtual void PostUpdate(ECSEntityManager* a_entity_manager);
+		virtual void PreUpdate(ECSUniverse* const a_universe);
+		virtual void Update(ECSUniverse* const a_universe);
+		virtual void PostUpdate(ECSUniverse* const a_universe);
 
-		bool IsSystemPaused();
+		bool IsSystemPaused() const;
 
 	protected:
-		std::string _system_name;
-
-	private:
 		friend class ECSystemManager;
-
-		void InternalInit(ECSEntityManager* a_entity_manager);
+		
+		void InternalInit();
 		void InternalTerminate();
 
-		void InternalPreUpdate();
-		void InternalUpdate();
-		void InternalPostUpdate();
+		void InternalPreUpdate(ECSUniverse* const a_universe);
+		void InternalUpdate(ECSUniverse* const a_universe);
+		void InternalPostUpdate(ECSUniverse* const a_universe);
 
 		void InternalPauseSystem(bool a_pause_on_true);
 
+		DCore::DUID			_id;
+		ECSEntityManager*	_entity_manager;
+		std::string			_name;
+
+	protected:
+		ECSEntityManager* const EntityManager() const;
+
 	private:
-		ComponentBitList _system_lock;
-		SystemID _system_id;
-		ECSEntityManager* _entity_manager;
-		bool _paused;
+		bool				_paused;
 	
 	};
 

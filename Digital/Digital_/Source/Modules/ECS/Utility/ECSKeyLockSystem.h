@@ -28,7 +28,7 @@ namespace DECS
 		ECSKeyLockSystem() = default;
 		~ECSKeyLockSystem() = default;
 
-		void GenerateComponentKeys();
+		static void GenerateComponentKeys();
 
 		template <typename... TArgs>
 		ComponentBitList ConstructComponentBitList() const;
@@ -54,11 +54,8 @@ namespace DECS
 		void GetComponentBitPlacement(int8& a_component_bit_list) const;
 
 	private:
-		template <typename TComponent, typename... TArgs>
-		void InternalConstructComponentBitList(ComponentBitList& a_component_bit_list) const;
-
-		static bool _generated_component_keys;
 		static std::unordered_map<std::type_index, int8> _component_bit_placement;
+		static bool _generated_component_keys;
 
 	};
 
@@ -67,9 +64,17 @@ namespace DECS
 	template <typename... TArgs>
 	ComponentBitList ECSKeyLockSystem::ConstructComponentBitList() const
 	{
-		ComponentBitList comp_bit_list(0);
-		InternalConstructComponentBitList<TArgs...>(comp_bit_list);
-		return comp_bit_list;
+		if constexpr ((not IsValidComponentType2<TArgs> || ...))
+		{
+			static_assert(always_false<TArgs...>::value, __FUNCTION__ " - Trying to construct bitlist with a Component of type T that isn't derived from DECS::ECSComponent.");
+			return ComponentBitList();
+		}
+		else
+		{
+			ComponentBitList comp_bit_list(0);
+			(SetComponentBits<TArgs>(comp_bit_list), ...);
+			return comp_bit_list;
+		}
 	}
 
 	template <typename TComponent>
@@ -135,25 +140,6 @@ namespace DECS
 		{
 			DFW_ERRORLOG("Unable to find ComponentBitPlacement of TComponent: ", type.name());
 			a_component_bit_list = DFW_UNASSIGNED_COMPONENT_BIT;
-		}
-	}
-
-	template <typename TComponent, typename... TArgs>
-	void ECSKeyLockSystem::InternalConstructComponentBitList(ComponentBitList& a_component_bit_list) const
-	{
-		if constexpr (not IsValidComponentType2<TComponent>)
-		{
-			static_assert(always_false<TComponent>::value, __FUNCTION__ " - Trying to construct bitlist with a Component of type T that isn't derived from DECS::ECSComponent.");
-			return;
-		}
-		else if constexpr (sizeof...(TArgs) == 0)
-		{
-			SetComponentBits<TComponent>(a_component_bit_list);
-		}
-		else
-		{
-			SetComponentBits<TComponent>(a_component_bit_list);
-			InternalConstructorBitList<TArgs...>(a_component_bit_list);
 		}
 	}
 

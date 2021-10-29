@@ -8,6 +8,8 @@
 #include <CoreSystems/Stage/StageStackCommunicator.h>
 #include <CoreSystems/Window/WindowManagement.h>
 
+#include <Modules/ECS/ECSModule.h>
+
 #include <CoreSystems/ImGui/ImGuiLayer.h>
 
 namespace DCore
@@ -18,27 +20,28 @@ namespace DCore
         ApplicationInstance();
         virtual ~ApplicationInstance();
 
-        void RunApplication(const char* a_name);
-        void RunApplication(const std::string a_name = "DIGITAL");
+        void RunApplication(char const* a_name);
+        void RunApplication(std::string const& a_name);
 
         static WindowManagementSystem* ProvideWindowManagement();
         static InputManagementSystem* ProvideInputManagment();
 
     protected:
-        void RegisterStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
+        void RegisterStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
 
         StageStackController& ProvideStageStackController();
 
-        virtual void PreApplicationLoad();
-        virtual void PostApplicationLoad();
+        virtual void PreApplicationInit();
+        virtual void PostApplicationInit();
 
     private:
         void InitApplication();
-        void ApplicationLoad();
         void UpdateApplication();
         void TerminateApplication();
 
         void OnApplicationEvent(ApplicationEvent& a_event);
+
+        void Debug_DrawBGFXInfo() const;
 
         static WindowManagementSystem _window_management;
         static InputManagementSystem _input_management;
@@ -47,6 +50,8 @@ namespace DCore
  
         TimeTracker _game_clock_log_timer;
         GameClock _game_clock;
+
+        DECS::ECSModule _ecs_module;
 
         StageStackController _stage_stack_controller;
         std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;
