@@ -37,6 +37,9 @@ set(public_headers ${HEADER_FILES})
 set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 20)
 set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 
+### Set Work Directory
+set_property(TARGET ${LIB_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
+
 ### PreCompiled Headers
 find_file(PCH_FILE_FOUND NAMES DFWPCH.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/DFW")
 if (PCH_FILE_FOUND)

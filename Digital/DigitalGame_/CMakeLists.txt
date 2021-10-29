@@ -34,6 +34,10 @@ target_include_directories(${EXE_NAME}
 set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD 20)
 set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 
+### Set Work Directory
+set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
+set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
+
 ### Forced Includes
 find_file(DEFINES_FILE_FOUND NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/Defines")
 if (DEFINES_FILE_FOUND)

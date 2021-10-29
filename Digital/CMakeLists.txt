@@ -8,8 +8,6 @@ project(${PROJECT_NAME})
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "_PredfinedTargetsFolder")
 
-set_property(GLOBAL PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
-
 ### Platform Specific Defines
 if(WIN32 AND NOT UNIX AND NOT APPLE)
     add_compile_definitions(DFW_PLATFORM_WINDOWS)
