@@ -1,70 +1,123 @@
 #include <Modules/ECS/ECSModule.h>
 		 
-#include <Modules/ECS/Managers/ECSComponentManager.h>
 #include <Modules/ECS/Managers/ECSEntityManager.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
+#include <Modules/ECS/Managers/ECSEventHandler.h>
+#include <Modules/ECS/Objects/ECSUniverse.h>
+
+#include <CoreSystems/Logging/Logger.h>
 
 namespace DECS 
 {
-	ECSModule::ECSModule() :
-		initialized_(false),
-		system_manager_(nullptr),
-		entity_manager_(nullptr),
-		component_manager_(nullptr)
-	{ /*EMPTY*/ }
-
-	ECSModule::~ECSModule() { /*EMPTY*/ }
+	ECSModule::ECSModule() 
+		: _system_manager(nullptr)
+		, _entity_manager(nullptr)
+		, _event_handler(nullptr)
+		, _current_universe(nullptr)
+		, _initialized(false)
+	{ 
+	}
 
 	void ECSModule::InitECS() 
 	{
-		if (initialized_) 
+		if (_initialized) 
 		{ 
-			INFOLOG("ECSModule already initialized");
+			DFW_INFOLOG("ECSModule already initialized");
 			return; 
 		}
 
-		INFOLOG("Initializing ECS Module.");
+		DFW_INFOLOG("Initializing ECS Module.");
 
 		// Allocate.
-		entity_manager_		= new ECSEntityManager();
-		system_manager_		= new ECSystemManager();
-		component_manager_	= new ECSComponentManager();
+		_entity_manager		= new ECSEntityManager();
+		_system_manager		= new ECSystemManager();
+		_event_handler		= new ECSEventHandler();
 
 		// Init.
-		entity_manager_->Init();
-		system_manager_->Init(entity_manager_);
-		component_manager_->Init(entity_manager_);
+		_system_manager->Init();
+		_event_handler->Init();
 
-		initialized_ = true;
+		_initialized = true;
 	}
 
 	void ECSModule::TerminateECS() 
 	{
-		if (!initialized_) 
+		if (!_initialized) 
 		{ 
-			INFOLOG("ECSModule not initialized. No need for termination."); 
+			DFW_INFOLOG("ECSModule not initialized. No need for termination."); 
 			return;
 		}
 
-		INFOLOG("Terminating ECS Module.");
+		DFW_INFOLOG("Terminating ECS Module.");
+
+		for (auto const& [name, ptr] : _universes)
+			delete ptr;
 
 		// Terminate.
-		system_manager_->Terminate();
+		_system_manager->Terminate();
+		_event_handler->Terminate();
+
+		delete _entity_manager;
+		delete _system_manager;
+		delete _event_handler;
 	}
 
 	void ECSModule::UpdateECS() 
 	{ 
 #if !defined(RELEASE64)
-		if (!initialized_) 
+		if (!_initialized) 
 		{ 
-			ERRORLOG("ECSModule not yet initialized");
+			DFW_ERRORLOG("ECSModule not yet initialized");
 			return; 
 		}
 #endif
 
-		// Update systems.
-		entity_manager_->ManageEntities();
-		system_manager_->UpdateSystems(); 
+		// Update systems and events.
+		for (auto [universe_name, universe_ptr] : _universes)
+		{
+			_current_universe = universe_ptr;
+			_event_handler->ProcessPendingEvents();
+			_system_manager->UpdateSystems(_current_universe);
+			_event_handler->ProcessPendingEvents();
+
+			_entity_manager->ManageDeletedEntities(_current_universe);
+		}
+	}
+
+	ECSystemManager* const ECSModule::SystemManager() const
+	{
+		return _system_manager;
+	}
+
+	ECSEntityManager* const ECSModule::EntityManager() const
+	{
+		return _entity_manager;
+	}
+
+	ECSEventHandler* const ECSModule::EventHandler() const
+	{
+		return _event_handler;
+	}
+
+	ECSUniverse* ECSModule::RegisterUniverse(std::string const& a_universe_name)
+	{
+		if (!_universes.contains(a_universe_name))
+			return _universes[a_universe_name] = new ECSUniverse();
+		else
+			return _universes[a_universe_name];
+	}
+
+	ECSUniverse* const ECSModule::GetUniverse(std::string const& a_universe_name)
+	{
+		if (_universes.contains(a_universe_name))
+			return _universes[a_universe_name];
+		else
+			return nullptr;
+	}
+	
+	ECSUniverse* const ECSModule::CurrentUniverse()
+	{
+		return _current_universe;
 	}
 	
 } // End of namespace ~ DECS

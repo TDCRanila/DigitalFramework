@@ -4,22 +4,14 @@
 
 namespace DCore
 {
-    TimeUnit SecondsToMilliseconds(const TimeUnit a_time)
+    TimeTracker::TimeTracker(bool a_start_timer) 
+        : _is_tracking_time(false)
+        , _start_time_point(std::chrono::nanoseconds(0))
+        , _end_time_point(std::chrono::nanoseconds(0))
+        , _current_elapsed_time(0.0f)
     {
-        return a_time * 1000;
-    }
-
-    TimeUnit MillisecondsToSeconds(const TimeUnit a_time)
-    {
-        return a_time * 0.001f;
-    }
-
-    TimeTracker::TimeTracker() :
-        is_tracking_time_(false),
-        start_time_point_(std::chrono::nanoseconds(0)),
-        end_time_point_(std::chrono::nanoseconds(0)),
-        current_delta_time_(0.0f)
-    {
+        if (a_start_timer)
+            StartTimer();
     }
 
     TimeTracker::~TimeTracker()
@@ -28,25 +20,31 @@ namespace DCore
 
     void TimeTracker::StartTimer()
     {
-        is_tracking_time_   = true;
-        start_time_point_   = std::chrono::high_resolution_clock::now();
+        if (!IsRunning())
+        {
+            _is_tracking_time   = true;
+            _start_time_point   = std::chrono::high_resolution_clock::now();
+        }
     }
 
     void TimeTracker::StopTimer()
     {
-        is_tracking_time_   = false;
-        end_time_point_     = std::chrono::high_resolution_clock::now();
+        if (IsRunning())
+        {
+            _is_tracking_time = false;
+            _end_time_point = std::chrono::high_resolution_clock::now();
 
-        current_delta_time_ = std::chrono::duration_cast<std::chrono::duration<TimeUnit>>(end_time_point_ - start_time_point_).count();
+            _current_elapsed_time = std::chrono::duration_cast<std::chrono::duration<TimeUnit>>(_end_time_point - _start_time_point).count();
+        }
     }
 
     void TimeTracker::ResetTimer(bool a_reset_and_start_timer)
     {
-        is_tracking_time_ = false;
+        _is_tracking_time = false;
 
-        start_time_point_   = std::chrono::high_resolution_clock::time_point(std::chrono::nanoseconds(0));
-        end_time_point_     = std::chrono::high_resolution_clock::time_point(std::chrono::nanoseconds(0));
-        current_delta_time_ = TimeUnit(0.0f);
+        _start_time_point   = std::chrono::high_resolution_clock::time_point(std::chrono::nanoseconds(0));
+        _end_time_point     = std::chrono::high_resolution_clock::time_point(std::chrono::nanoseconds(0));
+        _current_elapsed_time = TimeUnit(0.0f);
 
         if (a_reset_and_start_timer)
         {
@@ -54,30 +52,35 @@ namespace DCore
         }
     }
 
-    TimeUnit TimeTracker::FetchTime() const
+    bool TimeTracker::IsRunning() const
+    {
+        return _is_tracking_time;
+    }
+
+    TimeUnit TimeTracker::FetchElapsedTime() const
     {
         TimeUnit delta_time(0.0f);
-        if (is_tracking_time_)
+        if (_is_tracking_time)
         {
-            delta_time = std::chrono::duration_cast<std::chrono::duration<TimeUnit>>(std::chrono::high_resolution_clock::now() - start_time_point_).count();
+            delta_time = std::chrono::duration_cast<std::chrono::duration<TimeUnit>>(std::chrono::high_resolution_clock::now() - _start_time_point).count();
         }
         else
         {
-            delta_time = current_delta_time_;
+            delta_time = _current_elapsed_time;
         }
 
         return delta_time;
     }
 
-    TimeUnit TimeTracker::StopAndFetchTime()
+    TimeUnit TimeTracker::StopAndFetchElapsedTime()
     {
         StopTimer();
-        return FetchTime();
+        return FetchElapsedTime();
     }
 
-    TimeUnit TimeTracker::ResetAndFetchTime(bool a_reset_and_start)
+    TimeUnit TimeTracker::ResetAndFetchElapsedTime(bool a_reset_and_start)
     {
-        const TimeUnit time = FetchTime();
+        const TimeUnit time = FetchElapsedTime();
         ResetTimer(a_reset_and_start);
         return time;
     }

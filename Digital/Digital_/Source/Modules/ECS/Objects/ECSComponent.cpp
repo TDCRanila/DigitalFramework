@@ -1,26 +1,22 @@
 #include <Modules/ECS/Objects/ECSComponent.h>
 
-#include <Modules/ECS/Utility/ECSIDManager.h>
-
 namespace DECS
 {
 
-	ECSComponent::ECSComponent(Key) :
-		component_id_(ECSIDManager::GetNextComponentID())
+	ECSComponent::ECSComponent(Key)
+		: _owner()
+		, _id(DCore::DFW_INVALID_DUID)
 	{ 
-		/*EMPTY*/ 
 	}
 
-	ECSComponent::~ECSComponent() { /*EMPTY*/ }
-
-	ComponentID ECSComponent::GetID() const 
+	ECSEntity ECSComponent::GetOwner() const
 	{
-		return component_id_;
+		return _owner;
 	}
 
-	EntityID ECSComponent::GetOwner() const
+	DCore::DUID ECSComponent::GetID() const 
 	{
-		return owner_id_;
+		return _id;
 	}
 
 } // End of namespace ~ DECS

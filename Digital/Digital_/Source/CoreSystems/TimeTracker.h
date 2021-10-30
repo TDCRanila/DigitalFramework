@@ -1,35 +1,33 @@
 #pragma once
 
+#include <Defines/TimeDefines.h>
+
 #include <chrono>
 
 namespace DCore
-{
-    typedef float64 TimeUnit;
-    
-    TimeUnit SecondsToMilliseconds(const TimeUnit a_time);
-    TimeUnit MillisecondsToSeconds(const TimeUnit a_time);
-    
+{   
     class TimeTracker final
     {
     public:
-        TimeTracker();
+        TimeTracker(bool a_start_timer = false);
         ~TimeTracker();
 
         void StartTimer();
         void StopTimer();
         void ResetTimer(bool a_reset_and_start_timer);
+        bool IsRunning() const;
 
-        TimeUnit FetchTime() const;
-        TimeUnit StopAndFetchTime();
-        TimeUnit ResetAndFetchTime(bool a_reset_and_start_timer);
+        TimeUnit FetchElapsedTime() const;
+        TimeUnit StopAndFetchElapsedTime();
+        TimeUnit ResetAndFetchElapsedTime(bool a_reset_and_start_timer);
 
     private:
-        std::chrono::high_resolution_clock::time_point start_time_point_;
-        std::chrono::high_resolution_clock::time_point end_time_point_;
+        std::chrono::high_resolution_clock::time_point _start_time_point;
+        std::chrono::high_resolution_clock::time_point _end_time_point;
 
-        TimeUnit current_delta_time_;
+        TimeUnit _current_elapsed_time;
 
-        bool is_tracking_time_;
+        bool _is_tracking_time;
     };
 
 } // End of namespace ~ DCore.

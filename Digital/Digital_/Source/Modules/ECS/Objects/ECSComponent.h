@@ -2,23 +2,29 @@
 
 #include <Autofactory/AutoFactory.h>
 
-#include <Modules/ECS/Utility/ECSIDManager.h>
+#include <CoreSystems/DUID.h>
+
+#include <Modules/ECS/Objects/ECSEntity.h>
 
 namespace DECS 
 {
+	// FW Declare
+	class ECSComponentManager;
+
 	class ECSComponent : public DFactory::AutoFactory<ECSComponent> 
 	{
 	public:
 		ECSComponent(Key);
-		virtual ~ECSComponent();
+		virtual ~ECSComponent() = default;
 		
-		EntityID GetOwner() const;
+		ECSEntity GetOwner() const;
+		DCore::DUID GetID() const;
 
-		ComponentID GetID() const;
+	protected:
+		friend class ECSComponentManager;
 
-	private:
-		EntityID	owner_id_;
-		ComponentID component_id_;
+		DCore::DUID	_id;
+		ECSEntity	_owner;
 
 	};
 

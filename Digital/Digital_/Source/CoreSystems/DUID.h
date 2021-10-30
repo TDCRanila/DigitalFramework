@@ -8,16 +8,9 @@
 
 namespace DCore
 {
-	class InvalidDUID : public boost::uuids::uuid
-	{
-	public:
-		InvalidDUID()
-			: boost::uuids::uuid(boost::uuids::nil_generator()())
-		{
-		}
-	};
+	auto const DFW_INVALID_DUID = boost::uuids::nil_generator()();
 
-	class DUID : public boost::uuids::uuid
+	class DUID final : public boost::uuids::uuid
 	{
 	public:
 		DUID()
@@ -25,8 +18,8 @@ namespace DCore
 		{
 		}
 
-		explicit DUID(boost::uuids::uuid const& u)
-			: boost::uuids::uuid(u)
+		explicit DUID(boost::uuids::uuid const& a_uuid)
+			: boost::uuids::uuid(a_uuid)
 		{
 		}
 
@@ -44,19 +37,15 @@ namespace DCore
 		{
 			return boost::uuids::to_string(*this);
 		}
+
+		std::strong_ordering operator<=>(DUID const& a_other) const = default;
+
 	};
 
-	class DUIDGenerator
+	inline DUID GenerateDUID()
 	{
-	public:
-		static DUID GenerateID()
-		{
-			DUID id;
-			boost::uuids::uuid random_id = boost::uuids::random_generator()();
-			id.swap(random_id);
-			return id;
-		}
-	};
+		return DUID { boost::uuids::random_generator()() };
+	}
 
 } // End of Namespace ~ Digital.
 
@@ -66,10 +55,9 @@ namespace std
 	template<>
 	struct hash<DCore::DUID>
 	{
-		std::size_t operator()(const DCore::DUID& a_duid) const
+		std::size_t operator()(DCore::DUID const& a_duid) const
 		{
-			boost::hash<DCore::DUID> duid_hasher;
-			std::size_t hash_val = duid_hasher(a_duid);
+			std::size_t hash_val = boost::hash<DCore::DUID>()(a_duid);
 			return hash_val;
 		}
 	};

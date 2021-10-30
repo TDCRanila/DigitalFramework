@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Utility/StringUtility.h>
+#include <Utility/TemplateUtility.h>
 
 #include <boost/functional/hash.hpp>
 
@@ -15,19 +16,19 @@
 namespace DFactory 
 {
 		
-	template <class Base, class... Args>
+	template <typename BaseType, typename... Args>
 	class AutoFactory 
 	{
 	public:
-		typedef std::function<std::unique_ptr<Base>(Args...)>													FuncType;
+		typedef std::function<std::unique_ptr<BaseType>(Args...)>												FuncType;
 		typedef std::pair<std::string, std::type_index>															StringTypePair;
-		typedef std::unordered_map< StringTypePair, FuncType, boost::hash<StringTypePair>>						FactoryMap;
-		typedef typename std::unordered_map< StringTypePair, FuncType, boost::hash<StringTypePair> >::iterator	FactoryMapIt;
+		typedef std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>						FactoryMap;
+		typedef typename std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>::iterator	FactoryMapIt;
 
-		friend Base;
+		friend BaseType;
 
-		template <class... Args>
-		static std::unique_ptr<Base> Construct(const std::string& a_type_name, Args&&...a_args) 
+		template <typename... Args>
+		static std::unique_ptr<BaseType> Construct(const std::string& a_type_name, Args&&...a_args) 
 		{
 
 			// Create Compare Lambda used to find the type_name in the factories map.
@@ -43,7 +44,7 @@ namespace DFactory
 			if (it == fac.end()) 
 			{
 				_ASSERT(false); // -> Element has not been found in factory_map.
-				return std::unique_ptr<Base>();
+				return std::unique_ptr<BaseType>();
 			} 
 			else 
 			{
@@ -57,21 +58,22 @@ namespace DFactory
 			return factory_map;
 		}
 
-		template <class T>
-		class Registrar : public Base 
+		template <typename RegistrarType, typename DerivedClassOverride = BaseType>
+		requires (IsDerivedFrom<DerivedClassOverride, BaseType> || AreSameTypes<DerivedClassOverride, BaseType>)
+		class Registrar : public DerivedClassOverride
 		{
 		public:
-			friend T;
+			friend RegistrarType;
 
 			static bool RegisterType() 
 			{
-				// Create Factory Construction Lambda for Type T.
-				FuncType constructor_lambda = [](Args... a_args) -> std::unique_ptr<Base> 
+				// Create Factory Construction Lambda for Type RegistrarType.
+				FuncType constructor_lambda = [](Args... a_args) -> std::unique_ptr<BaseType> 
 				{
-					return std::make_unique<T>(std::forward<Args>(a_args)...);
+					return std::make_unique<RegistrarType>(std::forward<Args>(a_args)...);
 				};
 
-				const std::type_index type_id	= typeid(T);
+				const std::type_index type_id	= typeid(RegistrarType);
 				std::string type_name			= type_id.name();
 
 				// TODO: MSVC Further Specific Demangling. ~ Implement Other compilers?
@@ -86,17 +88,51 @@ namespace DFactory
 			static bool registered;
 
 		private:
-			Registrar() : Base(Key{}) { (void)registered; }
+			Registrar() { (void)registered; }
 
 		}; // Registrar.
+
+		template <typename RegistrarType>
+		class StrictRegistrar : public BaseType
+		{
+		public:
+			friend RegistrarType;
+
+			static bool RegisterType()
+			{
+				// Create Factory Construction Lambda for Type RegistrarType.
+				FuncType constructor_lambda = [](Args... a_args) -> std::unique_ptr<BaseType>
+				{
+					return std::make_unique<RegistrarType>(std::forward<Args>(a_args)...);
+				};
+
+				const std::type_index type_id = typeid(RegistrarType);
+				std::string type_name = type_id.name();
+
+				// TODO: MSVC Further Specific Demangling. ~ Implement Other compilers?
+				DUtility::SubtractString(type_name, std::string("class "));
+				DUtility::SubtractString(type_name, std::string("struct "));
+
+				AutoFactory::GetFactories()[std::make_pair(type_name, type_id)] = constructor_lambda;
+
+				return true;
+			}
+
+			static bool registered;
+
+		private:
+			StrictRegistrar() : BaseType(Key{}) { (void)registered; }
+
+		}; // StrictRegistrar.
 
 	private:
 		class Key 
 		{
 		private:
 			Key() = default;
-			
-			template <class T> friend class Registrar;
+
+			template <typename RegistrarType>
+			friend class StrictRegistrar;
 
 		}; // Key.
 
@@ -107,9 +143,14 @@ namespace DFactory
 #pragma region Template Magic
 
 	// Static Variable initialization so we can execute code before main().
-	template <class Base, class... Args>
-	template <class T>
-	bool AutoFactory<Base, Args...>::template Registrar<T>::registered = AutoFactory<Base, Args...>::template Registrar<T>::RegisterType();
+	template <typename BaseType, typename... Args>
+	template <typename RegistrarType, typename DerivedClassOverride>
+	requires (IsDerivedFrom<DerivedClassOverride, BaseType> || AreSameTypes<DerivedClassOverride, BaseType>)
+	bool AutoFactory<BaseType, Args...>::template Registrar<RegistrarType, DerivedClassOverride>::registered = AutoFactory<BaseType, Args...>::template Registrar<RegistrarType, DerivedClassOverride>::RegisterType();
+
+	template <typename BaseType, typename... Args>
+	template <typename RegistrarType>
+	bool AutoFactory<BaseType, Args...>::template StrictRegistrar<RegistrarType>::registered = AutoFactory<BaseType, Args...>::template StrictRegistrar<RegistrarType>::RegisterType();
 
 #pragma endregion
 

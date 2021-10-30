@@ -1,77 +1,47 @@
 #pragma once
 
-#include <Modules/ECS/Utility/ECSIDManager.h>
+#include <AutoFactory/AutoFactory.h>
 
-#include <Modules/ECS/Objects/ECSComponentHandle.h>
-#include <Modules/ECS/Utility/ECSCompBitList.h>
+#include <CoreSystems/DUID.h>
 
-#include <tuple>
+#include <entt/entity/handle.hpp>
 
 namespace DECS 
 {
+	// FW Declare.
+	class ECSUniverse;
 	class ECSEntityManager;
 	class ECSComponentManager;
+	
+	using EntityHandle								= entt::entity;
+	constexpr entt::null_t DFW_NULL_ENTITY_HANDLE	= entt::null;
 
-	class ECSEntity final 
+	class ECSEntity : public DFactory::AutoFactory<ECSEntity>
 	{
 	public:
 		ECSEntity();
-		~ECSEntity();
-
-		EntityID GetID() const;
+		ECSEntity(EntityHandle const& a_entity_handle, ECSUniverse* const a_universe);
+		virtual ~ECSEntity() = default;
 		
-		bool IsEntityValid() const;
+		std::strong_ordering operator<=>(ECSEntity const& a_other) const;
 
+		operator EntityHandle();
+		operator EntityHandle() const;
+		
+		DCore::DUID GetID() const;
+		EntityHandle GetHandle() const;
+		ECSUniverse* GetUniverse() const;
+
+		bool IsEntityValid() const;
 		bool IsPendingDeletion() const;
 
-		template <class T>
-		ECSComponentHandle<T> AddComponent() const;
-
-		template <class T>
-		bool RemoveComponent() const;
-
-		template <class T>
-		ECSComponentHandle<T> GetComponent() const;
-
-		template <class ...T>
-		std::tuple<ECSComponentHandle<T>...> GetComponents() const;
-
-	protected:
-		friend class ECSEntityManager;
-		ECSEntity(EntityID a_entity_id, ECSEntityManager* a_entity_manager);
-
 	private:
-		EntityID			entity_id_;
-		ECSEntityManager*	entity_manager_;
+		friend ECSEntityManager;
+		friend ECSComponentManager;
+
+		EntityHandle	_handle;
+		ECSUniverse*	_universe;
 
 	};
-
-#pragma region Template Function Implementation
-
-	template <class T>
-	ECSComponentHandle<T> ECSEntity::AddComponent() const
-	{
-		// TODO
-	}
-
-	template <class T>
-	bool ECSEntity::RemoveComponent() const
-	{
-		// TODO
-	}
-
-	template <class T>
-	ECSComponentHandle<T> ECSEntity::GetComponent() const
-	{
-		// TODO
-	}
-
-	template <class ...T>
-	std::tuple<ECSComponentHandle<T>...> ECSEntity::GetComponents() const
-	{
-		// TODO
-	}
-
-#pragma endregion
 
 } // End of namespace ~ DECS

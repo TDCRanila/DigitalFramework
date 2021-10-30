@@ -8,7 +8,7 @@
 
 #include <ImGui/imgui.h>
 
-#include <ImGui/examples/imgui_impl_glfw.h>
+#include <ImGui/backends/imgui_impl_glfw.h>
 
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Window.h>
@@ -96,6 +96,9 @@ namespace DCore
 	void ImGuiLayer::EndFrame()
 	{
 		ImGuiIO& io = ImGui::GetIO();
+		
+		// BUG TODO When AddCircleFilled is removed, imgui rendering goes fault. 
+		// Investigate, can it be related to Viewports problem regarding rendering as well?
 		ImGui::GetOverlayDrawList()->AddCircleFilled(io.MousePos, 4.0f, 0xFFFFFFFF);
 		ImGui::Text("DisplaySize: [%f | %f]", io.DisplaySize.x, io.DisplaySize.y);
 		ImGui::Text("DisplayFramebufferScale: [%f | %f]", io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
@@ -186,7 +189,7 @@ namespace DCore
 		colours[ImGuiCol_PlotLinesHovered]		= panelHoverColor;
 		colours[ImGuiCol_PlotHistogram]			= panelActiveColor;
 		colours[ImGuiCol_PlotHistogramHovered]	= panelHoverColor;
-		colours[ImGuiCol_ModalWindowDarkening]	= bgColor;
+		colours[ImGuiCol_ModalWindowDimBg]		= bgColor;
 		colours[ImGuiCol_DragDropTarget]		= bgColor;
 		colours[ImGuiCol_NavHighlight]			= bgColor;
 		//colours[ImGuiCol_DockingPreview]		= panelActiveColor;

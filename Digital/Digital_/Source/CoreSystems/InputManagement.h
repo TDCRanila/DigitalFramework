@@ -21,7 +21,7 @@ namespace DCore
 	{
 		InputData();
 
-		std::array<bool, 1024>					_keys{false};
+		std::array<DKeyAction, 1024>			_keys{DKeyAction::UNDEFINED};
 		std::unordered_map<int32, DKeyAction>	_buffered_keys;
 		std::vector<uint32>						_buffered_characters;
 
@@ -45,22 +45,23 @@ namespace DCore
 
 		~InputManagementSystem();
 
-		void ProcessInputEvents();
-		
 		void EnableInput();
 		void DisableInput();
 
 		bool IsKeyPressed(DKey a_key) const;
+		bool IsKeyRepeated(DKey a_key) const;
 		bool IsKeyDown(DKey a_key) const;
 		bool IsKeyReleased(DKey a_key) const;
 
 		bool IsKeyPressed(DMouse a_mouse_button) const;
+		bool IsKeyRepeated(DMouse a_mouse_button) const;
 		bool IsKeyDown(DMouse a_mouse_button) const;
 		bool IsKeyReleased(DMouse a_mouse_button) const;
 
-		bool IsKeyPressed(DJoy a_joykey_key) const;
-		bool IsKeyDown(DJoy a_joykey_key) const;
-		bool IsKeyReleased(DJoy a_joykey_key) const;
+		bool IsKeyPressed(DGamePad a_gamepad_key) const;
+		bool IsKeyRepeated(DGamePad a_gamepad_key) const;
+		bool IsKeyDown(DGamePad a_gamepad_key) const;
+		bool IsKeyReleased(DGamePad a_gamepad_key) const;
 
 		bool HasAnyKeyBeenPressed() const;
 		bool HasCursorMoved() const;
@@ -82,6 +83,9 @@ namespace DCore
 		friend class ApplicationInstance;
 
 		InputManagementSystem();
+
+		void ProcessInputEvents();
+		void PollClipboardInput();
 
 		friend class WindowManagementSystem;
 
@@ -134,9 +138,10 @@ namespace DCore
 			float32 _scroll_y_offset;
 		};
 
-		bool IsKeyPressed(int32 a_key) const;
-		bool IsKeyDown(int32 a_key) const;
-		bool IsKeyReleased(int32 a_key) const;
+		bool IsKeyPressedInternal(int32 a_key) const;
+		bool IsKeyRepeatedInternal(int32 a_key) const;
+		bool IsKeyDownInternal(int32 a_key) const;
+		bool IsKeyReleasedInternal(int32 a_key) const;
 		
 		void ClearInputDataBuffers();
 

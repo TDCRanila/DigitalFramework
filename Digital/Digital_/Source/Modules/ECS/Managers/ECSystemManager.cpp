@@ -1,72 +1,68 @@
 #include <Modules/ECS/Managers/ECSystemManager.h>
 
-#include <Modules/ECS/Utility/ECSIDManager.h>
-
 #include <AutoFactory/Autofactory.h>
+
+#include <CoreSystems/CoreServices.h>
+
+#include <Modules/ECS/ECSModule.h>
+
+#include <ranges>
 
 namespace DECS 
 {
 
-	ECSystemManager::ECSystemManager() { /*EMPTY*/ }
+	ECSystemManager::ECSystemManager() 
+	{ 
+		_systems.reserve(DFW_SYSTEM_RESERVE_AMOUNT);
+	}
 
-	ECSystemManager::~ECSystemManager() { /*EMPTY*/ }
-
-	void ECSystemManager::Init(ECSEntityManager* a_entity_manager)
+	void ECSystemManager::Init()
 	{
-		// Create the starting list of systems.
-		this->SetupSystemList();
-
-		// Calling Init of systems.
-		for (auto const&[system_type, system_ptr] : systems_)
-		{
-			system_ptr->InternalInit(a_entity_manager);
-		}
 	}
 
 	void ECSystemManager::Terminate() 
 	{ 
 		// Calling Terminiate of systems.
-		for (auto const&[system_type, system_ptr] : systems_)
+		for (auto const&[system_type, system_ptr] : _systems)
 		{
 			system_ptr->InternalTerminate();
 		}
 	}
 
-	void ECSystemManager::UpdateSystems() 
+	void ECSystemManager::UpdateSystems(ECSUniverse* const a_universe)
 	{ 
+		DFW_ASSERT(a_universe && "Updating ECS Systems, but universe is invalid.");
+
+		if (_systems.empty())
+		{
+			return;
+		}
+
+		auto IsSystemPaused = [](std::shared_ptr<ECSystem> const& system) -> bool
+		{
+			return system->IsSystemPaused();
+		};
+
+		// auto systems_values = std::views::values(_systems);
+		auto enabled_system = std::views::values(_systems) | std::views::filter(IsSystemPaused);
+
 		// Calling Init of systems.
-		for (auto const&[system_type, system_ptr] : systems_)
+		for (auto const&[system_type, system_ptr] : _systems)
 		{
-			system_ptr->InternalPreUpdate();
+			system_ptr->InternalPreUpdate(a_universe);
 		}
 
 		// Calling Init of systems.
-		for (auto const&[system_type, system_ptr] : systems_)
+		for (auto const&[system_type, system_ptr] : _systems)
 		{
-			system_ptr->InternalUpdate();
+			system_ptr->InternalUpdate(a_universe);
 		}
 
 		// Calling Init of systems.
-		for (auto const&[system_type, system_ptr] : systems_)
+		for (auto const&[system_type, system_ptr] : _systems)
 		{
-			system_ptr->InternalPostUpdate();
+			system_ptr->InternalPostUpdate(a_universe);
 		}
-	}
-
-	void ECSystemManager::SetupSystemList() 
-	{
-		for (auto const&[type_pair, fac] : ECSystem::GetFactories()) 
-		{
-			this->AddSystemInternal(type_pair.second, fac());
-		}
-	}
-
-	void ECSystemManager::SortSystemPriority() { /*EMPTY*/ }
-
-	void ECSystemManager::AddSystemInternal(std::type_index a_type_index, std::unique_ptr<ECSystem> a_system_ptr) 
-	{
-		// TODO: Set System IDs
-		systems_[a_type_index] = std::move(a_system_ptr);
 	}
 
 } // End of namespace ~ DECS
