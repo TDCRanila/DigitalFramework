@@ -82,19 +82,17 @@ set(BGFX_LIB_NAME bgfx)
 
 find_path(BGFX_FOUND NAMES "bgfx.h" PATHS "${BGFX_INCLUDE_DIR}/bgfx")
 if((NOT BGFX_FOUND) OR (NOT EXISTS ${BGFX_INCLUDE_DIR}))
-    message("Unable to find Submodule: ${BGFX_LIB_NAME} or file bgfx.hpp")
+    message("Unable to find Submodule: ${BGFX_LIB_NAME} or file bgfx.h")
     execute_process(COMMAND git submodule update --init -- ${BGFX_CMAKE_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 else()
     message("Found Submodule: ${BGFX_LIB_NAME}")
 endif()
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake bgfx.cmake)
-
-message("\n")
-
 target_link_libraries(${LIB_NAME} bgfx)
 target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
-#target_include_directories(${LIB_NAME} PUBLIC "${BIMG_INCLUDE_DIR}")
-#target_include_directories(${LIB_NAME} PUBLIC "${BX_INCLUDE_DIR}")
+
+message("\n")
 
 ## entt
 message("Adding SubModule: entt")

@@ -12,7 +12,7 @@
 	url = https://github.com/skypjack/entt.git
 [submodule "Digital/Dependency/External/bgfx.cmake"]
 	path = Digital/Dependency/External/bgfx.cmake
-	url = https://github.com/bkaradzic/bgfx.cmake.git
+	url = https://github.com/TDCRanila/bgfx.cmake.git
 [submodule "Digital/Dependency/External/imgui/imgui"]
 	path = Digital/Dependency/External/imgui/imgui
 	url = https://github.com/TDCRanila/imgui.git
