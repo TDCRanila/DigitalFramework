@@ -6,17 +6,17 @@
 #include <bx/allocator.h>
 
 #include <imgui/imgui.h>
-#include <digital-imgui/imgui_user.h>
+#include <imgui-user/imgui_user.h>
 
-#include <digital-imgui/resources/vs_ocornut_imgui.bin.h>
-#include <digital-imgui/resources/fs_ocornut_imgui.bin.h>
-#include <digital-imgui/resources/vs_imgui_image.bin.h>
-#include <digital-imgui/resources/fs_imgui_image.bin.h>
-
-#include <digital-imgui/resources/roboto_regular.ttf.h>
-#include <digital-imgui/resources/robotomono_regular.ttf.h>
-#include <digital-imgui/resources/icons_kenney.ttf.h>
-#include <digital-imgui/resources/icons_font_awesome.ttf.h>
+#include <imgui-resources/vs_ocornut_imgui.bin.h>
+#include <imgui-resources/fs_ocornut_imgui.bin.h>
+#include <imgui-resources/vs_imgui_image.bin.h>
+#include <imgui-resources/fs_imgui_image.bin.h>
+		  
+#include <imgui-resources/roboto_regular.ttf.h>
+#include <imgui-resources/robotomono_regular.ttf.h>
+#include <imgui-resources/icons_kenney.ttf.h>
+#include <imgui-resources/icons_font_awesome.ttf.h>
 
 #include <glfw/glfw3.h>
 

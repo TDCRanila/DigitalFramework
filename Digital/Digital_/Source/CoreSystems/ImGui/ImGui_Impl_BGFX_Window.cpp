@@ -9,7 +9,7 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-#include <ImGui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_glfw.h>
 
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>

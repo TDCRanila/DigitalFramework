@@ -113,10 +113,10 @@ target_include_directories(${LIB_NAME} PUBLIC "${ENTT_INCLUDE_DIR}")
 
 message("\n")
 
-## digital-imgui
-message("Adding SubModule: Digital/Dear ImGui")
-set(IMGUI_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/digital-imgui)
-set(IMGUI_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/digital-imgui)
+## imgui
+message("Adding SubModule: Dear ImGui")
+set(IMGUI_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui)
+set(IMGUI_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui)
 set(IMGUI_LIB_NAME imgui)
 
 find_path(IMGUI_FOUND NAMES "imgui.h" PATHS "${IMGUI_INCLUDE_DIR}/imgui")
@@ -126,7 +126,7 @@ if((NOT IMGUI_FOUND) OR (NOT EXISTS ${IMGUI_INCLUDE_DIR}))
 else()
     message("Found Submodule: ${IMGUI_LIB_NAME}")
 endif()
-add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/digital-imgui digital-imgui)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/imgui imgui)
 target_link_libraries(${LIB_NAME} imgui)
 target_include_directories(${LIB_NAME} PUBLIC "${IMGUI_INCLUDE_DIR}")
 

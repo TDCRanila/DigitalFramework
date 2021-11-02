@@ -4,9 +4,6 @@
 [submodule "Digital/Dependency/External/glfw"]
 	path = Digital/Dependency/External/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "Digital/Dependency/External/digital-imgui/imgui"]
-	path = Digital/Dependency/External/digital-imgui/imgui
-	url = https://github.com/ocornut/imgui.git
 [submodule "Digital/Dependency/External/spdlog"]
 	path = Digital/Dependency/External/spdlog
 	url = https://github.com/gabime/spdlog.git
@@ -16,3 +13,6 @@
 [submodule "Digital/Dependency/External/bgfx.cmake"]
 	path = Digital/Dependency/External/bgfx.cmake
 	url = https://github.com/bkaradzic/bgfx.cmake.git
+[submodule "Digital/Dependency/External/imgui/imgui"]
+	path = Digital/Dependency/External/imgui/imgui
+	url = https://github.com/TDCRanila/imgui.git
