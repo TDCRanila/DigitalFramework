@@ -32,34 +32,36 @@ namespace DImGui
 
     bool ImGui_ImplBGFX_AddFonts()
     {
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO& const io = ImGui::GetIO();
 
-        uint8* data;
-        int32 width;
-        int32 height;
         {
             ImFontConfig config;
             config.FontDataOwnedByAtlas = false;
             config.MergeMode = false;
 
-            const ImWchar* ranges = io.Fonts->GetGlyphRangesCyrillic();
+            //const ImWchar* ranges = io.Fonts->GetGlyphRangesCyrillic();
             //_font[ImGui::Font::Regular] = io.Fonts->AddFontFromMemoryTTF((void*)s_robotoRegularTtf		, sizeof(s_robotoRegularTtf)	, a_font_size		, &config, ranges);
             //_font[ImGui::Font::Mono]	= io.Fonts->AddFontFromMemoryTTF((void*)s_robotoMonoRegularTtf	, sizeof(s_robotoMonoRegularTtf), a_font_size - 3.0f, &config, ranges);
 
             config.MergeMode = true;
             config.DstFont = DImGui::imgui_context._font[ImGui::Font::Regular];
 
-            for (uint32 ii = 0; ii < BX_COUNTOF(DImGui::s_fontRangeMerge); ++ii)
-            {
-                const DImGui::FontRangeMerge& frm = DImGui::s_fontRangeMerge[ii];
-                //io.Fonts->AddFontFromMemoryTTF((void*)frm.data, static_cast<int>(frm.size), a_font_size - 3.0f, &config, frm.ranges);
-            }
+            //for (uint32 ii = 0; ii < BX_COUNTOF(DImGui::s_fontRangeMerge); ++ii)
+            //{
+            //    const DImGui::FontRangeMerge& frm = DImGui::s_fontRangeMerge[ii];
+            //    io.Fonts->AddFontFromMemoryTTF((void*)frm.data, static_cast<int>(frm.size), a_font_size - 3.0f, &config, frm.ranges);
+            //}
         }
 
+        uint8* data;
+        int32 width;
+        int32 height;
         io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
-        for (int32 view_id_it = 0; view_id_it < 255; ++view_id_it)
+        
+        int8 const num_framebuffers = DImGui::imgui_context._num_framebuffers;
+        for (int32 index = 0; index < num_framebuffers; ++index)
         {
-            DImGui::imgui_context._texture_handles[view_id_it] = bgfx::createTexture2D(static_cast<uint16>(width), static_cast<uint16>(height), false, 1, bgfx::TextureFormat::BGRA8, 0, bgfx::copy(data, width * height * 4));
+            DImGui::imgui_context._texture_handles[index] = bgfx::createTexture2D(static_cast<uint16>(width), static_cast<uint16>(height), false, 1, bgfx::TextureFormat::BGRA8, 0, bgfx::copy(data, width * height * 4));
         }
 
         // TODO - proper return and checking if something can go wrong

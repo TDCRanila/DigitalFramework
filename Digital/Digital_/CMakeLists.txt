@@ -91,6 +91,8 @@ endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake bgfx.cmake)
 target_link_libraries(${LIB_NAME} bgfx)
 target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
+target_include_directories(${LIB_NAME} PUBLIC "${BIMG_INCLUDE_DIR}")
+target_include_directories(${LIB_NAME} PUBLIC "${BX_INCLUDE_DIR}")
 
 message("\n")
 

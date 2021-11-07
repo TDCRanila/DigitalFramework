@@ -12,7 +12,7 @@
 #include <imgui-resources/fs_ocornut_imgui.bin.h>
 #include <imgui-resources/vs_imgui_image.bin.h>
 #include <imgui-resources/fs_imgui_image.bin.h>
-		  
+
 #include <imgui-resources/roboto_regular.ttf.h>
 #include <imgui-resources/robotomono_regular.ttf.h>
 #include <imgui-resources/icons_kenney.ttf.h>
@@ -59,24 +59,24 @@ namespace DImGui
 
 	struct OcornutImguiContext
 	{
-		ImGuiContext* _imgui_context;
-		bx::AllocatorI* _allocator;
-
-		bgfx::FrameBufferHandle _framebuffer_handles[256];
-
-		bgfx::VertexLayout  _layouts[256];
-
-		bgfx::ProgramHandle _programs[256];
-		bgfx::ProgramHandle _image_programs[256];
-
-		bgfx::TextureHandle _texture_handles[256];
-		bgfx::UniformHandle s_texs[256];
-		bgfx::UniformHandle u_imageLodEnabled[256];
+		ImGuiContext*				_imgui_context;
+		bx::AllocatorI*				_allocator;
 
 		ImFont* _font[::ImGui::Font::Count];
 
-		int64				_last;
-		int32				_last_scroll;
+		constexpr static int8		_num_framebuffers = 8;
+		bgfx::FrameBufferHandle		_framebuffer_handles[_num_framebuffers];
+
+		// TODO; I don't think we need X amount of copies of all of these for each framebuffer.
+		bgfx::VertexLayout			_layouts[_num_framebuffers];
+		bgfx::ProgramHandle			_programs[_num_framebuffers];
+		bgfx::ProgramHandle			_image_programs[_num_framebuffers];
+		bgfx::TextureHandle			_texture_handles[_num_framebuffers];
+		bgfx::UniformHandle			_texture_uniform_handles[_num_framebuffers];
+		bgfx::UniformHandle			_image_lod_uniform_handles[_num_framebuffers];
+
+		int64						_last;
+		int32						_last_scroll;
 	};
 
 	extern OcornutImguiContext	imgui_context;

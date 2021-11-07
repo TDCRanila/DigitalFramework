@@ -17,7 +17,9 @@ set(IMGUI_HEADER_FILES
 
 set(IMGUI_SOURCE_FILES
     ${IMGUI_CMAKE_INCLUDE_DIR}/imgui.cpp
+    ${IMGUI_CMAKE_INCLUDE_DIR}/imgui_demo.cpp
     ${IMGUI_CMAKE_INCLUDE_DIR}/imgui_draw.cpp
+    ${IMGUI_CMAKE_INCLUDE_DIR}/imgui_tables.cpp
     ${IMGUI_CMAKE_INCLUDE_DIR}/imgui_widgets.cpp
 )
 

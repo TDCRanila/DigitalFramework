@@ -6,9 +6,8 @@
 #include <bgfx/bgfx.h>
 #include <bx/allocator.h>
 
-#include <ImGui/imgui.h>
-
-#include <ImGui/backends/imgui_impl_glfw.h>
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_glfw.h>
 
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Window.h>
@@ -81,9 +80,17 @@ namespace DCore
 
 	void ImGuiLayer::BeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension)
 	{
+
+
+		// TODO Remove?
 		UNUSED(a_input_data);
 
 		ImGuiIO& io		= ImGui::GetIO();
+		
+		// TODO Get DeltaTime, thorugh core service
+		// io.DeltaTime = 
+
+		// TODO Use event to change this instead of constant.
 		io.DisplaySize	= ImVec2(static_cast<float>(a_window_dimension._current_width), static_cast<float>(a_window_dimension._current_height));
 
 		DImGui::ImGui_ImplBGFX_NewFrameGraphics();
@@ -95,11 +102,11 @@ namespace DCore
 
 	void ImGuiLayer::EndFrame()
 	{
-		ImGuiIO& io = ImGui::GetIO();
+		ImGuiIO& const io = ImGui::GetIO();
+						
+		// TODO Debug: Software Cursor
+		ImGui::GetForegroundDrawList()->AddCircleFilled(io.MousePos, 4.0f, 0xFFFFFFFF);
 		
-		// BUG TODO When AddCircleFilled is removed, imgui rendering goes fault. 
-		// Investigate, can it be related to Viewports problem regarding rendering as well?
-		ImGui::GetOverlayDrawList()->AddCircleFilled(io.MousePos, 4.0f, 0xFFFFFFFF);
 		ImGui::Text("DisplaySize: [%f | %f]", io.DisplaySize.x, io.DisplaySize.y);
 		ImGui::Text("DisplayFramebufferScale: [%f | %f]", io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
 		ImGui::Text("[%f | %f]", io.MousePos.x, io.MousePos.y);
@@ -116,14 +123,12 @@ namespace DCore
 		DImGui::ImGui_ImplBGFX_RenderDrawData(ImGui::GetDrawData(), main_window);
 		
 		// Update and Render additional Platform Windows
-		//ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
 
-		//ImGui::EndFrame();
 	}
 
 	void ImGuiLayer::SetupStyle()

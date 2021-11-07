@@ -31,9 +31,7 @@ namespace DImGui
         // Set ImGui IOs.
         ImGuiIO& io = ImGui::GetIO();
 
-        std::string backend_platform_name;
-
-        backend_platform_name   = std::string("GLFW");
+        std::string const backend_platform_name("GLFW");
         io.BackendPlatformName  = backend_platform_name.c_str();
 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
