@@ -20,7 +20,7 @@ endif()
 ### Build Configurations.
 if (MSVC)
     if(CMAKE_CONFIGURATION_TYPES)
-        set(CMAKE_CONFIGURATION_TYPES PreProcessorDebug Debug PreRelease Release Final)
+        set(CMAKE_CONFIGURATION_TYPES PreProcessorDebug;Debug;PreRelease;Release;Final)
         set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}")
     endif()
 
@@ -44,7 +44,7 @@ if (MSVC)
     set(CMAKE_CXX_FLAGS_FINAL "/W4 /WX /O2 /Oi /Ot /MD /DDFW_FINAL64")
     set(CMAKE_EXE_LINKER_FLAGS_FINAL "")
 else()
-message("Unsupported Build Configurations.")
+    message("Unsupported Build Configurations.")
 endif()
 
 add_subdirectory(Digital_)

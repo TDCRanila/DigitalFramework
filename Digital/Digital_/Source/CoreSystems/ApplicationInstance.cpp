@@ -155,7 +155,7 @@ namespace DCore
                 should_run = false;
             }
             else
-            {            
+            {
                 Debug_DrawBGFXInfo();
 
                 // Main
@@ -169,11 +169,7 @@ namespace DCore
                 _ecs_module.UpdateECS();
 
                 // Render - imgui
-                const DUID window_id = _window_management.GetMainWindow();
-                WindowDimension& window_dimension = _window_management._window_instances.at(window_id)._window_dimension;
-
-                InputData& active_input_data = _input_management._input_data_storage.at(window_id);
-                _imgui.BeginFrame(active_input_data, window_dimension);
+                _imgui.BeginFrame(_game_clock.GetLastFrameDeltaTime());
 
                 for (StageBase* stage : _stages)
                 {
