@@ -1,11 +1,5 @@
 #include <CoreSystems/ImGui/ImGuiLayer.h>
 
-// TODO CAN WE PREVENT THESE INCLUDES
-#include <GLFW/glfw3.h>
-
-#include <bgfx/bgfx.h>
-#include <bx/allocator.h>
-
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
@@ -13,88 +7,67 @@
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Window.h>
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
 
+#include <CoreSystems/CoreServices.h>
+
 namespace DCore
 {
-
-	void ImGuiLayer::InitImGuiLayer(const WindowInstance& a_window_instance)
+	void ImGuiLayer::InitImGuiLayer(WindowInstance const& a_main_window)
 	{
-		// Allocator
-
 		// Context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 
-		// Setup
+		// Setup Config
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-		// Enable Docking
+		// Enable Docking Feature
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-		// Enable Multi-Viewport / Platform Windows
-		// TODO: Need to investigate viewport issues.
-		// Disabled for now as it causes alginment issues regarding the mouse cursor.
-		// Possibly to do with bgfx rendering, or the imgui translation of the windows.
-		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		// Enable Multi-Viewport Feature
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		const WindowDimension& dim = a_window_instance._window_dimension;
+		const WindowDimension& dim = a_main_window._window_dimension;
 		io.DisplaySize	= ImVec2(static_cast<float>(dim._current_width), static_cast<float>(dim._current_height));
 		io.DeltaTime	= 1.0f / 60.0f;
+		// TODO ImGui .ini filepath.
 		io.IniFilename	= NULL;
-
-		// Debug IO
-		//io.MouseDrawCursor = true;
 
 		// Style
 		SetupStyle();
 
-		// Render & Platform Initialization and binding.
+		/// Render & Platform Initialization and binding.
 
 		// TODO: Simply using the imgui ogl example for buttons etc.
 		// Should eventually be all moved to BGFX Window and handle input there as well.
-		ImGui_ImplGlfw_InitForOpenGL(a_window_instance._window, true);
+		ImGui_ImplGlfw_InitForOther(a_main_window._window, true);
 
-		DImGui::ImGui_ImplBGFX_InitWindow(a_window_instance._window, false);
-		
-		//ImGui_ImplBGFX_Init(a_window_instance._window);
+		DImGui::ImGui_ImplBGFX_InitWindowPlatform(a_main_window._window);
 		DImGui::ImGui_ImplBGFX_InitGraphics();
 
 		// Custom Callbacks.
-	
 		// Clipboard
-		
-		// Add Fonts
-		DImGui::ImGui_ImplBGFX_AddFonts();
 	}
 
 	void ImGuiLayer::TerminateImGuiLayer()
 	{
 		// Render & Platform Shutdown
+		DImGui::ImGui_ImplBGFX_ShutdownGraphics();
+		DImGui::ImGui_ImplBGFX_ShutdownWindowPlatform();
+		DImGui::imgui_rendering_context = DImGui::ImGuiRenderingContext();
 
 		// Context
 		ImGui::DestroyContext();
-
 	}
 
-	void ImGuiLayer::BeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension)
+	void ImGuiLayer::BeginFrame(float32 const a_delta_time)
 	{
-
-
-		// TODO Remove?
-		UNUSED(a_input_data);
-
-		ImGuiIO& io		= ImGui::GetIO();
-		
-		// TODO Get DeltaTime, thorugh core service
-		// io.DeltaTime = 
-
-		// TODO Use event to change this instead of constant.
-		io.DisplaySize	= ImVec2(static_cast<float>(a_window_dimension._current_width), static_cast<float>(a_window_dimension._current_height));
+		ImGuiIO& io = ImGui::GetIO();
+		io.DeltaTime = a_delta_time;
 
 		DImGui::ImGui_ImplBGFX_NewFrameGraphics();
-
 		DImGui::ImGui_ImplBGFX_NewFrameWindow();
 
 		ImGui::NewFrame();
@@ -102,33 +75,28 @@ namespace DCore
 
 	void ImGuiLayer::EndFrame()
 	{
-		ImGuiIO& const io = ImGui::GetIO();
-						
 		// TODO Debug: Software Cursor
+		ImGuiIO& const io = ImGui::GetIO();
 		ImGui::GetForegroundDrawList()->AddCircleFilled(io.MousePos, 4.0f, 0xFFFFFFFF);
 		
-		ImGui::Text("DisplaySize: [%f | %f]", io.DisplaySize.x, io.DisplaySize.y);
-		ImGui::Text("DisplayFramebufferScale: [%f | %f]", io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-		ImGui::Text("[%f | %f]", io.MousePos.x, io.MousePos.y);
-		
+		Debug_DrawViewportRenderingInformation();
+
 		ImGui::Render();
 
-		// Render Draw Data
-		bgfx::ViewId main_window = 0;
-
-		// Set view 0 to the same dimensions as the window and to clear the color buffer.
-		//bgfx::setViewClear(main_window, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x00cc6600);
-		//bgfx::setViewRect(main_window, 0, 0, bgfx::BackbufferRatio::Equal);
-
-		DImGui::ImGui_ImplBGFX_RenderDrawData(ImGui::GetDrawData(), main_window);
+		DImGui::ImGui_ImplBGFX_RenderDrawData(ImGui::GetMainViewport()->DrawData, DImGui::main_window_id);
 		
-		// Update and Render additional Platform Windows
+		// Update and Render additional Viewports / Platform Windows
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
+	}
 
+	void ImGuiLayer::SetMainImGuiWindowSize(WindowResizeEvent& const a_event)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.DisplaySize = ImVec2(static_cast<float>(a_event.new_width), static_cast<float>(a_event.new_height));
 	}
 
 	void ImGuiLayer::SetupStyle()
@@ -144,17 +112,17 @@ namespace DCore
 		ImGuiStyle& style	= ImGui::GetStyle();
 		ImVec4* colours		= style.Colors;
 
-		const ImVec4 bgColor			= ColourFromBytes(30, 30, 31);
-		const ImVec4 lightBgColor		= ColourFromBytes(72, 72, 75);
-		const ImVec4 veryLightBgColor	= ColourFromBytes(80, 80, 85);
-
-		const ImVec4 panelColor			= ColourFromBytes(41, 41, 45);
-		const ImVec4 panelHoverColor	= ColourFromBytes(245, 80, 0);
-		const ImVec4 panelActiveColor	= ColourFromBytes(190, 55, 10);
-
-		const ImVec4 textColor			= ColourFromBytes(255, 255, 255);
-		const ImVec4 textDisabledColor	= ColourFromBytes(151, 151, 151);
-		const ImVec4 borderColor		= ColourFromBytes(78, 78, 78);
+		ImVec4 const bgColor			= ColourFromBytes(30, 30, 31);
+		ImVec4 const lightBgColor		= ColourFromBytes(72, 72, 75);
+		ImVec4 const veryLightBgColor	= ColourFromBytes(80, 80, 85);
+					 
+		ImVec4 const panelColor			= ColourFromBytes(41, 41, 45);
+		ImVec4 const panelHoverColor	= ColourFromBytes(245, 80, 0);
+		ImVec4 const panelActiveColor	= ColourFromBytes(190, 55, 10);
+					 
+		ImVec4 const textColor			= ColourFromBytes(255, 255, 255);
+		ImVec4 const textDisabledColor	= ColourFromBytes(151, 151, 151);
+		ImVec4 const borderColor		= ColourFromBytes(78, 78, 78);
 
 		colours[ImGuiCol_Text]					= textColor;
 		colours[ImGuiCol_TextDisabled]			= textDisabledColor;
@@ -218,6 +186,26 @@ namespace DCore
 		{
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
+	}
+
+	void ImGuiLayer::Debug_DrawViewportRenderingInformation() const
+	{
+		ImGuiIO& const io = ImGui::GetIO();
+		ImGui::Text("DisplaySize: [%f | %f]", io.DisplaySize.x, io.DisplaySize.y);
+		ImGui::Text("DisplayFramebufferScale: [%f | %f]", io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+		ImGui::Text("[%f | %f]", io.MousePos.x, io.MousePos.y);
+
+		for (auto const& viewport_data : DImGui::imgui_rendering_context._viewports)
+		{
+			ImGuiViewport const* viewport = ImGui::FindViewportByPlatformHandle(viewport_data->_window);
+			if (viewport)
+			{
+				ImGui::Text("-----");
+				ImGui::Text("Viewport ID: [%d]", static_cast<uint16>(viewport_data->_view_id));
+				ImGui::Text("Framebuffer ID: [%d]", static_cast<uint16>(viewport_data->_framebuffer_handle.idx));
+				ImGui::Text("DisplaySize: [%f | %f]", viewport->Size.x, viewport->Size.y);
+			}
 		}
 	}
 
