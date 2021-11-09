@@ -1,28 +1,34 @@
 #pragma once
 
-#include <CoreSystems/InputManagement.h>
 #include <CoreSystems/Window/WindowManagement.h>
-
-namespace bgfx
-{
-	typedef uint16_t ViewId;
-} // End of namespace ~ bgfx.
 
 namespace DCore
 {
-	class ImGuiLayer
+	// FW Declare.
+	class ApplicationInstance;
+
+	class ImGuiLayer final
 	{
 	public:
-		ImGuiLayer() = default;
+		~ImGuiLayer() = default;
 
-		void InitImGuiLayer(const WindowInstance& a_window_instance);
+		void InitImGuiLayer(WindowInstance const& a_main_window);
 		void TerminateImGuiLayer();
 
-		void BeginFrame(const DCore::InputData& a_input_data, const DCore::WindowDimension& a_window_dimension);
+		void BeginFrame(float32 const a_delta_time);
 		void EndFrame();
-	private:
 
+	protected:
+		friend ApplicationInstance;
+
+		void SetMainImGuiWindowSize(WindowResizeEvent& const a_event);
+
+		ImGuiLayer() = default;
+	
+	private:
 		void SetupStyle();
+
+		void Debug_DrawViewportRenderingInformation() const;
 	};
 
 } // End of namespace ~ DCore.

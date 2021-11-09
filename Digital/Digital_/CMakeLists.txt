@@ -82,19 +82,19 @@ set(BGFX_LIB_NAME bgfx)
 
 find_path(BGFX_FOUND NAMES "bgfx.h" PATHS "${BGFX_INCLUDE_DIR}/bgfx")
 if((NOT BGFX_FOUND) OR (NOT EXISTS ${BGFX_INCLUDE_DIR}))
-    message("Unable to find Submodule: ${BGFX_LIB_NAME} or file bgfx.hpp")
+    message("Unable to find Submodule: ${BGFX_LIB_NAME} or file bgfx.h")
     execute_process(COMMAND git submodule update --init -- ${BGFX_CMAKE_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 else()
     message("Found Submodule: ${BGFX_LIB_NAME}")
 endif()
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake bgfx.cmake)
-
-message("\n")
-
 target_link_libraries(${LIB_NAME} bgfx)
 target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
-#target_include_directories(${LIB_NAME} PUBLIC "${BIMG_INCLUDE_DIR}")
-#target_include_directories(${LIB_NAME} PUBLIC "${BX_INCLUDE_DIR}")
+target_include_directories(${LIB_NAME} PUBLIC "${BIMG_INCLUDE_DIR}")
+target_include_directories(${LIB_NAME} PUBLIC "${BX_INCLUDE_DIR}")
+
+message("\n")
 
 ## entt
 message("Adding SubModule: entt")
@@ -113,10 +113,10 @@ target_include_directories(${LIB_NAME} PUBLIC "${ENTT_INCLUDE_DIR}")
 
 message("\n")
 
-## digital-imgui
-message("Adding SubModule: Digital/Dear ImGui")
-set(IMGUI_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/digital-imgui)
-set(IMGUI_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/digital-imgui)
+## imgui
+message("Adding SubModule: Dear ImGui")
+set(IMGUI_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui)
+set(IMGUI_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui)
 set(IMGUI_LIB_NAME imgui)
 
 find_path(IMGUI_FOUND NAMES "imgui.h" PATHS "${IMGUI_INCLUDE_DIR}/imgui")
@@ -126,7 +126,7 @@ if((NOT IMGUI_FOUND) OR (NOT EXISTS ${IMGUI_INCLUDE_DIR}))
 else()
     message("Found Submodule: ${IMGUI_LIB_NAME}")
 endif()
-add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/digital-imgui digital-imgui)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/imgui imgui)
 target_link_libraries(${LIB_NAME} imgui)
 target_include_directories(${LIB_NAME} PUBLIC "${IMGUI_INCLUDE_DIR}")
 
