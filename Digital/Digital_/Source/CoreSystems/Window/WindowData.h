@@ -10,7 +10,10 @@ struct GLFWwindow;
 namespace DFW
 {
     // Forward Declare(s)
-    struct InputData;
+    namespace DInput
+    {
+        struct InputData;
+    }
 
     struct WindowDimension
     {
@@ -32,7 +35,7 @@ namespace DFW
         std::string     _name;
 
         GLFWwindow* _window;
-        InputData* _input_data;
+        DInput::InputData* _input_data;
 
         bool _should_be_closed;
         bool _is_minimized;

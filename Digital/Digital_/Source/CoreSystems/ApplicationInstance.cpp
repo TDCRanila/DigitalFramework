@@ -16,7 +16,6 @@
 namespace DFW
 {    
     WindowManagementSystem ApplicationInstance::_window_management;
-    InputManagementSystem ApplicationInstance::_input_management;
 
     ApplicationInstance::ApplicationInstance()
         : _stage_stack_communicator(nullptr)
@@ -44,6 +43,7 @@ namespace DFW
         // Core Services
         CoreService::ProvideGameClock(&_game_clock);
         CoreService::ProvideECS(&_ecs_module);
+        CoreService::ProvideInputSystem(&_input_system);
 
         // Application
         TimeTracker application_timer;
@@ -66,11 +66,6 @@ namespace DFW
     WindowManagementSystem* ApplicationInstance::ProvideWindowManagement()
     {
         return &_window_management;
-    }
-
-    InputManagementSystem* ApplicationInstance::ProvideInputManagment()
-    {
-        return &_input_management;
     }
 
     StageStackController& ApplicationInstance::ProvideStageStackController()
@@ -147,7 +142,7 @@ namespace DFW
             glfwPollEvents();
 
             // Input
-            _input_management.ProcessInputEvents();
+            _input_system.ProcessInputEvents();
 
             // Update Game Instance(s)
             if (_window_management.HaveAllWindowsBeenClosed())
@@ -250,10 +245,10 @@ namespace DFW
         static bool show_debug_info = true;
         static uint32 bgfx_debug = BGFX_DEBUG_TEXT;
 
-        bool key_f1_pressed = _input_management.IsKeyReleased(DKey::F1);
+        bool key_f1_pressed = _input_system.IsKeyReleased(DInput::DKey::F1);
         if (key_f1_pressed)
         {
-            bool key_shift_pressed = _input_management.IsKeyDown(DKey::LEFT_SHIFT) || _input_management.IsKeyDown(DKey::RIGHT_SHIFT);
+            bool key_shift_pressed = _input_system.IsKeyDown(DInput::DKey::LEFT_SHIFT) || _input_system.IsKeyDown(DInput::DKey::RIGHT_SHIFT);
             if (show_debug_info && key_shift_pressed)
             {
                 bgfx_debug = show_stats ? BGFX_DEBUG_TEXT : BGFX_DEBUG_STATS;

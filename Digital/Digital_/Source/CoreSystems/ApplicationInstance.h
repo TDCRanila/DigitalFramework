@@ -2,7 +2,7 @@
 
 #include <CoreSystems/GameClock.h>
 #include <CoreSystems/TimeTracker.h>
-#include <CoreSystems/InputManagement.h>
+#include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Events/EventImplementation.h>
 #include <CoreSystems/Stage/StageStackController.h>
 #include <CoreSystems/Stage/StageStackCommunicator.h>
@@ -24,7 +24,6 @@ namespace DFW
         void RunApplication(std::string const& a_name);
 
         static WindowManagementSystem* ProvideWindowManagement();
-        static InputManagementSystem* ProvideInputManagment();
 
     protected:
         void RegisterStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
@@ -44,7 +43,8 @@ namespace DFW
         void Debug_DrawBGFXInfo() const;
 
         static WindowManagementSystem _window_management;
-        static InputManagementSystem _input_management;
+        
+        DInput::InputManagementSystem _input_system;
         
         ImGuiLayer _imgui;
  

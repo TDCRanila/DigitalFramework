@@ -8,7 +8,8 @@
 #include <bgfx/platform.h>
 
 #include <CoreSystems/ApplicationInstance.h>
-#include <CoreSystems/InputManagement.h>
+#include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Logging/Logger.h>
 #include <Defines/Defines.h>
 
@@ -136,7 +137,7 @@ namespace DFW
             int32 action    = static_cast<int32>(a_action);
             int32 modifier  = static_cast<int32>(a_mods);
 
-            ApplicationInstance::ProvideInputManagment()->SendKeyEvent(user_data->_id, key, scancode, action, modifier);
+            CoreService::GetInputSystem()->SendKeyEvent(user_data->_id, key, scancode, action, modifier);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_char_callback(GLFWwindow* a_window, unsigned int a_char)
@@ -145,7 +146,7 @@ namespace DFW
 
             uint16 character = static_cast<uint16>(a_char);
 
-            ApplicationInstance::ProvideInputManagment()->SendCharEvent(user_data->_id, character);
+            CoreService::GetInputSystem()->SendCharEvent(user_data->_id, character);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_mousebutton_callback(GLFWwindow* a_window, int a_key, int a_action, int a_mods)
@@ -157,7 +158,7 @@ namespace DFW
             int32 modifier  = static_cast<int32>(a_mods);
             int32 undefined = -1;
 
-            ApplicationInstance::ProvideInputManagment()->SendMouseEvent(user_data->_id, key, undefined, action, modifier);
+            CoreService::GetInputSystem()->SendMouseEvent(user_data->_id, key, undefined, action, modifier);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos)
@@ -167,7 +168,7 @@ namespace DFW
             float32 x_pos = static_cast<float32>(a_x_pos);
             float32 y_pos = static_cast<float32>(a_y_pos);
 
-            ApplicationInstance::ProvideInputManagment()->SendDirectionalEvent(user_data->_id, x_pos, y_pos);
+            CoreService::GetInputSystem()->SendDirectionalEvent(user_data->_id, x_pos, y_pos);
         }
 
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_scroll_callback(GLFWwindow* a_window, double a_x_offset, double a_y_offset)
@@ -177,7 +178,7 @@ namespace DFW
             float32 x_offset = static_cast<float32>(a_x_offset);
             float32 y_offset = static_cast<float32>(a_y_offset);
 
-            ApplicationInstance::ProvideInputManagment()->SendScrollEvent(user_data->_id, x_offset, y_offset);
+            CoreService::GetInputSystem()->SendScrollEvent(user_data->_id, x_offset, y_offset);
         }
 
 #pragma endregion
@@ -282,7 +283,7 @@ namespace DFW
         glfwSetCursorPosCallback(glfw_window, GLFWWindowCallBacks::glfw_mouse_callback);
         glfwSetScrollCallback(glfw_window, GLFWWindowCallBacks::glfw_scroll_callback);
         
-        ApplicationInstance::ProvideInputManagment()->RegisterWindow(&new_window);
+        CoreService::GetInputSystem()->RegisterWindow(&new_window);
 
         auto [it_pair, result] =_window_instances.emplace(new_window._id, new_window);
         if (result)
@@ -344,7 +345,7 @@ namespace DFW
 
         glfwDestroyWindow(a_window->_window);
 
-        ApplicationInstance::ProvideInputManagment()->UnregisterWindow(a_window);
+        CoreService::GetInputSystem()->UnregisterWindow(a_window);
 
         _window_instances.erase(a_window->_id);
     }
