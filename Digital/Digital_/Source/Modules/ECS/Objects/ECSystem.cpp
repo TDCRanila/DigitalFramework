@@ -2,9 +2,9 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace DECS
+namespace ECS
 {
-	ECSystem::ECSystem(Key) 
+	System::System(Key) 
 		: _id(DCore::DFW_INVALID_DUID)
 		, _entity_manager(nullptr)
 		, _name("Default System Name.")
@@ -12,84 +12,84 @@ namespace DECS
 	{ 
 	}
 
-	void ECSystem::Init() 
+	void System::Init() 
 	{
 	}
 
-	void ECSystem::Terminate()
+	void System::Terminate()
 	{
 	}
 	
-	void ECSystem::PreUpdate(ECSUniverse* const /*a_universe*/) 
+	void System::PreUpdate(Universe* const /*a_universe*/) 
 	{
 	}
 
-	void ECSystem::Update(ECSUniverse* const /*a_universe*/) 
+	void System::Update(Universe* const /*a_universe*/) 
 	{
 	}
 
-	void ECSystem::PostUpdate(ECSUniverse* const /*a_universe*/) 
+	void System::PostUpdate(Universe* const /*a_universe*/) 
 	{
 	}
 
-	bool ECSystem::IsSystemPaused() const
+	bool System::IsSystemPaused() const
 	{
 		return _paused;
 	}
 
-	DCore::DUID ECSystem::GetID() const
+	DCore::DUID System::GetID() const
 	{
 		return _id;
 	}
 
-	std::string ECSystem::GetName() const
+	std::string System::GetName() const
 	{
 		return _name;
 	}
 
-	ECSEntityManager* const ECSystem::EntityManager() const
+	EntityManager* const System::EntityManager() const
 	{
 		return _entity_manager;
 	}
 
-	void ECSystem::InternalInit()
+	void System::InternalInit()
 	{
 		DFW_INFOLOG("Initialization System: {} - {}", _id, _name);
 
 		this->Init();
 	}
 
-	void ECSystem::InternalTerminate()
+	void System::InternalTerminate()
 	{
 		DFW_INFOLOG("Terminating System: {} - {}", _id, _name);
 
 		this->Terminate();
 	}
 
-	void ECSystem::InternalPreUpdate(ECSUniverse* const a_universe)
+	void System::InternalPreUpdate(Universe* const a_universe)
 	{
 		DFW_LOG("PreUpdate System: {} - {}", _id, _name);
 
 		this->PreUpdate(a_universe);
 	}
 
-	void ECSystem::InternalUpdate(ECSUniverse* const a_universe)
+	void System::InternalUpdate(Universe* const a_universe)
 	{
 		DFW_LOG("Update System: {} - {}", _id, _name);
 		
 		this->Update(a_universe);
 	}
 
-	void ECSystem::InternalPostUpdate(ECSUniverse* const a_universe)
+	void System::InternalPostUpdate(Universe* const a_universe)
 	{
 		DFW_LOG("PostUpdate System: {} - {}", _id, _name);
 
 		this->PostUpdate(a_universe);
 	}
 
-	void ECSystem::InternalPauseSystem(bool a_pause_on_true)
+	void System::InternalPauseSystem(bool a_pause_on_true)
 	{
 		this->_paused = a_pause_on_true;
 	}
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

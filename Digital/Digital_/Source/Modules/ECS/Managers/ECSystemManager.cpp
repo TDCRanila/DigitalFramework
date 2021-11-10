@@ -8,19 +8,19 @@
 
 #include <ranges>
 
-namespace DECS 
+namespace ECS 
 {
 
-	ECSystemManager::ECSystemManager() 
+	SystemManager::SystemManager() 
 	{ 
 		_systems.reserve(DFW_SYSTEM_RESERVE_AMOUNT);
 	}
 
-	void ECSystemManager::Init()
+	void SystemManager::Init()
 	{
 	}
 
-	void ECSystemManager::Terminate() 
+	void SystemManager::Terminate() 
 	{ 
 		// Calling Terminiate of systems.
 		for (auto const&[system_type, system_ptr] : _systems)
@@ -29,7 +29,7 @@ namespace DECS
 		}
 	}
 
-	void ECSystemManager::UpdateSystems(ECSUniverse* const a_universe)
+	void SystemManager::UpdateSystems(Universe* const a_universe)
 	{ 
 		DFW_ASSERT(a_universe && "Updating ECS Systems, but universe is invalid.");
 
@@ -38,7 +38,7 @@ namespace DECS
 			return;
 		}
 
-		auto IsSystemPaused = [](std::shared_ptr<ECSystem> const& system) -> bool
+		auto IsSystemPaused = [](std::shared_ptr<System> const& system) -> bool
 		{
 			return system->IsSystemPaused();
 		};
@@ -65,4 +65,4 @@ namespace DECS
 		}
 	}
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

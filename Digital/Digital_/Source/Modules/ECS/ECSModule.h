@@ -10,26 +10,26 @@ namespace DCore
 	class ApplicationInstance;
 } // End of namespace ~ DCore.
 
-namespace DECS 
+namespace ECS 
 {
 	// FW Declares.
-	class ECSystemManager;
-	class ECSEntityManager;
-	class ECSEventHandler;
-	class ECSUniverse;
+	class SystemManager;
+	class EntityManager;
+	class EventHandler;
+	class Universe;
 
 	class ECSModule final 
 	{
 	public:
 		~ECSModule() = default;
 			   
-		ECSystemManager* const SystemManager() const;
-		ECSEntityManager* const EntityManager() const;
-		ECSEventHandler* const EventHandler() const;
+		SystemManager* const SystemManager() const;
+		EntityManager* const EntityManager() const;
+		EventHandler* const EventHandler() const;
 
-		ECSUniverse* RegisterUniverse(std::string const& a_universe_name);
-		ECSUniverse* const GetUniverse(std::string const& a_universe_name);
-		ECSUniverse* const CurrentUniverse();
+		Universe* RegisterUniverse(std::string const& a_universe_name);
+		Universe* const GetUniverse(std::string const& a_universe_name);
+		Universe* const CurrentUniverse();
 
 	protected:
 		friend DCore::ApplicationInstance;
@@ -42,16 +42,16 @@ namespace DECS
 
 	private:
 		
-		ECSystemManager*	_system_manager;
-		ECSEntityManager*	_entity_manager;
-		ECSEventHandler*	_event_handler;
-		ECSUniverse*		_current_universe;
+		ECS::SystemManager*	_system_manager;
+		ECS::EntityManager*	_entity_manager;
+		ECS::EventHandler*	_event_handler;
+		Universe*			_current_universe;
 		
-		std::unordered_map<std::string, ECSUniverse*> _universes;
+		std::unordered_map<std::string, Universe*> _universes;
 
 		bool				_initialized;
 
 	};
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS
 

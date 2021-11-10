@@ -7,7 +7,7 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace DECS 
+namespace ECS 
 {
 	ECSModule::ECSModule() 
 		: _system_manager(nullptr)
@@ -29,9 +29,9 @@ namespace DECS
 		DFW_INFOLOG("Initializing ECS Module.");
 
 		// Allocate.
-		_entity_manager		= new ECSEntityManager();
-		_system_manager		= new ECSystemManager();
-		_event_handler		= new ECSEventHandler();
+		_entity_manager		= new ECS::EntityManager();
+		_system_manager		= new ECS::SystemManager();
+		_event_handler		= new ECS::EventHandler();
 
 		// Init.
 		_system_manager->Init();
@@ -84,30 +84,30 @@ namespace DECS
 		}
 	}
 
-	ECSystemManager* const ECSModule::SystemManager() const
+	SystemManager* const ECSModule::SystemManager() const
 	{
 		return _system_manager;
 	}
 
-	ECSEntityManager* const ECSModule::EntityManager() const
+	EntityManager* const ECSModule::EntityManager() const
 	{
 		return _entity_manager;
 	}
 
-	ECSEventHandler* const ECSModule::EventHandler() const
+	EventHandler* const ECSModule::EventHandler() const
 	{
 		return _event_handler;
 	}
 
-	ECSUniverse* ECSModule::RegisterUniverse(std::string const& a_universe_name)
+	Universe* ECSModule::RegisterUniverse(std::string const& a_universe_name)
 	{
 		if (!_universes.contains(a_universe_name))
-			return _universes[a_universe_name] = new ECSUniverse();
+			return _universes[a_universe_name] = new Universe();
 		else
 			return _universes[a_universe_name];
 	}
 
-	ECSUniverse* const ECSModule::GetUniverse(std::string const& a_universe_name)
+	Universe* const ECSModule::GetUniverse(std::string const& a_universe_name)
 	{
 		if (_universes.contains(a_universe_name))
 			return _universes[a_universe_name];
@@ -115,9 +115,9 @@ namespace DECS
 			return nullptr;
 	}
 	
-	ECSUniverse* const ECSModule::CurrentUniverse()
+	Universe* const ECSModule::CurrentUniverse()
 	{
 		return _current_universe;
 	}
 	
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

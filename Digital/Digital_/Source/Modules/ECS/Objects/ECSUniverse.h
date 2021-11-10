@@ -10,27 +10,27 @@
 #include <vector>
 #include <unordered_map>
 
-namespace DECS
+namespace ECS
 {
     // FW Declare
-    class ECSEntityManager;
-    class ECSComponentManager;
-    class ECSEntity;
+    class EntityManager;
+    class ComponentManager;
+    class Entity;
 
     const int64 DFW_UNIVERSE_ENTITY_RESERVATION_SIZE = 256;
 
-    using EntityRegistrationMap = std::unordered_map<EntityHandle, ECSEntityRegistrationComponent*>;
+    using EntityRegistrationMap = std::unordered_map<EntityHandle, EntityRegistrationComponent*>;
 
-    class ECSUniverse final
+    class Universe final
     {
 
     public:
-        ECSUniverse();
-        ~ECSUniverse();
+        Universe();
+        ~Universe();
         
-        std::strong_ordering operator<=>(ECSUniverse const& a_other) const = default;
+        std::strong_ordering operator<=>(Universe const& a_other) const = default;
 
-        std::vector<ECSEntity> GetEntities();
+        std::vector<Entity> GetEntities();
         std::vector<EntityHandle> const& GetEntityHandles() const;
         EntityRegistrationMap const& GetEntityRegistrationMap() const;
 
@@ -38,9 +38,9 @@ namespace DECS
         DCore::DUID const   _id;
         
     protected:
-        friend ECSEntityManager;
-        friend ECSComponentManager;
-        friend ECSEntity;
+        friend EntityManager;
+        friend ComponentManager;
+        friend Entity;
 
         // TODO Could use a pool alocator here.
         // TODO Can remove _entities container and replace GetEntityHandles with a range.
@@ -50,4 +50,4 @@ namespace DECS
 
     };
 
-} // End of namespace ~ DECS.
+} // End of namespace ~ ECS.

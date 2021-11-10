@@ -13,16 +13,16 @@
 #include <unordered_map>
 #include <typeindex>
 
-namespace DECS 
+namespace ECS 
 {
 	const int64 DFW_UNASSIGNED_COMPONENT_BIT	= -1;
 	const int8	DFW_MAX_REGISTERED_COMPONENTS	= 64;
 
-	class ECSKeyLockSystem final 
+	class KeyLockSystem final 
 	{
 	public:
-		ECSKeyLockSystem() = default;
-		~ECSKeyLockSystem() = default;
+		KeyLockSystem() = default;
+		~KeyLockSystem() = default;
 
 		static void GenerateComponentKeys();
 
@@ -58,11 +58,11 @@ namespace DECS
 #pragma region Template Function Implementation
 
 	template <typename... TArgs>
-	ComponentBitList ECSKeyLockSystem::ConstructComponentBitList() const
+	ComponentBitList KeyLockSystem::ConstructComponentBitList() const
 	{
 		if constexpr ((not IsValidComponentType2<TArgs> || ...))
 		{
-			static_assert(always_false<TArgs...>::value, __FUNCTION__ " - Trying to construct bitlist with a Component of type T that isn't derived from DECS::ECSComponent.");
+			static_assert(always_false<TArgs...>::value, __FUNCTION__ " - Trying to construct bitlist with a Component of type T that isn't derived from ECS::Component.");
 			return ComponentBitList();
 		}
 		else
@@ -75,7 +75,7 @@ namespace DECS
 
 	template <typename TComponent>
 	requires IsValidComponentType<TComponent>
-	bool ECSKeyLockSystem::IsComponentBitTrue(ComponentBitList const& a_bit_var) const 
+	bool KeyLockSystem::IsComponentBitTrue(ComponentBitList const& a_bit_var) const 
 	{
 		int8 component_bit_placement(0);
 		GetComponentBitPlacement<TComponent>(component_bit_placement);
@@ -93,7 +93,7 @@ namespace DECS
 
 	template <typename TComponent>
 	requires IsValidComponentType<TComponent>
-	void ECSKeyLockSystem::SetComponentBits(ComponentBitList& a_bit_var) const
+	void KeyLockSystem::SetComponentBits(ComponentBitList& a_bit_var) const
 	{
 		int64 temp (1);
 		int8 component_bit_placement(0);
@@ -104,7 +104,7 @@ namespace DECS
 
 	template <typename TComponent>
 	requires IsValidComponentType<TComponent>
-	void ECSKeyLockSystem::ResetComponentBits(ComponentBitList& a_bit_var) const
+	void KeyLockSystem::ResetComponentBits(ComponentBitList& a_bit_var) const
 	{
 		int64 temp(1);
 		int8 component_bit_placement(0);
@@ -115,7 +115,7 @@ namespace DECS
 
 	template <typename TComponent>
 	requires IsValidComponentType<TComponent>
-	int8 ECSKeyLockSystem::GetComponentBitPlacement() const 
+	int8 KeyLockSystem::GetComponentBitPlacement() const 
 	{
 		int8 temp_bit_list(0);
 		GetComponentBitPlacement<TComponent>(temp_bit_list);
@@ -124,7 +124,7 @@ namespace DECS
 
 	template <typename TComponent>
 	requires IsValidComponentType<TComponent>
-	void ECSKeyLockSystem::GetComponentBitPlacement(int8& a_component_bit_list) const
+	void KeyLockSystem::GetComponentBitPlacement(int8& a_component_bit_list) const
 	{
 		const type_info& type = typeid(TComponent);
 		auto it = _component_bit_placement.find(type);
@@ -141,4 +141,4 @@ namespace DECS
 
 #pragma endregion
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

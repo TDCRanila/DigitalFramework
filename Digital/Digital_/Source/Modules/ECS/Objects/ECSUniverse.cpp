@@ -2,9 +2,9 @@
 
 #include <ranges>
 
-namespace DECS
+namespace ECS
 {
-    ECSUniverse::ECSUniverse()
+    Universe::Universe()
         : _id(DCore::GenerateDUID())
     {
         _registry.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
@@ -13,7 +13,7 @@ namespace DECS
         _deleted_entities.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
     }
 
-    ECSUniverse::~ECSUniverse()
+    Universe::~Universe()
     {
         _registry.clear();
         _entity_data_registration.clear();
@@ -21,9 +21,9 @@ namespace DECS
         _deleted_entities.clear();
     }
 
-    std::vector<ECSEntity>  ECSUniverse::GetEntities()
+    std::vector<Entity>  Universe::GetEntities()
     {
-        auto range = _entities | std::ranges::views::transform([this](EntityHandle const& a_handle) { return ECSEntity(a_handle, this); } );
+        auto range = _entities | std::ranges::views::transform([this](EntityHandle const& a_handle) { return Entity(a_handle, this); } );
         
         // TODO: std::ranges::to_vector is not part of C20, so using a custom implementation instead.
         std::vector<std::ranges::range_value_t<decltype(range)>> v;
@@ -33,14 +33,14 @@ namespace DECS
         return v;
     }
 
-    std::vector<EntityHandle> const& ECSUniverse::GetEntityHandles() const
+    std::vector<EntityHandle> const& Universe::GetEntityHandles() const
     {
         return _entities;
     }
 
-    EntityRegistrationMap const& ECSUniverse::GetEntityRegistrationMap() const
+    EntityRegistrationMap const& Universe::GetEntityRegistrationMap() const
     {
         return _entity_data_registration;
     }
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

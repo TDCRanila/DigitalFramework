@@ -9,56 +9,56 @@
 
 #include <entt/entity/registry.hpp>
 
-namespace DECS 
+namespace ECS 
 {
 	// FW Declare.
 	class ECSModule;
 
-	class ECSEntityManager final 
+	class EntityManager final 
 	{
 	public:
-		~ECSEntityManager() = default;
+		~EntityManager() = default;
 
 		template <typename EntityType, typename... TArgs>
-		EntityType CreateEntity(ECSUniverse* a_universe, TArgs&&... a_args) const;
-		ECSEntity CreateEntity(ECSUniverse* a_universe) const;
+		EntityType CreateEntity(Universe* a_universe, TArgs&&... a_args) const;
+		Entity CreateEntity(Universe* a_universe) const;
 
-		void DestroyEntity(ECSEntity const& a_entity) const;
-		void DestroyEntity(DCore::DUID a_entity_id, ECSUniverse* a_universe) const;
+		void DestroyEntity(Entity const& a_entity) const;
+		void DestroyEntity(DCore::DUID a_entity_id, Universe* a_universe) const;
 
-		ECSEntity GetEntity(DCore::DUID a_entity_id, ECSUniverse* a_universe) const;
+		Entity GetEntity(DCore::DUID a_entity_id, Universe* a_universe) const;
 
-		ECSEntity AttachEntity(DCore::DUID a_child_id, DCore::DUID a_parent_id, ECSUniverse* a_universe) const;
-		ECSEntity AttachEntity(ECSEntity const& a_child, ECSEntity const& a_parent) const;
+		Entity AttachEntity(DCore::DUID a_child_id, DCore::DUID a_parent_id, Universe* a_universe) const;
+		Entity AttachEntity(Entity const& a_child, Entity const& a_parent) const;
 
 		template <typename ComponentType, typename... TArgs>
-		ComponentType* const AddComponent(ECSEntity const& a_entity, TArgs&&...a_args) const;
+		ComponentType* const AddComponent(Entity const& a_entity, TArgs&&...a_args) const;
 
 		template <typename ComponentType>
-		ComponentType* const GetComponent(ECSEntity const& a_entity) const;
+		ComponentType* const GetComponent(Entity const& a_entity) const;
 
 		template <typename... TArgs>
-		bool HasComponents(ECSEntity const& a_entity) const;
+		bool HasComponents(Entity const& a_entity) const;
 
 		template <typename ComponentType>
-		bool DeleteComponent(ECSEntity const& a_entity) const;
+		bool DeleteComponent(Entity const& a_entity) const;
 		 
 	protected:
 		friend ECSModule;
 
-		ECSEntityManager() = default;
+		EntityManager() = default;
 
-		void ManageDeletedEntities(ECSUniverse* a_universe);
+		void ManageDeletedEntities(Universe* a_universe);
 
 	private:
-		ECSComponentManager _component_manager;
+		ComponentManager _component_manager;
 
 	};
 
 #pragma region Template Function Implementation
 
 	template <typename EntityType, typename... TArgs>
-	EntityType ECSEntityManager::CreateEntity(ECSUniverse* a_universe, TArgs&&... a_args) const
+	EntityType EntityManager::CreateEntity(Universe* a_universe, TArgs&&... a_args) const
 	{
 		if (!a_universe)
 		{
@@ -78,7 +78,7 @@ namespace DECS
 
 		a_universe->_entities.emplace_back(handle);
 		a_universe->_entity_data_registration.emplace(handle, 
-			AddComponent<ECSEntityRegistrationComponent>(entity, DCore::GenerateDUID(), "Default Entity Name"));
+			AddComponent<EntityRegistrationComponent>(entity, DCore::GenerateDUID(), "Default Entity Name"));
 
 		// TODO - Should be in something like a WorldManager -  Add any additional default components here; e.g. transform, name component
 		// _component_manager.AddComponent<TransformComponent>(entity, a_universe);
@@ -95,29 +95,29 @@ namespace DECS
 	}
 
 	template <typename ComponentType, typename... TArgs>
-	ComponentType* const ECSEntityManager::AddComponent(ECSEntity const& a_entity, TArgs&&...a_args) const
+	ComponentType* const EntityManager::AddComponent(Entity const& a_entity, TArgs&&...a_args) const
 	{
 		return _component_manager.AddComponent<ComponentType>(a_entity, std::forward<TArgs&&>(a_args)...);
 	}
 
 	template <typename ComponentType>
-	ComponentType* const ECSEntityManager::GetComponent(ECSEntity const& a_entity) const
+	ComponentType* const EntityManager::GetComponent(Entity const& a_entity) const
 	{
 		return _component_manager.GetComponent<ComponentType>(a_entity);
 	}
 
 	template <typename... TArgs>
-	bool ECSEntityManager::HasComponents(ECSEntity const& a_entity) const
+	bool EntityManager::HasComponents(Entity const& a_entity) const
 	{
 		return _component_manager.HasComponents<TArgs...>(a_entity);
 	}
 
 	template <typename ComponentType>
-	bool ECSEntityManager::DeleteComponent(ECSEntity const& a_entity) const
+	bool EntityManager::DeleteComponent(Entity const& a_entity) const
 	{
 		return _component_manager.DeleteComponent<ComponentType>(a_entity);
 	}
 
 #pragma endregion
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

@@ -8,46 +8,46 @@
 #include <Utility/TemplateUtility.h>
 #include <CoreSystems/DUID.h>
 
-namespace DECS 
+namespace ECS 
 {
 	// FW Declare
-	class ECSEntityManager;
+	class EntityManager;
 
-	class ECSComponentManager final 
+	class ComponentManager final 
 	{
 	public:
-		~ECSComponentManager() = default;
+		~ComponentManager() = default;
 
 		template <typename ComponentType> 
-		ComponentType* const GetComponent(ECSEntity const& a_entity) const;
+		ComponentType* const GetComponent(Entity const& a_entity) const;
 
 		template <typename... TArgs>
-		bool HasComponents(ECSEntity const& a_entity) const;
+		bool HasComponents(Entity const& a_entity) const;
 
 		template <typename ComponentType, typename ...TArgs>
-		ComponentType* const AddComponent(ECSEntity const& a_entity, TArgs&&...a_args) const;
+		ComponentType* const AddComponent(Entity const& a_entity, TArgs&&...a_args) const;
 
 		template <typename ComponentType>
-		bool DeleteComponent(ECSEntity const& a_entity) const;
+		bool DeleteComponent(Entity const& a_entity) const;
 
 	protected: 
-		friend ECSEntityManager;
+		friend EntityManager;
 
-		ECSComponentManager();
+		ComponentManager();
 
 	private:
-		ECSKeyLockSystem _keylock_system;
+		KeyLockSystem _keylock_system;
 
 	};
 
 #pragma region Template Function Implementation
 
 	template <typename ComponentType>
-	ComponentType* const ECSComponentManager::GetComponent(ECSEntity const& a_entity) const
+	ComponentType* const ComponentManager::GetComponent(Entity const& a_entity) const
 	{
 		if constexpr (not IsValidComponentType<ComponentType>)
 		{
-			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to get a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
+			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to get a Component of type ComponentType that isn'ComponentType derived from ECS::Component.");
 			return nullptr;
 		}
 		else if constexpr (IsValidComponentType<ComponentType>)
@@ -59,7 +59,7 @@ namespace DECS
 	}
 
 	template <typename... TArgs>
-	bool ECSComponentManager::HasComponents(ECSEntity const& a_entity) const
+	bool ComponentManager::HasComponents(Entity const& a_entity) const
 	{
 		if constexpr (sizeof...(TArgs) <= 0)
 		{
@@ -68,7 +68,7 @@ namespace DECS
 		}
 		else if constexpr ( (not IsValidComponentType<TArgs> || ...))
 		{
-			static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check for a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
+			static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check for a Component of type ComponentType that isn'ComponentType derived from ECS::Component.");
 			return false;
 		}
 		else
@@ -80,11 +80,11 @@ namespace DECS
 	}
 	
 	template <typename ComponentType, typename... TArgs>
-	ComponentType* const ECSComponentManager::AddComponent(ECSEntity const& a_entity, TArgs&&... a_args) const
+	ComponentType* const ComponentManager::AddComponent(Entity const& a_entity, TArgs&&... a_args) const
 	{
 		if constexpr (not IsValidComponentType<ComponentType>)
 		{
-			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to add a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
+			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to add a Component of type ComponentType that isn'ComponentType derived from ECS::Component.");
 			return nullptr;
 		}
 		else if constexpr (IsValidComponentType<ComponentType>)
@@ -98,7 +98,7 @@ namespace DECS
 
 				// Special Case for Entity Registration Component.
 				// TODO: Not all that nice, could look in an alternative.
-				if constexpr (AreSameTypes<ECSEntityRegistrationComponent, ComponentType>)
+				if constexpr (AreSameTypes<EntityRegistrationComponent, ComponentType>)
 				{
 					_keylock_system.SetComponentBits<ComponentType>(component.comp_list);
 				}
@@ -116,11 +116,11 @@ namespace DECS
 	}
 
 	template <typename ComponentType>
-	bool ECSComponentManager::DeleteComponent(ECSEntity const& a_entity) const
+	bool ComponentManager::DeleteComponent(Entity const& a_entity) const
 	{
 		if constexpr (not IsValidComponentType<ComponentType>)
 		{
-			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to delete a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
+			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to delete a Component of type ComponentType that isn'ComponentType derived from ECS::Component.");
 			return false;
 		}
 		else if constexpr (IsValidComponentType<ComponentType>)
@@ -142,4 +142,4 @@ namespace DECS
 
 #pragma endregion
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

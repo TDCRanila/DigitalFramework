@@ -10,18 +10,18 @@
 #include <unordered_map>
 #include <typeindex>
 
-namespace DECS 
+namespace ECS 
 {
 	// FW Declare
 	class ECSModule;
-	class ECSUniverse;
+	class Universe;
 
 	constexpr int64 DFW_SYSTEM_RESERVE_AMOUNT = 16;
 
-	class ECSystemManager final 
+	class SystemManager final 
 	{
 	public:
-		~ECSystemManager() = default;
+		~SystemManager() = default;
 
 		template <typename SystemType, typename ...TArgs>
 		requires IsValidSystemType<SystemType>
@@ -58,15 +58,15 @@ namespace DECS
 
 		void Init();
 		void Terminate();
-		void UpdateSystems(ECSUniverse* const a_universe);
+		void UpdateSystems(Universe* const a_universe);
 
-		ECSystemManager();
+		SystemManager();
 
 	private:
 		// TODO Potentially better to use integer values instead of type_index for possibily 
 		// a slight performance boost, but that depends on the comparisson implementation of 
 		// typeinfo/type_index.
-		std::unordered_map<std::type_index, std::shared_ptr<ECSystem>> _systems;
+		std::unordered_map<std::type_index, std::shared_ptr<System>> _systems;
 
 	};
 
@@ -74,12 +74,12 @@ namespace DECS
 
 	template <typename SystemType, typename ...TArgs>
 	requires IsValidSystemType<SystemType>
-	void ECSystemManager::AddSystem(TArgs&&... a_args)
+	void SystemManager::AddSystem(TArgs&&... a_args)
 	{
 		auto& type = typeid(SystemType);
 		if (_systems.contains(type))
 		{
-			DFW_WARNLOG("Trying to add a new ECSystem that is already registered in the manager.");
+			DFW_WARNLOG("Trying to add a new System that is already registered in the manager.");
 		}
 		else
 		{
@@ -97,12 +97,12 @@ namespace DECS
 
 	template <typename SystemType>
 	requires IsValidSystemType<SystemType>
-	void ECSystemManager::RemoveSystem()
+	void SystemManager::RemoveSystem()
 	{
 		auto const it = _systems.find(typeid(SystemType));
 		if (it == _systems.end())
 		{
-			DFW_WARNLOG("Trying to remove an ECSystem that is not registered in the manager.");
+			DFW_WARNLOG("Trying to remove an System that is not registered in the manager.");
 		}
 		else
 		{
@@ -114,7 +114,7 @@ namespace DECS
 
 	template <typename SystemType>
 	requires IsValidSystemType<SystemType>
-	bool ECSystemManager::EnableSystem()
+	bool SystemManager::EnableSystem()
 	{
 		if (SystemType* system_ptr = GetSystem<SystemType>())
 		{
@@ -129,7 +129,7 @@ namespace DECS
 
 	template <typename SystemType>
 	requires IsValidSystemType<SystemType>
-	bool ECSystemManager::DisableSystem()
+	bool SystemManager::DisableSystem()
 	{
 		if (SystemType* system_ptr = GetSystem<SystemType>())
 		{
@@ -144,9 +144,9 @@ namespace DECS
 
 	template <typename SystemType>
 	requires IsValidSystemType<SystemType>
-	bool ECSystemManager::IsSystemDisabled() const
+	bool SystemManager::IsSystemDisabled() const
 	{
-		if (SystemType const* const system_ptr = const_cast<ECSystemManager*>(this)->GetSystem<SystemType>())
+		if (SystemType const* const system_ptr = const_cast<SystemManager*>(this)->GetSystem<SystemType>())
 			return system_ptr->IsSystemPaused();
 		else
 			return false;
@@ -154,7 +154,7 @@ namespace DECS
 
 	template <typename SystemType>
 	requires IsValidSystemType<SystemType>
-	SystemType* ECSystemManager::GetSystem()
+	SystemType* SystemManager::GetSystem()
 	{
 		auto& type	= typeid(SystemType);
 		auto it		= _systems.find(type);
@@ -174,7 +174,7 @@ namespace DECS
 
 	template <typename SystemType>
 	requires IsValidSystemType<SystemType>
-	bool ECSystemManager::IsSystemPresent()
+	bool SystemManager::IsSystemPresent()
 	{
 		auto const& type = typeid(SystemType);
 		if (!_systems.contains(type))
@@ -190,4 +190,4 @@ namespace DECS
 
 #pragma endregion 
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

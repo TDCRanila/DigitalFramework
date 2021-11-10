@@ -17,7 +17,7 @@
 
 namespace DGame
 {
-    class TestComponent final : public DECS::ECSComponent::StrictRegistrar<TestComponent>
+    class TestComponent final : public ECS::Component::StrictRegistrar<TestComponent>
     {
     public:
         TestComponent() = default;
@@ -28,14 +28,14 @@ namespace DGame
     struct TestEvent
     {
         TestEvent() = default;
-        TestEvent(DECS::ECSEntity a_entity, float32 a_old_value, float32 a_new_value)
+        TestEvent(ECS::Entity a_entity, float32 a_old_value, float32 a_new_value)
         {
             entity      = a_entity;
             old_value   = a_old_value;
             new_value   = a_new_value;
         }
 
-        DECS::ECSEntity entity;
+        ECS::Entity entity;
         float32 old_value;
         float32 new_value;
     };
@@ -45,7 +45,7 @@ namespace DGame
         DFW_INFOLOG("Testing EventTestFunction");
     }
 
-    class TestSystem : public DECS::ECSystem::StrictRegistrar<TestSystem>
+    class TestSystem : public ECS::System::StrictRegistrar<TestSystem>
     {
     public:
         TestSystem() = default;
@@ -68,7 +68,7 @@ namespace DGame
             DFW_INFOLOG("Value Addition Event Received: {}, {}, {}", a_event.entity.GetID(), a_event.new_value, a_event.old_value);
         }
 
-        inline virtual void Update(DECS::ECSUniverse* const a_universe) override
+        inline virtual void Update(ECS::Universe* const a_universe) override
         {
             float32 dt = CoreService::GetGameClock()->GetLastFrameDeltaTime();
             

@@ -5,21 +5,21 @@
 #include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Managers/ECSEntityManager.h>
 
-namespace DECS 
+namespace ECS 
 {
-	ECSEntity::ECSEntity()
+	Entity::Entity()
 		: _handle(DFW_NULL_ENTITY_HANDLE)
 		, _universe(nullptr)
 	{ 
 	}
 
-	ECSEntity::ECSEntity(EntityHandle const& a_entity_handle, ECSUniverse* const a_universe)
+	Entity::Entity(EntityHandle const& a_entity_handle, Universe* const a_universe)
 		:	_handle(a_entity_handle)
 		,	_universe(a_universe)
 	{
 	}
 
-	std::strong_ordering ECSEntity::operator<=>(ECSEntity const& a_other) const
+	std::strong_ordering Entity::operator<=>(Entity const& a_other) const
 	{
 		if (auto comparison = this->_handle <=> a_other._handle; comparison != 0)
 			return comparison;
@@ -31,17 +31,17 @@ namespace DECS
 		return std::strong_ordering();
 	}
 
-	ECSEntity::operator EntityHandle()
+	Entity::operator EntityHandle()
 	{ 
 		return _handle;
 	}
 
-	ECSEntity::operator EntityHandle() const
+	Entity::operator EntityHandle() const
 	{ 
 		return _handle;
 	}
 
-	DCore::DUID ECSEntity::GetID() const 
+	DCore::DUID Entity::GetID() const 
 	{
 		if (_handle != DFW_NULL_ENTITY_HANDLE)
 			return _universe->_entity_data_registration[_handle]->id;
@@ -49,17 +49,17 @@ namespace DECS
 		return DCore::DUID();
 	}
 
-	EntityHandle ECSEntity::GetHandle() const
+	EntityHandle Entity::GetHandle() const
 	{
 		return _handle;
 	}
 
-	ECSUniverse* ECSEntity::GetUniverse() const 
+	Universe* Entity::GetUniverse() const 
 	{
 		return _universe;
 	}
 
-	bool ECSEntity::IsEntityValid() const
+	bool Entity::IsEntityValid() const
 	{
 		if (_handle == DFW_NULL_ENTITY_HANDLE)
 			return false;
@@ -73,7 +73,7 @@ namespace DECS
 		return true;
 	}
 
-	bool ECSEntity::IsPendingDeletion() const
+	bool Entity::IsPendingDeletion() const
 	{
 		if (_handle != DFW_NULL_ENTITY_HANDLE)
 		{
@@ -85,4 +85,4 @@ namespace DECS
 		return false;
 	}
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

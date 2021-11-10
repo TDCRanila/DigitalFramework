@@ -6,12 +6,12 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace DECS 
+namespace ECS 
 {
-	bool ECSKeyLockSystem::_generated_component_keys = false;
-	std::unordered_map<std::type_index, int8> ECSKeyLockSystem::_component_bit_placement;
+	bool KeyLockSystem::_generated_component_keys = false;
+	std::unordered_map<std::type_index, int8> KeyLockSystem::_component_bit_placement;
 
-	void ECSKeyLockSystem::GenerateComponentKeys() 
+	void KeyLockSystem::GenerateComponentKeys() 
 	{
 		if (_generated_component_keys)
 		{
@@ -21,7 +21,7 @@ namespace DECS
 
 		int8 key_index = -1;
 
-		for (auto const&[type_pair, fac] : ECSComponent::GetFactories()) 
+		for (auto const&[type_pair, fac] : Component::GetFactories()) 
 		{
 			_component_bit_placement[type_pair.second] = ++key_index;
 
@@ -34,4 +34,4 @@ namespace DECS
 		_generated_component_keys = true;
 	}
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

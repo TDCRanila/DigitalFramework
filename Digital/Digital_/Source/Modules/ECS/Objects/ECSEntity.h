@@ -6,42 +6,42 @@
 
 #include <entt/entity/handle.hpp>
 
-namespace DECS 
+namespace ECS 
 {
 	// FW Declare.
-	class ECSUniverse;
-	class ECSEntityManager;
-	class ECSComponentManager;
+	class Universe;
+	class EntityManager;
+	class ComponentManager;
 	
 	using EntityHandle								= entt::entity;
 	constexpr entt::null_t DFW_NULL_ENTITY_HANDLE	= entt::null;
 
-	class ECSEntity : public DFactory::AutoFactory<ECSEntity>
+	class Entity : public DFactory::AutoFactory<Entity>
 	{
 	public:
-		ECSEntity();
-		ECSEntity(EntityHandle const& a_entity_handle, ECSUniverse* const a_universe);
-		virtual ~ECSEntity() = default;
+		Entity();
+		Entity(EntityHandle const& a_entity_handle, Universe* const a_universe);
+		virtual ~Entity() = default;
 		
-		std::strong_ordering operator<=>(ECSEntity const& a_other) const;
+		std::strong_ordering operator<=>(Entity const& a_other) const;
 
 		operator EntityHandle();
 		operator EntityHandle() const;
 		
 		DCore::DUID GetID() const;
 		EntityHandle GetHandle() const;
-		ECSUniverse* GetUniverse() const;
+		Universe* GetUniverse() const;
 
 		bool IsEntityValid() const;
 		bool IsPendingDeletion() const;
 
 	private:
-		friend ECSEntityManager;
-		friend ECSComponentManager;
+		friend EntityManager;
+		friend ComponentManager;
 
 		EntityHandle	_handle;
-		ECSUniverse*	_universe;
+		Universe*	_universe;
 
 	};
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

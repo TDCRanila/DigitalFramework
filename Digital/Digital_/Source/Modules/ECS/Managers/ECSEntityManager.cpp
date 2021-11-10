@@ -4,14 +4,14 @@
 
 #include <vector>
 
-namespace DECS 
+namespace ECS 
 {
-	ECSEntity ECSEntityManager::CreateEntity(ECSUniverse* a_universe) const
+	Entity EntityManager::CreateEntity(Universe* a_universe) const
 	{
-		return CreateEntity<ECSEntity>(a_universe);
+		return CreateEntity<Entity>(a_universe);
 	}
 
-	void ECSEntityManager::DestroyEntity(ECSEntity const& a_entity) const
+	void EntityManager::DestroyEntity(Entity const& a_entity) const
 	{
 		if (!a_entity.IsEntityValid())
 		{
@@ -29,7 +29,7 @@ namespace DECS
 		vec.emplace_back(a_entity._handle);
 	}
 
-	ECSEntity ECSEntityManager::GetEntity(DCore::DUID a_entity_id, ECSUniverse* a_universe) const
+	Entity EntityManager::GetEntity(DCore::DUID a_entity_id, Universe* a_universe) const
 	{
 		// TODO : If function becomes used very frequently - might need to rework this function/container. 
 		// (Adding a separate container or a bi map; DUID - EntityHandle)
@@ -39,12 +39,12 @@ namespace DECS
 									, [&a_entity_id](auto const& it) { return it.second->id == a_entity_id; });
 
 		if (result != a_universe->_entity_data_registration.end())
-			return ECSEntity(result->first, a_universe);
+			return Entity(result->first, a_universe);
 		else
-			return ECSEntity();
+			return Entity();
 	}
 
-	void ECSEntityManager::ManageDeletedEntities(ECSUniverse* a_universe)
+	void EntityManager::ManageDeletedEntities(Universe* a_universe)
 	{
 		DFW_ASSERT(a_universe && "Attempting to manage entities, but the universe is invalid.");
 
@@ -66,4 +66,4 @@ namespace DECS
 		a_universe->_deleted_entities.clear();
 	}
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS

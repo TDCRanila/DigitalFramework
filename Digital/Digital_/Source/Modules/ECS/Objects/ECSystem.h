@@ -6,19 +6,19 @@
 
 #include <string>
 
-namespace DECS 
+namespace ECS 
 {
 	// FW Declare
 	class ECSModule;
-	class ECSUniverse;
-	class ECSEntityManager;
-	class ECSystemManager;
+	class Universe;
+	class EntityManager;
+	class SystemManager;
 
-	class ECSystem : public DFactory::AutoFactory<ECSystem> 
+	class System : public DFactory::AutoFactory<System> 
 	{
 	public:
-		ECSystem(Key);
-		virtual ~ECSystem() = default;
+		System(Key);
+		virtual ~System() = default;
 
 		DCore::DUID GetID() const;
 		std::string GetName() const;
@@ -26,34 +26,34 @@ namespace DECS
 		virtual void Init();
 		virtual void Terminate();
 
-		virtual void PreUpdate(ECSUniverse* const a_universe);
-		virtual void Update(ECSUniverse* const a_universe);
-		virtual void PostUpdate(ECSUniverse* const a_universe);
+		virtual void PreUpdate(Universe* const a_universe);
+		virtual void Update(Universe* const a_universe);
+		virtual void PostUpdate(Universe* const a_universe);
 
 		bool IsSystemPaused() const;
 
 	protected:
-		friend class ECSystemManager;
+		friend class SystemManager;
 		
 		void InternalInit();
 		void InternalTerminate();
 
-		void InternalPreUpdate(ECSUniverse* const a_universe);
-		void InternalUpdate(ECSUniverse* const a_universe);
-		void InternalPostUpdate(ECSUniverse* const a_universe);
+		void InternalPreUpdate(Universe* const a_universe);
+		void InternalUpdate(Universe* const a_universe);
+		void InternalPostUpdate(Universe* const a_universe);
 
 		void InternalPauseSystem(bool a_pause_on_true);
 
 		DCore::DUID			_id;
-		ECSEntityManager*	_entity_manager;
+		EntityManager*	_entity_manager;
 		std::string			_name;
 
 	protected:
-		ECSEntityManager* const EntityManager() const;
+		EntityManager* const EntityManager() const;
 
 	private:
 		bool				_paused;
 	
 	};
 
-} // End of namespace ~ DECS
+} // End of namespace ~ ECS
