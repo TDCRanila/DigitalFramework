@@ -6,54 +6,58 @@
 
 #include <string>
 
-namespace DECS 
+namespace DFW
 {
-	// FW Declare
-	class ECSModule;
-	class Universe;
-	class EntityManager;
-	class SystemManager;
-
-	class System : public DFactory::AutoFactory<System> 
+	namespace DECS
 	{
-	public:
-		System(Key);
-		virtual ~System() = default;
+		// FW Declare
+		class ECSModule;
+		class Universe;
+		class EntityManager;
+		class SystemManager;
 
-		DCore::DUID GetID() const;
-		std::string GetName() const;
+		class System : public DFactory::AutoFactory<System>
+		{
+		public:
+			System(Key);
+			virtual ~System() = default;
 
-		virtual void Init();
-		virtual void Terminate();
+			DFW::DUID GetID() const;
+			std::string GetName() const;
 
-		virtual void PreUpdate(Universe* const a_universe);
-		virtual void Update(Universe* const a_universe);
-		virtual void PostUpdate(Universe* const a_universe);
+			virtual void Init();
+			virtual void Terminate();
 
-		bool IsSystemPaused() const;
+			virtual void PreUpdate(Universe* const a_universe);
+			virtual void Update(Universe* const a_universe);
+			virtual void PostUpdate(Universe* const a_universe);
 
-	protected:
-		friend class SystemManager;
-		
-		void InternalInit();
-		void InternalTerminate();
+			bool IsSystemPaused() const;
 
-		void InternalPreUpdate(Universe* const a_universe);
-		void InternalUpdate(Universe* const a_universe);
-		void InternalPostUpdate(Universe* const a_universe);
+		protected:
+			friend class SystemManager;
 
-		void InternalPauseSystem(bool a_pause_on_true);
+			void InternalInit();
+			void InternalTerminate();
 
-		DCore::DUID			_id;
-		EntityManager*	_entity_manager;
-		std::string			_name;
+			void InternalPreUpdate(Universe* const a_universe);
+			void InternalUpdate(Universe* const a_universe);
+			void InternalPostUpdate(Universe* const a_universe);
 
-	protected:
-		EntityManager* const EntityManager() const;
+			void InternalPauseSystem(bool a_pause_on_true);
 
-	private:
-		bool				_paused;
-	
-	};
+			DFW::DUID		_id;
+			EntityManager*	_entity_manager;
+			std::string		_name;
 
-} // End of namespace ~ DECS
+		protected:
+			EntityManager* const EntityManager() const;
+
+		private:
+			bool				_paused;
+
+		};
+
+	} // End of namespace ~ DECS
+
+} // End of namespace ~ DFW.

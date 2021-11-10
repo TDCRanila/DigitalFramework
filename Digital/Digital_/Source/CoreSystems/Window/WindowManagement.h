@@ -7,7 +7,7 @@
 // Forward Declare(s)
 struct GLFWwindow;
 
-namespace DCore
+namespace DFW
 {
     class WindowManagementSystem
     {
@@ -92,4 +92,4 @@ namespace DCore
 
     };
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW.

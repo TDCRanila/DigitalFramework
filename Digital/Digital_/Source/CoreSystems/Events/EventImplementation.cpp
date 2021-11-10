@@ -1,8 +1,7 @@
 #include <CoreSystems/Events/EventImplementation.h>
 
-namespace DCore
+namespace DFW
 {
-
 	BaseEvent::BaseEvent() 
 		: _is_event_dead(false)
 	{
@@ -33,4 +32,4 @@ namespace DCore
 		return _event_type_id;
 	}
 	
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

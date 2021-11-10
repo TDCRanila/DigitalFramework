@@ -4,7 +4,7 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace DCore
+namespace DFW
 {
 	InputData::InputData() 
 		: _cursor_position(0.0f)
@@ -351,4 +351,4 @@ namespace DCore
 	{
 	}
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW.

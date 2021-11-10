@@ -6,7 +6,7 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/container_hash/hash.hpp>
 
-namespace DCore
+namespace DFW
 {
 	auto const DFW_INVALID_DUID = boost::uuids::nil_generator()();
 
@@ -47,17 +47,17 @@ namespace DCore
 		return DUID { boost::uuids::random_generator()() };
 	}
 
-} // End of Namespace ~ Digital.
+} // End of Namespace ~ DFW.
 
 namespace std
 {
 	// Custom std::hash functionality for DUID.
 	template<>
-	struct hash<DCore::DUID>
+	struct hash<DFW::DUID>
 	{
-		std::size_t operator()(DCore::DUID const& a_duid) const
+		std::size_t operator()(DFW::DUID const& a_duid) const
 		{
-			std::size_t hash_val = boost::hash<DCore::DUID>()(a_duid);
+			std::size_t hash_val = boost::hash<DFW::DUID>()(a_duid);
 			return hash_val;
 		}
 	};

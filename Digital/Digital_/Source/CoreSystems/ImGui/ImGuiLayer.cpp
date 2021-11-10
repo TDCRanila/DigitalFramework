@@ -9,7 +9,7 @@
 
 #include <CoreSystems/CoreServices.h>
 
-namespace DCore
+namespace DFW
 {
 	void ImGuiLayer::InitImGuiLayer(WindowInstance const& a_main_window)
 	{
@@ -209,4 +209,4 @@ namespace DCore
 		}
 	}
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

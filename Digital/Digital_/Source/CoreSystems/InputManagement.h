@@ -10,7 +10,7 @@
 #include <array>
 #include <functional>
 
-namespace DCore
+namespace DFW
 {
 	struct WindowInstance;
 
@@ -155,4 +155,4 @@ namespace DCore
 
 	};
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW.

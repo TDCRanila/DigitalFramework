@@ -9,13 +9,13 @@
     // TODO Need to look into this again regarding operators for custom logging types.
 
     //template<typename OStream>
-    //OStream& operator<<(OStream& os, const DCore::DUID& c)
+    //OStream& operator<<(OStream& os, const DFW::DUID& c)
     //{
     //    return os << "DUID-" << c.operator std::string();
     //}
 
     //template<typename OStream>
-    //OStream& operator<<(OStream& os, const DCore::DObject& c)
+    //OStream& operator<<(OStream& os, const DFW::DObject& c)
     //{
     //    return os << "DObject-" << c.operator std::string();
     //}

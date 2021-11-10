@@ -12,7 +12,7 @@
 
 #include <CoreSystems/ImGui/ImGuiLayer.h>
 
-namespace DCore
+namespace DFW
 {
     class ApplicationInstance
     {
@@ -59,7 +59,7 @@ namespace DCore
         std::string _application_name;
     };
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW.
 
 #define DFW_APP_ENTRY(a_name, a_app_class)      \
     int main(int /*argc*/, char** /*argv*/)     \

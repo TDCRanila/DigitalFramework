@@ -7,7 +7,7 @@
 
 #include <Utility/TemplateUtility.h>
 
-namespace DCore
+namespace DFW
 {
 	const int8 MAX_SUPPORTED_STAGES = 32;
 
@@ -68,11 +68,11 @@ namespace DCore
 
 	};
 
-} // End of namespace DCore.
+} // End of namespace DFW.
 
 #pragma region Template Implementation
 
-namespace DCore
+namespace DFW
 {
 
 	template <class TStage, class... Args>
@@ -133,6 +133,6 @@ namespace DCore
 		return stage_ptr->GetID();
 	}
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.
 
 #pragma endregion

@@ -21,69 +21,71 @@
 #include <vector>
 #include <array>
 
-namespace DImGui
+namespace DFW
 {
-	// Helper structure we store in the void* RenderUserData field of each ImGuiViewport to easily retrieve our backend data.
-	struct ImGuiViewportDataBGFX
+	namespace DImGui
 	{
-		ImGuiViewportDataBGFX();
+		// Helper structure we store in the void* RenderUserData field of each ImGuiViewport to easily retrieve our backend data.
+		struct ImGuiViewportDataBGFX
+		{
+			ImGuiViewportDataBGFX();
 
-		GLFWwindow*				_window;
-		bgfx::ViewId			_view_id;
+			GLFWwindow* _window;
+			bgfx::ViewId			_view_id;
 
-		bgfx::FrameBufferHandle _framebuffer_handle;
-		int32					_ignore_window_pos_event_frame;
-		int32					_ignore_window_size_event_frame;
-		bool					_window_owned;
-	};
-	
-	struct ImGuiRenderingContext
-	{
-		ImGuiRenderingContext();
+			bgfx::FrameBufferHandle _framebuffer_handle;
+			int32					_ignore_window_pos_event_frame;
+			int32					_ignore_window_size_event_frame;
+			bool					_window_owned;
+		};
 
-		std::vector<ImGuiViewportDataBGFX*> _viewports;
+		struct ImGuiRenderingContext
+		{
+			ImGuiRenderingContext();
 
-		std::array<ImFont*, ::ImGui::Font::Count> _font;
+			std::vector<ImGuiViewportDataBGFX*> _viewports;
 
-		bgfx::VertexLayout	_vertex_layout;
-		bgfx::ProgramHandle	_shader_program_handle;
-		bgfx::ProgramHandle	_image_program_handle;
-		bgfx::TextureHandle	_texture_handle;
-		bgfx::UniformHandle	_texture_uniform_handle;
-		bgfx::UniformHandle	_image_lod_uniform_handle;
+			std::array<ImFont*, ::ImGui::Font::Count> _font;
 
-		std::vector<bgfx::ViewId>	_free_viewport_ids;
-		uint32						_viewport_id_counter;
+			bgfx::VertexLayout	_vertex_layout;
+			bgfx::ProgramHandle	_shader_program_handle;
+			bgfx::ProgramHandle	_image_program_handle;
+			bgfx::TextureHandle	_texture_handle;
+			bgfx::UniformHandle	_texture_uniform_handle;
+			bgfx::UniformHandle	_image_lod_uniform_handle;
 
-		bool						_are_graphic_devices_initialized;
-	};
+			std::vector<bgfx::ViewId>	_free_viewport_ids;
+			uint32						_viewport_id_counter;
 
-	bgfx::ViewId ImGui_ImplBGFX_AllocateViewportID();
-	void ImGui_ImplBGFX_FreeViewportID(bgfx::ViewId const a_viewport_id);
+			bool						_are_graphic_devices_initialized;
+		};
 
-	extern ImGuiRenderingContext	imgui_rendering_context;
-	extern GLFWwindow*				main_window;
-	extern bgfx::ViewId				main_window_id;
+		bgfx::ViewId ImGui_ImplBGFX_AllocateViewportID();
+		void ImGui_ImplBGFX_FreeViewportID(bgfx::ViewId const a_viewport_id);
 
-	extern bool					mouse_just_pressed[ImGuiMouseButton_COUNT];
-	extern bool                 installed_callbacks;
-	extern bool                 want_update_monitors;
+		extern ImGuiRenderingContext	imgui_rendering_context;
+		extern GLFWwindow* main_window;
+		extern bgfx::ViewId				main_window_id;
 
-	extern GLFWmousebuttonfun   prev_user_callback_mousebutton;
-	extern GLFWscrollfun        prev_user_callback_scroll;
-	extern GLFWkeyfun           prev_user_callback_key;
-	extern GLFWcharfun          prev_user_callback_char;
-	extern GLFWmonitorfun       prev_user_callback_monitor;
+		extern bool					mouse_just_pressed[ImGuiMouseButton_COUNT];
+		extern bool                 installed_callbacks;
+		extern bool                 want_update_monitors;
 
-	static const bgfx::EmbeddedShader embedded_imgui_shaders[] =
-	{
-		BGFX_EMBEDDED_SHADER(vs_ocornut_imgui),
-		BGFX_EMBEDDED_SHADER(fs_ocornut_imgui),
-		BGFX_EMBEDDED_SHADER(vs_imgui_image),
-		BGFX_EMBEDDED_SHADER(fs_imgui_image),
+		extern GLFWmousebuttonfun   prev_user_callback_mousebutton;
+		extern GLFWscrollfun        prev_user_callback_scroll;
+		extern GLFWkeyfun           prev_user_callback_key;
+		extern GLFWcharfun          prev_user_callback_char;
+		extern GLFWmonitorfun       prev_user_callback_monitor;
 
-		BGFX_EMBEDDED_SHADER_END()
-	};
+		static const bgfx::EmbeddedShader embedded_imgui_shaders[] =
+		{
+			BGFX_EMBEDDED_SHADER(vs_ocornut_imgui),
+			BGFX_EMBEDDED_SHADER(fs_ocornut_imgui),
+			BGFX_EMBEDDED_SHADER(vs_imgui_image),
+			BGFX_EMBEDDED_SHADER(fs_imgui_image),
+
+			BGFX_EMBEDDED_SHADER_END()
+		};
 
 #define ICON_MIN_KI 0xe900
 #define ICON_MAX_KI 0xe9e3
@@ -91,20 +93,22 @@ namespace DImGui
 #define ICON_MIN_FA 0xf000
 #define ICON_MAX_FA 0xf2e0
 
-	struct FontRangeMerge
-	{
-		const void* data;
-		size_t      size;
-		ImWchar     ranges[3];
-	};
+		struct FontRangeMerge
+		{
+			const void* data;
+			size_t      size;
+			ImWchar     ranges[3];
+		};
 
-	static FontRangeMerge s_fontRangeMerge[] =
-	{
-		{ s_iconsKenneyTtf,      sizeof(s_iconsKenneyTtf),      { ICON_MIN_KI, ICON_MAX_KI, 0 } },
-		{ s_iconsFontAwesomeTtf, sizeof(s_iconsFontAwesomeTtf), { ICON_MIN_FA, ICON_MAX_FA, 0 } },
-	};
+		static FontRangeMerge s_fontRangeMerge[] =
+		{
+			{ s_iconsKenneyTtf,      sizeof(s_iconsKenneyTtf),      { ICON_MIN_KI, ICON_MAX_KI, 0 } },
+			{ s_iconsFontAwesomeTtf, sizeof(s_iconsFontAwesomeTtf), { ICON_MIN_FA, ICON_MAX_FA, 0 } },
+		};
 
-} // End of namespace ~ DImGui.
+	} // End of namespace ~ DImGui.
+
+} // End of namespace ~ DFW.
 
 namespace ImGui
 {
@@ -153,3 +157,4 @@ namespace ImGui
 		, const ImVec4& a_tint_colour = ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 } // End of namespace ~ ImGui.
+

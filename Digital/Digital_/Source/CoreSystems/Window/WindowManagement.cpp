@@ -12,7 +12,7 @@
 #include <CoreSystems/Logging/Logger.h>
 #include <Defines/Defines.h>
 
-namespace DCore
+namespace DFW
 {
 #pragma region GLFWWindowCallBacks
         void WindowManagementSystem::GLFWWindowCallBacks::glfw_error_callback(int error, const char* description)
@@ -257,7 +257,7 @@ namespace DCore
         WindowInstance new_window;
 
         GLFWwindow* glfw_window                     = glfwCreateWindow(a_width, a_height, a_name, NULL, NULL);
-        new_window._id                              = DCore::GenerateDUID();
+        new_window._id                              = DFW::GenerateDUID();
         new_window._window                          = glfw_window;
         new_window._application_event_callback_func = _application_event_callback_func;
         new_window._name                            = a_name;
@@ -365,4 +365,4 @@ namespace DCore
         _current_focussed_window_id = a_window_id;
     }
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW.

@@ -2,7 +2,7 @@
 
 #include <Defines/TimeDefines.h>
 
-namespace DCore
+namespace DFW
 {
     class GameClock
     {
@@ -53,5 +53,4 @@ namespace DCore
         bool _has_requested_single_step;
     };
 
-
-} // End of namspace ~ DCore.
+} // End of namspace ~ DFW.

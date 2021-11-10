@@ -2,8 +2,12 @@
 
 #include <Defines/Defines.h>
 
-namespace DECS 
+namespace DFW
 {
-	typedef int64 ComponentBitList;
+	namespace DECS
+	{
+		typedef int64 ComponentBitList;
 
-} // End of namespace ~ DECS
+	} // End of namespace ~ DECS
+
+} // End of namespace ~ DFW.

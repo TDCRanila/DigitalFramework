@@ -2,26 +2,30 @@
 
 #include <CoreSystems/Stage/Stage.h>
 
-namespace DEditor
+namespace DFW
 {
-	class DockerStage : public DCore::StageBase
+	namespace DEditor
 	{
-	public:
-		DockerStage(std::string a_stage_name, bool a_start_disabled = false);
-		~DockerStage() = default;
+		class DockerStage : public DFW::StageBase
+		{
+		public:
+			DockerStage(std::string a_stage_name, bool a_start_disabled = false);
+			~DockerStage() = default;
 
-		virtual void RenderImGui() override;
+			virtual void RenderImGui() override;
 
-		virtual void Update() override;
+			virtual void Update() override;
 
-		virtual void OnAttached() override;
+			virtual void OnAttached() override;
 
-		virtual void OnRemoved() override;
+			virtual void OnRemoved() override;
 
-	private:
-		bool _first_time_start;
-		bool _show_imgui_showcase;
+		private:
+			bool _first_time_start;
+			bool _show_imgui_showcase;
 
-	};
+		};
 
-} // End of namespace ~ DCore
+	} // End of namespace ~ DFW
+
+} // End of namespace ~ DFW.

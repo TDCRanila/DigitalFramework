@@ -2,11 +2,15 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace DECS 
+namespace DFW
 {
-    ComponentManager::ComponentManager()
+    namespace DECS
     {
-        _keylock_system.GenerateComponentKeys();
-    }
+        ComponentManager::ComponentManager()
+        {
+            _keylock_system.GenerateComponentKeys();
+        }
 
-} // End of namespace ~ DECS
+    } // End of namespace ~ DECS.
+
+} // End of namespace ~ DFW.

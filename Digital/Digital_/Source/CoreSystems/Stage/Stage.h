@@ -8,7 +8,7 @@
 // TODO remove - when removing ExampleStage class.
 #include <imgui/imgui.h>
 
-namespace DCore
+namespace DFW
 {
 	// FW Declare.
 	class StageStackCommunicator;
@@ -104,4 +104,4 @@ namespace DCore
 
 	};
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

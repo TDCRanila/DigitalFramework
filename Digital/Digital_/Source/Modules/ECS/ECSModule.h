@@ -4,54 +4,54 @@
 #include <unordered_map>
 #include <string>
 
-// FW Declares.
-namespace DCore
+namespace DFW
 {
+	// FW Declare.
 	class ApplicationInstance;
-} // End of namespace ~ DCore.
 
-namespace DECS 
-{
-	// FW Declares.
-	class SystemManager;
-	class EntityManager;
-	class EventHandler;
-	class Universe;
-
-	class ECSModule final 
+	namespace DECS
 	{
-	public:
-		~ECSModule() = default;
-			   
-		SystemManager* const SystemManager() const;
-		EntityManager* const EntityManager() const;
-		EventHandler* const EventHandler() const;
+		// FW Declares.
+		class SystemManager;
+		class EntityManager;
+		class EventHandler;
+		class Universe;
 
-		Universe* RegisterUniverse(std::string const& a_universe_name);
-		Universe* const GetUniverse(std::string const& a_universe_name);
-		Universe* const CurrentUniverse();
+		class ECSModule final
+		{
+		public:
+			~ECSModule() = default;
 
-	protected:
-		friend DCore::ApplicationInstance;
+			SystemManager* const SystemManager() const;
+			EntityManager* const EntityManager() const;
+			EventHandler* const EventHandler() const;
 
-		ECSModule();
+			Universe* RegisterUniverse(std::string const& a_universe_name);
+			Universe* const GetUniverse(std::string const& a_universe_name);
+			Universe* const CurrentUniverse();
 
-		void InitECS();
-		void TerminateECS();
-		void UpdateECS();
+		protected:
+			friend DFW::ApplicationInstance;
 
-	private:
-		
-		DECS::SystemManager*	_system_manager;
-		DECS::EntityManager*	_entity_manager;
-		DECS::EventHandler*	_event_handler;
-		Universe*			_current_universe;
-		
-		std::unordered_map<std::string, Universe*> _universes;
+			ECSModule();
 
-		bool				_initialized;
+			void InitECS();
+			void TerminateECS();
+			void UpdateECS();
 
-	};
+		private:
 
-} // End of namespace ~ DECS
+			DECS::SystemManager* _system_manager;
+			DECS::EntityManager* _entity_manager;
+			DECS::EventHandler* _event_handler;
+			Universe* _current_universe;
 
+			std::unordered_map<std::string, Universe*> _universes;
+
+			bool				_initialized;
+
+		};
+
+	} // End of namespace ~ DECS.
+
+} // End of namespace ~ DFW.

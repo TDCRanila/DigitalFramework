@@ -2,7 +2,7 @@
 
 #include <CoreSystems/Window/WindowManagement.h>
 
-namespace DCore
+namespace DFW
 {
 	// FW Declare.
 	class ApplicationInstance;
@@ -31,4 +31,4 @@ namespace DCore
 		void Debug_DrawViewportRenderingInformation() const;
 	};
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

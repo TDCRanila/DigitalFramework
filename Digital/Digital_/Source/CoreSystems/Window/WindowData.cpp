@@ -1,8 +1,7 @@
 #include <CoreSystems/Window/WindowData.h>
 
-namespace DCore
+namespace DFW
 {
-
     WindowDimension::WindowDimension()
         : _current_width(1280)
         , _current_height(720)
@@ -18,7 +17,7 @@ namespace DCore
     }
 
     WindowInstance::WindowInstance()
-        : _id(DCore::DFW_INVALID_DUID)
+        : _id(DFW::DFW_INVALID_DUID)
         , _name("")
         , _window(nullptr)
         , _input_data(nullptr)
@@ -28,4 +27,4 @@ namespace DCore
     {
     }
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

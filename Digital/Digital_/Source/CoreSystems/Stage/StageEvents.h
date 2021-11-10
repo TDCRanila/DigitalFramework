@@ -9,7 +9,7 @@
 #include <string>
 #include <sstream>
 
-namespace DCore
+namespace DFW
 {
 	class StageEvent;
 
@@ -117,4 +117,4 @@ namespace DCore
 		}
 	};
 
-}
+} // End of namespace ~ DFW.

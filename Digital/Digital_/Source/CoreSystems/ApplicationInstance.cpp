@@ -13,7 +13,7 @@
 
 #include <array>
 
-namespace DCore
+namespace DFW
 {    
     WindowManagementSystem ApplicationInstance::_window_management;
     InputManagementSystem ApplicationInstance::_input_management;
@@ -103,7 +103,7 @@ namespace DCore
         PreApplicationInit();
         
         // Event Library
-        DCore::EventLibrary::ProcessEventCollection<DCore::StageEvent>();
+        DFW::EventLibrary::ProcessEventCollection<DFW::StageEvent>();
 
         // DECS
         _ecs_module.InitECS();
@@ -268,4 +268,4 @@ namespace DCore
         }
     }
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW.

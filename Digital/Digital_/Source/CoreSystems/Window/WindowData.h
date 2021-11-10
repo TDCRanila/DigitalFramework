@@ -7,7 +7,7 @@
 // Forward Declare(s)
 struct GLFWwindow;
 
-namespace DCore
+namespace DFW
 {
     // Forward Declare(s)
     struct InputData;
@@ -37,6 +37,7 @@ namespace DCore
         bool _should_be_closed;
         bool _is_minimized;
         bool _is_focussed;
+
     protected:
         friend class WindowManagementSystem;
 
@@ -44,4 +45,4 @@ namespace DCore
 
     };
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

@@ -2,9 +2,13 @@
 
 #include <vector>
 
-namespace DAny 
+namespace DFW
 {
-    template <typename T>
-    using AnyStorage = std::vector<T*>;
+    namespace DAny
+    {
+        template <typename T>
+        using AnyStorage = std::vector<T*>;
 
-} // End of namespace ~ Any
+    } // End of namespace ~ DAny.
+
+} // End of namespace ~ DFW.

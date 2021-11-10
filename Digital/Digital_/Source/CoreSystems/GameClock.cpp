@@ -8,9 +8,8 @@
 
 #include <chrono>
 
-namespace DCore
+namespace DFW
 {
-
     GameClock::GameClock(float32 a_start_time_in_seconds, bool a_start_paused)
         : _start_frame_cycle_count(0)
         , _end_frame_cycle_count(0)
@@ -151,4 +150,4 @@ namespace DCore
             , dt, (1 / dt), GetElapsedCycleCount(), GetElapsedTimeInSeconds());
     }
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

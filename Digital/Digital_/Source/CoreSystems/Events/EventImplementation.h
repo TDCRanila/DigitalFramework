@@ -6,7 +6,7 @@
 
 #include <functional>
 
-namespace DCore
+namespace DFW
 {
 	class BaseEvent
 	{
@@ -117,7 +117,7 @@ namespace DCore
 // TODO: Add new Dispatch function that only works for T types that have type; (FactoryMap)T::GetFactories. 
 // This is for the reflected events. // otherwise default to the normal one.
 
-namespace DCore
+namespace DFW
 {
 	template <typename OwnedEventType>
 	requires EventDispatcherRequirements<OwnedEventType>
@@ -126,7 +126,7 @@ namespace DCore
 	{
 		if constexpr (not IsDerivedFrom<EventType, BaseEvent>)
 		{
-			static_assert(IsAlwaysFalse<EventType>, __FUNCTION__ " - EventType's type is not derived from DCore::BaseEvent.");
+			static_assert(IsAlwaysFalse<EventType>, __FUNCTION__ " - EventType's type is not derived from DFW::BaseEvent.");
 			return false;
 		}
 
@@ -181,6 +181,6 @@ namespace DCore
 		return comparison_result;
 	}
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.
 
 #pragma endregion

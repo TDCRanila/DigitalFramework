@@ -8,61 +8,65 @@
 
 #include <ranges>
 
-namespace DECS 
+namespace DFW
 {
-
-	SystemManager::SystemManager() 
-	{ 
-		_systems.reserve(DFW_SYSTEM_RESERVE_AMOUNT);
-	}
-
-	void SystemManager::Init()
+	namespace DECS
 	{
-	}
 
-	void SystemManager::Terminate() 
-	{ 
-		// Calling Terminiate of systems.
-		for (auto const&[system_type, system_ptr] : _systems)
+		SystemManager::SystemManager()
 		{
-			system_ptr->InternalTerminate();
-		}
-	}
-
-	void SystemManager::UpdateSystems(Universe* const a_universe)
-	{ 
-		DFW_ASSERT(a_universe && "Updating DECS Systems, but universe is invalid.");
-
-		if (_systems.empty())
-		{
-			return;
+			_systems.reserve(DFW_SYSTEM_RESERVE_AMOUNT);
 		}
 
-		auto IsSystemPaused = [](std::shared_ptr<System> const& system) -> bool
+		void SystemManager::Init()
 		{
-			return system->IsSystemPaused();
-		};
-
-		// auto systems_values = std::views::values(_systems);
-		auto enabled_system = std::views::values(_systems) | std::views::filter(IsSystemPaused);
-
-		// Calling Init of systems.
-		for (auto const&[system_type, system_ptr] : _systems)
-		{
-			system_ptr->InternalPreUpdate(a_universe);
 		}
 
-		// Calling Init of systems.
-		for (auto const&[system_type, system_ptr] : _systems)
+		void SystemManager::Terminate()
 		{
-			system_ptr->InternalUpdate(a_universe);
+			// Calling Terminiate of systems.
+			for (auto const& [system_type, system_ptr] : _systems)
+			{
+				system_ptr->InternalTerminate();
+			}
 		}
 
-		// Calling Init of systems.
-		for (auto const&[system_type, system_ptr] : _systems)
+		void SystemManager::UpdateSystems(Universe* const a_universe)
 		{
-			system_ptr->InternalPostUpdate(a_universe);
-		}
-	}
+			DFW_ASSERT(a_universe && "Updating DECS Systems, but universe is invalid.");
 
-} // End of namespace ~ DECS
+			if (_systems.empty())
+			{
+				return;
+			}
+
+			auto IsSystemPaused = [](std::shared_ptr<System> const& system) -> bool
+			{
+				return system->IsSystemPaused();
+			};
+
+			// auto systems_values = std::views::values(_systems);
+			auto enabled_system = std::views::values(_systems) | std::views::filter(IsSystemPaused);
+
+			// Calling Init of systems.
+			for (auto const& [system_type, system_ptr] : _systems)
+			{
+				system_ptr->InternalPreUpdate(a_universe);
+			}
+
+			// Calling Init of systems.
+			for (auto const& [system_type, system_ptr] : _systems)
+			{
+				system_ptr->InternalUpdate(a_universe);
+			}
+
+			// Calling Init of systems.
+			for (auto const& [system_type, system_ptr] : _systems)
+			{
+				system_ptr->InternalPostUpdate(a_universe);
+			}
+		}
+
+	} // End of namespace ~ DECS.
+
+} // End of namespace ~ DFW.

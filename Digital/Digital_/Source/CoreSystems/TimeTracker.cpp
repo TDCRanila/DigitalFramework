@@ -1,8 +1,6 @@
 #include <CoreSystems\TimeTracker.h>
 
-#include <chrono>
-
-namespace DCore
+namespace DFW
 {
     TimeTracker::TimeTracker(bool a_start_timer) 
         : _is_tracking_time(false)
@@ -85,4 +83,4 @@ namespace DCore
         return time;
     }
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.
