@@ -51,7 +51,7 @@ namespace DCore
         TimeTracker _game_clock_log_timer;
         GameClock _game_clock;
 
-        ECS::ECSModule _ecs_module;
+        DECS::ECSModule _ecs_module;
 
         StageStackController _stage_stack_controller;
         std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;

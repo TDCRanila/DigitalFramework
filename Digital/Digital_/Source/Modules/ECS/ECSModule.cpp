@@ -7,7 +7,7 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace ECS 
+namespace DECS 
 {
 	ECSModule::ECSModule() 
 		: _system_manager(nullptr)
@@ -26,12 +26,12 @@ namespace ECS
 			return; 
 		}
 
-		DFW_INFOLOG("Initializing ECS Module.");
+		DFW_INFOLOG("Initializing DECS Module.");
 
 		// Allocate.
-		_entity_manager		= new ECS::EntityManager();
-		_system_manager		= new ECS::SystemManager();
-		_event_handler		= new ECS::EventHandler();
+		_entity_manager		= new DECS::EntityManager();
+		_system_manager		= new DECS::SystemManager();
+		_event_handler		= new DECS::EventHandler();
 
 		// Init.
 		_system_manager->Init();
@@ -48,7 +48,7 @@ namespace ECS
 			return;
 		}
 
-		DFW_INFOLOG("Terminating ECS Module.");
+		DFW_INFOLOG("Terminating DECS Module.");
 
 		for (auto const& [name, ptr] : _universes)
 			delete ptr;
@@ -120,4 +120,4 @@ namespace ECS
 		return _current_universe;
 	}
 	
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

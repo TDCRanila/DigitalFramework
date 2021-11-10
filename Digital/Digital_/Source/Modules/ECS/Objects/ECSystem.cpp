@@ -2,7 +2,7 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace ECS
+namespace DECS
 {
 	System::System(Key) 
 		: _id(DCore::DFW_INVALID_DUID)
@@ -92,4 +92,4 @@ namespace ECS
 		this->_paused = a_pause_on_true;
 	}
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

@@ -2,8 +2,8 @@
 
 #include <Defines/Defines.h>
 
-namespace ECS 
+namespace DECS 
 {
 	typedef int64 ComponentBitList;
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

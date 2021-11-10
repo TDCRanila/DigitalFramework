@@ -79,7 +79,7 @@ namespace DCore
 	requires (not IsDerivedFrom<TStage, StageBase>)
 	StageID StageStackController::AttachStage(Args&&... a_args)
 	{
-		static_assert(IsAlwaysFalse<TStage>, __FUNCTION__ " - Trying to attach a stage of type T that isn't derived from ECS::StageBase.");
+		static_assert(IsAlwaysFalse<TStage>, __FUNCTION__ " - Trying to attach a stage of type T that isn't derived from DECS::StageBase.");
 		return StageID();
 	}
 
@@ -109,7 +109,7 @@ namespace DCore
 	requires (not IsDerivedFrom<TStage, StageBase>)
 	StageID	StageStackController::AttachStageBack(Args&&... a_args)
 	{
-		static_assert(always_false<TStage>::value, __FUNCTION__ " - Trying to a attach a stage of type T that isn't derived from ECS::StageBase.");
+		static_assert(always_false<TStage>::value, __FUNCTION__ " - Trying to a attach a stage of type T that isn't derived from DECS::StageBase.");
 		return StageID();
 	}
 

@@ -6,7 +6,7 @@
 
 #include <entt/entity/handle.hpp>
 
-namespace ECS 
+namespace DECS 
 {
 	// FW Declare.
 	class Universe;
@@ -44,4 +44,4 @@ namespace ECS
 
 	};
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

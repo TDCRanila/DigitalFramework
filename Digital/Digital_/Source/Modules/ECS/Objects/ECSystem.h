@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace ECS 
+namespace DECS 
 {
 	// FW Declare
 	class ECSModule;
@@ -56,4 +56,4 @@ namespace ECS
 	
 	};
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

@@ -7,9 +7,9 @@
 
 #include <string>
 
-namespace ECS
+namespace DECS
 {
-    struct EntityRegistrationComponent final : public ECS::Component::StrictRegistrar<EntityRegistrationComponent>
+    struct EntityRegistrationComponent final : public DECS::Component::StrictRegistrar<EntityRegistrationComponent>
     {
         EntityRegistrationComponent()
             : name("")
@@ -32,4 +32,4 @@ namespace ECS
         ComponentBitList    comp_list;
     };
 
-} // End of namespace ~ ECS.
+} // End of namespace ~ DECS.

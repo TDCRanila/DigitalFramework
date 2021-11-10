@@ -105,7 +105,7 @@ namespace DCore
         // Event Library
         DCore::EventLibrary::ProcessEventCollection<DCore::StageEvent>();
 
-        // ECS
+        // DECS
         _ecs_module.InitECS();
 
         // Stage Communicator

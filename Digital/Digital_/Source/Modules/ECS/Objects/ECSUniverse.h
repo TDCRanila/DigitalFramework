@@ -10,7 +10,7 @@
 #include <vector>
 #include <unordered_map>
 
-namespace ECS
+namespace DECS
 {
     // FW Declare
     class EntityManager;
@@ -50,4 +50,4 @@ namespace ECS
 
     };
 
-} // End of namespace ~ ECS.
+} // End of namespace ~ DECS.

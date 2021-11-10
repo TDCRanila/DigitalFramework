@@ -8,7 +8,7 @@
 #include <Utility/TemplateUtility.h>
 #include <CoreSystems/DUID.h>
 
-namespace ECS 
+namespace DECS 
 {
 	// FW Declare
 	class EntityManager;
@@ -47,7 +47,7 @@ namespace ECS
 	{
 		if constexpr (not IsValidComponentType<ComponentType>)
 		{
-			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to get a Component of type ComponentType that isn'ComponentType derived from ECS::Component.");
+			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to get a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
 			return nullptr;
 		}
 		else if constexpr (IsValidComponentType<ComponentType>)
@@ -68,7 +68,7 @@ namespace ECS
 		}
 		else if constexpr ( (not IsValidComponentType<TArgs> || ...))
 		{
-			static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check for a Component of type ComponentType that isn'ComponentType derived from ECS::Component.");
+			static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check for a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
 			return false;
 		}
 		else
@@ -84,7 +84,7 @@ namespace ECS
 	{
 		if constexpr (not IsValidComponentType<ComponentType>)
 		{
-			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to add a Component of type ComponentType that isn'ComponentType derived from ECS::Component.");
+			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to add a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
 			return nullptr;
 		}
 		else if constexpr (IsValidComponentType<ComponentType>)
@@ -120,7 +120,7 @@ namespace ECS
 	{
 		if constexpr (not IsValidComponentType<ComponentType>)
 		{
-			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to delete a Component of type ComponentType that isn'ComponentType derived from ECS::Component.");
+			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to delete a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
 			return false;
 		}
 		else if constexpr (IsValidComponentType<ComponentType>)
@@ -142,4 +142,4 @@ namespace ECS
 
 #pragma endregion
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

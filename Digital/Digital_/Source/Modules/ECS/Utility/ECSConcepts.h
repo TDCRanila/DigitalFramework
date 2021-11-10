@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ECS
+namespace DECS
 {
     // FW Declare.
     class System;
@@ -12,4 +12,4 @@ namespace ECS
     template <typename ComponentType>
     concept IsValidComponentType = IsDerivedFrom<ComponentType, Component>;
 
-} // End of namespace ~ ECS.
+} // End of namespace ~ DECS.

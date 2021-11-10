@@ -3,7 +3,7 @@
 #include <entt/signal/dispatcher.hpp>
 #include <entt/signal/sigh.hpp>
 
-namespace ECS
+namespace DECS
 {
     // FW Declare
     class ECSModule;
@@ -140,4 +140,4 @@ namespace ECS
 
 #pragma endregion
 
-} // End of namespace ~ ECS.
+} // End of namespace ~ DECS.

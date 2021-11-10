@@ -6,7 +6,7 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace ECS 
+namespace DECS 
 {
 	bool KeyLockSystem::_generated_component_keys = false;
 	std::unordered_map<std::type_index, int8> KeyLockSystem::_component_bit_placement;
@@ -34,4 +34,4 @@ namespace ECS
 		_generated_component_keys = true;
 	}
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

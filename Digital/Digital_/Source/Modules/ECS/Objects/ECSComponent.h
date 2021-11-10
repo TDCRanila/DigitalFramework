@@ -6,7 +6,7 @@
 
 #include <Modules/ECS/Objects/ECSEntity.h>
 
-namespace ECS 
+namespace DECS 
 {
 	// FW Declare
 	class ComponentManager;
@@ -28,4 +28,4 @@ namespace ECS
 
 	};
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

@@ -10,7 +10,7 @@ namespace DCore
 	class ApplicationInstance;
 } // End of namespace ~ DCore.
 
-namespace ECS 
+namespace DECS 
 {
 	// FW Declares.
 	class SystemManager;
@@ -42,9 +42,9 @@ namespace ECS
 
 	private:
 		
-		ECS::SystemManager*	_system_manager;
-		ECS::EntityManager*	_entity_manager;
-		ECS::EventHandler*	_event_handler;
+		DECS::SystemManager*	_system_manager;
+		DECS::EntityManager*	_entity_manager;
+		DECS::EventHandler*	_event_handler;
 		Universe*			_current_universe;
 		
 		std::unordered_map<std::string, Universe*> _universes;
@@ -53,5 +53,5 @@ namespace ECS
 
 	};
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS
 

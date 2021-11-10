@@ -2,7 +2,7 @@
 
 #include <ranges>
 
-namespace ECS
+namespace DECS
 {
     Universe::Universe()
         : _id(DCore::GenerateDUID())
@@ -43,4 +43,4 @@ namespace ECS
         return _entity_data_registration;
     }
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

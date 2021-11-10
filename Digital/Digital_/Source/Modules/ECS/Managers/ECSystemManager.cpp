@@ -8,7 +8,7 @@
 
 #include <ranges>
 
-namespace ECS 
+namespace DECS 
 {
 
 	SystemManager::SystemManager() 
@@ -31,7 +31,7 @@ namespace ECS
 
 	void SystemManager::UpdateSystems(Universe* const a_universe)
 	{ 
-		DFW_ASSERT(a_universe && "Updating ECS Systems, but universe is invalid.");
+		DFW_ASSERT(a_universe && "Updating DECS Systems, but universe is invalid.");
 
 		if (_systems.empty())
 		{
@@ -65,4 +65,4 @@ namespace ECS
 		}
 	}
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

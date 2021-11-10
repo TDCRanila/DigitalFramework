@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <typeindex>
 
-namespace ECS 
+namespace DECS 
 {
 	// FW Declare
 	class ECSModule;
@@ -190,4 +190,4 @@ namespace ECS
 
 #pragma endregion 
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

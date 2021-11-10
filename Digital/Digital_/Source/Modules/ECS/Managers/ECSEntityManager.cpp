@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace ECS 
+namespace DECS 
 {
 	Entity EntityManager::CreateEntity(Universe* a_universe) const
 	{
@@ -66,4 +66,4 @@ namespace ECS
 		a_universe->_deleted_entities.clear();
 	}
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

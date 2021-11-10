@@ -9,7 +9,7 @@
 
 #include <entt/entity/registry.hpp>
 
-namespace ECS 
+namespace DECS 
 {
 	// FW Declare.
 	class ECSModule;
@@ -120,4 +120,4 @@ namespace ECS
 
 #pragma endregion
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

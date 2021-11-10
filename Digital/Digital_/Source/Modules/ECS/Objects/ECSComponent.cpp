@@ -1,6 +1,6 @@
 #include <Modules/ECS/Objects/ECSComponent.h>
 
-namespace ECS
+namespace DECS
 {
 
 	Component::Component(Key)
@@ -19,4 +19,4 @@ namespace ECS
 		return _id;
 	}
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

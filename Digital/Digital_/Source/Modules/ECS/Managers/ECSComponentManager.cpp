@@ -2,11 +2,11 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace ECS 
+namespace DECS 
 {
     ComponentManager::ComponentManager()
     {
         _keylock_system.GenerateComponentKeys();
     }
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <typeindex>
 
-namespace ECS 
+namespace DECS 
 {
 	const int64 DFW_UNASSIGNED_COMPONENT_BIT	= -1;
 	const int8	DFW_MAX_REGISTERED_COMPONENTS	= 64;
@@ -62,7 +62,7 @@ namespace ECS
 	{
 		if constexpr ((not IsValidComponentType2<TArgs> || ...))
 		{
-			static_assert(always_false<TArgs...>::value, __FUNCTION__ " - Trying to construct bitlist with a Component of type T that isn't derived from ECS::Component.");
+			static_assert(always_false<TArgs...>::value, __FUNCTION__ " - Trying to construct bitlist with a Component of type T that isn't derived from DECS::Component.");
 			return ComponentBitList();
 		}
 		else
@@ -141,4 +141,4 @@ namespace ECS
 
 #pragma endregion
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS

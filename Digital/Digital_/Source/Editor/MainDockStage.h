@@ -4,7 +4,6 @@
 
 namespace DEditor
 {
-
 	class DockerStage : public DCore::StageBase
 	{
 	public:
@@ -22,6 +21,7 @@ namespace DEditor
 	private:
 		bool _first_time_start;
 		bool _show_imgui_showcase;
+
 	};
 
 } // End of namespace ~ DCore

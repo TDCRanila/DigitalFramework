@@ -1,6 +1,6 @@
 #include <Modules/ECS/Managers/ECSEventHandler.h>
 
-namespace ECS
+namespace DECS
 {
     void EventHandler::Init()
     {
@@ -10,4 +10,4 @@ namespace ECS
     {
     }
 
-} // End of namespace ~ ECS.
+} // End of namespace ~ DECS.

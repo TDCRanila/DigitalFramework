@@ -5,7 +5,7 @@
 #include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Managers/ECSEntityManager.h>
 
-namespace ECS 
+namespace DECS 
 {
 	Entity::Entity()
 		: _handle(DFW_NULL_ENTITY_HANDLE)
@@ -85,4 +85,4 @@ namespace ECS
 		return false;
 	}
 
-} // End of namespace ~ ECS
+} // End of namespace ~ DECS
