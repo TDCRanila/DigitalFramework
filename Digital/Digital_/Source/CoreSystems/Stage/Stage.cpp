@@ -4,7 +4,7 @@
 
 namespace DFW
 {
-	StageBase::StageBase(std::string a_stage_name, bool a_start_disabled)
+	StageBase::StageBase(std::string const& a_stage_name, bool a_start_disabled)
 		: _name(a_stage_name)
 		, _id(DFW::GenerateDUID())
 		, _is_disabled(a_start_disabled)
@@ -13,7 +13,6 @@ namespace DFW
 
 	void StageBase::RenderImGui()
 	{
-
 	}
 
 	bool StageBase::IsDisabled() const
@@ -23,22 +22,18 @@ namespace DFW
 
 	void StageBase::OnEnable()
 	{
-
 	}
 
 	void StageBase::OnDisable()
 	{
-
 	}
 	
-	void StageBase::OnApplicationEvent(ApplicationEvent& a_event)
+	void StageBase::OnApplicationEvent(ApplicationEvent const& a_event)
 	{
-
 	}
 
-	void StageBase::OnStageEvent(StageEvent& a_event)
+	void StageBase::OnStageEvent(StageEvent const& a_event)
 	{
-
 	}
 	
 	StageID StageBase::GetID() const
@@ -49,6 +44,11 @@ namespace DFW
 	std::string StageBase::GetName() const
 	{
 		return _name;
+	}
+
+	bool StageBase::operator==(StageBase const& a_other) 
+	{ 
+		return this->_id == a_other._id; 
 	}
 
 	void StageBase::Enable()
@@ -85,7 +85,7 @@ namespace DFW
 		}
 	}
 
-	void StageBase::SetStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_communicator)
+	void StageBase::SetStageStackCommunicator(std::shared_ptr<StageStackCommunicator> const& a_communicator)
 	{
 		_stage_stack_communicator = a_communicator;
 	}
@@ -100,7 +100,7 @@ namespace DFW
 		return _stage_stack_communicator;
 	}
 
-	void StageBase::BindStageEventFunc(const StageEventCallbackFunc& a_event_callback_func)
+	void StageBase::BindStageEventFunc(StageEventCallbackFunc const& a_event_callback_func)
 	{
 		_stage_event_callback_func = a_event_callback_func;
 	}

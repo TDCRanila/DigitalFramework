@@ -1,5 +1,7 @@
 #include <Editor/Console/MainConsole.h>
 
+#include <imgui/imgui.h>
+
 namespace DFW
 {
     namespace DEditor
@@ -71,12 +73,10 @@ namespace DFW
 
         void MainConsole::OnAttached()
         {
-
         }
 
         void MainConsole::OnRemoved()
         {
-
         }
 
         void MainConsole::ParseLogMessage(ParsedLogMessageStruct& a_log_struct, std::string a_log_string)
