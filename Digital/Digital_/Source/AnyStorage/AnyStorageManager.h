@@ -6,7 +6,7 @@
 #include <functional>
 #include <any>
 
-namespace Any 
+namespace DAny 
 {
     class AnyStorageManager 
 	{

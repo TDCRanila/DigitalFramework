@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace Any 
+namespace DAny 
 {
     template <typename T>
     using AnyStorage = std::vector<T*>;
