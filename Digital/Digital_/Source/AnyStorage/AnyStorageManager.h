@@ -6,77 +6,69 @@
 #include <functional>
 #include <any>
 
-namespace DAnyStorage 
+namespace Any 
 {
-
     class AnyStorageManager 
 	{
     public:
-		AnyStorageManager()		{ /*Empty*/ }
-        ~AnyStorageManager()	{ /*Empty*/ }
+        AnyStorageManager() = default;
+        ~AnyStorageManager() = default;
 
-        template <class T>
+        template <typename T>
         void Subscribe(T* a_item);
 
-
-        template <class T>
-		AnyStorage<T>* GetItemVector();
+        template <typename T>
+		AnyStorage<T>* GetItemVector() const;
 
     private:
-        template <class T>
+        template <typename T>
         AnyStorage<T>* AddItemVector(size_t a_hash);
  
-		std::unordered_map<size_t, std::any> storage;
+		std::unordered_map<size_t, std::any> _storage_map;
 
     };
 
 #pragma region Template Function Implementation
 
-    template <class T>
+    template <typename T>
     void AnyStorageManager::Subscribe(T* a_item) 
 	{
         // Search for item vector in storage.
-		AnyStorage<T>* i = nullptr;
-        i = GetItemVector<T>();
-
-        // If Not ~
-        if (i == nullptr) 
+		AnyStorage<T>* storage_ptr = GetItemVector<T>();
+        if (!storage_ptr)
 		{
             size_t current_hash = typeid(T).hash_code();
-            i = AddItemVector<T>(current_hash);
+            storage_ptr         = AddItemVector<T>(current_hash);
         }
 
         // Add element
-        i->item_vector.emplace_back(a_item);
+        storage_ptr.emplace_back(a_item);
     }
 
-    template <class T>
+    template <typename T>
 	AnyStorage<T>* AnyStorageManager::AddItemVector(size_t a_hash) 
 	{
 		AnyStorage<T>* temp = new AnyStorage<T>();
-        this->storage.insert(std::make_pair(a_hash, temp));
+        _storage_map.insert(std::make_pair(a_hash, temp));
         return temp;
     }
 
-    template <class T>
-	AnyStorage<T>* AnyStorageManager::GetItemVector() 
+    template <typename T>
+	AnyStorage<T>* AnyStorageManager::GetItemVector() const
 	{
-        // Check storage is empty. Is faster? How many instructions.
-
-        // Hash
-        size_t current_hash = typeid(T).hash_code();
-
         // Search for item vector in storage.
-		AnyStorage<T>* storage_ptr = nullptr;
-        auto it = this->storage.find(current_hash);
-        if (it != this->storage.end()) 
+        size_t current_hash         = typeid(T).hash_code();
+		AnyStorage<T>* storage_ptr  = nullptr;
+        if (auto [hash, any_object] = _storage_map.find(current_hash); it != _storage_map.end())
 		{
-            storage_ptr = std::any_cast<AnyStorage<T>*>(it->second);
+            storage_ptr = std::any_cast<AnyStorage<T>*>(any_object);
         }
-
-        return storage_ptr;
+        else
+        {
+            return storage_ptr;
+        }
     }
 
 #pragma endregion
 
-} // End of namespace ~ DAnyStorage
+} // End of namespace ~ Any

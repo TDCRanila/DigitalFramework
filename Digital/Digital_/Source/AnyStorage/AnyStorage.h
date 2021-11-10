@@ -2,19 +2,9 @@
 
 #include <vector>
 
-namespace DAnyStorage 
+namespace Any 
 {
+    template <typename T>
+    using AnyStorage = std::vector<T*>;
 
-    template <class T>
-    class AnyStorage 
-	{
-    public:
-		AnyStorage() { /*Empty*/ }
-
-        ~AnyStorage() { /*Empty*/ }
-
-        std::vector<T*> item_vector;
-
-    };
-
-} // End of namespace ~ DAnyStorage
+} // End of namespace ~ Any
