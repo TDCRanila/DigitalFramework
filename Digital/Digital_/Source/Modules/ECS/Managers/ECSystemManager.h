@@ -4,6 +4,7 @@
 #include <CoreSystems/Logging/Logger.h>
 
 #include <Modules/ECS/Objects/ECSystem.h>
+#include <Modules/ECS/Utility/ECSConcepts.h>
 
 #include <memory>
 #include <unordered_map>
@@ -11,10 +12,6 @@
 
 namespace DECS 
 {
-	// Cocnepts
-	template <typename SystemType>
-	concept IsValidSystemType = IsDerivedFrom<SystemType, ECSystem>;
-
 	// FW Declare
 	class ECSModule;
 	class ECSUniverse;

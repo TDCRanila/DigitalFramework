@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Modules/ECS/Utility/ECSCompBitList.h>
 #include <Modules/ECS/Objects/ECSComponent.h>
+#include <Modules/ECS/Utility/ECSConcepts.h>
+#include <Modules/ECS/Utility/ECSCompBitList.h>
 
 #include <Defines/Defines.h>
 
@@ -17,11 +18,6 @@ namespace DECS
 	const int64 DFW_UNASSIGNED_COMPONENT_BIT	= -1;
 	const int8	DFW_MAX_REGISTERED_COMPONENTS	= 64;
 
-	// Concepts
-	// TODO TEMPORARY SECOND CONCEPT FOR COMPONENT TYPE CHECK - NEEDS TO BE REPLACEMENT
-	template <typename ComponentType>
-	concept IsValidComponentType2 = IsDerivedFrom<ComponentType, ECSComponent>;
-
 	class ECSKeyLockSystem final 
 	{
 	public:
@@ -34,23 +30,23 @@ namespace DECS
 		ComponentBitList ConstructComponentBitList() const;
 		
 		template <typename TComponent>
-		requires IsValidComponentType2<TComponent>
+		requires IsValidComponentType<TComponent>
 		bool IsComponentBitTrue(ComponentBitList const& a_bit_var) const;
 
 		template <typename TComponent>
-		requires IsValidComponentType2<TComponent>
+		requires IsValidComponentType<TComponent>
 		void SetComponentBits(ComponentBitList& a_bit_var) const;
 
 		template <typename TComponent>
-		requires IsValidComponentType2<TComponent>
+		requires IsValidComponentType<TComponent>
 		void ResetComponentBits(ComponentBitList& a_bit_var) const;
 
 		template <typename TComponent>
-		requires IsValidComponentType2<TComponent>
+		requires IsValidComponentType<TComponent>
 		int8 GetComponentBitPlacement() const;
 
 		template <typename TComponent>
-		requires IsValidComponentType2<TComponent>
+		requires IsValidComponentType<TComponent>
 		void GetComponentBitPlacement(int8& a_component_bit_list) const;
 
 	private:
@@ -78,7 +74,7 @@ namespace DECS
 	}
 
 	template <typename TComponent>
-	requires IsValidComponentType2<TComponent>
+	requires IsValidComponentType<TComponent>
 	bool ECSKeyLockSystem::IsComponentBitTrue(ComponentBitList const& a_bit_var) const 
 	{
 		int8 component_bit_placement(0);
@@ -96,7 +92,7 @@ namespace DECS
 	}
 
 	template <typename TComponent>
-	requires IsValidComponentType2<TComponent>
+	requires IsValidComponentType<TComponent>
 	void ECSKeyLockSystem::SetComponentBits(ComponentBitList& a_bit_var) const
 	{
 		int64 temp (1);
@@ -107,7 +103,7 @@ namespace DECS
 	}
 
 	template <typename TComponent>
-	requires IsValidComponentType2<TComponent>
+	requires IsValidComponentType<TComponent>
 	void ECSKeyLockSystem::ResetComponentBits(ComponentBitList& a_bit_var) const
 	{
 		int64 temp(1);
@@ -118,7 +114,7 @@ namespace DECS
 	}
 
 	template <typename TComponent>
-	requires IsValidComponentType2<TComponent>
+	requires IsValidComponentType<TComponent>
 	int8 ECSKeyLockSystem::GetComponentBitPlacement() const 
 	{
 		int8 temp_bit_list(0);
@@ -127,7 +123,7 @@ namespace DECS
 	}
 
 	template <typename TComponent>
-	requires IsValidComponentType2<TComponent>
+	requires IsValidComponentType<TComponent>
 	void ECSKeyLockSystem::GetComponentBitPlacement(int8& a_component_bit_list) const
 	{
 		const type_info& type = typeid(TComponent);

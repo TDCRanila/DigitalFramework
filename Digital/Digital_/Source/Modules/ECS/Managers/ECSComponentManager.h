@@ -13,10 +13,6 @@ namespace DECS
 	// FW Declare
 	class ECSEntityManager;
 
-	// Concepts
-	template <typename ComponentType>
-	concept IsValidComponentType = IsDerivedFrom<ComponentType, ECSComponent>;
-
 	class ECSComponentManager final 
 	{
 	public:
