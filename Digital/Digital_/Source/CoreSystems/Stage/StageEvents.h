@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Defines/IDDefines.h>
-
+#include <CoreSystems/Stage/StageID.h>
 #include <CoreSystems/Events/EventImplementation.h>
 
 #include <AutoFactory/AutoFactory.h>
@@ -13,7 +12,7 @@ namespace DFW
 {
 	class StageEvent;
 
-	typedef std::function<void(StageEvent&)> StageEventCallbackFunc;
+	using StageEventCallbackFunc = std::function<void(StageEvent&)>;
 
 	enum class StageEvents
 	{

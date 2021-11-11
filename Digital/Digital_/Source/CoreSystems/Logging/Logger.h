@@ -10,6 +10,7 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/details/null_mutex.h>
 
+#include <CoreSystems/DUID.h>
 #include <CoreSystems/Logging/CustomTypes.h>
 
 #include <mutex>
@@ -47,10 +48,10 @@ namespace DFW
 
 	};
 
-	typedef DFWSinkImpl<std::mutex>						DFWSink_mt;
-	typedef DFWSinkImpl<spdlog::details::null_mutex>	DFWSink_st;
+	using DFWSink_mt = DFWSinkImpl<std::mutex>;
+	using DFWSink_st = DFWSinkImpl<spdlog::details::null_mutex>;
 
-	typedef std::function<void(std::string)> LogSubscriberMessageFunc;
+	using LogSubscriberMessageFunc = std::function<void(std::string const&)>;
 
 	class Logger
 	{

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Defines/IDDefines.h>
-
 #include <CoreSystems/Window/WindowData.h>
 
 // Forward Declare(s)

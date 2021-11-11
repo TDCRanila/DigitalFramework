@@ -24,7 +24,7 @@ namespace DFW
 
 	};
 
-	typedef std::function<void(ApplicationEvent&)> ApplicationEventCallbackFunc;
+	using ApplicationEventCallbackFunc = std::function<void(ApplicationEvent const&)>;
 
 	/// <summary>
 	/// Window Events

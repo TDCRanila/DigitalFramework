@@ -2,5 +2,5 @@
 
 namespace DFW
 {
-	typedef float64 TimeUnit;
+	using TimeUnit = float64;
 } // End of namespace ~ DFW.

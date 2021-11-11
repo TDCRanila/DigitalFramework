@@ -36,7 +36,7 @@ namespace DFW
         void UpdateApplication();
         void TerminateApplication();
 
-        void OnApplicationEvent(ApplicationEvent& a_event);
+        void OnApplicationEvent(ApplicationEvent const& a_event);
 
         void Debug_DrawBGFXInfo() const;
 

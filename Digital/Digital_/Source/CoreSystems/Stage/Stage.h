@@ -2,8 +2,7 @@
 
 #include <CoreSystems/ApplicationEvents.h>
 #include <CoreSystems/Stage/StageEvents.h>
-
-#include <Defines/IDDefines.h>
+#include <CoreSystems/Stage/StageID.h>
 
 namespace DFW
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines/IDDefines.h>
+#include <CoreSystems/Window/WindowID.h>
 #include <CoreSystems/Input/InputKeys.h>
 #include <Utility/TemplateUtility.h>
 
@@ -77,11 +77,11 @@ namespace DFW
 			void DefaultInputProfile();
 			void ChangeActiveInputProfile(std::string a_new_input_profile);
 
-			void SendKeyEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
-			void SendMouseEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
-			void SendCharEvent(WindowID a_id, uint16 a_char);
-			void SendDirectionalEvent(WindowID a_id, float32 a_x_offset, float32 a_y_offset);
-			void SendScrollEvent(WindowID a_id, float32 a_scroll_x_offset, float32 a_scroll_y_offset);
+			void SendKeyEvent(DWindow::WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
+			void SendMouseEvent(DWindow::WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
+			void SendCharEvent(DWindow::WindowID a_id, uint16 a_char);
+			void SendDirectionalEvent(DWindow::WindowID a_id, float32 a_x_offset, float32 a_y_offset);
+			void SendScrollEvent(DWindow::WindowID a_id, float32 a_scroll_x_offset, float32 a_scroll_y_offset);
 
 		protected:
 
@@ -116,12 +116,12 @@ namespace DFW
 
 			struct KeyEvent
 			{
-				KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier);
-				KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
-				KeyEvent(WindowID a_id, KeyEventType a_event_type, uint16 a_char);
+				KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier);
+				KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
+				KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, uint16 a_char);
 
 				KeyEventType	_event_type;
-				WindowID		_user_id;
+				DWindow::WindowID		_user_id;
 
 				int32			_key;
 				int32			_scancode;
@@ -132,10 +132,10 @@ namespace DFW
 
 			struct DirectionalEvent
 			{
-				DirectionalEvent(WindowID a_id, DirectionalEventType a_event_type, float32 a_cursor_x_pos, float32 a_cursor_y_pos, float32 a_scroll_x_offset, float32 a_scroll_y_offset);
+				DirectionalEvent(DWindow::WindowID a_id, DirectionalEventType a_event_type, float32 a_cursor_x_pos, float32 a_cursor_y_pos, float32 a_scroll_x_offset, float32 a_scroll_y_offset);
 
 				DirectionalEventType _event_type;
-				WindowID _user_id;
+				DWindow::WindowID _user_id;
 
 				float32 _cursor_x_position;
 				float32 _cursor_y_position;
@@ -150,7 +150,7 @@ namespace DFW
 
 			void ClearInputDataBuffers();
 
-			std::unordered_map<WindowID, InputData> _input_data_storage;
+			std::unordered_map<DWindow::WindowID, InputData> _input_data_storage;
 
 			std::vector<KeyEvent>			_key_event_buffer;
 			std::vector<DirectionalEvent>	_dir_event_buffer;

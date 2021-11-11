@@ -197,7 +197,7 @@ namespace DFW
         CoreService::ProvideWindowSystem(nullptr);
     }
 
-    void ApplicationInstance::OnApplicationEvent(ApplicationEvent& a_event)
+    void ApplicationInstance::OnApplicationEvent(ApplicationEvent const& a_event)
     {
         DFW_LOG("ApplicationEvent Received: {}", a_event.GetDebugString());
 

@@ -56,7 +56,7 @@ namespace DFW
 		using TypeTag = EventTag;
 	};
 
-	typedef std::function<void(BaseEvent&)> EventCallbackFunc;
+	using EventCallbackFunc = std::function<void(BaseEvent const&)>;
 
 	class ReflectedEvent : public BaseEvent
 	{

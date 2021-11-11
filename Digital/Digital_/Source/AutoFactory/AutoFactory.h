@@ -26,6 +26,11 @@ namespace DFW
 			typedef std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>						FactoryMap;
 			typedef typename std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>::iterator	FactoryMapIt;
 
+			using  FuncType			= std::function<std::unique_ptr<BaseType>(Args...)>;
+			using  StringTypePair	= std::pair<std::string, std::type_index>;
+			using  FactoryMap		= std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>;
+			using  FactoryMapIt		= std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>::iterator;
+
 			friend BaseType;
 
 			template <typename... Args>

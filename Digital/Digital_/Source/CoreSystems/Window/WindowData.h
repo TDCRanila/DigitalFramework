@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines/IDDefines.h>
+#include <CoreSystems/Window/WindowID.h>
 
 #include <CoreSystems/ApplicationEvents.h>
 

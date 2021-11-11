@@ -6,7 +6,7 @@ namespace DFW
 {
 	namespace DECS
 	{
-		typedef int64 ComponentBitList;
+		using ComponentBitList = int64;
 
 	} // End of namespace ~ DECS
 

@@ -181,7 +181,7 @@ namespace DFW
 			_has_input_events_buffered = false;
 		}
 
-		void InputManagementSystem::SendKeyEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
+		void InputManagementSystem::SendKeyEvent(DWindow::WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
 		{
 			if (_is_input_enabled)
 			{
@@ -193,7 +193,7 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::SendMouseEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
+		void InputManagementSystem::SendMouseEvent(DWindow::WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
 		{
 			if (_is_input_enabled)
 			{
@@ -205,7 +205,7 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::SendCharEvent(WindowID a_id, uint16 a_char)
+		void InputManagementSystem::SendCharEvent(DWindow::WindowID a_id, uint16 a_char)
 		{
 			if (_is_input_enabled)
 			{
@@ -217,7 +217,7 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::SendDirectionalEvent(WindowID a_id, float32 a_x_offset, float32 a_y_offset)
+		void InputManagementSystem::SendDirectionalEvent(DWindow::WindowID a_id, float32 a_x_offset, float32 a_y_offset)
 		{
 			if (_is_input_enabled)
 			{
@@ -226,7 +226,7 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::SendScrollEvent(WindowID a_id, float32 a_scroll_x_offset, float32 a_scroll_y_offset)
+		void InputManagementSystem::SendScrollEvent(DWindow::WindowID a_id, float32 a_scroll_x_offset, float32 a_scroll_y_offset)
 		{
 			if (_is_input_enabled)
 			{
@@ -312,7 +312,7 @@ namespace DFW
 			}
 		}
 
-		InputManagementSystem::KeyEvent::KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier)
+		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier)
 			: _user_id(a_id)
 			, _event_type(a_event_type)
 			, _key(a_key)
@@ -323,7 +323,7 @@ namespace DFW
 		{
 		}
 
-		InputManagementSystem::KeyEvent::KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
+		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
 			: _user_id(a_id)
 			, _event_type(a_event_type)
 			, _key(a_key)
@@ -333,7 +333,7 @@ namespace DFW
 		{
 		}
 
-		InputManagementSystem::KeyEvent::KeyEvent(WindowID a_id, KeyEventType a_event_type, uint16 a_char)
+		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, uint16 a_char)
 			: _user_id(a_id)
 			, _event_type(a_event_type)
 			, _key(to_underlying(DKey::UNDEFINED))
@@ -341,7 +341,7 @@ namespace DFW
 		{
 		}
 
-		InputManagementSystem::DirectionalEvent::DirectionalEvent(WindowID a_id, DirectionalEventType a_event_type,
+		InputManagementSystem::DirectionalEvent::DirectionalEvent(DWindow::WindowID a_id, DirectionalEventType a_event_type,
 			float32 a_cursor_x_pos, float32 a_cursor_y_pos, float32 a_scroll_x_offset, float32 a_scroll_y_offset)
 			: _user_id(a_id)
 			, _event_type(a_event_type)
