@@ -32,4 +32,6 @@ namespace DFW
 
 	} // End of namespace ~ DECS.
 
+	using Component = DECS::Component;
+
 } // End of namespace ~ DFW.

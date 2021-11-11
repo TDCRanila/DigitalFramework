@@ -42,10 +42,13 @@ namespace DFW
 			friend ComponentManager;
 
 			EntityHandle	_handle;
-			Universe* _universe;
+			Universe*		_universe;
 
 		};
 
 	} // End of namespace ~ DECS.
+
+	using Entity = DECS::Entity;
+	using EntityHandle = DECS::EntityHandle;
 
 } // End of namespace ~ DFW.
