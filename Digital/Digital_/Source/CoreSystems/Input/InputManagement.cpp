@@ -2,6 +2,7 @@
 
 #include <CoreSystems/ApplicationInstance.h>
 #include <CoreSystems/Logging/Logger.h>
+#include <CoreSystems/CoreServices.h>
 
 namespace DFW
 {
@@ -234,20 +235,20 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::RegisterWindow(WindowInstance* a_window)
+		void InputManagementSystem::RegisterWindow(DWindow::WindowInstance* a_window)
 		{
 			InputData& data = _input_data_storage[a_window->_id];
 			a_window->_input_data = &data;
 		}
 
-		void InputManagementSystem::UnregisterWindow(WindowInstance* a_window)
+		void InputManagementSystem::UnregisterWindow(DWindow::WindowInstance* a_window)
 		{
 			_input_data_storage.erase(a_window->_id);
 		}
 
 		bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
 		{
-			const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
+			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
 			if (focussed_window && focussed_window->_input_data)
 			{
 				const InputData& data = *focussed_window->_input_data;
@@ -260,7 +261,7 @@ namespace DFW
 
 		bool InputManagementSystem::IsKeyRepeatedInternal(int32 a_key) const
 		{
-			const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
+			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
 			if (focussed_window && focussed_window->_input_data)
 			{
 				const InputData& data = *focussed_window->_input_data;
@@ -273,7 +274,7 @@ namespace DFW
 
 		bool InputManagementSystem::IsKeyDownInternal(int32 a_key) const
 		{
-			const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
+			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
 			if (focussed_window && focussed_window->_input_data)
 			{
 				const InputData& data = *focussed_window->_input_data;
@@ -286,7 +287,7 @@ namespace DFW
 
 		bool InputManagementSystem::IsKeyReleasedInternal(int32 a_key) const
 		{
-			const WindowInstance* focussed_window = ApplicationInstance::ProvideWindowManagement()->CurrentFocussedWindow();
+			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
 			if (focussed_window && focussed_window->_input_data)
 			{
 				const InputData& data = *focussed_window->_input_data;

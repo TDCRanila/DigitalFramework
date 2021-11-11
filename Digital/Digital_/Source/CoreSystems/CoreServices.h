@@ -15,10 +15,14 @@ namespace DFW
         class InputManagementSystem;
     } // End of namespace ~ DInput.
     
+    namespace DWindow
+    {
+        class WindowManagementSystem;
+    } // End of namespace ~ DWindow.
+
     class CoreService
     {
     public:
-
         static GameClock* GetGameClock();
         static void ProvideGameClock(GameClock* a_provided_service);
 
@@ -28,10 +32,15 @@ namespace DFW
         static DInput::InputManagementSystem* GetInputSystem();
         static void ProvideInputSystem(DInput::InputManagementSystem* a_provided_service);
     
+        static DWindow::WindowManagementSystem* GetWindowSystem();
+        static void ProvideWindowSystem(DWindow::WindowManagementSystem* a_provided_service);
+
     private:
-        static GameClock* _gc_service;
-        static DECS::ECSModule* _ecs_service;
-        static DInput::InputManagementSystem* _input_service;
+        static GameClock*                       _gc_service;
+        static DECS::ECSModule*                 _ecs_service;
+        static DInput::InputManagementSystem*   _input_service;
+        static DWindow::WindowManagementSystem* _window_service;
+
     };
 
 } // End of namespace ~ DFW.

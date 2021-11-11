@@ -23,8 +23,6 @@ namespace DFW
         void RunApplication(char const* a_name);
         void RunApplication(std::string const& a_name);
 
-        static WindowManagementSystem* ProvideWindowManagement();
-
     protected:
         void RegisterStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
 
@@ -42,8 +40,7 @@ namespace DFW
 
         void Debug_DrawBGFXInfo() const;
 
-        static WindowManagementSystem _window_management;
-        
+        DWindow::WindowManagementSystem _window_management;
         DInput::InputManagementSystem _input_system;
         
         ImGuiLayer _imgui;

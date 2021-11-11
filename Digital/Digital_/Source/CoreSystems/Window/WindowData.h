@@ -15,37 +15,42 @@ namespace DFW
         struct InputData;
     }
 
-    struct WindowDimension
+    namespace DWindow
     {
-        WindowDimension();
+        class WindowManagementSystem;
+        
+        struct WindowDimension
+        {
+            WindowDimension();
 
-        int32 _current_frame_width, _current_frame_height;
-        int32 _current_width, _current_height;
-        int32 _current_x_pos, _current_y_pos; // Point is the the upper-left corner.
-        int32 _window_frame_left, _window_frame_top, _window_frame_right, _window_frame_bottom;
-    };
+            int32 _current_frame_width, _current_frame_height;
+            int32 _current_width, _current_height;
+            int32 _current_x_pos, _current_y_pos; // Point is the the upper-left corner.
+            int32 _window_frame_left, _window_frame_top, _window_frame_right, _window_frame_bottom;
+        };
 
-    struct WindowInstance
-    {
-        WindowInstance();
+        struct WindowInstance
+        {
+            WindowInstance();
 
-        WindowDimension _window_dimension;
+            WindowDimension _window_dimension;
 
-        WindowID        _id;
-        std::string     _name;
+            WindowID        _id;
+            std::string     _name;
 
-        GLFWwindow* _window;
-        DInput::InputData* _input_data;
+            GLFWwindow* _window;
+            DInput::InputData* _input_data;
 
-        bool _should_be_closed;
-        bool _is_minimized;
-        bool _is_focussed;
+            bool _should_be_closed;
+            bool _is_minimized;
+            bool _is_focussed;
 
-    protected:
-        friend class WindowManagementSystem;
+        protected:
+            friend WindowManagementSystem;
 
-        ApplicationEventCallbackFunc _application_event_callback_func;
+            ApplicationEventCallbackFunc _application_event_callback_func;
 
-    };
+        };
+    } // End of namespace ~ DWindow.
 
 } // End of namespace ~ DFW.

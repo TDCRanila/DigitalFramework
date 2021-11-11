@@ -15,8 +15,6 @@
 
 namespace DFW
 {    
-    WindowManagementSystem ApplicationInstance::_window_management;
-
     ApplicationInstance::ApplicationInstance()
         : _stage_stack_communicator(nullptr)
         , _application_name("")
@@ -44,6 +42,7 @@ namespace DFW
         CoreService::ProvideGameClock(&_game_clock);
         CoreService::ProvideECS(&_ecs_module);
         CoreService::ProvideInputSystem(&_input_system);
+        CoreService::ProvideWindowSystem(&_window_management);
 
         // Application
         TimeTracker application_timer;
@@ -61,11 +60,6 @@ namespace DFW
         TerminateApplication();
         const TimeUnit elapsed_termination_time = application_timer.ResetAndFetchElapsedTime(false);
         DFW_INFOLOG("{} - Terminating Application Complete - Elapsed Time: {}", _application_name, elapsed_termination_time);
-    }
-
-    WindowManagementSystem* ApplicationInstance::ProvideWindowManagement()
-    {
-        return &_window_management;
     }
 
     StageStackController& ApplicationInstance::ProvideStageStackController()
@@ -111,10 +105,10 @@ namespace DFW
         _window_management.ChangeDefaultWindowName(_application_name);
         _window_management.BindApplicationEventFunc(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
         _window_management.InitWindowManagement();
-        const DUID window_id            = _window_management.GetMainWindow();
-        WindowInstance& window_instance = _window_management._window_instances.at(window_id);
 
         // Imgui
+        DUID const window_id = _window_management.GetMainWindow();
+        DWindow::WindowInstance const& window_instance = _window_management._window_instances.at(window_id);
         _imgui.InitImGuiLayer(window_instance);
 
         // Gfx
@@ -213,8 +207,8 @@ namespace DFW
 
     void ApplicationInstance::Debug_DrawBGFXInfo() const
     {
-        const DUID window_id = _window_management.GetMainWindow();
-        WindowDimension& window_dimension = _window_management._window_instances.at(window_id)._window_dimension;
+        DUID const window_id = _window_management.GetMainWindow();
+        DWindow::WindowDimension const& window_dimension = _window_management._window_instances.at(window_id)._window_dimension;
 
         // This dummy draw call is here to make sure that view 0 is cleared
         // if no other draw calls are submitted to view 0.

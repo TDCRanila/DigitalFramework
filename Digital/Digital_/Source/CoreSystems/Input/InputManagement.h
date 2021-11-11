@@ -12,7 +12,12 @@
 namespace DFW
 {
 	// FW Declare.
-	struct WindowInstance;
+	namespace DWindow
+	{
+		class WindowManagementSystem;
+		struct WindowInstance;
+	} // End of namespace ~ DWindow.
+
 	class ApplicationInstance;
 
 	namespace DInput
@@ -87,10 +92,10 @@ namespace DFW
 			void ProcessInputEvents();
 			void PollClipboardInput();
 
-			friend class WindowManagementSystem;
+			friend DWindow::WindowManagementSystem;
 
-			void RegisterWindow(WindowInstance* a_window);
-			void UnregisterWindow(WindowInstance* a_window);
+			void RegisterWindow(DWindow::WindowInstance* a_window);
+			void UnregisterWindow(DWindow::WindowInstance* a_window);
 
 		private:
 
