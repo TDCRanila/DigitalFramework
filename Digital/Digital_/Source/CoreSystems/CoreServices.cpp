@@ -15,7 +15,7 @@ namespace DFW
 
     GameClock* CoreService::GetGameClock()
     {
-        DFW_ASSERT(_gc_service && "No Game Clock provided.");
+        DFW_ASSERT(_gc_service && "No or invalid Game Clock provided.");
         return _gc_service;
     }
 
@@ -26,7 +26,7 @@ namespace DFW
 
     DECS::ECSModule* CoreService::GetECS()
     {
-        DFW_ASSERT(_ecs_service && "No DECS Module provided.");
+        DFW_ASSERT(_ecs_service && "No or invalid ECS Module provided.");
         return _ecs_service;
     }
 
@@ -37,7 +37,7 @@ namespace DFW
 
     DInput::InputManagementSystem* CoreService::GetInputSystem()
     {
-        DFW_ASSERT(_input_service && "No Input Management System provided.");
+        DFW_ASSERT(_input_service && "No or invalid Input Management System provided.");
         return _input_service;
     }
 
@@ -48,7 +48,7 @@ namespace DFW
 
     DWindow::WindowManagementSystem* CoreService::GetWindowSystem()
     {
-        DFW_ASSERT(_window_service && "No Window Management System provided.");
+        DFW_ASSERT(_window_service && "No or invalid Window Management System provided.");
         return _window_service;
     }
 

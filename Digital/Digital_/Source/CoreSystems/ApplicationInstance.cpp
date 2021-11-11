@@ -190,6 +190,11 @@ namespace DFW
         _window_management.TerminateWindowManagement();
 
         _ecs_module.TerminateECS();
+
+        CoreService::ProvideGameClock(nullptr);
+        CoreService::ProvideECS(nullptr);
+        CoreService::ProvideInputSystem(nullptr);
+        CoreService::ProvideWindowSystem(nullptr);
     }
 
     void ApplicationInstance::OnApplicationEvent(ApplicationEvent& a_event)
