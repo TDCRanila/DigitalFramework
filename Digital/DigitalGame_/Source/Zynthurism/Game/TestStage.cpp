@@ -14,7 +14,7 @@ namespace DGame
     TestStage::TestStage(std::string a_stage_name, bool a_start_disabled)
         : DGame::GameStageBase(a_stage_name, a_start_disabled)
     {
-        ecs = CoreService::GetECS();
+        ecs = DFW::CoreService::GetECS();
     }
 
     void TestStage::RenderImGui()

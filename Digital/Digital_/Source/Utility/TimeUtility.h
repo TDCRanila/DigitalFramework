@@ -4,15 +4,19 @@
 
 #include <string>
 
-namespace DUtility
+namespace DFW
 {
-	DCore::TimeUnit SecondsToMilliseconds(const DCore::TimeUnit a_time);
-	DCore::TimeUnit MillisecondsToSeconds(const DCore::TimeUnit a_time);
+	namespace DUtility
+	{
+		TimeUnit SecondsToMilliseconds(TimeUnit const a_time);
+		TimeUnit MillisecondsToSeconds(TimeUnit const a_time);
 
-	std::string GetTimeAndDateStamp();
+		std::string GetTimeAndDateStamp();
 
-	std::string GetTimeStamp();
+		std::string GetTimeStamp();
 
-	std::string GetDateStamp();
+		std::string GetDateStamp();
 
-} // End of namespace ~ DUtility
+	} // End of namespace ~ DUtility.
+
+} // End of namespace ~ DFW.

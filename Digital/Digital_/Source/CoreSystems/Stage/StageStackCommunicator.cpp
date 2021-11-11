@@ -4,7 +4,7 @@
 
 #include <Coresystems/Logging/Logger.h>
 
-namespace DCore
+namespace DFW
 {
     void StageStackCommunicator::OnStageEventReceived(StageEvent& a_event)
     {
@@ -27,4 +27,4 @@ namespace DCore
         _stage_stack_controller = &a_controller;
     }
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

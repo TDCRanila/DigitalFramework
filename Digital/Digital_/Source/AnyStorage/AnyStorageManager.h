@@ -6,77 +6,73 @@
 #include <functional>
 #include <any>
 
-namespace DAnyStorage 
+namespace DFW
 {
+    namespace DAny
+    {
+        class AnyStorageManager
+        {
+        public:
+            AnyStorageManager() = default;
+            ~AnyStorageManager() = default;
 
-    class AnyStorageManager 
-	{
-    public:
-		AnyStorageManager()		{ /*Empty*/ }
-        ~AnyStorageManager()	{ /*Empty*/ }
+            template <typename T>
+            void Subscribe(T* a_item);
 
-        template <class T>
-        void Subscribe(T* a_item);
+            template <typename T>
+            AnyStorage<T>* GetItemVector() const;
 
+        private:
+            template <typename T>
+            AnyStorage<T>* AddItemVector(size_t a_hash);
 
-        template <class T>
-		AnyStorage<T>* GetItemVector();
+            std::unordered_map<size_t, std::any> _storage_map;
 
-    private:
-        template <class T>
-        AnyStorage<T>* AddItemVector(size_t a_hash);
- 
-		std::unordered_map<size_t, std::any> storage;
-
-    };
+        };
 
 #pragma region Template Function Implementation
 
-    template <class T>
-    void AnyStorageManager::Subscribe(T* a_item) 
-	{
-        // Search for item vector in storage.
-		AnyStorage<T>* i = nullptr;
-        i = GetItemVector<T>();
+        template <typename T>
+        void AnyStorageManager::Subscribe(T* a_item)
+        {
+            // Search for item vector in storage.
+            AnyStorage<T>* storage_ptr = GetItemVector<T>();
+            if (!storage_ptr)
+            {
+                size_t current_hash = typeid(T).hash_code();
+                storage_ptr = AddItemVector<T>(current_hash);
+            }
 
-        // If Not ~
-        if (i == nullptr) 
-		{
+            // Add element
+            storage_ptr.emplace_back(a_item);
+        }
+
+        template <typename T>
+        AnyStorage<T>* AnyStorageManager::AddItemVector(size_t a_hash)
+        {
+            AnyStorage<T>* temp = new AnyStorage<T>();
+            _storage_map.insert(std::make_pair(a_hash, temp));
+            return temp;
+        }
+
+        template <typename T>
+        AnyStorage<T>* AnyStorageManager::GetItemVector() const
+        {
+            // Search for item vector in storage.
             size_t current_hash = typeid(T).hash_code();
-            i = AddItemVector<T>(current_hash);
+            AnyStorage<T>* storage_ptr = nullptr;
+            if (auto [hash, any_object] = _storage_map.find(current_hash); it != _storage_map.end())
+            {
+                storage_ptr = std::any_cast<AnyStorage<T>*>(any_object);
+            }
+            else
+            {
+                return storage_ptr;
+            }
         }
-
-        // Add element
-        i->item_vector.emplace_back(a_item);
-    }
-
-    template <class T>
-	AnyStorage<T>* AnyStorageManager::AddItemVector(size_t a_hash) 
-	{
-		AnyStorage<T>* temp = new AnyStorage<T>();
-        this->storage.insert(std::make_pair(a_hash, temp));
-        return temp;
-    }
-
-    template <class T>
-	AnyStorage<T>* AnyStorageManager::GetItemVector() 
-	{
-        // Check storage is empty. Is faster? How many instructions.
-
-        // Hash
-        size_t current_hash = typeid(T).hash_code();
-
-        // Search for item vector in storage.
-		AnyStorage<T>* storage_ptr = nullptr;
-        auto it = this->storage.find(current_hash);
-        if (it != this->storage.end()) 
-		{
-            storage_ptr = std::any_cast<AnyStorage<T>*>(it->second);
-        }
-
-        return storage_ptr;
-    }
 
 #pragma endregion
 
-} // End of namespace ~ DAnyStorage
+    } // End of namespace ~ DAny.
+
+} // End of namespace ~ DFW.

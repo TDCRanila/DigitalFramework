@@ -2,19 +2,17 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace DCore
+namespace DFW
 {
-
-	StageBase::StageBase(std::string a_stage_name, bool a_start_disabled)
+	StageBase::StageBase(std::string const& a_stage_name, bool a_start_disabled)
 		: _name(a_stage_name)
-		, _id(DCore::GenerateDUID())
+		, _id(DFW::GenerateDUID())
 		, _is_disabled(a_start_disabled)
 	{
 	}
 
 	void StageBase::RenderImGui()
 	{
-
 	}
 
 	bool StageBase::IsDisabled() const
@@ -24,22 +22,18 @@ namespace DCore
 
 	void StageBase::OnEnable()
 	{
-
 	}
 
 	void StageBase::OnDisable()
 	{
-
 	}
 	
-	void StageBase::OnApplicationEvent(ApplicationEvent& a_event)
+	void StageBase::OnApplicationEvent(ApplicationEvent const& a_event)
 	{
-
 	}
 
-	void StageBase::OnStageEvent(StageEvent& a_event)
+	void StageBase::OnStageEvent(StageEvent const& a_event)
 	{
-
 	}
 	
 	StageID StageBase::GetID() const
@@ -50,6 +44,11 @@ namespace DCore
 	std::string StageBase::GetName() const
 	{
 		return _name;
+	}
+
+	bool StageBase::operator==(StageBase const& a_other) 
+	{ 
+		return this->_id == a_other._id; 
 	}
 
 	void StageBase::Enable()
@@ -86,7 +85,7 @@ namespace DCore
 		}
 	}
 
-	void StageBase::SetStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_communicator)
+	void StageBase::SetStageStackCommunicator(std::shared_ptr<StageStackCommunicator> const& a_communicator)
 	{
 		_stage_stack_communicator = a_communicator;
 	}
@@ -101,9 +100,9 @@ namespace DCore
 		return _stage_stack_communicator;
 	}
 
-	void StageBase::BindStageEventFunc(const StageEventCallbackFunc& a_event_callback_func)
+	void StageBase::BindStageEventFunc(StageEventCallbackFunc const& a_event_callback_func)
 	{
 		_stage_event_callback_func = a_event_callback_func;
 	}
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

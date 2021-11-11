@@ -15,7 +15,7 @@
 #include <mutex>
 #include <unordered_map>
 
-namespace DCore
+namespace DFW
 {
 	enum class LogLevel
 	{
@@ -84,15 +84,15 @@ namespace DCore
 
 	};
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW
 
 #if defined(DFW_PDEBUG64) || defined(DFW_DEBUG64) || defined(DFW_PRERELEASE64)
 
-#define DFW_LOG(...)		SPDLOG_LOGGER_TRACE(&DCore::Logger::ProvideMainLogger(), __VA_ARGS__)
-#define DFW_DEBUGLOG(...)	SPDLOG_LOGGER_DEBUG(&DCore::Logger::ProvideMainLogger(), __VA_ARGS__)
-#define DFW_INFOLOG(...)	SPDLOG_LOGGER_INFO(&DCore::Logger::ProvideMainLogger(), __VA_ARGS__)
-#define DFW_WARNLOG(...)	SPDLOG_LOGGER_WARN(&DCore::Logger::ProvideMainLogger(), __VA_ARGS__)
-#define DFW_ERRORLOG(...)	SPDLOG_LOGGER_ERROR(&DCore::Logger::ProvideMainLogger(), __VA_ARGS__)
+#define DFW_LOG(...)		SPDLOG_LOGGER_TRACE(&DFW::Logger::ProvideMainLogger(), __VA_ARGS__)
+#define DFW_DEBUGLOG(...)	SPDLOG_LOGGER_DEBUG(&DFW::Logger::ProvideMainLogger(), __VA_ARGS__)
+#define DFW_INFOLOG(...)	SPDLOG_LOGGER_INFO(&DFW::Logger::ProvideMainLogger(), __VA_ARGS__)
+#define DFW_WARNLOG(...)	SPDLOG_LOGGER_WARN(&DFW::Logger::ProvideMainLogger(), __VA_ARGS__)
+#define DFW_ERRORLOG(...)	SPDLOG_LOGGER_ERROR(&DFW::Logger::ProvideMainLogger(), __VA_ARGS__)
 
 #elif defined(DFW_RELEASE64) || defined(DFW_FINAL64)
 
@@ -104,10 +104,9 @@ namespace DCore
 
 #endif
 
-#pragma region Template Implementation
-
-namespace DCore
+namespace DFW
 {
+#pragma region Template Implementation
 	template<class Mutex> 
 	DFWSinkImpl<Mutex>::DFWSinkImpl()
 	{
@@ -140,5 +139,6 @@ namespace DCore
 		std::cout << std::flush;
 	}
 
-} // End of namespace ~ DCore
 #pragma endregion
+
+} // End of namespace ~ DFW.

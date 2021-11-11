@@ -2,94 +2,98 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-namespace DECS
+namespace DFW
 {
-	ECSystem::ECSystem(Key) 
-		: _id(DCore::DFW_INVALID_DUID)
-		, _entity_manager(nullptr)
-		, _name("Default System Name.")
-		, _paused(false)
-	{ 
-	}
-
-	void ECSystem::Init() 
+	namespace DECS
 	{
-	}
+		System::System(Key)
+			: _id(DFW::DFW_INVALID_DUID)
+			, _entity_manager(nullptr)
+			, _name("Default System Name.")
+			, _paused(false)
+		{
+		}
 
-	void ECSystem::Terminate()
-	{
-	}
-	
-	void ECSystem::PreUpdate(ECSUniverse* const /*a_universe*/) 
-	{
-	}
+		void System::Init()
+		{
+		}
 
-	void ECSystem::Update(ECSUniverse* const /*a_universe*/) 
-	{
-	}
+		void System::Terminate()
+		{
+		}
 
-	void ECSystem::PostUpdate(ECSUniverse* const /*a_universe*/) 
-	{
-	}
+		void System::PreUpdate(Universe* const /*a_universe*/)
+		{
+		}
 
-	bool ECSystem::IsSystemPaused() const
-	{
-		return _paused;
-	}
+		void System::Update(Universe* const /*a_universe*/)
+		{
+		}
 
-	DCore::DUID ECSystem::GetID() const
-	{
-		return _id;
-	}
+		void System::PostUpdate(Universe* const /*a_universe*/)
+		{
+		}
 
-	std::string ECSystem::GetName() const
-	{
-		return _name;
-	}
+		bool System::IsSystemPaused() const
+		{
+			return _paused;
+		}
 
-	ECSEntityManager* const ECSystem::EntityManager() const
-	{
-		return _entity_manager;
-	}
+		DFW::DUID System::GetID() const
+		{
+			return _id;
+		}
 
-	void ECSystem::InternalInit()
-	{
-		DFW_INFOLOG("Initialization System: {} - {}", _id, _name);
+		std::string System::GetName() const
+		{
+			return _name;
+		}
 
-		this->Init();
-	}
+		EntityManager* const System::EntityManager() const
+		{
+			return _entity_manager;
+		}
 
-	void ECSystem::InternalTerminate()
-	{
-		DFW_INFOLOG("Terminating System: {} - {}", _id, _name);
+		void System::InternalInit()
+		{
+			DFW_INFOLOG("Initialization System: {} - {}", _id, _name);
 
-		this->Terminate();
-	}
+			this->Init();
+		}
 
-	void ECSystem::InternalPreUpdate(ECSUniverse* const a_universe)
-	{
-		DFW_LOG("PreUpdate System: {} - {}", _id, _name);
+		void System::InternalTerminate()
+		{
+			DFW_INFOLOG("Terminating System: {} - {}", _id, _name);
 
-		this->PreUpdate(a_universe);
-	}
+			this->Terminate();
+		}
 
-	void ECSystem::InternalUpdate(ECSUniverse* const a_universe)
-	{
-		DFW_LOG("Update System: {} - {}", _id, _name);
-		
-		this->Update(a_universe);
-	}
+		void System::InternalPreUpdate(Universe* const a_universe)
+		{
+			DFW_LOG("PreUpdate System: {} - {}", _id, _name);
 
-	void ECSystem::InternalPostUpdate(ECSUniverse* const a_universe)
-	{
-		DFW_LOG("PostUpdate System: {} - {}", _id, _name);
+			this->PreUpdate(a_universe);
+		}
 
-		this->PostUpdate(a_universe);
-	}
+		void System::InternalUpdate(Universe* const a_universe)
+		{
+			DFW_LOG("Update System: {} - {}", _id, _name);
 
-	void ECSystem::InternalPauseSystem(bool a_pause_on_true)
-	{
-		this->_paused = a_pause_on_true;
-	}
+			this->Update(a_universe);
+		}
 
-} // End of namespace ~ DECS
+		void System::InternalPostUpdate(Universe* const a_universe)
+		{
+			DFW_LOG("PostUpdate System: {} - {}", _id, _name);
+
+			this->PostUpdate(a_universe);
+		}
+
+		void System::InternalPauseSystem(bool a_pause_on_true)
+		{
+			this->_paused = a_pause_on_true;
+		}
+
+	} // End of namespace ~ DECS
+
+} // End of namespace ~ DFW.

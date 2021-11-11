@@ -2,7 +2,7 @@
 
 #include <CoreSystems/GameClock.h>
 #include <CoreSystems/TimeTracker.h>
-#include <CoreSystems/InputManagement.h>
+#include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Events/EventImplementation.h>
 #include <CoreSystems/Stage/StageStackController.h>
 #include <CoreSystems/Stage/StageStackCommunicator.h>
@@ -12,7 +12,7 @@
 
 #include <CoreSystems/ImGui/ImGuiLayer.h>
 
-namespace DCore
+namespace DFW
 {
     class ApplicationInstance
     {
@@ -22,9 +22,6 @@ namespace DCore
 
         void RunApplication(char const* a_name);
         void RunApplication(std::string const& a_name);
-
-        static WindowManagementSystem* ProvideWindowManagement();
-        static InputManagementSystem* ProvideInputManagment();
 
     protected:
         void RegisterStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
@@ -43,8 +40,8 @@ namespace DCore
 
         void Debug_DrawBGFXInfo() const;
 
-        static WindowManagementSystem _window_management;
-        static InputManagementSystem _input_management;
+        DWindow::WindowManagementSystem _window_management;
+        DInput::InputManagementSystem _input_system;
         
         ImGuiLayer _imgui;
  
@@ -59,7 +56,7 @@ namespace DCore
         std::string _application_name;
     };
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW.
 
 #define DFW_APP_ENTRY(a_name, a_app_class)      \
     int main(int /*argc*/, char** /*argv*/)     \

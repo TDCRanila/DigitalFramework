@@ -2,9 +2,9 @@
 
 #include <CoreSystems/DUID.h>
 
-namespace DCore
+namespace DFW
 {
 	typedef DUID WindowID;
 	typedef DUID StageID;
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW

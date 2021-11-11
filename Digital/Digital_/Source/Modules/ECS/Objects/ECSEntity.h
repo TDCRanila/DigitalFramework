@@ -6,42 +6,46 @@
 
 #include <entt/entity/handle.hpp>
 
-namespace DECS 
+namespace DFW
 {
-	// FW Declare.
-	class ECSUniverse;
-	class ECSEntityManager;
-	class ECSComponentManager;
-	
-	using EntityHandle								= entt::entity;
-	constexpr entt::null_t DFW_NULL_ENTITY_HANDLE	= entt::null;
-
-	class ECSEntity : public DFactory::AutoFactory<ECSEntity>
+	namespace DECS
 	{
-	public:
-		ECSEntity();
-		ECSEntity(EntityHandle const& a_entity_handle, ECSUniverse* const a_universe);
-		virtual ~ECSEntity() = default;
-		
-		std::strong_ordering operator<=>(ECSEntity const& a_other) const;
+		// FW Declare.
+		class Universe;
+		class EntityManager;
+		class ComponentManager;
 
-		operator EntityHandle();
-		operator EntityHandle() const;
-		
-		DCore::DUID GetID() const;
-		EntityHandle GetHandle() const;
-		ECSUniverse* GetUniverse() const;
+		using EntityHandle = entt::entity;
+		constexpr entt::null_t DFW_NULL_ENTITY_HANDLE = entt::null;
 
-		bool IsEntityValid() const;
-		bool IsPendingDeletion() const;
+		class Entity : public DFactory::AutoFactory<Entity>
+		{
+		public:
+			Entity();
+			Entity(EntityHandle const& a_entity_handle, Universe* const a_universe);
+			virtual ~Entity() = default;
 
-	private:
-		friend ECSEntityManager;
-		friend ECSComponentManager;
+			std::strong_ordering operator<=>(Entity const& a_other) const;
 
-		EntityHandle	_handle;
-		ECSUniverse*	_universe;
+			operator EntityHandle();
+			operator EntityHandle() const;
 
-	};
+			DFW::DUID GetID() const;
+			EntityHandle GetHandle() const;
+			Universe* GetUniverse() const;
 
-} // End of namespace ~ DECS
+			bool IsEntityValid() const;
+			bool IsPendingDeletion() const;
+
+		private:
+			friend EntityManager;
+			friend ComponentManager;
+
+			EntityHandle	_handle;
+			Universe* _universe;
+
+		};
+
+	} // End of namespace ~ DECS.
+
+} // End of namespace ~ DFW.

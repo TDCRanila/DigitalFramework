@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-namespace DCore
+namespace DFW
 {   
     class TimeTracker final
     {
@@ -30,4 +30,4 @@ namespace DCore
         bool _is_tracking_time;
     };
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

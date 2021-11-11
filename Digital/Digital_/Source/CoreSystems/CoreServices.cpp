@@ -2,31 +2,59 @@
 
 #include <Utility/TemplateUtility.h>
 
-DCore::GameClock* CoreService::_gc_service = nullptr;
-DECS::ECSModule* CoreService::_ecs_service = nullptr;
-
-// TODO: Could provide some game clock null-service instead.
-// maybe not needed for a gameclock but other services such as audio
-// could be useful.
-
-DCore::GameClock* CoreService::GetGameClock()
+namespace DFW
 {
-    DFW_ASSERT(_gc_service && "No Game Clock provided.");      
-    return _gc_service;
-}
+    GameClock* CoreService::_gc_service                             = nullptr;
+    DECS::ECSModule* CoreService::_ecs_service                      = nullptr;
+    DInput::InputManagementSystem* CoreService::_input_service      = nullptr;
+    DWindow::WindowManagementSystem* CoreService::_window_service   = nullptr;
 
-void CoreService::ProvideGameClock(DCore::GameClock* a_provided_service)
-{
-    _gc_service = a_provided_service;
-}
+    // TODO: Could provide some game clock null-service instead.
+    // maybe not needed for a gameclock but other services such as audio
+    // could be useful.
 
-DECS::ECSModule* CoreService::GetECS()
-{
-    DFW_ASSERT(_ecs_service && "No ECS Module provided.");
-    return _ecs_service;
-}
+    GameClock* CoreService::GetGameClock()
+    {
+        DFW_ASSERT(_gc_service && "No or invalid Game Clock provided.");
+        return _gc_service;
+    }
 
-void CoreService::ProvideECS(DECS::ECSModule* a_provided_service)
-{
-    _ecs_service = a_provided_service;
-}
+    void CoreService::ProvideGameClock(GameClock* a_provided_service)
+    {
+        _gc_service = a_provided_service;
+    }
+
+    DECS::ECSModule* CoreService::GetECS()
+    {
+        DFW_ASSERT(_ecs_service && "No or invalid ECS Module provided.");
+        return _ecs_service;
+    }
+
+    void CoreService::ProvideECS(DECS::ECSModule* a_provided_service)
+    {
+        _ecs_service = a_provided_service;
+    }
+
+    DInput::InputManagementSystem* CoreService::GetInputSystem()
+    {
+        DFW_ASSERT(_input_service && "No or invalid Input Management System provided.");
+        return _input_service;
+    }
+
+    void CoreService::ProvideInputSystem(DInput::InputManagementSystem* a_provided_service)
+    {
+        _input_service = a_provided_service;
+    }
+
+    DWindow::WindowManagementSystem* CoreService::GetWindowSystem()
+    {
+        DFW_ASSERT(_window_service && "No or invalid Window Management System provided.");
+        return _window_service;
+    }
+
+    void CoreService::ProvideWindowSystem(DWindow::WindowManagementSystem* a_provided_service)
+    {
+        _window_service = a_provided_service;
+    }
+
+} // End of namespace ~ DFW.

@@ -5,7 +5,7 @@
 namespace DGame
 {
 
-	class GameApplication final : public DCore::ApplicationInstance
+	class GameApplication final : public DFW::ApplicationInstance
 	{
 	public:
 		GameApplication() = default;

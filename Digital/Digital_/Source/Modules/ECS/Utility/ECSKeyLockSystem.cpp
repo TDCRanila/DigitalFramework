@@ -2,36 +2,40 @@
 
 #include <AutoFactory/AutoFactory.h>
 
-#include <Modules/ECS/Objects/ECSComponent.h>
-
 #include <CoreSystems/Logging/Logger.h>
 
-namespace DECS 
+#include <Modules/ECS/Objects/ECSComponent.h>
+
+namespace DFW
 {
-	bool ECSKeyLockSystem::_generated_component_keys = false;
-	std::unordered_map<std::type_index, int8> ECSKeyLockSystem::_component_bit_placement;
-
-	void ECSKeyLockSystem::GenerateComponentKeys() 
+	namespace DECS
 	{
-		if (_generated_component_keys)
+		bool KeyLockSystem::_generated_component_keys = false;
+		std::unordered_map<std::type_index, int8> KeyLockSystem::_component_bit_placement;
+
+		void KeyLockSystem::GenerateComponentKeys()
 		{
-			DFW_INFOLOG("KeyLockSystem has already generated the component keys.");
-			return;
-		}
-
-		int8 key_index = -1;
-
-		for (auto const&[type_pair, fac] : ECSComponent::GetFactories()) 
-		{
-			_component_bit_placement[type_pair.second] = ++key_index;
-
-			if (key_index > DFW_MAX_REGISTERED_COMPONENTS)
-			{ 
-				DFW_ERRORLOG("Over {} Components have been registered for ComponentBitPlacement.", DFW_MAX_REGISTERED_COMPONENTS);
+			if (_generated_component_keys)
+			{
+				DFW_INFOLOG("KeyLockSystem has already generated the component keys.");
+				return;
 			}
+
+			int8 key_index = -1;
+
+			for (auto const& [type_pair, fac] : Component::GetFactories())
+			{
+				_component_bit_placement[type_pair.second] = ++key_index;
+
+				if (key_index > DFW_MAX_REGISTERED_COMPONENTS)
+				{
+					DFW_ERRORLOG("Over {} Components have been registered for ComponentBitPlacement.", DFW_MAX_REGISTERED_COMPONENTS);
+				}
+			}
+
+			_generated_component_keys = true;
 		}
 
-		_generated_component_keys = true;
-	}
+	} // End of namespace ~ DECS.
 
-} // End of namespace ~ DECS
+} // End of namespace ~ DFW.

@@ -2,64 +2,68 @@
 
 #include <Defines/MathDefines.h>
 
-namespace DImGui
+namespace DFW
 {
-    ImGuiRenderingContext   imgui_rendering_context;
-    GLFWwindow*             main_window         = nullptr;
-    bgfx::ViewId            main_window_id      = 0;
-
-    bool				    mouse_just_pressed[ImGuiMouseButton_COUNT] = { false };
-    bool                    installed_callbacks    = false;
-    bool                    want_update_monitors   = true;
-
-    GLFWmousebuttonfun      prev_user_callback_mousebutton = nullptr;
-    GLFWscrollfun           prev_user_callback_scroll      = nullptr;
-    GLFWkeyfun              prev_user_callback_key         = nullptr;
-    GLFWcharfun             prev_user_callback_char        = nullptr;
-    GLFWmonitorfun          prev_user_callback_monitor     = nullptr;
-
-    ImGuiViewportDataBGFX::ImGuiViewportDataBGFX()
-        : _window(nullptr)
-        , _window_owned(false)
-        , _ignore_window_size_event_frame(DMath::GetMinValueOfType<decltype(_ignore_window_size_event_frame)>())
-        , _ignore_window_pos_event_frame(DMath::GetMinValueOfType<decltype(_ignore_window_pos_event_frame)>())
-        , _view_id(bgfx::kInvalidHandle)
+    namespace DImGui
     {
-        _framebuffer_handle.idx = bgfx::kInvalidHandle;
-    }
+        ImGuiRenderingContext   imgui_rendering_context;
+        GLFWwindow* main_window = nullptr;
+        bgfx::ViewId            main_window_id = 0;
 
-    ImGuiRenderingContext::ImGuiRenderingContext()
-        : _font({ nullptr })    
-        , _shader_program_handle(BGFX_INVALID_HANDLE)
-        , _image_program_handle(BGFX_INVALID_HANDLE)
-        , _texture_handle(BGFX_INVALID_HANDLE)
-        , _texture_uniform_handle(BGFX_INVALID_HANDLE)
-        , _image_lod_uniform_handle(BGFX_INVALID_HANDLE)
-        , _viewport_id_counter(-1)
-        , _are_graphic_devices_initialized(false)
-    {
-    }
+        bool				    mouse_just_pressed[ImGuiMouseButton_COUNT] = { false };
+        bool                    installed_callbacks = false;
+        bool                    want_update_monitors = true;
 
-    bgfx::ViewId ImGui_ImplBGFX_AllocateViewportID()
-    {
-        if (DImGui::imgui_rendering_context._free_viewport_ids.empty())
+        GLFWmousebuttonfun      prev_user_callback_mousebutton = nullptr;
+        GLFWscrollfun           prev_user_callback_scroll = nullptr;
+        GLFWkeyfun              prev_user_callback_key = nullptr;
+        GLFWcharfun             prev_user_callback_char = nullptr;
+        GLFWmonitorfun          prev_user_callback_monitor = nullptr;
+
+        ImGuiViewportDataBGFX::ImGuiViewportDataBGFX()
+            : _window(nullptr)
+            , _window_owned(false)
+            , _ignore_window_size_event_frame(DMath::GetMinValueOfType<decltype(_ignore_window_size_event_frame)>())
+            , _ignore_window_pos_event_frame(DMath::GetMinValueOfType<decltype(_ignore_window_pos_event_frame)>())
+            , _view_id(bgfx::kInvalidHandle)
         {
-            return ++DImGui::imgui_rendering_context._viewport_id_counter;
+            _framebuffer_handle.idx = bgfx::kInvalidHandle;
         }
-        else
+
+        ImGuiRenderingContext::ImGuiRenderingContext()
+            : _font({ nullptr })
+            , _shader_program_handle(BGFX_INVALID_HANDLE)
+            , _image_program_handle(BGFX_INVALID_HANDLE)
+            , _texture_handle(BGFX_INVALID_HANDLE)
+            , _texture_uniform_handle(BGFX_INVALID_HANDLE)
+            , _image_lod_uniform_handle(BGFX_INVALID_HANDLE)
+            , _viewport_id_counter(-1)
+            , _are_graphic_devices_initialized(false)
         {
-            bgfx::ViewId const free_id = DImGui::imgui_rendering_context._free_viewport_ids.back();
-            DImGui::imgui_rendering_context._free_viewport_ids.pop_back();
-            return free_id;
         }
-    }
 
-    void ImGui_ImplBGFX_FreeViewportID(bgfx::ViewId const a_viewport_id)
-    {
-        DImGui::imgui_rendering_context._free_viewport_ids.emplace_back(a_viewport_id);
-    }
+        bgfx::ViewId ImGui_ImplBGFX_AllocateViewportID()
+        {
+            if (DImGui::imgui_rendering_context._free_viewport_ids.empty())
+            {
+                return ++DImGui::imgui_rendering_context._viewport_id_counter;
+            }
+            else
+            {
+                bgfx::ViewId const free_id = DImGui::imgui_rendering_context._free_viewport_ids.back();
+                DImGui::imgui_rendering_context._free_viewport_ids.pop_back();
+                return free_id;
+            }
+        }
 
-} // End of namespace ~ DImGui.
+        void ImGui_ImplBGFX_FreeViewportID(bgfx::ViewId const a_viewport_id)
+        {
+            DImGui::imgui_rendering_context._free_viewport_ids.emplace_back(a_viewport_id);
+        }
+
+    } // End of namespace ~ DImGui.
+
+} // End of namespace ~ DFW.
 
 namespace ImGui
 {

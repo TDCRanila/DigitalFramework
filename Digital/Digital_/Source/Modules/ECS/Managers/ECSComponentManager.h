@@ -8,142 +8,142 @@
 #include <Utility/TemplateUtility.h>
 #include <CoreSystems/DUID.h>
 
-namespace DECS 
+namespace DFW
 {
-	// FW Declare
-	class ECSEntityManager;
-
-	// Concepts
-	template <typename ComponentType>
-	concept IsValidComponentType = IsDerivedFrom<ComponentType, ECSComponent>;
-
-	class ECSComponentManager final 
+	namespace DECS
 	{
-	public:
-		~ECSComponentManager() = default;
+		// FW Declare
+		class EntityManager;
 
-		template <typename ComponentType> 
-		ComponentType* const GetComponent(ECSEntity const& a_entity) const;
+		class ComponentManager final
+		{
+		public:
+			~ComponentManager() = default;
 
-		template <typename... TArgs>
-		bool HasComponents(ECSEntity const& a_entity) const;
+			template <typename ComponentType>
+			ComponentType* const GetComponent(Entity const& a_entity) const;
 
-		template <typename ComponentType, typename ...TArgs>
-		ComponentType* const AddComponent(ECSEntity const& a_entity, TArgs&&...a_args) const;
+			template <typename... TArgs>
+			bool HasComponents(Entity const& a_entity) const;
 
-		template <typename ComponentType>
-		bool DeleteComponent(ECSEntity const& a_entity) const;
+			template <typename ComponentType, typename ...TArgs>
+			ComponentType* const AddComponent(Entity const& a_entity, TArgs&&...a_args) const;
 
-	protected: 
-		friend ECSEntityManager;
+			template <typename ComponentType>
+			bool DeleteComponent(Entity const& a_entity) const;
 
-		ECSComponentManager();
+		protected:
+			friend EntityManager;
 
-	private:
-		ECSKeyLockSystem _keylock_system;
+			ComponentManager();
 
-	};
+		private:
+			KeyLockSystem _keylock_system;
+
+		};
 
 #pragma region Template Function Implementation
 
-	template <typename ComponentType>
-	ComponentType* const ECSComponentManager::GetComponent(ECSEntity const& a_entity) const
-	{
-		if constexpr (not IsValidComponentType<ComponentType>)
+		template <typename ComponentType>
+		ComponentType* const ComponentManager::GetComponent(Entity const& a_entity) const
 		{
-			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to get a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
-			return nullptr;
-		}
-		else if constexpr (IsValidComponentType<ComponentType>)
-		{
-			DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component to an invalid entity.");
-			ComponentType* component = a_entity._universe->_registry.try_get<ComponentType>(a_entity);
-			return component;
-		}
-	}
-
-	template <typename... TArgs>
-	bool ECSComponentManager::HasComponents(ECSEntity const& a_entity) const
-	{
-		if constexpr (sizeof...(TArgs) <= 0)
-		{
-			static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check the presence of a Component, but no template arguments provided.");
-			return false;
-		}
-		else if constexpr ( (not IsValidComponentType<TArgs> || ...))
-		{
-			static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check for a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
-			return false;
-		}
-		else
-		{
-			DFW_ASSERT(a_entity.IsEntityValid() && "Trying to read component data from an invalid entity.");			
-			bool result = a_entity._universe->_registry.all_of<TArgs...>(a_entity);
-			return result;
-		}
-	}
-	
-	template <typename ComponentType, typename... TArgs>
-	ComponentType* const ECSComponentManager::AddComponent(ECSEntity const& a_entity, TArgs&&... a_args) const
-	{
-		if constexpr (not IsValidComponentType<ComponentType>)
-		{
-			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to add a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
-			return nullptr;
-		}
-		else if constexpr (IsValidComponentType<ComponentType>)
-		{
-			DFW_ASSERT(a_entity.IsEntityValid() && "Trying to add a component to an invalid entity.");
-			if (!HasComponents<ComponentType>(a_entity))
+			if constexpr (not IsValidComponentType<ComponentType>)
 			{
-				ComponentType& component	= a_entity._universe->_registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
-				component._owner			= a_entity;
-				component._id				= DCore::GenerateDUID();
+				static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to get a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
+				return nullptr;
+			}
+			else if constexpr (IsValidComponentType<ComponentType>)
+			{
+				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component to an invalid entity.");
+				ComponentType* component = a_entity._universe->_registry.try_get<ComponentType>(a_entity);
+				return component;
+			}
+		}
 
-				// Special Case for Entity Registration Component.
-				// TODO: Not all that nice, could look in an alternative.
-				if constexpr (AreSameTypes<ECSEntityRegistrationComponent, ComponentType>)
+		template <typename... TArgs>
+		bool ComponentManager::HasComponents(Entity const& a_entity) const
+		{
+			if constexpr (sizeof...(TArgs) <= 0)
+			{
+				static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check the presence of a Component, but no template arguments provided.");
+				return false;
+			}
+			else if constexpr ((not IsValidComponentType<TArgs> || ...))
+			{
+				static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ " - Trying to check for a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
+				return false;
+			}
+			else
+			{
+				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to read component data from an invalid entity.");
+				bool result = a_entity._universe->_registry.all_of<TArgs...>(a_entity);
+				return result;
+			}
+		}
+
+		template <typename ComponentType, typename... TArgs>
+		ComponentType* const ComponentManager::AddComponent(Entity const& a_entity, TArgs&&... a_args) const
+		{
+			if constexpr (not IsValidComponentType<ComponentType>)
+			{
+				static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to add a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
+				return nullptr;
+			}
+			else if constexpr (IsValidComponentType<ComponentType>)
+			{
+				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to add a component to an invalid entity.");
+				if (!HasComponents<ComponentType>(a_entity))
 				{
-					_keylock_system.SetComponentBits<ComponentType>(component.comp_list);
+					ComponentType& component = a_entity._universe->_registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
+					component._owner = a_entity;
+					component._id = DFW::GenerateDUID();
+
+					// Special Case for Entity Registration Component.
+					// TODO: Not all that nice, could look in an alternative.
+					if constexpr (AreSameTypes<EntityRegistrationComponent, ComponentType>)
+					{
+						_keylock_system.SetComponentBits<ComponentType>(component.comp_list);
+					}
+					else
+					{
+						auto const reg_comp = a_entity._universe->_entity_data_registration[a_entity._handle];
+						_keylock_system.SetComponentBits<ComponentType>(reg_comp->comp_list);
+					}
+
+					return &component;
 				}
-				else
+			}
+
+			return nullptr;
+		}
+
+		template <typename ComponentType>
+		bool ComponentManager::DeleteComponent(Entity const& a_entity) const
+		{
+			if constexpr (not IsValidComponentType<ComponentType>)
+			{
+				static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to delete a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
+				return false;
+			}
+			else if constexpr (IsValidComponentType<ComponentType>)
+			{
+				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to remove a component from an invalid entity.");
+				if (HasComponents<ComponentType>(a_entity))
 				{
+					a_entity._universe->_registry.remove<ComponentType>(a_entity);
+
 					auto const reg_comp = a_entity._universe->_entity_data_registration[a_entity._handle];
-					_keylock_system.SetComponentBits<ComponentType>(reg_comp->comp_list);
+					_keylock_system.ResetComponentBits<ComponentType>(reg_comp->comp_list);
+
+					return true;
 				}
-
-				return &component;
 			}
-		}
 
-		return nullptr;
-	}
-
-	template <typename ComponentType>
-	bool ECSComponentManager::DeleteComponent(ECSEntity const& a_entity) const
-	{
-		if constexpr (not IsValidComponentType<ComponentType>)
-		{
-			static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to delete a Component of type ComponentType that isn'ComponentType derived from DECS::ECSComponent.");
 			return false;
 		}
-		else if constexpr (IsValidComponentType<ComponentType>)
-		{
-			DFW_ASSERT(a_entity.IsEntityValid() && "Trying to remove a component from an invalid entity.");
-			if (HasComponents<ComponentType>(a_entity))
-			{
-				a_entity._universe->_registry.remove<ComponentType>(a_entity);
-
-				auto const reg_comp = a_entity._universe->_entity_data_registration[a_entity._handle];
-				_keylock_system.ResetComponentBits<ComponentType>(reg_comp->comp_list);
-
-				return true;
-			}
-		}
-
-		return false;
-	}
 
 #pragma endregion
 
-} // End of namespace ~ DECS
+	} // End of namespace ~ DECS.
+
+} // End of namespace ~ DFW.

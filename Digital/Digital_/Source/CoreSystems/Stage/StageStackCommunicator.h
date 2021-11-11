@@ -2,7 +2,7 @@
 
 #include <CoreSystems/Stage/StageEvents.h>
 
-namespace DCore
+namespace DFW
 {
 	// FW Declare.
 	class StageStackController;
@@ -25,4 +25,4 @@ namespace DCore
 
 	};
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

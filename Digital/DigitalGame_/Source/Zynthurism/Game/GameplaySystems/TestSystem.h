@@ -17,7 +17,7 @@
 
 namespace DGame
 {
-    class TestComponent final : public DECS::ECSComponent::StrictRegistrar<TestComponent>
+    class TestComponent final : public DFW::DECS::Component::StrictRegistrar<TestComponent>
     {
     public:
         TestComponent() = default;
@@ -28,14 +28,14 @@ namespace DGame
     struct TestEvent
     {
         TestEvent() = default;
-        TestEvent(DECS::ECSEntity a_entity, float32 a_old_value, float32 a_new_value)
+        TestEvent(DFW::DECS::Entity a_entity, float32 a_old_value, float32 a_new_value)
         {
             entity      = a_entity;
             old_value   = a_old_value;
             new_value   = a_new_value;
         }
 
-        DECS::ECSEntity entity;
+        DFW::DECS::Entity entity;
         float32 old_value;
         float32 new_value;
     };
@@ -45,7 +45,7 @@ namespace DGame
         DFW_INFOLOG("Testing EventTestFunction");
     }
 
-    class TestSystem : public DECS::ECSystem::StrictRegistrar<TestSystem>
+    class TestSystem : public DFW::DECS::System::StrictRegistrar<TestSystem>
     {
     public:
         TestSystem() = default;
@@ -53,14 +53,14 @@ namespace DGame
 
         void Init() override
         {
-            CoreService::GetECS()->EventHandler()->RegisterCallback<TestEvent, &TestSystem::OnValueAddition>(this);
-            CoreService::GetECS()->EventHandler()->RegisterCallback<TestEvent, &DGame::EventTestFunction>();
+            DFW::CoreService::GetECS()->EventHandler()->RegisterCallback<TestEvent, &TestSystem::OnValueAddition>(this);
+            DFW::CoreService::GetECS()->EventHandler()->RegisterCallback<TestEvent, &DGame::EventTestFunction>();
         }
 
         void Terminate() override
         {
-            CoreService::GetECS()->EventHandler()->UnregisterCallback<TestEvent, &TestSystem::OnValueAddition>(this);
-            CoreService::GetECS()->EventHandler()->UnregisterCallback<TestEvent, &DGame::EventTestFunction>();
+            DFW::CoreService::GetECS()->EventHandler()->UnregisterCallback<TestEvent, &TestSystem::OnValueAddition>(this);
+            DFW::CoreService::GetECS()->EventHandler()->UnregisterCallback<TestEvent, &DGame::EventTestFunction>();
         }
 
         void OnValueAddition(TestEvent& a_event)
@@ -68,17 +68,17 @@ namespace DGame
             DFW_INFOLOG("Value Addition Event Received: {}, {}, {}", a_event.entity.GetID(), a_event.new_value, a_event.old_value);
         }
 
-        inline virtual void Update(DECS::ECSUniverse* const a_universe) override
+        inline virtual void Update(DFW::DECS::Universe* const a_universe) override
         {
-            float32 dt = CoreService::GetGameClock()->GetLastFrameDeltaTime();
+            float32 dt = DFW::CoreService::GetGameClock()->GetLastFrameDeltaTime();
             
-            static DCore::TimeTracker timer(true);
+            static DFW::TimeTracker timer(true);
 
             auto view = a_universe->_registry.view<TestComponent>();
 
             for (auto& entity : view)
             {
-                if (timer.FetchElapsedTime() > DCore::TimeUnit(15.0f))
+                if (timer.FetchElapsedTime() > DFW::TimeUnit(15.0f))
                 {
                     TestComponent& comp1  = a_universe->_registry.get<TestComponent>(entity);
 
@@ -86,8 +86,8 @@ namespace DGame
                     float32 new_value = comp1.value + dt;
                     TestEvent val_event(comp1.GetOwner(), old_value, new_value);
 
-                    CoreService::GetECS()->EventHandler()->Broadcast(val_event);
-                    CoreService::GetECS()->EventHandler()->Broadcast<TestEvent>();
+                    DFW::CoreService::GetECS()->EventHandler()->Broadcast(val_event);
+                    DFW::CoreService::GetECS()->EventHandler()->Broadcast<TestEvent>();
                     timer.ResetTimer(true);
                 }
             }

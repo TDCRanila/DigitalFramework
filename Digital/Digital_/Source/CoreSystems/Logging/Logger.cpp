@@ -4,7 +4,7 @@
 #include <Utility/StringUtility.h>
 #include <Utility/TimeUtility.h>
 
-namespace DCore
+namespace DFW
 {
 	spdlog::logger Logger::_main_logger("Main Log");
 
@@ -143,4 +143,4 @@ namespace DCore
 		}
 	}
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

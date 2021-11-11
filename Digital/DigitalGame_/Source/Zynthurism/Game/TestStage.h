@@ -22,8 +22,8 @@ namespace DGame
 
     private: 
 
-        DECS::ECSModule* ecs;
-        DECS::ECSUniverse* _universe;
+        DFW::DECS::ECSModule* ecs;
+        DFW::DECS::Universe* _universe;
 
     };
 

@@ -13,11 +13,8 @@
 
 #include <array>
 
-namespace DCore
+namespace DFW
 {    
-    WindowManagementSystem ApplicationInstance::_window_management;
-    InputManagementSystem ApplicationInstance::_input_management;
-
     ApplicationInstance::ApplicationInstance()
         : _stage_stack_communicator(nullptr)
         , _application_name("")
@@ -44,6 +41,8 @@ namespace DCore
         // Core Services
         CoreService::ProvideGameClock(&_game_clock);
         CoreService::ProvideECS(&_ecs_module);
+        CoreService::ProvideInputSystem(&_input_system);
+        CoreService::ProvideWindowSystem(&_window_management);
 
         // Application
         TimeTracker application_timer;
@@ -61,16 +60,6 @@ namespace DCore
         TerminateApplication();
         const TimeUnit elapsed_termination_time = application_timer.ResetAndFetchElapsedTime(false);
         DFW_INFOLOG("{} - Terminating Application Complete - Elapsed Time: {}", _application_name, elapsed_termination_time);
-    }
-
-    WindowManagementSystem* ApplicationInstance::ProvideWindowManagement()
-    {
-        return &_window_management;
-    }
-
-    InputManagementSystem* ApplicationInstance::ProvideInputManagment()
-    {
-        return &_input_management;
     }
 
     StageStackController& ApplicationInstance::ProvideStageStackController()
@@ -103,9 +92,9 @@ namespace DCore
         PreApplicationInit();
         
         // Event Library
-        DCore::EventLibrary::ProcessEventCollection<DCore::StageEvent>();
+        DFW::EventLibrary::ProcessEventCollection<DFW::StageEvent>();
 
-        // ECS
+        // DECS
         _ecs_module.InitECS();
 
         // Stage Communicator
@@ -116,10 +105,10 @@ namespace DCore
         _window_management.ChangeDefaultWindowName(_application_name);
         _window_management.BindApplicationEventFunc(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
         _window_management.InitWindowManagement();
-        const DUID window_id            = _window_management.GetMainWindow();
-        WindowInstance& window_instance = _window_management._window_instances.at(window_id);
 
         // Imgui
+        DUID const window_id = _window_management.GetMainWindow();
+        DWindow::WindowInstance const& window_instance = _window_management._window_instances.at(window_id);
         _imgui.InitImGuiLayer(window_instance);
 
         // Gfx
@@ -147,7 +136,7 @@ namespace DCore
             glfwPollEvents();
 
             // Input
-            _input_management.ProcessInputEvents();
+            _input_system.ProcessInputEvents();
 
             // Update Game Instance(s)
             if (_window_management.HaveAllWindowsBeenClosed())
@@ -201,6 +190,11 @@ namespace DCore
         _window_management.TerminateWindowManagement();
 
         _ecs_module.TerminateECS();
+
+        CoreService::ProvideGameClock(nullptr);
+        CoreService::ProvideECS(nullptr);
+        CoreService::ProvideInputSystem(nullptr);
+        CoreService::ProvideWindowSystem(nullptr);
     }
 
     void ApplicationInstance::OnApplicationEvent(ApplicationEvent& a_event)
@@ -218,8 +212,8 @@ namespace DCore
 
     void ApplicationInstance::Debug_DrawBGFXInfo() const
     {
-        const DUID window_id = _window_management.GetMainWindow();
-        WindowDimension& window_dimension = _window_management._window_instances.at(window_id)._window_dimension;
+        DUID const window_id = _window_management.GetMainWindow();
+        DWindow::WindowDimension const& window_dimension = _window_management._window_instances.at(window_id)._window_dimension;
 
         // This dummy draw call is here to make sure that view 0 is cleared
         // if no other draw calls are submitted to view 0.
@@ -250,10 +244,10 @@ namespace DCore
         static bool show_debug_info = true;
         static uint32 bgfx_debug = BGFX_DEBUG_TEXT;
 
-        bool key_f1_pressed = _input_management.IsKeyReleased(DKey::F1);
+        bool key_f1_pressed = _input_system.IsKeyReleased(DInput::DKey::F1);
         if (key_f1_pressed)
         {
-            bool key_shift_pressed = _input_management.IsKeyDown(DKey::LEFT_SHIFT) || _input_management.IsKeyDown(DKey::RIGHT_SHIFT);
+            bool key_shift_pressed = _input_system.IsKeyDown(DInput::DKey::LEFT_SHIFT) || _input_system.IsKeyDown(DInput::DKey::RIGHT_SHIFT);
             if (show_debug_info && key_shift_pressed)
             {
                 bgfx_debug = show_stats ? BGFX_DEBUG_TEXT : BGFX_DEBUG_STATS;
@@ -268,4 +262,4 @@ namespace DCore
         }
     }
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW.

@@ -24,13 +24,13 @@ namespace DGame
 	void GameApplication::PostApplicationInit()
 	{
 		// Systems
-		CoreService::GetECS()->SystemManager()->AddSystem<TestSystem>();
+		DFW::CoreService::GetECS()->SystemManager()->AddSystem<TestSystem>();
 
 		// Stages
-		ProvideStageStackController().AttachStage<DEditor::DockerStage>("MainDockSpace", false);
-		ProvideStageStackController().AttachStage<DEditor::MainConsole>("Console", false);
-		//ProvideStageStackController().AttachStage<DCore::StageExample>("StageOne", false);
-		//ProvideStageStackController().AttachStage<DCore::StageExample>("StageTwo", false);
+		ProvideStageStackController().AttachStage<DFW::DEditor::DockerStage>("MainDockSpace", false);
+		ProvideStageStackController().AttachStage<DFW::DEditor::MainConsole>("Console", false);
+		//ProvideStageStackController().AttachStage<DFW::StageExample>("StageOne", false);
+		//ProvideStageStackController().AttachStage<DFW::StageExample>("StageTwo", false);
 		ProvideStageStackController().AttachStage<DGame::TestStage>("Test Stage", false);
 
 	}

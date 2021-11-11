@@ -2,7 +2,7 @@
 
 #include <CoreSystems/Window/WindowManagement.h>
 
-namespace DCore
+namespace DFW
 {
 	// FW Declare.
 	class ApplicationInstance;
@@ -12,7 +12,7 @@ namespace DCore
 	public:
 		~ImGuiLayer() = default;
 
-		void InitImGuiLayer(WindowInstance const& a_main_window);
+		void InitImGuiLayer(DWindow::WindowInstance const& a_main_window);
 		void TerminateImGuiLayer();
 
 		void BeginFrame(float32 const a_delta_time);
@@ -31,4 +31,4 @@ namespace DCore
 		void Debug_DrawViewportRenderingInformation() const;
 	};
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

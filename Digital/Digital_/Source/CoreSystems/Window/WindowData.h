@@ -7,41 +7,50 @@
 // Forward Declare(s)
 struct GLFWwindow;
 
-namespace DCore
+namespace DFW
 {
     // Forward Declare(s)
-    struct InputData;
-
-    struct WindowDimension
+    namespace DInput
     {
-        WindowDimension();
+        struct InputData;
+    }
 
-        int32 _current_frame_width, _current_frame_height;
-        int32 _current_width, _current_height;
-        int32 _current_x_pos, _current_y_pos; // Point is the the upper-left corner.
-        int32 _window_frame_left, _window_frame_top, _window_frame_right, _window_frame_bottom;
-    };
-
-    struct WindowInstance
+    namespace DWindow
     {
-        WindowInstance();
+        class WindowManagementSystem;
+        
+        struct WindowDimension
+        {
+            WindowDimension();
 
-        WindowDimension _window_dimension;
+            int32 _current_frame_width, _current_frame_height;
+            int32 _current_width, _current_height;
+            int32 _current_x_pos, _current_y_pos; // Point is the the upper-left corner.
+            int32 _window_frame_left, _window_frame_top, _window_frame_right, _window_frame_bottom;
+        };
 
-        WindowID        _id;
-        std::string     _name;
+        struct WindowInstance
+        {
+            WindowInstance();
 
-        GLFWwindow* _window;
-        InputData* _input_data;
+            WindowDimension _window_dimension;
 
-        bool _should_be_closed;
-        bool _is_minimized;
-        bool _is_focussed;
-    protected:
-        friend class WindowManagementSystem;
+            WindowID        _id;
+            std::string     _name;
 
-        ApplicationEventCallbackFunc _application_event_callback_func;
+            GLFWwindow* _window;
+            DInput::InputData* _input_data;
 
-    };
+            bool _should_be_closed;
+            bool _is_minimized;
+            bool _is_focussed;
 
-} // End of namespace ~ DCore.
+        protected:
+            friend WindowManagementSystem;
+
+            ApplicationEventCallbackFunc _application_event_callback_func;
+
+        };
+    } // End of namespace ~ DWindow.
+
+} // End of namespace ~ DFW.

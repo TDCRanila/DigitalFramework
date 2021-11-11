@@ -9,9 +9,9 @@
 
 #include <CoreSystems/CoreServices.h>
 
-namespace DCore
+namespace DFW
 {
-	void ImGuiLayer::InitImGuiLayer(WindowInstance const& a_main_window)
+	void ImGuiLayer::InitImGuiLayer(DWindow::WindowInstance const& a_main_window)
 	{
 		// Context
 		IMGUI_CHECKVERSION();
@@ -29,7 +29,7 @@ namespace DCore
 		// Enable Multi-Viewport Feature
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		const WindowDimension& dim = a_main_window._window_dimension;
+		DWindow::WindowDimension const& dim = a_main_window._window_dimension;
 		io.DisplaySize	= ImVec2(static_cast<float>(dim._current_width), static_cast<float>(dim._current_height));
 		io.DeltaTime	= 1.0f / 60.0f;
 		// TODO ImGui .ini filepath.
@@ -209,4 +209,4 @@ namespace DCore
 		}
 	}
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

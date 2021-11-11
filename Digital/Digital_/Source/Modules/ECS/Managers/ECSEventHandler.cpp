@@ -1,13 +1,17 @@
 #include <Modules/ECS/Managers/ECSEventHandler.h>
 
-namespace DECS
+namespace DFW
 {
-    void ECSEventHandler::Init()
+    namespace DECS
     {
-    }
+        void EventHandler::Init()
+        {
+        }
 
-    void ECSEventHandler::Terminate()
-    {
-    }
+        void EventHandler::Terminate()
+        {
+        }
 
-} // End of namespace ~ DECS.
+    } // End of namespace ~ DECS.
+
+} // End of namespace ~ DFW.

@@ -7,29 +7,33 @@
 
 #include <string>
 
-namespace DECS
+namespace DFW
 {
-    struct ECSEntityRegistrationComponent final : public DECS::ECSComponent::StrictRegistrar<ECSEntityRegistrationComponent>
+    namespace DECS
     {
-        ECSEntityRegistrationComponent()
-            : name("")
-            , id(DCore::DFW_INVALID_DUID)
-            , comp_list(0)
+        struct EntityRegistrationComponent final : public DECS::Component::StrictRegistrar<EntityRegistrationComponent>
         {
-        }
+            EntityRegistrationComponent()
+                : name("")
+                , id(DFW_INVALID_DUID)
+                , comp_list(0)
+            {
+            }
 
-        ECSEntityRegistrationComponent(DCore::DUID a_id, std::string a_name) 
-            : name(a_name)
-            , id (a_id)
-            , comp_list(0)
-        {
-        }
+            EntityRegistrationComponent(DFW::DUID a_id, std::string a_name)
+                : name(a_name)
+                , id(a_id)
+                , comp_list(0)
+            {
+            }
 
-        ~ECSEntityRegistrationComponent() = default;
+            ~EntityRegistrationComponent() = default;
 
-        std::string         name;
-        DCore::DUID         id;
-        ComponentBitList    comp_list;
-    };
+            std::string         name;
+            DFW::DUID         id;
+            ComponentBitList    comp_list;
+        };
 
-} // End of namespace ~ DECS.
+    } // End of namespace ~ DECS.
+
+} // End of namespace ~ DFW.

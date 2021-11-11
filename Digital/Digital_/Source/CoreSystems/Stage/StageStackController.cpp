@@ -1,8 +1,7 @@
 #include <CoreSystems/Stage/StageStackController.h>
 
-namespace DCore
+namespace DFW
 {
-
 	StageStackController::StageStackController()
 		:  _stage_insert_index(0)
 	{
@@ -107,4 +106,4 @@ namespace DCore
 		return _stages;
 	}
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.

@@ -5,7 +5,7 @@
 #include <sstream>
 #include <functional>
 
-namespace DCore
+namespace DFW
 {
 	enum class ApplicationEvents
 	{
@@ -298,4 +298,4 @@ namespace DCore
 		const char** const	_item_paths;
 	};
 
-} // End of namespace ~ DCore
+} // End of namespace ~ DFW.

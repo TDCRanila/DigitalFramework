@@ -5,7 +5,7 @@
 namespace DGame
 {
 
-	class GameMaster : public DCore::StageStackCommunicator
+	class GameMaster : public DFW::StageStackCommunicator
 	{
 	public:
 		GameMaster() = default;

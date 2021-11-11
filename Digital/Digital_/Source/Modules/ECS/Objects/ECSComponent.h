@@ -6,26 +6,30 @@
 
 #include <Modules/ECS/Objects/ECSEntity.h>
 
-namespace DECS 
+namespace DFW
 {
-	// FW Declare
-	class ECSComponentManager;
-
-	class ECSComponent : public DFactory::AutoFactory<ECSComponent> 
+	namespace DECS
 	{
-	public:
-		ECSComponent(Key);
-		virtual ~ECSComponent() = default;
-		
-		ECSEntity GetOwner() const;
-		DCore::DUID GetID() const;
+		// FW Declare
+		class ComponentManager;
 
-	protected:
-		friend class ECSComponentManager;
+		class Component : public DFactory::AutoFactory<Component>
+		{
+		public:
+			Component(Key);
+			virtual ~Component() = default;
 
-		DCore::DUID	_id;
-		ECSEntity	_owner;
+			Entity GetOwner() const;
+			DFW::DUID GetID() const;
 
-	};
+		protected:
+			friend class ComponentManager;
 
-} // End of namespace ~ DECS
+			DFW::DUID	_id;
+			Entity	_owner;
+
+		};
+
+	} // End of namespace ~ DECS.
+
+} // End of namespace ~ DFW.

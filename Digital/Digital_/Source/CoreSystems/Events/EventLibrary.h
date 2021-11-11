@@ -4,7 +4,7 @@
 
 #include <Utility/TemplateUtility.h>
 
-namespace DCore
+namespace DFW
 {
     // FW Declare
     class ReflectedEvent;
@@ -27,11 +27,11 @@ namespace DCore
         inline static int32 _category_counter = 0;
     };
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.
 
 #pragma region Template Implementation
 
-namespace DCore
+namespace DFW
 {
     template <typename FactoryType>
     requires (IsDerivedFrom<FactoryType, ReflectedEvent>)
@@ -49,6 +49,6 @@ namespace DCore
         ++_category_counter;
     }
 
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.
 
 #pragma endregion

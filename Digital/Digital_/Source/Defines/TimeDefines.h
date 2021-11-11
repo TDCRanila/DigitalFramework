@@ -1,6 +1,6 @@
 #pragma once
 
-namespace DCore
+namespace DFW
 {
 	typedef float64 TimeUnit;
-} // End of namespace ~ DCore.
+} // End of namespace ~ DFW.
