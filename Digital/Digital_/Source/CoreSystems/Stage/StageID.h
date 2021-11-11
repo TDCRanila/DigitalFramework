@@ -4,7 +4,6 @@
 
 namespace DFW
 {
-
     using StageID = DFW::DUID;
 
 } // End of namespace ~ DFW.
