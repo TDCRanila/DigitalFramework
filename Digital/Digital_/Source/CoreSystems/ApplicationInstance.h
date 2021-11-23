@@ -39,13 +39,13 @@ namespace DFW
         void OnApplicationEvent(ApplicationEvent const& a_event);
 
         void Debug_DrawBGFXInfo() const;
+        void Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval);
 
         DWindow::WindowManagementSystem _window_management;
         DInput::InputManagementSystem _input_system;
         
         ImGuiLayer _imgui;
  
-        TimeTracker _game_clock_log_timer;
         GameClock _game_clock;
 
         DECS::ECSModule _ecs_module;

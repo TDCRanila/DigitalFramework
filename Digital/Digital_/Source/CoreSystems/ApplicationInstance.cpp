@@ -18,7 +18,7 @@ namespace DFW
     ApplicationInstance::ApplicationInstance()
         : _stage_stack_communicator(nullptr)
         , _application_name("")
-        , _game_clock_log_timer(true)
+        , _game_clock(0.0f, false)
     {
     }
 
@@ -45,11 +45,11 @@ namespace DFW
         CoreService::ProvideWindowSystem(&_window_management);
 
         // Application
-        TimeTracker application_timer;
+        TimeTracker application_timer(false);
         DFW_INFOLOG("{} - Init Application.", _application_name);
         application_timer.StartTimer();
         InitApplication();
-        const TimeUnit elapsed_init_time = application_timer.ResetAndFetchElapsedTime(false);
+        TimeUnit const elapsed_init_time = application_timer.ResetAndFetchElapsedTime(false);
         DFW_INFOLOG("{} - Init Application Complete - Elapsed Time: {}", _application_name, elapsed_init_time);
 
         DFW_INFOLOG("{} - Running Application.", _application_name);
@@ -58,7 +58,7 @@ namespace DFW
         DFW_INFOLOG("{} - Terminating Application.", _application_name);
         application_timer.StartTimer();
         TerminateApplication();
-        const TimeUnit elapsed_termination_time = application_timer.ResetAndFetchElapsedTime(false);
+        TimeUnit const elapsed_termination_time = application_timer.ResetAndFetchElapsedTime(false);
         DFW_INFOLOG("{} - Terminating Application Complete - Elapsed Time: {}", _application_name, elapsed_termination_time);
     }
 
@@ -123,14 +123,6 @@ namespace DFW
         bool should_run(true);
         while (should_run)
         {
-            // Clock
-            float32 game_clock_log_interval(10.0f);
-            if (_game_clock_log_timer.FetchElapsedTime() > game_clock_log_interval)
-            {
-                _game_clock_log_timer.ResetTimer(true);
-                _game_clock.DebugLog();
-            }
-
             _game_clock.BeginGameFrame();
             
             glfwPollEvents();
@@ -178,6 +170,8 @@ namespace DFW
             }
 
             _game_clock.EndGameFrame();
+
+            Debug_ReportGameClockInfo(DFW::TimeUnit(10.f));
         }
     }
 
@@ -259,6 +253,16 @@ namespace DFW
                 bgfx::setDebug(show_debug_info ? BGFX_DEBUG_NONE : bgfx_debug);
                 show_debug_info = show_debug_info ? false : true;
             }
+        }
+    }
+
+    void ApplicationInstance::Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval)
+    {
+        static TimeTracker game_clock_log_timer(true);
+        if (game_clock_log_timer.FetchElapsedTime() > a_log_interval)
+        {
+            game_clock_log_timer.ResetTimer(true);
+            _game_clock.Debug_LogInfo();
         }
     }
 
