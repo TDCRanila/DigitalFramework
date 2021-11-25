@@ -4,6 +4,13 @@ namespace DFW
 {
     namespace DWindow
     {
+        WindowParameters::WindowParameters(std::string const& a_window_name, int32 const a_window_width, int32 const a_window_height)
+            : name(a_window_name)
+            , width(a_window_width)
+            , height(a_window_height)
+        {
+        }
+
         WindowDimension::WindowDimension()
             : _current_width(1280)
             , _current_height(720)

@@ -4,9 +4,6 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-#include <bgfx/bgfx.h>
-#include <bgfx/platform.h>
-
 #include <CoreSystems/ApplicationInstance.h>
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/Input/InputManagement.h>
@@ -101,9 +98,6 @@ namespace DFW
             dim._current_frame_width = static_cast<int32>(a_width);
             dim._current_frame_height = static_cast<int32>(a_height);
 
-            bgfx::reset(a_width, a_height);
-            bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
-
             WindowFramebufferResizeEvent event(old_frame_width, old_frame_height, dim._current_frame_width, dim._current_frame_height);
             user_data->_application_event_callback_func(event);
         }
@@ -185,17 +179,6 @@ namespace DFW
 
 #pragma endregion
 
-        WindowManagementSystem::WindowManagementSystem(const std::string a_main_window_name)
-            : _default_width(1280)
-            , _default_height(720)
-            , _default_window_name(a_main_window_name)
-        {
-        }
-
-        WindowManagementSystem::~WindowManagementSystem()
-        {
-        }
-
         void WindowManagementSystem::InitWindowManagement()
         {
             glfwSetErrorCallback(GLFWWindowCallBacks::glfw_error_callback);
@@ -204,39 +187,97 @@ namespace DFW
 
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-            // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
-            bgfx::renderFrame();
+            SharedPtr<WindowInstance> const new_window = ConstructWindow(
+                WindowParameters(DFW_DEFAULT_WINDOW_NAME, DFW_DEFAULT_WINDOW_WIDTH, DFW_DEFAULT_WINDOW_HEIGHT)
+            );
 
-            WindowInstance* default_first_window = ConstructWindow(_default_width, _default_height, _default_window_name);
-            glfwSetWindowUserPointer(default_first_window->_window, default_first_window);
-            _default_first_window_id = default_first_window->_id;
-
-            bgfx::PlatformData platform_data;
-            platform_data.nwh = glfwGetWin32Window(default_first_window->_window);
-            bgfx::setPlatformData(platform_data);
-
-            bgfx::Init bgfx_init;
-            bgfx_init.type = bgfx::RendererType::Count; // Auto Choose Renderer
-            bgfx_init.resolution.width = _default_width;
-            bgfx_init.resolution.height = _default_height;
-            bgfx_init.resolution.reset = BGFX_RESET_VSYNC;
-            bgfx::init(bgfx_init);
-
-            // Set view 0 to the same dimensions as the window and to clear the color buffer.
-            const bgfx::ViewId kClearView = 0;
-            bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x00cc6600);
-            bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
+            _main_window_id = new_window->_id;
         }
 
         void WindowManagementSystem::TerminateWindowManagement()
         {
-            bgfx::shutdown();
             glfwTerminate();
         }
 
-        void WindowManagementSystem::BindApplicationEventFunc(const ApplicationEventCallbackFunc& a_event_callback_func)
+        void WindowManagementSystem::PollWindowEvents()
+        {
+            glfwPollEvents();
+        }
+
+        void WindowManagementSystem::BindApplicationEventFunc(ApplicationEventCallbackFunc const& a_event_callback_func)
         {
             _application_event_callback_func = a_event_callback_func;
+        }
+
+        SharedPtr<WindowInstance> WindowManagementSystem::ConstructWindow(WindowParameters const& a_window_parameters)
+        {
+
+            const char* name = a_window_parameters.name.c_str();
+            GLFWwindow* glfw_window = glfwCreateWindow(a_window_parameters.width, a_window_parameters.height, name, NULL, NULL);
+
+            // Setting-Up GLFW Window Callbacks
+            {
+                glfwSetWindowFocusCallback(glfw_window, GLFWWindowCallBacks::glfw_window_focus_callback);
+                glfwSetWindowIconifyCallback(glfw_window, GLFWWindowCallBacks::glfw_window_minimized_callback);
+
+                glfwSetWindowCloseCallback(glfw_window, GLFWWindowCallBacks::glfw_window_closed_callback);
+
+                glfwSetWindowPosCallback(glfw_window, GLFWWindowCallBacks::glfw_window_position_callback);
+                glfwSetWindowSizeCallback(glfw_window, GLFWWindowCallBacks::glfw_window_resize_callback);
+                glfwSetFramebufferSizeCallback(glfw_window, GLFWWindowCallBacks::glfw_framebuffer_resize_callback);
+
+                glfwSetDropCallback(glfw_window, GLFWWindowCallBacks::glfw_set_item_drop_callback);
+
+                glfwSetKeyCallback(glfw_window, GLFWWindowCallBacks::glfw_key_callback);
+                glfwSetCharCallback(glfw_window, GLFWWindowCallBacks::glfw_char_callback);
+                glfwSetMouseButtonCallback(glfw_window, GLFWWindowCallBacks::glfw_mousebutton_callback);
+                glfwSetCursorPosCallback(glfw_window, GLFWWindowCallBacks::glfw_mouse_callback);
+                glfwSetScrollCallback(glfw_window, GLFWWindowCallBacks::glfw_scroll_callback);
+            }
+
+            SharedPtr<WindowInstance> new_window = MakeShared<WindowInstance>();
+            new_window->_id             = DFW::GenerateDUID();
+            new_window->_window         = glfw_window;
+            new_window->_name           = a_window_parameters.name;
+
+            new_window->_application_event_callback_func = _application_event_callback_func;
+
+            glfwSetWindowUserPointer(new_window->_window, new_window.get());
+
+            CoreService::GetInputSystem()->RegisterWindow(new_window.get());
+            
+            SetFocussedWindowID(new_window->_id);
+
+            _window_instances.emplace(new_window->_id, new_window);
+            return new_window;
+        }
+
+        WindowID WindowManagementSystem::GetMainWindowID() const
+        {
+            return _main_window_id;
+        }
+
+        SharedPtr<WindowInstance> const WindowManagementSystem::GetMainWindow() const
+        {
+            return _window_instances.at(_main_window_id);
+        }
+
+        SharedPtr<WindowInstance> const WindowManagementSystem::GetWindow(WindowID const a_window_id) const
+        {
+            if (auto const it = _window_instances.find(a_window_id); it != _window_instances.end())
+            {
+                return (*it).second;
+            }
+            else
+            {
+                DFW_ERRORLOG("Attempting to find a window with ID: {}, but it cannot be found.", a_window_id);
+                return SharedPtr<WindowInstance>();
+            }
+        }
+
+        void* WindowManagementSystem::GetMainWindowNWH() const
+        {
+            return glfwGetWin32Window(GetWindow(_main_window_id)->_window);
         }
 
         bool WindowManagementSystem::HaveAllWindowsBeenClosed() const
@@ -244,82 +285,9 @@ namespace DFW
             return _window_instances.size() <= 0;
         }
 
-        const DUID WindowManagementSystem::GetMainWindow() const
+        WindowID WindowManagementSystem::CurrentFocussedWindowID() const
         {
-            return _default_first_window_id;
-        }
-
-        WindowInstance* WindowManagementSystem::ConstructWindow(int32 a_width, int32 a_height, std::string  a_name)
-        {
-            WindowInstance* new_window = ConstructWindow(a_width, a_height, a_name.c_str());
-            return new_window;
-        }
-
-        WindowInstance* WindowManagementSystem::ConstructWindow(int32 a_width, int32 a_height, const char* a_name)
-        {
-            WindowInstance new_window;
-
-            GLFWwindow* glfw_window = glfwCreateWindow(a_width, a_height, a_name, NULL, NULL);
-            new_window._id = DFW::GenerateDUID();
-            new_window._window = glfw_window;
-            new_window._application_event_callback_func = _application_event_callback_func;
-            new_window._name = a_name;
-            new_window._is_focussed = true;
-
-            SetFocussedWindowID(new_window._id);
-
-            glfwSetWindowFocusCallback(glfw_window, GLFWWindowCallBacks::glfw_window_focus_callback);
-            glfwSetWindowIconifyCallback(glfw_window, GLFWWindowCallBacks::glfw_window_minimized_callback);
-
-            glfwSetWindowCloseCallback(glfw_window, GLFWWindowCallBacks::glfw_window_closed_callback);
-
-            glfwSetWindowPosCallback(glfw_window, GLFWWindowCallBacks::glfw_window_position_callback);
-            glfwSetWindowSizeCallback(glfw_window, GLFWWindowCallBacks::glfw_window_resize_callback);
-            glfwSetFramebufferSizeCallback(glfw_window, GLFWWindowCallBacks::glfw_framebuffer_resize_callback);
-
-            glfwSetDropCallback(glfw_window, GLFWWindowCallBacks::glfw_set_item_drop_callback);
-
-            glfwSetKeyCallback(glfw_window, GLFWWindowCallBacks::glfw_key_callback);
-            glfwSetCharCallback(glfw_window, GLFWWindowCallBacks::glfw_char_callback);
-            glfwSetMouseButtonCallback(glfw_window, GLFWWindowCallBacks::glfw_mousebutton_callback);
-            glfwSetCursorPosCallback(glfw_window, GLFWWindowCallBacks::glfw_mouse_callback);
-            glfwSetScrollCallback(glfw_window, GLFWWindowCallBacks::glfw_scroll_callback);
-
-            CoreService::GetInputSystem()->RegisterWindow(&new_window);
-
-            auto [it_pair, result] = _window_instances.emplace(new_window._id, new_window);
-            if (result)
-            {
-                return &(it_pair->second);
-            }
-            else
-            {
-                DFW_ERRORLOG("Window Management System couldn't construct a new window.");
-                return nullptr;
-            }
-        }
-
-        void WindowManagementSystem::ChangeDefaultWindowName(const std::string a_new_default_window_name)
-        {
-            ChangeDefaultWindowName(a_new_default_window_name.c_str());
-        }
-
-        void WindowManagementSystem::ChangeDefaultWindowName(const char* a_new_default_window_name)
-        {
-            _default_window_name = a_new_default_window_name;
-        }
-
-        const WindowInstance* WindowManagementSystem::CurrentFocussedWindow() const
-        {
-            auto it = _window_instances.find(_current_focussed_window_id);
-            if (it != _window_instances.end())
-            {
-                return &(*it).second;
-            }
-            else
-            {
-                return nullptr;
-            }
+            return _current_focussed_window_id;
         }
 
         bool WindowManagementSystem::IsWindowFocussed(WindowID a_window_id) const
@@ -327,41 +295,69 @@ namespace DFW
             return a_window_id == _current_focussed_window_id;
         }
 
-        bool WindowManagementSystem::IsWindowMinimized(const WindowID a_window_id) const
+        bool WindowManagementSystem::IsWindowMinimized(WindowID const a_window_id) const
         {
-            auto it = _window_instances.find(a_window_id);
-            if (it != _window_instances.end())
+            return GetWindow(a_window_id)->_is_minimized;
+        }
+
+        void WindowManagementSystem::SetDefaultWindowParameters(WindowParameters const& a_window_parameters)
+        {
+            _default_window_paramters = a_window_parameters;
+        }
+
+        void WindowManagementSystem::ChangeWindowParameters(WindowID const a_window_id, WindowParameters const& a_window_parameters)
+        {
+            SharedPtr<WindowInstance>& window_ptr = GetWindowInternal(a_window_id);
+
+            // Name
+            window_ptr->_name = a_window_parameters.name;
+            
+            // Window Resize
+            // Lend the glfw window callback
+            GLFWwindow* const glfw_window = window_ptr.get()->_window;
+            GLFWWindowCallBacks::glfw_window_resize_callback(glfw_window, a_window_parameters.width, a_window_parameters.height);
+        }
+
+        SharedPtr<WindowInstance>& WindowManagementSystem::GetWindowInternal(WindowID const a_window_id)
+        {
+            if (auto const it = _window_instances.find(a_window_id); it != _window_instances.end())
             {
-                return (*it).second._is_minimized;
+                return (*it).second;
             }
             else
             {
-                return false;
+                DFW_ERRORLOG("Attempting to find a window with ID: {}, but it cannot be found.", a_window_id);
+                DFW_ASSERT((*it).second);
+                SharedPtr<WindowInstance> ptr;
+                return ptr;
             }
         }
 
-        void WindowManagementSystem::DestructWindow(WindowInstance* a_window)
+        void WindowManagementSystem::DestructWindow(WindowInstance* const a_window_ptr)
         {
-            if (a_window->_id == _current_focussed_window_id)
+            DFW_ASSERT(a_window_ptr);
+
+            if (a_window_ptr->_id == _current_focussed_window_id)
                 SetFocussedWindowID(WindowID());
 
-            glfwDestroyWindow(a_window->_window);
+            glfwDestroyWindow(a_window_ptr->_window);
+            _window_instances.erase(a_window_ptr->_id);
 
-            CoreService::GetInputSystem()->UnregisterWindow(a_window);
-
-            _window_instances.erase(a_window->_id);
+            CoreService::GetInputSystem()->UnregisterWindow(a_window_ptr->_id);
         }
 
-        void WindowManagementSystem::SetFocussedWindowID(WindowID a_window_id)
+        void WindowManagementSystem::SetFocussedWindowID(WindowID const a_window_id)
         {
             bool is_first = _current_focussed_window_id.is_nil();
+
             bool is_not_same = a_window_id != _current_focussed_window_id;
+
             if (!is_first && is_not_same)
             {
                 auto it = _window_instances.find(_current_focussed_window_id);
                 if (it != _window_instances.end())
                 {
-                    (*it).second._is_focussed = false;
+                    (*it).second->_is_focussed = false;
                 }
             }
 

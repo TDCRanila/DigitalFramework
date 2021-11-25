@@ -19,6 +19,16 @@ namespace DFW
     {
         class WindowManagementSystem;
         
+        struct WindowParameters
+        {
+            WindowParameters() = default;
+            WindowParameters(std::string const& a_window_name, int32 const a_window_width, int32 const a_window_height);
+
+            std::string name;
+            int32       width;
+            int32       height;
+        };
+
         struct WindowDimension
         {
             WindowDimension();

@@ -95,7 +95,7 @@ namespace DFW
 			friend DWindow::WindowManagementSystem;
 
 			void RegisterWindow(DWindow::WindowInstance* a_window);
-			void UnregisterWindow(DWindow::WindowInstance* a_window);
+			void UnregisterWindow(DWindow::WindowID a_window);
 
 		private:
 

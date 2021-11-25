@@ -2,6 +2,8 @@
 
 #include <CoreSystems/Window/WindowData.h>
 
+#include <CoreSystems/Memory.h>
+
 // Forward Declare(s)
 struct GLFWwindow;
 
@@ -12,6 +14,12 @@ namespace DFW
 
     namespace DWindow
     {
+        constexpr const char*   DFW_DEFAULT_WINDOW_NAME     = "DIGITAL";
+        constexpr int32         DFW_DEFAULT_WINDOW_WIDTH    = 1280;
+        constexpr int32         DFW_DEFAULT_WINDOW_HEIGHT   = 720;
+
+        using WindowContainer = std::unordered_map<WindowID, SharedPtr<WindowInstance>>;
+
         class WindowManagementSystem
         {
         public:
@@ -46,53 +54,48 @@ namespace DFW
             }; // End of "namespace" ~ GLFWWindowCallBacks
 
         public:
-            ~WindowManagementSystem();
+            ~WindowManagementSystem() = default;
+
+            SharedPtr<WindowInstance> ConstructWindow(WindowParameters const& a_window_parameters);
+
+            WindowID GetMainWindowID() const;
+            SharedPtr<WindowInstance> const GetMainWindow() const;
+            SharedPtr<WindowInstance> const GetWindow(WindowID const a_window_id) const;
+            void* GetMainWindowNWH() const;
 
             bool HaveAllWindowsBeenClosed() const;
+            void RequestWindowClose(std::string const& a_name);
+            void RequestWindowClose(WindowID const a_window_id);
 
-            const DUID GetMainWindow() const;
+            WindowID CurrentFocussedWindowID() const;
+            bool IsWindowFocussed(WindowID const a_window_id) const;
+            bool IsWindowMinimized(WindowID const a_window_id) const;
 
-            WindowInstance* ConstructWindow(const int32 a_width, const int32 a_height, const std::string  a_name);
-            WindowInstance* ConstructWindow(const int32 a_width, const int32 a_height, const char* a_name);
+            void SetDefaultWindowParameters(WindowParameters const& a_window_parameters);
+            void ChangeWindowParameters(WindowID const a_window_id, WindowParameters const& a_window_parameters);
 
-            void CloseWindow(const std::string  a_name);
-            void CloseWindow(WindowID a_window_id);
-
-            void ChangeDefaultWindowName(const char* a_new_default_window_name);
-            void ChangeDefaultWindowName(const std::string a_new_default_window_name);
-            void ChangeWindowName(WindowID a_window_id, const std::string a_new_window_name);
-
-            const WindowInstance* CurrentFocussedWindow() const;
-            bool IsWindowFocussed(const WindowID a_window_id) const;
-            bool IsWindowMinimized(const WindowID a_window_id) const;
-
-        protected:
+        private:
             friend ApplicationInstance;
 
-            WindowManagementSystem(const std::string a_window_name = "DIGITAL");
+            WindowManagementSystem() = default;
 
             void InitWindowManagement();
             void TerminateWindowManagement();
+            void PollWindowEvents();
 
-            void BindApplicationEventFunc(const ApplicationEventCallbackFunc& a_event_callback_func);
-
-            std::unordered_map<WindowID, WindowInstance> _window_instances;
+            void BindApplicationEventFunc(ApplicationEventCallbackFunc const& a_event_callback_func);
 
         private:
-            void DestructWindow(WindowInstance* a_window);
+            SharedPtr<WindowInstance>& GetWindowInternal(WindowID const a_window_id);
+            void DestructWindow(WindowInstance* const a_window_ptr);
+            void SetFocussedWindowID(WindowID const a_window_id);
 
-            void SetFocussedWindowID(const WindowID a_window_id);
-
-            std::string _default_window_name;
-
+            WindowContainer _window_instances;
             ApplicationEventCallbackFunc _application_event_callback_func;
 
-            WindowID _default_first_window_id;
+            WindowParameters _default_window_paramters;
             WindowID _current_focussed_window_id;
-
-            int32 _default_width;
-            int32 _default_height;
-
+            WindowID _main_window_id;
         };
 
     } // End of namespace ~ DWindow.

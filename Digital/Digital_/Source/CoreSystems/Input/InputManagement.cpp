@@ -241,17 +241,18 @@ namespace DFW
 			a_window->_input_data = &data;
 		}
 
-		void InputManagementSystem::UnregisterWindow(DWindow::WindowInstance* a_window)
+		void InputManagementSystem::UnregisterWindow(DWindow::WindowID a_window_id)
 		{
-			_input_data_storage.erase(a_window->_id);
+			_input_data_storage.erase(a_window_id);
 		}
 
 		bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
 		{
-			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
-			if (focussed_window && focussed_window->_input_data)
+			auto const ws = CoreService::GetWindowSystem();
+			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetWindow(ws->CurrentFocussedWindowID());
+			if (focussed_window_ptr && focussed_window_ptr->_input_data)
 			{
-				const InputData& data = *focussed_window->_input_data;
+				const InputData& data = *focussed_window_ptr->_input_data;
 				const DKeyAction& key_action = data._keys[a_key];
 				return (key_action == DKeyAction::PRESSED);
 			}
@@ -261,10 +262,11 @@ namespace DFW
 
 		bool InputManagementSystem::IsKeyRepeatedInternal(int32 a_key) const
 		{
-			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
-			if (focussed_window && focussed_window->_input_data)
+			auto const ws = CoreService::GetWindowSystem();
+			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetWindow(ws->CurrentFocussedWindowID());
+			if (focussed_window_ptr && focussed_window_ptr->_input_data)
 			{
-				const InputData& data = *focussed_window->_input_data;
+				const InputData& data = *focussed_window_ptr->_input_data;
 				const DKeyAction& key_action = data._keys[a_key];
 				return (key_action == DKeyAction::REPEATED);
 			}
@@ -274,10 +276,11 @@ namespace DFW
 
 		bool InputManagementSystem::IsKeyDownInternal(int32 a_key) const
 		{
-			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
-			if (focussed_window && focussed_window->_input_data)
+			auto const ws = CoreService::GetWindowSystem();
+			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetWindow(ws->CurrentFocussedWindowID());
+			if (focussed_window_ptr && focussed_window_ptr->_input_data)
 			{
-				const InputData& data = *focussed_window->_input_data;
+				const InputData& data = *focussed_window_ptr->_input_data;
 				const DKeyAction& key_action = data._keys[a_key];
 				return (key_action == DKeyAction::PRESSED) || (key_action == DKeyAction::REPEATED);
 			}
@@ -287,16 +290,16 @@ namespace DFW
 
 		bool InputManagementSystem::IsKeyReleasedInternal(int32 a_key) const
 		{
-			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
-			if (focussed_window && focussed_window->_input_data)
+			auto const ws = CoreService::GetWindowSystem();
+			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetWindow(ws->CurrentFocussedWindowID());
+			if (focussed_window_ptr && focussed_window_ptr->_input_data)
 			{
-				const InputData& data = *focussed_window->_input_data;
+				const InputData& data = *focussed_window_ptr->_input_data;
 				auto it_key = data._buffered_keys.find(a_key);
 				if (it_key != data._buffered_keys.end())
 				{
 					const DKeyAction& key_action = data._keys[a_key];
 					return (key_action == DKeyAction::RELEASED);
-
 				}
 			}
 
