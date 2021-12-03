@@ -38,9 +38,9 @@ namespace DFW
 			void InitECS();
 			void TerminateECS();
 			void UpdateECS();
+			void UpdateECSImGui();
 
 		private:
-
 			DECS::SystemManager* _system_manager;
 			DECS::EntityManager* _entity_manager;
 			DECS::EventHandler* _event_handler;

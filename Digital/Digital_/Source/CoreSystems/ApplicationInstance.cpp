@@ -186,6 +186,8 @@ namespace DFW
                             stage->RenderImGui();
                     }
 
+                    _ecs_module.UpdateECSImGui();
+
                     _imgui.EndFrame();
                 }
 

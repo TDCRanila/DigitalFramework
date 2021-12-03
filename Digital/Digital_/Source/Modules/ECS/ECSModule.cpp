@@ -87,6 +87,15 @@ namespace DFW
 			}
 		}
 
+		void ECSModule::UpdateECSImGui()
+		{
+			// Update systems and events.
+			for (auto const& [universe_name, universe_ptr] : _universes)
+			{
+				_system_manager->UpdateSystemsImGui(universe_ptr);
+			}
+		}
+
 		SystemManager* const ECSModule::SystemManager() const
 		{
 			return _system_manager;

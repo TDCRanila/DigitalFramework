@@ -34,6 +34,10 @@ namespace DFW
 		{
 		}
 
+		void System::UpdateSystemImGui(Universe* const /*a_universe*/)
+		{
+		}
+
 		bool System::IsSystemPaused() const
 		{
 			return _paused;

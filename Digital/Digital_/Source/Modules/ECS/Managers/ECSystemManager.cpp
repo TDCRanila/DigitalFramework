@@ -66,6 +66,19 @@ namespace DFW
 			}
 		}
 
+		void SystemManager::UpdateSystemsImGui(Universe* const a_universe)
+		{
+			if (_systems.empty())
+			{
+				return;
+			}
+
+			for (auto const& [system_type, system_ptr] : _systems)
+			{
+				system_ptr->UpdateSystemImGui(a_universe);
+			}
+		}
+
 	} // End of namespace ~ DECS.
 
 } // End of namespace ~ DFW.

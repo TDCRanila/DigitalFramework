@@ -62,6 +62,8 @@ namespace DFW
 			void Terminate();
 			void UpdateSystems(Universe* const a_universe);
 
+			void UpdateSystemsImGui(Universe* const a_universe);
+
 			SystemManager();
 
 		private:
