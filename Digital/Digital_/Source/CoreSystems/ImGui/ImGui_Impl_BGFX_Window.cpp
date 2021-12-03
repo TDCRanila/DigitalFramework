@@ -18,15 +18,15 @@ namespace DFW
 {
     namespace DImGui
     {
-        bool ImGui_ImplBGFX_InitWindowPlatform(GLFWwindow* a_window)
+        bool ImGui_ImplBGFX_InitWindowPlatform(GLFWwindow* a_main_window)
         {
-            DImGui::main_window = a_window;
+            DImGui::main_window = a_main_window;
 
             ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-            main_viewport->PlatformHandle = static_cast<void*>(a_window);
+            main_viewport->PlatformHandle = static_cast<void*>(a_main_window);
 
 #ifdef _WIN32
-            main_viewport->PlatformHandleRaw = glfwGetWin32Window(a_window);
+            main_viewport->PlatformHandleRaw = glfwGetWin32Window(a_main_window);
 #else
 #error "Unsupported Platform."
 #endif
@@ -57,11 +57,17 @@ namespace DFW
 
         void ImGui_ImplBGFX_ShutdownWindowPlatform()
         {
+            ImGui::DestroyPlatformWindows();
+
             ImGui_ImplBGFX_ShutdownPlatformInterface();
 
             for (DImGui::ImGuiViewportDataBGFX const* const viewport_data : DImGui::imgui_rendering_context._viewports)
             {
-                bgfx::destroy(viewport_data->_framebuffer_handle);
+                // TODO - BUG - Wasn't happening before, but framebuffer handle would be invalid for the main window
+                // which is just registered for simplicity sake - see comment @103 - might just skip the main window id.
+                // Should check if this is still happening after window resize is fixed.
+                if (bgfx::isValid(viewport_data->_framebuffer_handle))
+                    bgfx::destroy(viewport_data->_framebuffer_handle);
             }
         }
 
@@ -74,21 +80,21 @@ namespace DFW
         {
             // Register platform interface (will be coupled with a renderer interface)
             ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
-            platform_io.Platform_CreateWindow = ImGui_ImplBGFX_CreateViewportWindow;
-            platform_io.Platform_DestroyWindow = ImGui_ImplBGFX_DestroyViewportWindow;
-            platform_io.Platform_RenderWindow = ImGui_ImplBGFX_RenderViewportWindow;
-            platform_io.Platform_UpdateWindow = ImGui_ImplBGFX_UpdateViewPortWindow;
-            platform_io.Platform_SwapBuffers = ImGui_ImplBGFX_SwapBuffers;
+            platform_io.Platform_CreateWindow       = ImGui_ImplBGFX_CreateViewportWindow;
+            platform_io.Platform_DestroyWindow      = ImGui_ImplBGFX_DestroyViewportWindow;
+            platform_io.Platform_RenderWindow       = ImGui_ImplBGFX_RenderViewportWindow;
+            platform_io.Platform_UpdateWindow       = ImGui_ImplBGFX_UpdateViewPortWindow;
+            platform_io.Platform_SwapBuffers        = ImGui_ImplBGFX_SwapBuffers;
 
-            platform_io.Platform_ShowWindow = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_ShowWindow;
-            platform_io.Platform_SetWindowPos = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_SetWindowPos;
-            platform_io.Platform_GetWindowPos = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_GetWindowPos;
-            platform_io.Platform_SetWindowSize = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_SetWindowSize;
-            platform_io.Platform_GetWindowSize = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_GetWindowSize;
-            platform_io.Platform_SetWindowFocus = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_SetWindowFocus;
-            platform_io.Platform_GetWindowFocus = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_GetWindowFocus;
+            platform_io.Platform_ShowWindow         = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_ShowWindow;
+            platform_io.Platform_SetWindowPos       = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_SetWindowPos;
+            platform_io.Platform_GetWindowPos       = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_GetWindowPos;
+            platform_io.Platform_SetWindowSize      = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_SetWindowSize;
+            platform_io.Platform_GetWindowSize      = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_GetWindowSize;
+            platform_io.Platform_SetWindowFocus     = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_SetWindowFocus;
+            platform_io.Platform_GetWindowFocus     = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_GetWindowFocus;
             platform_io.Platform_GetWindowMinimized = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_GetWindowMinimized;
-            platform_io.Platform_SetWindowTitle = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_SetWindowTitle;
+            platform_io.Platform_SetWindowTitle     = ImGuiPlatformInterfaceHelpers::ImGui_ImplBGFX_SetWindowTitle;
 
 #if GLFW_HAS_WINDOW_ALPHA
             platform_io.Platform_SetWindowAlpha = ImGui_ImplGlfw_SetWindowAlpha;
@@ -98,17 +104,19 @@ namespace DFW
             platform_io.Platform_SetImeInputPos = ImGui_ImplWin32_SetImeInputPos;
 #endif
 
-            // Register main window handle (which is owned by the main application, not by us)
-            // This is mostly for simplicity and consistency, so that our code (e.g. mouse handling etc.) can use same logic for main and secondary viewports.
+            // Register main window handle (which is owned by the main application, not by the imgui layer implementation.)
+            // This is mostly for simplicity and consistency, so that the code (e.g. mouse handling etc.) can use the same logic for main and secondary viewports.
             ImGuiViewportDataBGFX* main_viewport_data = DImGui::imgui_rendering_context._viewports.emplace_back(IM_NEW(ImGuiViewportDataBGFX)());
-            main_viewport_data->_view_id = ImGui_ImplBGFX_AllocateViewportID();
-            main_window_id = main_viewport_data->_view_id;
-            main_viewport_data->_window = DImGui::main_window;
-            main_viewport_data->_window_owned = false;
+            main_viewport_data->_view_id        = ImGui_ImplBGFX_AllocateViewportID();
+            main_viewport_data->_window         = DImGui::main_window;
+            main_viewport_data->_window_owned   = false;
+            // main_viewport_data->_framebuffer_handle = BGFX_INVALID_HANDLE; // Specifically set to an invalid handle.
+            
+            ImGuiViewport* main_viewport        = ImGui::GetMainViewport();
+            main_viewport->PlatformUserData     = main_viewport_data;
+            main_viewport->PlatformHandle       = static_cast<void*>(DImGui::main_window);
 
-            ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-            main_viewport->PlatformUserData = main_viewport_data;
-            main_viewport->PlatformHandle = static_cast<void*>(DImGui::main_window);
+            DImGui::main_window_id = main_viewport_data->_view_id;
         }
 
         void ImGui_ImplBGFX_ShutdownPlatformInterface()
@@ -200,7 +208,8 @@ namespace DFW
                 else
                     DFW_ASSERT(false, "Attempting to destroy viewport window, but not registered.");
 
-                bgfx::destroy(viewport_data->_framebuffer_handle);
+                if (bgfx::isValid(viewport_data->_framebuffer_handle))
+                    bgfx::destroy(viewport_data->_framebuffer_handle);
 
                 ImGui_ImplBGFX_FreeViewportID(viewport_data->_view_id);
 

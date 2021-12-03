@@ -63,10 +63,11 @@ namespace DFW
 		// Render & Platform Shutdown
 		DImGui::ImGui_ImplBGFX_ShutdownGraphics();
 		DImGui::ImGui_ImplBGFX_ShutdownWindowPlatform();
-		DImGui::imgui_rendering_context = DImGui::ImGuiRenderingContext();
 
 		// Context
 		ImGui::DestroyContext();
+
+		DImGui::imgui_rendering_context = DImGui::ImGuiRenderingContext();
 	}
 
 	void ImGuiLayer::BeginFrame(float32 const a_delta_time)
