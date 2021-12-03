@@ -15,6 +15,7 @@ namespace DFW
 	namespace DWindow
 	{
 		class WindowManagementSystem;
+		class WindowManagementGLFW;
 		struct WindowInstance;
 	} // End of namespace ~ DWindow.
 
@@ -93,6 +94,7 @@ namespace DFW
 			void PollClipboardInput();
 
 			friend DWindow::WindowManagementSystem;
+			friend DWindow::WindowManagementGLFW;
 
 			void RegisterWindow(DWindow::WindowInstance* a_window);
 			void UnregisterWindow(DWindow::WindowID a_window);

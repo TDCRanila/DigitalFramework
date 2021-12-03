@@ -22,7 +22,7 @@ namespace DFW
             DFW_ASSERT(main_window_ptr, "Pointer to the main window is invalid, window mangement might not have been initialised.");
 
             bgfx::PlatformData platform_data;
-            platform_data.nwh = CoreService::GetWindowSystem()->GetMainWindowNWH();
+            platform_data.nwh = CoreService::GetWindowSystem()->GetMainWindowPWH();
             bgfx::setPlatformData(platform_data);
 
             bgfx::Init bgfx_init;

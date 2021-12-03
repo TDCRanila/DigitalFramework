@@ -37,11 +37,15 @@ namespace DFW
         // Logging
         Logger::Init(true, 5000);
 
+        // Allocate Systems
+        _window_management  = DWindow::WindowManagementSystem::Construct();
+        _render_module      = MakeUnique<DRender::RenderModuleBGFX>();
+
         // Core Services
         CoreService::ProvideGameClock(&_game_clock);
         CoreService::ProvideECS(&_ecs_module);
         CoreService::ProvideInputSystem(&_input_system);
-        CoreService::ProvideWindowSystem(&_window_management);
+        CoreService::ProvideWindowSystem(_window_management.get());
 
         // Application
         TimeTracker application_timer(false);
@@ -98,13 +102,12 @@ namespace DFW
         DFW::EventLibrary::ProcessEventCollection<DFW::StageEvent>();
 
         // Window Management
-        _window_management.BindApplicationEventFunc(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
-        _window_management.InitWindowManagement();
+        _window_management->BindApplicationEventFunc(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
+        _window_management->InitWindowManagement();
         DWindow::WindowParameters param(_application_name, DWindow::DFW_DEFAULT_WINDOW_WIDTH, DWindow::DFW_DEFAULT_WINDOW_HEIGHT);
-        _window_management.ChangeWindowParameters(_window_management.GetMainWindowID(), param);
+        _window_management->ChangeWindowParameters(_window_management->GetMainWindowID(), param);
 
         // RenderModule
-        _render_module = MakeUnique<DRender::RenderModuleBGFX>();
         _render_module->InitRenderModule();       
 
         // ImGui
@@ -129,7 +132,7 @@ namespace DFW
         _render_module->TerminateRenderModule();
 
         // Window Management
-        _window_management.TerminateWindowManagement();
+        _window_management->TerminateWindowManagement();
 
         // Gracefully remove attached stages.
         _stage_stack_controller.RemoveAllAttachedStages();
@@ -148,11 +151,11 @@ namespace DFW
         {
             _game_clock.BeginGameFrame();
             
-            _window_management.PollWindowEvents();
+            _window_management->PollWindowEvents();
             _input_system.ProcessInputEvents();
 
             // Update Game Instance(s)
-            if (_window_management.HaveAllWindowsBeenClosed())
+            if (_window_management->HaveAllWindowsBeenClosed())
             {
                 should_run = false;
             }

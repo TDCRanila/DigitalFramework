@@ -29,8 +29,9 @@ namespace DFW
 		// Enable Multi-Viewport Feature
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		SharedPtr<DWindow::WindowInstance> main_window_ptr = CoreService::GetWindowSystem()->GetMainWindow();
-		DFW_ASSERT(main_window_ptr, "Pointer to the main window is invalid, window mangement might not have been initialised.");
+		SharedPtr<DWindow::WindowInstance> main_window_ptr	= CoreService::GetWindowSystem()->GetMainWindow();
+		GLFWwindow* glfw_window_ptr							= reinterpret_cast<GLFWwindow*>(CoreService::GetWindowSystem()->GetMainWindowNWH());
+		DFW_ASSERT(main_window_ptr, "Pointer to the main window is invalid, window management might not have been initialised.");
 
 		io.DisplaySize	= ImVec2(
 				static_cast<float>(main_window_ptr->_window_dimension._current_width)
@@ -48,9 +49,9 @@ namespace DFW
 
 		// TODO: Simply using the imgui ogl example for buttons etc.
 		// Should eventually be all moved to BGFX Window and handle input there as well.
-		ImGui_ImplGlfw_InitForOther(main_window_ptr->_window, true);
+		ImGui_ImplGlfw_InitForOther(glfw_window_ptr, true);
 
-		DImGui::ImGui_ImplBGFX_InitWindowPlatform(main_window_ptr->_window);
+		DImGui::ImGui_ImplBGFX_InitWindowPlatform(glfw_window_ptr);
 		DImGui::ImGui_ImplBGFX_InitGraphics();
 
 		// Custom Callbacks.

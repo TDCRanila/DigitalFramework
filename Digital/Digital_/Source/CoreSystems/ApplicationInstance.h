@@ -45,10 +45,10 @@ namespace DFW
         StageStackController _stage_stack_controller;
         std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;
 
-        DWindow::WindowManagementSystem         _window_management;
-        DInput::InputManagementSystem           _input_system;
-        DECS::ECSModule                         _ecs_module;
-        std::unique_ptr<DRender::RenderModule>  _render_module;
+        SharedPtr<DWindow::WindowManagementSystem>  _window_management;
+        DInput::InputManagementSystem               _input_system;
+        DECS::ECSModule                             _ecs_module;
+        SharedPtr<DRender::RenderModule>            _render_module;
  
         ImGuiLayer _imgui;
         

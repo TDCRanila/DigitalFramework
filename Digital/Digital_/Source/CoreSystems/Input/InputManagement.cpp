@@ -249,7 +249,7 @@ namespace DFW
 		bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
 		{
 			auto const ws = CoreService::GetWindowSystem();
-			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetWindow(ws->CurrentFocussedWindowID());
+			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetFocussedWindow();
 			if (focussed_window_ptr && focussed_window_ptr->_input_data)
 			{
 				const InputData& data = *focussed_window_ptr->_input_data;
@@ -263,7 +263,7 @@ namespace DFW
 		bool InputManagementSystem::IsKeyRepeatedInternal(int32 a_key) const
 		{
 			auto const ws = CoreService::GetWindowSystem();
-			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetWindow(ws->CurrentFocussedWindowID());
+			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetFocussedWindow();
 			if (focussed_window_ptr && focussed_window_ptr->_input_data)
 			{
 				const InputData& data = *focussed_window_ptr->_input_data;
@@ -277,7 +277,7 @@ namespace DFW
 		bool InputManagementSystem::IsKeyDownInternal(int32 a_key) const
 		{
 			auto const ws = CoreService::GetWindowSystem();
-			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetWindow(ws->CurrentFocussedWindowID());
+			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetFocussedWindow();
 			if (focussed_window_ptr && focussed_window_ptr->_input_data)
 			{
 				const InputData& data = *focussed_window_ptr->_input_data;
@@ -291,7 +291,7 @@ namespace DFW
 		bool InputManagementSystem::IsKeyReleasedInternal(int32 a_key) const
 		{
 			auto const ws = CoreService::GetWindowSystem();
-			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetWindow(ws->CurrentFocussedWindowID());
+			SharedPtr<DWindow::WindowInstance> const focussed_window_ptr = ws->GetFocussedWindow();
 			if (focussed_window_ptr && focussed_window_ptr->_input_data)
 			{
 				const InputData& data = *focussed_window_ptr->_input_data;
