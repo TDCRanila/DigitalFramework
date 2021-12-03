@@ -46,9 +46,8 @@ namespace DFW
 		SetupStyle();
 
 		/// Render & Platform Initialization and binding.
-
-		// TODO: Simply using the imgui ogl example for buttons etc.
-		// Should eventually be all moved to BGFX Window and handle input there as well.
+		
+		// TODO Implement other window API & implement compiler defines.
 		ImGui_ImplGlfw_InitForOther(glfw_window_ptr, true);
 
 		DImGui::ImGui_ImplBGFX_InitWindowPlatform(glfw_window_ptr);
