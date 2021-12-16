@@ -3,6 +3,7 @@
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/GameClock.h>
 
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/TimeTracker.h>
 
 #include <Modules/ECS/ECSModule.h>
@@ -11,7 +12,6 @@
 #include <Modules/ECS/Objects/ECSUniverse.h>
 #include <Modules/ECS/Objects/ECSEntity.h>
 #include <Modules/ECS/Managers/ECSEntityManager.h>
-#include <Modules/ECS/Managers/ECSEventHandler.h>
 
 #include <ranges>
 

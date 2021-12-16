@@ -2,9 +2,9 @@
 		 
 #include <Modules/ECS/Managers/ECSEntityManager.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
-#include <Modules/ECS/Managers/ECSEventHandler.h>
 #include <Modules/ECS/Objects/ECSUniverse.h>
 
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Logging/Logger.h>
 
 namespace DFW
@@ -34,11 +34,10 @@ namespace DFW
 			// Allocate.
 			_entity_manager = new DECS::EntityManager();
 			_system_manager = new DECS::SystemManager();
-			_event_handler = new DECS::EventHandler();
+			_event_handler	= new EventDispatcher();
 
 			// Init.
 			_system_manager->Init();
-			_event_handler->Init();
 
 			_initialized = true;
 		}
@@ -58,7 +57,6 @@ namespace DFW
 
 			// Terminate.
 			_system_manager->Terminate();
-			_event_handler->Terminate();
 
 			delete _entity_manager;
 			delete _system_manager;
@@ -97,7 +95,7 @@ namespace DFW
 			return _entity_manager;
 		}
 
-		EventHandler* const ECSModule::EventHandler() const
+		EventDispatcher* const ECSModule::EventHandler() const
 		{
 			return _event_handler;
 		}

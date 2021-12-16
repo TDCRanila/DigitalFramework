@@ -8,13 +8,13 @@ namespace DFW
 {
 	// FW Declare.
 	class ApplicationInstance;
+	class EventDispatcher;
 
 	namespace DECS
 	{
 		// FW Declares.
 		class SystemManager;
 		class EntityManager;
-		class EventHandler;
 		class Universe;
 
 		class ECSModule final
@@ -24,7 +24,7 @@ namespace DFW
 
 			SystemManager* const SystemManager() const;
 			EntityManager* const EntityManager() const;
-			EventHandler* const EventHandler() const;
+			EventDispatcher* const EventHandler() const;
 
 			Universe* RegisterUniverse(std::string const& a_universe_name);
 			Universe* const GetUniverse(std::string const& a_universe_name);
@@ -41,14 +41,14 @@ namespace DFW
 
 		private:
 
-			DECS::SystemManager* _system_manager;
-			DECS::EntityManager* _entity_manager;
-			DECS::EventHandler* _event_handler;
-			Universe* _current_universe;
-
 			std::unordered_map<std::string, Universe*> _universes;
 
-			bool				_initialized;
+			DECS::SystemManager*	_system_manager;
+			DECS::EntityManager*	_entity_manager;
+			EventDispatcher*		_event_handler;
+			Universe*				_current_universe;
+
+			bool _initialized;
 
 		};
 
