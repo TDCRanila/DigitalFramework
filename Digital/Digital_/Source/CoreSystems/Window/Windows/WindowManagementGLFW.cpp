@@ -35,7 +35,7 @@ namespace DFW
 
                 window_system->RequestWindowClose(user_data->_id);
 
-                application_event_dispatcher->InstantBroadcast<WindowFocusEvent>(user_data->_is_focussed);
+                application_event_dispatcher->InstantBroadcast<WindowCloseEvent>();
             }
 
             static void glfw_window_focus_callback(GLFWwindow* a_window, int a_result)
