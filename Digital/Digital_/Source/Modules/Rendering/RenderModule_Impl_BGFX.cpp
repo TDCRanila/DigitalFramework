@@ -2,6 +2,7 @@
 
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/DUID.h>
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/ImGui/ImGuiLayer.h>
 #include <CoreSystems/Window/WindowManagement.h>
@@ -31,6 +32,9 @@ namespace DFW
             bgfx_init.resolution.height = main_window_ptr->_window_dimension._current_height;
             bgfx_init.resolution.reset  = BGFX_RESET_VSYNC;
             bgfx::init(bgfx_init);
+
+            // Register Event Callbacks.
+            CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderModuleBGFX::OnWindowResizeEvent>(this);
         }
 
         void RenderModuleBGFX::TerminateRenderModule()
