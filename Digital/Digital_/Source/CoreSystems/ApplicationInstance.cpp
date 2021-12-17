@@ -40,6 +40,7 @@ namespace DFW
 
         // Core Services
         CoreService::ProvideGameClock(&_game_clock);
+        CoreService::ProvideMainEventHandler(&application_event_handler);
         CoreService::ProvideECS(&_ecs_module);
         CoreService::ProvideInputSystem(&_input_system);
         CoreService::ProvideWindowSystem(&_window_management);
@@ -103,7 +104,6 @@ namespace DFW
 
         // Window Management
         _window_management.ChangeDefaultWindowName(_application_name);
-        _window_management.BindApplicationEventFunc(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
         _window_management.InitWindowManagement();
 
         // Imgui
@@ -189,19 +189,6 @@ namespace DFW
         CoreService::ProvideECS(nullptr);
         CoreService::ProvideInputSystem(nullptr);
         CoreService::ProvideWindowSystem(nullptr);
-    }
-
-    void ApplicationInstance::OnApplicationEvent(ApplicationEvent const& a_event)
-    {
-        DFW_LOG("ApplicationEvent Received: {}", a_event.GetDebugString());
-
-        const std::vector<StageBase*>& _stages = _stage_stack_controller.GetStages();
-        for (auto stage_it = _stages.rbegin(); stage_it != _stages.rend(); ++stage_it)
-        {
-            StageBase* stage_ptr = (*stage_it);
-            if (!stage_ptr->IsDisabled())
-                stage_ptr->OnApplicationEvent(a_event);
-        }
     }
 
     void ApplicationInstance::Debug_DrawBGFXInfo() const

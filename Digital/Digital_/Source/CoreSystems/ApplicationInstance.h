@@ -1,9 +1,9 @@
 #pragma once
 
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/GameClock.h>
 #include <CoreSystems/TimeTracker.h>
 #include <CoreSystems/Input/InputManagement.h>
-#include <CoreSystems/Events/EventImplementation.h>
 #include <CoreSystems/Stage/StageStackController.h>
 #include <CoreSystems/Stage/StageStackCommunicator.h>
 #include <CoreSystems/Window/WindowManagement.h>
@@ -23,6 +23,8 @@ namespace DFW
         void RunApplication(char const* a_name);
         void RunApplication(std::string const& a_name);
 
+        EventDispatcher application_event_handler;
+
     protected:
         void RegisterStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
 
@@ -36,8 +38,6 @@ namespace DFW
         void UpdateApplication();
         void TerminateApplication();
 
-        void OnApplicationEvent(ApplicationEvent const& a_event);
-
         void Debug_DrawBGFXInfo() const;
         void Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval);
 
@@ -45,7 +45,7 @@ namespace DFW
         DInput::InputManagementSystem _input_system;
         
         ImGuiLayer _imgui;
- 
+
         GameClock _game_clock;
 
         DECS::ECSModule _ecs_module;

@@ -9,6 +9,7 @@ namespace DFW
 {
     // FW Declare.
     class ApplicationInstance;
+    class EventDispatcher;
 
     namespace DWindow
     {
@@ -41,6 +42,8 @@ namespace DFW
                 static void glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos);
                 static void glfw_mousebutton_callback(GLFWwindow* a_window, int a_key, int a_action, int a_mods);
                 static void glfw_scroll_callback(GLFWwindow* a_window, double a_x_offset, double a_y_offset);
+                
+                static EventDispatcher* application_event_dispatcher;
             private:
                 GLFWWindowCallBacks() = delete;
             }; // End of "namespace" ~ GLFWWindowCallBacks
@@ -74,8 +77,6 @@ namespace DFW
             void InitWindowManagement();
             void TerminateWindowManagement();
 
-            void BindApplicationEventFunc(const ApplicationEventCallbackFunc& a_event_callback_func);
-
             std::unordered_map<WindowID, WindowInstance> _window_instances;
 
         private:
@@ -84,8 +85,6 @@ namespace DFW
             void SetFocussedWindowID(const WindowID a_window_id);
 
             std::string _default_window_name;
-
-            ApplicationEventCallbackFunc _application_event_callback_func;
 
             WindowID _default_first_window_id;
             WindowID _current_focussed_window_id;

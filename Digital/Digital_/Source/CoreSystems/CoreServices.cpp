@@ -5,6 +5,7 @@
 namespace DFW
 {
     GameClock* CoreService::_gc_service                             = nullptr;
+    EventDispatcher* CoreService::_meh_service                      = nullptr;
     DECS::ECSModule* CoreService::_ecs_service                      = nullptr;
     DInput::InputManagementSystem* CoreService::_input_service      = nullptr;
     DWindow::WindowManagementSystem* CoreService::_window_service   = nullptr;
@@ -22,6 +23,17 @@ namespace DFW
     void CoreService::ProvideGameClock(GameClock* a_provided_service)
     {
         _gc_service = a_provided_service;
+    }
+
+    EventDispatcher* CoreService::GetMainEventHandler()
+    {
+        DFW_ASSERT(_gc_service && "No or invalid Game Clock provided.");
+        return _meh_service;
+    }
+
+    void CoreService::ProvideMainEventHandler(EventDispatcher* a_provided_service)
+    {
+        _meh_service = a_provided_service;
     }
 
     DECS::ECSModule* CoreService::GetECS()
