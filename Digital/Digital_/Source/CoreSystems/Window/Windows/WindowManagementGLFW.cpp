@@ -18,6 +18,8 @@ namespace DFW
     {
         namespace GLFWWindowCallBacks
         {
+            static EventDispatcher* application_event_dispatcher = nullptr;
+
             static void glfw_error_callback(int error, const char* description)
             {
                 UNUSED(error);
@@ -29,10 +31,9 @@ namespace DFW
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
                 user_data->_should_be_closed = true;
 
-                WindowCloseEvent event;
-                user_data->_application_event_callback_func(event);
-
                 static_cast<WindowManagementGLFW*>(CoreService::GetWindowSystem())->RequestWindowClose(user_data->_id);
+
+                application_event_dispatcher->InstantBroadcast<WindowFocusEvent>(user_data->_is_focussed);
             }
 
             static void glfw_window_focus_callback(GLFWwindow* a_window, int a_result)
@@ -40,8 +41,7 @@ namespace DFW
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
                 user_data->_is_focussed = static_cast<bool>(a_result);
 
-                WindowFocusEvent event(user_data->_is_focussed);
-                user_data->_application_event_callback_func(event);
+                application_event_dispatcher->InstantBroadcast<WindowFocusEvent>(user_data->_is_focussed);
             }
 
             static void glfw_window_minimized_callback(GLFWwindow* a_window, int a_result)
@@ -49,8 +49,7 @@ namespace DFW
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
                 user_data->_is_minimized = static_cast<bool>(a_result);
 
-                WindowMinimizedEvent event(user_data->_is_focussed);
-                user_data->_application_event_callback_func(event);
+                application_event_dispatcher->InstantBroadcast<WindowMinimizedEvent>(user_data->_is_focussed);
             }
 
             static void glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos)
@@ -64,8 +63,12 @@ namespace DFW
                 dim._current_x_pos = static_cast<int32>(a_x_pos);
                 dim._current_y_pos = static_cast<int32>(a_y_pos);
 
-                WindowMoveEvent event(old_x_pos, old_y_pos, dim._current_x_pos, dim._current_y_pos);
-                user_data->_application_event_callback_func(event);
+                application_event_dispatcher->InstantBroadcast<WindowMoveEvent>(
+                        old_x_pos
+                    ,   old_y_pos
+                    , dim._current_x_pos
+                    , dim._current_y_pos
+                    );
             }
 
             static void glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
@@ -81,8 +84,12 @@ namespace DFW
 
                 glfwGetWindowFrameSize(a_window, &dim._window_frame_left, &dim._window_frame_top, &dim._window_frame_right, &dim._window_frame_bottom);
 
-                WindowResizeEvent event(old_width, old_height, dim._current_width, dim._current_height);
-                user_data->_application_event_callback_func(event);
+                application_event_dispatcher->InstantBroadcast<WindowResizeEvent>(
+                        old_width
+                    ,   old_height
+                    ,   dim._current_width
+                    ,   dim._current_height
+                    );
             }
 
             static void glfw_framebuffer_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
@@ -96,8 +103,12 @@ namespace DFW
                 dim._current_frame_width = static_cast<int32>(a_width);
                 dim._current_frame_height = static_cast<int32>(a_height);
 
-                WindowFramebufferResizeEvent event(old_frame_width, old_frame_height, dim._current_frame_width, dim._current_frame_height);
-                user_data->_application_event_callback_func(event);
+                application_event_dispatcher->InstantBroadcast<WindowFramebufferResizeEvent>(
+                        old_frame_width
+                    ,   old_frame_height
+                    ,   dim._current_frame_width
+                    ,   dim._current_frame_height
+                    );
             }
 
             static void glfw_set_clipboard_string(void* a_user_data, const char* a_text)
@@ -105,8 +116,7 @@ namespace DFW
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(a_user_data);
                 glfwSetClipboardString(reinterpret_cast<GLFWwindow*>(a_user_data), a_text);
 
-                InputClipboardEvent event(a_text);
-                user_data->_application_event_callback_func(event);
+                application_event_dispatcher->InstantBroadcast<InputClipboardEvent>(a_text);
             }
 
             static const char* glfw_get_clipboard_string(void* a_user_data)
@@ -118,8 +128,7 @@ namespace DFW
             {
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
-                InputItemDropEvent event(a_count, a_paths);
-                user_data->_application_event_callback_func(event);
+                application_event_dispatcher->InstantBroadcast<InputItemDropEvent>(a_count, a_paths);
             }
 
             static void glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods)
@@ -185,6 +194,9 @@ namespace DFW
 
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
+            // Saving Core Services.
+            GLFWWindowCallBacks::application_event_dispatcher = CoreService::GetMainEventHandler();
+            
             // Construct the main window.
             SharedPtr<WindowInstance> const new_window = ConstructWindow(default_window_parameters);
 
@@ -231,8 +243,6 @@ namespace DFW
             new_window->_id             = DFW::GenerateDUID();
             new_window->_glfw_window    = glfw_window;
             new_window->_name           = a_window_parameters.name;
-
-            new_window->_application_event_callback_func = _application_event_callback_func;
 
             glfwSetWindowUserPointer(new_window->_glfw_window, new_window.get());
 

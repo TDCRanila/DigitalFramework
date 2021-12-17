@@ -22,11 +22,6 @@ namespace DFW
             return MakeShared<WindowManagementGLFW>();
         }
 
-        void WindowManagementSystem::BindApplicationEventFunc(ApplicationEventCallbackFunc const& a_event_callback_func)
-        {
-            _application_event_callback_func = a_event_callback_func;
-        }
-
         WindowID WindowManagementSystem::GetMainWindowID() const
         {
             return _main_window_id;

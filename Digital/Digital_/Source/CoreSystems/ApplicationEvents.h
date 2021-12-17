@@ -56,7 +56,7 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		const bool _is_focussed;
+		bool _is_focussed;
 	};
 
 	class WindowMinimizedEvent : public ApplicationEvent
@@ -78,7 +78,7 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		const bool _is_minimized;
+		bool _is_minimized;
 	};
 
 	class WindowMoveEvent : public ApplicationEvent
@@ -112,10 +112,10 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		const int32 _old_x_pos;
-		const int32 _old_y_pos;
-		const int32 _new_x_pos;
-		const int32 _new_y_pos;
+		int32 _old_x_pos;
+		int32 _old_y_pos;
+		int32 _new_x_pos;
+		int32 _new_y_pos;
 	};
 
 	class WindowResizeEvent : public ApplicationEvent
@@ -149,10 +149,10 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		const int32 old_width;
-		const int32 old_height;
-		const int32 new_width;
-		const int32 new_height;
+		int32 old_width;
+		int32 old_height;
+		int32 new_width;
+		int32 new_height;
 	};
 
 	class WindowFramebufferResizeEvent : public WindowResizeEvent
@@ -213,7 +213,7 @@ namespace DFW
 
 		DFW_CONSTRUCT_EVENT(ApplicationEvents, GamePauseEvent);
 
-		const bool _paused;
+		bool _paused;
 	};
 
 	class GameResetEvent : public ApplicationEvent
@@ -255,7 +255,7 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		const char* const _clipboard_input;
+		const char* _clipboard_input;
 	};
 
 	class InputItemDropEvent : public ApplicationEvent
@@ -294,8 +294,8 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		const int32			_item_count;
-		const char** const	_item_paths;
+		int32			_item_count;
+		const char**	_item_paths;
 	};
 
 } // End of namespace ~ DFW.

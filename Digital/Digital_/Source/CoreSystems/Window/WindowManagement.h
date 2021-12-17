@@ -56,8 +56,6 @@ namespace DFW
 
             WindowContainer _window_instances;
 
-            ApplicationEventCallbackFunc _application_event_callback_func;
-
             WindowID _main_window_id;
         
         private:

@@ -4,6 +4,7 @@ namespace DFW
 {
     // FW Declare.
     class GameClock;
+    class EventDispatcher;
 
     namespace DECS
     {
@@ -26,6 +27,9 @@ namespace DFW
         static GameClock* GetGameClock();
         static void ProvideGameClock(GameClock* a_provided_service);
 
+        static EventDispatcher* GetMainEventHandler();
+        static void ProvideMainEventHandler(EventDispatcher* a_provided_service);
+
         static DECS::ECSModule* GetECS();
         static void ProvideECS(DECS::ECSModule* a_provided_service);
 
@@ -37,6 +41,7 @@ namespace DFW
 
     private:
         static GameClock*                       _gc_service;
+        static EventDispatcher*                 _meh_service;
         static DECS::ECSModule*                 _ecs_service;
         static DInput::InputManagementSystem*   _input_service;
         static DWindow::WindowManagementSystem* _window_service;

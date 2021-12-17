@@ -43,6 +43,7 @@ namespace DFW
 
         // Core Services
         CoreService::ProvideGameClock(&_game_clock);
+        CoreService::ProvideMainEventHandler(&application_event_handler);
         CoreService::ProvideECS(&_ecs_module);
         CoreService::ProvideInputSystem(&_input_system);
         CoreService::ProvideWindowSystem(_window_management.get());
@@ -102,7 +103,6 @@ namespace DFW
         DFW::EventLibrary::ProcessEventCollection<DFW::StageEvent>();
 
         // Window Management
-        _window_management->BindApplicationEventFunc(DFW_BIND_FUNC(ApplicationInstance::OnApplicationEvent));
         _window_management->InitWindowManagement();
         DWindow::WindowParameters param(_application_name, DWindow::DFW_DEFAULT_WINDOW_WIDTH, DWindow::DFW_DEFAULT_WINDOW_HEIGHT);
         _window_management->ChangeWindowParameters(_window_management->GetMainWindowID(), param);
@@ -199,19 +199,6 @@ namespace DFW
             _game_clock.EndGameFrame();
 
             Debug_ReportGameClockInfo(DFW::TimeUnit(10.f));
-        }
-    }
-
-    void ApplicationInstance::OnApplicationEvent(ApplicationEvent const& a_event)
-    {
-        DFW_LOG("ApplicationEvent Received: {}", a_event.GetDebugString());
-
-        std::vector<StageBase*> const& _stages = _stage_stack_controller.GetStages();
-        for (auto stage_it = _stages.rbegin(); stage_it != _stages.rend(); ++stage_it)
-        {
-            StageBase* stage_ptr = (*stage_it);
-            if (!stage_ptr->IsDisabled())
-                stage_ptr->OnApplicationEvent(a_event);
         }
     }
 
