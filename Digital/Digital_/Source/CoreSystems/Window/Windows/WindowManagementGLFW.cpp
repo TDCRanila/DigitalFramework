@@ -18,7 +18,9 @@ namespace DFW
     {
         namespace GLFWWindowCallBacks
         {
-            static EventDispatcher* application_event_dispatcher = nullptr;
+            static EventDispatcher* application_event_dispatcher        = nullptr;
+            static DFW::DInput::InputManagementSystem* input_system     = nullptr;
+            static DFW::DWindow::WindowManagementGLFW* window_system    = nullptr;
 
             static void glfw_error_callback(int error, const char* description)
             {
@@ -31,7 +33,7 @@ namespace DFW
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
                 user_data->_should_be_closed = true;
 
-                static_cast<WindowManagementGLFW*>(CoreService::GetWindowSystem())->RequestWindowClose(user_data->_id);
+                window_system->RequestWindowClose(user_data->_id);
 
                 application_event_dispatcher->InstantBroadcast<WindowFocusEvent>(user_data->_is_focussed);
             }
@@ -66,8 +68,8 @@ namespace DFW
                 application_event_dispatcher->InstantBroadcast<WindowMoveEvent>(
                         old_x_pos
                     ,   old_y_pos
-                    , dim._current_x_pos
-                    , dim._current_y_pos
+                    ,   dim._current_x_pos
+                    ,   dim._current_y_pos
                     );
             }
 
@@ -135,12 +137,12 @@ namespace DFW
             {
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
-                int32 key = static_cast<int32>(a_key);
-                int32 scancode = static_cast<int32>(a_scancode);
-                int32 action = static_cast<int32>(a_action);
-                int32 modifier = static_cast<int32>(a_mods);
+                int32 key       = static_cast<int32>(a_key);
+                int32 scancode  = static_cast<int32>(a_scancode);
+                int32 action    = static_cast<int32>(a_action);
+                int32 modifier  = static_cast<int32>(a_mods);
 
-                CoreService::GetInputSystem()->SendKeyEvent(user_data->_id, key, scancode, action, modifier);
+                input_system->SendKeyEvent(user_data->_id, key, scancode, action, modifier);
             }
 
             static void glfw_char_callback(GLFWwindow* a_window, unsigned int a_char)
@@ -149,19 +151,19 @@ namespace DFW
 
                 uint16 character = static_cast<uint16>(a_char);
 
-                CoreService::GetInputSystem()->SendCharEvent(user_data->_id, character);
+                input_system->SendCharEvent(user_data->_id, character);
             }
 
             static void glfw_mousebutton_callback(GLFWwindow* a_window, int a_key, int a_action, int a_mods)
             {
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
-                int32 key = static_cast<int32>(a_key);
-                int32 action = static_cast<int32>(a_action);
-                int32 modifier = static_cast<int32>(a_mods);
+                int32 key       = static_cast<int32>(a_key);
+                int32 action    = static_cast<int32>(a_action);
+                int32 modifier  = static_cast<int32>(a_mods);
                 int32 undefined = -1;
 
-                CoreService::GetInputSystem()->SendMouseEvent(user_data->_id, key, undefined, action, modifier);
+                input_system->SendMouseEvent(user_data->_id, key, undefined, action, modifier);
             }
 
             static void glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos)
@@ -171,7 +173,7 @@ namespace DFW
                 float32 x_pos = static_cast<float32>(a_x_pos);
                 float32 y_pos = static_cast<float32>(a_y_pos);
 
-                CoreService::GetInputSystem()->SendDirectionalEvent(user_data->_id, x_pos, y_pos);
+                input_system->SendDirectionalEvent(user_data->_id, x_pos, y_pos);
             }
 
             static void glfw_scroll_callback(GLFWwindow* a_window, double a_x_offset, double a_y_offset)
@@ -181,7 +183,7 @@ namespace DFW
                 float32 x_offset = static_cast<float32>(a_x_offset);
                 float32 y_offset = static_cast<float32>(a_y_offset);
 
-                CoreService::GetInputSystem()->SendScrollEvent(user_data->_id, x_offset, y_offset);
+                input_system->SendScrollEvent(user_data->_id, x_offset, y_offset);
             }
 
         } // End of namespace ~ GLFWWindowCallBacks.
@@ -195,7 +197,9 @@ namespace DFW
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
             // Saving Core Services.
-            GLFWWindowCallBacks::application_event_dispatcher = CoreService::GetMainEventHandler();
+            GLFWWindowCallBacks::application_event_dispatcher   = CoreService::GetMainEventHandler();
+            GLFWWindowCallBacks::input_system                   = CoreService::GetInputSystem();
+            GLFWWindowCallBacks::window_system                  = static_cast<WindowManagementGLFW*>(CoreService::GetWindowSystem());
             
             // Construct the main window.
             SharedPtr<WindowInstance> const new_window = ConstructWindow(default_window_parameters);
@@ -246,6 +250,7 @@ namespace DFW
 
             glfwSetWindowUserPointer(new_window->_glfw_window, new_window.get());
 
+            // TODO Replace direct call to event-based using a 'window created' event.
             CoreService::GetInputSystem()->RegisterWindow(new_window.get());
 
             _window_instances.emplace(new_window->_id, new_window);
@@ -259,6 +264,7 @@ namespace DFW
             glfwDestroyWindow(window_ptr->_glfw_window);
             _window_instances.erase(window_ptr->_id);
 
+            // TODO Replace direct call to event-based using a 'window created' event.
             CoreService::GetInputSystem()->UnregisterWindow(window_ptr->_id);
         }
 
