@@ -39,6 +39,9 @@ namespace DFW
 
         void RenderModuleBGFX::TerminateRenderModule()
         {
+            // Unregister Event Callbacks.
+            CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderModuleBGFX::OnWindowResizeEvent>(this);
+
             bgfx::shutdown();
         }
              
