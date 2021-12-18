@@ -119,6 +119,9 @@ namespace DFW
         // DECS
         _ecs_module.InitECS();
 
+        // OS focusses on the main window. Make sure systems know about it.
+        application_event_handler.InstantBroadcast<WindowFocusEvent>(_window_management->GetMainWindowID(), true);
+
         // User-Implemented Post-Initialisation.
         PostApplicationInit();
     }
