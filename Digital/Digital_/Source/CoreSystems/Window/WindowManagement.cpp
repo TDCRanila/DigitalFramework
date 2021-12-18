@@ -45,7 +45,7 @@ namespace DFW
             }
             else
             {
-                DFW_ERRORLOG("Attempting to find a window with ID: {}, but it cannot be found.", a_window_id);
+                DFW_WARNLOG("Attempting to find a window with ID: {}, but it cannot be found.", a_window_id);
                 return SharedPtr<WindowInstance>();
             }
         }
