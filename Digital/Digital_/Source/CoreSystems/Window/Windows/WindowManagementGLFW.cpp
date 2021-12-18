@@ -35,23 +35,24 @@ namespace DFW
 
                 window_system->RequestWindowClose(user_data->_id);
 
-                application_event_dispatcher->InstantBroadcast<WindowCloseEvent>();
+                application_event_dispatcher->InstantBroadcast<WindowCloseEvent>(user_data->_id);
             }
 
             static void glfw_window_focus_callback(GLFWwindow* a_window, int a_result)
             {
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
-                user_data->_is_focussed = static_cast<bool>(a_result);
+                user_data->is_focussed = static_cast<bool>(a_result);
 
-                application_event_dispatcher->InstantBroadcast<WindowFocusEvent>(user_data->_is_focussed);
+                WindowID focussed_window_id = a_result ? user_data->_id : WindowID();
+                application_event_dispatcher->InstantBroadcast<WindowFocusEvent>(focussed_window_id, user_data->is_focussed);
             }
 
             static void glfw_window_minimized_callback(GLFWwindow* a_window, int a_result)
             {
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
-                user_data->_is_minimized = static_cast<bool>(a_result);
+                user_data->is_minimized = static_cast<bool>(a_result);
 
-                application_event_dispatcher->InstantBroadcast<WindowMinimizedEvent>(user_data->_is_focussed);
+                application_event_dispatcher->InstantBroadcast<WindowMinimizedEvent>(user_data->_id, user_data->is_focussed);
             }
 
             static void glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos)
@@ -66,7 +67,8 @@ namespace DFW
                 dim._current_y_pos = static_cast<int32>(a_y_pos);
 
                 application_event_dispatcher->InstantBroadcast<WindowMoveEvent>(
-                        old_x_pos
+                        user_data->_id
+                    ,   old_x_pos
                     ,   old_y_pos
                     ,   dim._current_x_pos
                     ,   dim._current_y_pos
@@ -87,7 +89,8 @@ namespace DFW
                 glfwGetWindowFrameSize(a_window, &dim._window_frame_left, &dim._window_frame_top, &dim._window_frame_right, &dim._window_frame_bottom);
 
                 application_event_dispatcher->InstantBroadcast<WindowResizeEvent>(
-                        old_width
+                        user_data->_id
+                    ,   old_width
                     ,   old_height
                     ,   dim._current_width
                     ,   dim._current_height
@@ -106,7 +109,8 @@ namespace DFW
                 dim._current_frame_height = static_cast<int32>(a_height);
 
                 application_event_dispatcher->InstantBroadcast<WindowFramebufferResizeEvent>(
-                        old_frame_width
+                        user_data->_id
+                    ,   old_frame_width
                     ,   old_frame_height
                     ,   dim._current_frame_width
                     ,   dim._current_frame_height
@@ -205,10 +209,16 @@ namespace DFW
             SharedPtr<WindowInstance> const new_window = ConstructWindow(default_window_parameters);
 
             _main_window_id = new_window->_id;
+
+            // Register Event Callbacks.
+            RegisterCommonEventCallbacks();
         }
 
         void WindowManagementGLFW::TerminateWindowManagement()
         {
+            // Unregister Event Callbacks.
+            UnregisterCommonEventCallbacks();
+
             glfwTerminate();
         }
 

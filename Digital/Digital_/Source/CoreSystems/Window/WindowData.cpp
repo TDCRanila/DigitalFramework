@@ -39,8 +39,8 @@ namespace DFW
             , _name("")
             , _input_data(nullptr)
             , _should_be_closed(false)
-            , _is_minimized(false)
-            , _is_focussed(false)
+            , is_minimized(false)
+            , is_focussed(false)
         {
         }
     } // End of namespace ~ DWindow.

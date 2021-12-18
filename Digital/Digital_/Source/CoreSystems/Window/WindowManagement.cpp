@@ -34,15 +34,7 @@ namespace DFW
 
         SharedPtr<WindowInstance> const WindowManagementSystem::GetFocussedWindow() const
         {
-            // TODO Temporary!, should be removed with a proper application event implementation.
-            // Should only be one focussed window.
-            for (auto const& [window_id, window_ptr] : _window_instances)
-            {
-                if (window_ptr->_is_focussed)
-                    return window_ptr;
-            }
-
-            return SharedPtr<WindowInstance>();
+            return GetWindow(_focussed_window_id);
         }
 
         SharedPtr<WindowInstance> const WindowManagementSystem::GetWindow(WindowID const a_window_id) const
@@ -75,12 +67,12 @@ namespace DFW
 
         bool WindowManagementSystem::IsWindowFocussed(WindowID const a_window_id) const
         {
-            return GetWindow(a_window_id)->_is_focussed;
+            return GetWindow(a_window_id)->is_focussed;
         }
 
         bool WindowManagementSystem::IsWindowMinimized(WindowID const a_window_id) const
         {
-            return GetWindow(a_window_id)->_is_minimized;
+            return GetWindow(a_window_id)->is_minimized;
         }
 
         SharedPtr<WindowInstance>& WindowManagementSystem::GetWindowInternal(WindowID const a_window_id)
@@ -96,6 +88,21 @@ namespace DFW
                 SharedPtr<WindowInstance> ptr;
                 return ptr;
             }
+        }
+
+        void WindowManagementSystem::RegisterCommonEventCallbacks()
+        {
+            CoreService::GetMainEventHandler()->RegisterCallback<WindowFocusEvent, &WindowManagementSystem::OnWindowFocusEvent>(this);
+        }
+
+        void WindowManagementSystem::UnregisterCommonEventCallbacks()
+        {
+            CoreService::GetMainEventHandler()->UnregisterCallback<WindowFocusEvent, &WindowManagementSystem::OnWindowFocusEvent>(this);
+        }
+
+        void WindowManagementSystem::OnWindowFocusEvent(WindowFocusEvent const& a_event)
+        {
+            _focussed_window_id = a_event.window_id;
         }
 
     } // End of namespace ~ DWindow.

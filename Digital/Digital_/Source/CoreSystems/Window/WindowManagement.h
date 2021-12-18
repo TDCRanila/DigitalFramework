@@ -54,9 +54,13 @@ namespace DFW
 
             SharedPtr<WindowInstance>& GetWindowInternal(WindowID const a_window_id);
 
-            WindowContainer _window_instances;
+            void RegisterCommonEventCallbacks();
+            void UnregisterCommonEventCallbacks();
+            void OnWindowFocusEvent(WindowFocusEvent const& a_event);
 
+            WindowContainer _window_instances;
             WindowID _main_window_id;
+            WindowID _focussed_window_id;
         
         private:
             static SharedPtr<WindowManagementSystem> Construct();
@@ -65,7 +69,6 @@ namespace DFW
             virtual void TerminateWindowManagement() = 0;
             virtual void PollWindowEvents() = 0;
 
-            void BindApplicationEventFunc(ApplicationEventCallbackFunc const& a_event_callback_func);
         };
 
 

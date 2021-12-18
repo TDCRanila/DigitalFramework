@@ -50,8 +50,8 @@ namespace DFW
             DInput::InputData* _input_data;
 
             bool _should_be_closed;
-            bool _is_minimized;
-            bool _is_focussed;
+            bool is_minimized;
+            bool is_focussed;
 
             ApplicationEventCallbackFunc _application_event_callback_func;
 

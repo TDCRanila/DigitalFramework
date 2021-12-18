@@ -107,6 +107,9 @@ namespace DFW
         DWindow::WindowParameters param(_application_name, DWindow::DFW_DEFAULT_WINDOW_WIDTH, DWindow::DFW_DEFAULT_WINDOW_HEIGHT);
         _window_management->ChangeWindowParameters(_window_management->GetMainWindowID(), param);
 
+        // Input Management
+        _input_system.InitInputManagement();
+
         // RenderModule
         _render_module->InitRenderModule();       
 
@@ -130,6 +133,9 @@ namespace DFW
 
         // Render
         _render_module->TerminateRenderModule();
+
+        // Input
+        _input_system.TerminateInputManagement();
 
         // Window Management
         _window_management->TerminateWindowManagement();
