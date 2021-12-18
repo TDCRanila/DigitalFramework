@@ -18,7 +18,7 @@ namespace DFW
     
     namespace DWindow
     {
-        class WindowManagementSystem;
+        class WindowManagement;
     } // End of namespace ~ DWindow.
 
     class CoreService
@@ -36,15 +36,15 @@ namespace DFW
         static DInput::InputManagementSystem* GetInputSystem();
         static void ProvideInputSystem(DInput::InputManagementSystem* a_provided_service);
     
-        static DWindow::WindowManagementSystem* GetWindowSystem();
-        static void ProvideWindowSystem(DWindow::WindowManagementSystem* a_provided_service);
+        static DWindow::WindowManagement* GetWindowSystem();
+        static void ProvideWindowSystem(DWindow::WindowManagement* a_provided_service);
 
     private:
         static GameClock*                       _gc_service;
         static EventDispatcher*                 _meh_service;
         static DECS::ECSModule*                 _ecs_service;
         static DInput::InputManagementSystem*   _input_service;
-        static DWindow::WindowManagementSystem* _window_service;
+        static DWindow::WindowManagement*       _window_service;
 
     };
 

@@ -16,28 +16,28 @@ namespace DFW
 {
     namespace DWindow
     {
-        SharedPtr<WindowManagementSystem> WindowManagementSystem::Construct()
+        SharedPtr<WindowManagement> WindowManagement::Construct()
         {
             // TODO Implement Platform IfDefs
             return MakeShared<WindowManagementGLFW>();
         }
 
-        WindowID WindowManagementSystem::GetMainWindowID() const
+        WindowID WindowManagement::GetMainWindowID() const
         {
             return _main_window_id;
         }
 
-        SharedPtr<WindowInstance> const WindowManagementSystem::GetMainWindow() const
+        SharedPtr<WindowInstance> const WindowManagement::GetMainWindow() const
         {
             return _window_instances.at(_main_window_id);
         }
 
-        SharedPtr<WindowInstance> const WindowManagementSystem::GetFocussedWindow() const
+        SharedPtr<WindowInstance> const WindowManagement::GetFocussedWindow() const
         {
             return GetWindow(_focussed_window_id);
         }
 
-        SharedPtr<WindowInstance> const WindowManagementSystem::GetWindow(WindowID const a_window_id) const
+        SharedPtr<WindowInstance> const WindowManagement::GetWindow(WindowID const a_window_id) const
         {
             if (auto const it = _window_instances.find(a_window_id); it != _window_instances.end())
             {
@@ -50,32 +50,32 @@ namespace DFW
             }
         }
 
-        void* WindowManagementSystem::GetMainWindowNWH()
+        void* WindowManagement::GetMainWindowNWH()
         {
             return GetWindowNWH(_main_window_id);
         }
 
-        void* WindowManagementSystem::GetMainWindowPWH()
+        void* WindowManagement::GetMainWindowPWH()
         {
             return GetWindowPWH(_main_window_id);
         }
 
-        bool WindowManagementSystem::HaveAllWindowsBeenClosed() const
+        bool WindowManagement::HaveAllWindowsBeenClosed() const
         {
             return _window_instances.size() <= 0;
         }
 
-        bool WindowManagementSystem::IsWindowFocussed(WindowID const a_window_id) const
+        bool WindowManagement::IsWindowFocussed(WindowID const a_window_id) const
         {
             return GetWindow(a_window_id)->is_focussed;
         }
 
-        bool WindowManagementSystem::IsWindowMinimized(WindowID const a_window_id) const
+        bool WindowManagement::IsWindowMinimized(WindowID const a_window_id) const
         {
             return GetWindow(a_window_id)->is_minimized;
         }
 
-        SharedPtr<WindowInstance>& WindowManagementSystem::GetWindowInternal(WindowID const a_window_id)
+        SharedPtr<WindowInstance>& WindowManagement::GetWindowInternal(WindowID const a_window_id)
         {
             if (auto const it = _window_instances.find(a_window_id); it != _window_instances.end())
             {
@@ -90,17 +90,17 @@ namespace DFW
             }
         }
 
-        void WindowManagementSystem::RegisterCommonEventCallbacks()
+        void WindowManagement::RegisterCommonEventCallbacks()
         {
-            CoreService::GetMainEventHandler()->RegisterCallback<WindowFocusEvent, &WindowManagementSystem::OnWindowFocusEvent>(this);
+            CoreService::GetMainEventHandler()->RegisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
         }
 
-        void WindowManagementSystem::UnregisterCommonEventCallbacks()
+        void WindowManagement::UnregisterCommonEventCallbacks()
         {
-            CoreService::GetMainEventHandler()->UnregisterCallback<WindowFocusEvent, &WindowManagementSystem::OnWindowFocusEvent>(this);
+            CoreService::GetMainEventHandler()->UnregisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
         }
 
-        void WindowManagementSystem::OnWindowFocusEvent(WindowFocusEvent const& a_event)
+        void WindowManagement::OnWindowFocusEvent(WindowFocusEvent const& a_event)
         {
             _focussed_window_id = a_event.window_id;
         }

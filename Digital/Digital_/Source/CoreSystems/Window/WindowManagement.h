@@ -20,11 +20,11 @@ namespace DFW
 
         using WindowContainer = std::unordered_map<WindowID, SharedPtr<WindowInstance>>;
 
-        class WindowManagementSystem
+        class WindowManagement
         {
             friend ApplicationInstance;
         public:
-            virtual ~WindowManagementSystem() = default;
+            virtual ~WindowManagement() = default;
 
             virtual SharedPtr<WindowInstance> ConstructWindow(WindowParameters const& a_window_parameters) = 0;
             virtual void RequestWindowClose(WindowID const a_window_id) = 0;
@@ -50,7 +50,7 @@ namespace DFW
             WindowParameters default_window_parameters;
 
         protected:
-            WindowManagementSystem() = default;
+            WindowManagement() = default;
 
             SharedPtr<WindowInstance>& GetWindowInternal(WindowID const a_window_id);
 
@@ -63,7 +63,7 @@ namespace DFW
             WindowID _focussed_window_id;
         
         private:
-            static SharedPtr<WindowManagementSystem> Construct();
+            static SharedPtr<WindowManagement> Construct();
 
             virtual void InitWindowManagement() = 0;
             virtual void TerminateWindowManagement() = 0;

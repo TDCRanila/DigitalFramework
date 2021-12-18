@@ -19,7 +19,7 @@ namespace DFW
             GLFWwindow* _glfw_window;
         };
 
-        class WindowManagementGLFW final : public WindowManagementSystem
+        class WindowManagementGLFW final : public WindowManagement
         {
             friend ApplicationInstance;
         public:

@@ -16,9 +16,7 @@ namespace DFW
     }
 
     namespace DWindow
-    {
-        class WindowManagementSystem;
-        
+    {       
         struct WindowParameters
         {
             WindowParameters();

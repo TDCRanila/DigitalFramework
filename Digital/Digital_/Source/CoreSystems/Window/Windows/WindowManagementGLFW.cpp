@@ -18,9 +18,9 @@ namespace DFW
     {
         namespace GLFWWindowCallBacks
         {
-            static EventDispatcher* application_event_dispatcher        = nullptr;
-            static DFW::DInput::InputManagementSystem* input_system     = nullptr;
-            static DFW::DWindow::WindowManagementGLFW* window_system    = nullptr;
+            static EventDispatcher* application_event_dispatcher            = nullptr;
+            static DFW::DInput::InputManagementSystem* input_system         = nullptr;
+            static DFW::DWindow::WindowManagementGLFW* window_management    = nullptr;
 
             static void glfw_error_callback(int error, const char* description)
             {
@@ -33,7 +33,7 @@ namespace DFW
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
                 user_data->_should_be_closed = true;
 
-                window_system->RequestWindowClose(user_data->_id);
+                window_management->RequestWindowClose(user_data->_id);
 
                 application_event_dispatcher->InstantBroadcast<WindowCloseEvent>(user_data->_id);
             }
@@ -203,7 +203,7 @@ namespace DFW
             // Saving Core Services.
             GLFWWindowCallBacks::application_event_dispatcher   = CoreService::GetMainEventHandler();
             GLFWWindowCallBacks::input_system                   = CoreService::GetInputSystem();
-            GLFWWindowCallBacks::window_system                  = static_cast<WindowManagementGLFW*>(CoreService::GetWindowSystem());
+            GLFWWindowCallBacks::window_management              = static_cast<WindowManagementGLFW*>(CoreService::GetWindowSystem());
             
             // Construct the main window.
             SharedPtr<WindowInstance> const new_window = ConstructWindow(default_window_parameters);

@@ -38,7 +38,7 @@ namespace DFW
         Logger::Init(true, 5000);
 
         // Allocate Systems
-        _window_management  = DWindow::WindowManagementSystem::Construct();
+        _window_management  = DWindow::WindowManagement::Construct();
         _render_module      = MakeUnique<DRender::RenderModuleBGFX>();
 
         // Core Services
