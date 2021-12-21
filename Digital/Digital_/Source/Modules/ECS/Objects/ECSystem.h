@@ -32,6 +32,8 @@ namespace DFW
 			virtual void Update(Universe* const a_universe);
 			virtual void PostUpdate(Universe* const a_universe);
 
+			virtual void UpdateSystemImGui(Universe* const a_universe);
+
 			bool IsSystemPaused() const;
 
 		protected:

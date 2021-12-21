@@ -3,15 +3,15 @@
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
+#include <CoreSystems/CoreServices.h>
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Window.h>
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
-
-#include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Window/WindowManagement.h>
 
 namespace DFW
 {
-	void ImGuiLayer::InitImGuiLayer(DWindow::WindowInstance const& a_main_window)
+	void ImGuiLayer::InitImGuiLayer()
 	{
 		// Context
 		IMGUI_CHECKVERSION();
@@ -29,8 +29,15 @@ namespace DFW
 		// Enable Multi-Viewport Feature
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		DWindow::WindowDimension const& dim = a_main_window._window_dimension;
-		io.DisplaySize	= ImVec2(static_cast<float>(dim._current_width), static_cast<float>(dim._current_height));
+		SharedPtr<DWindow::WindowInstance> main_window_ptr	= CoreService::GetWindowSystem()->GetMainWindow();
+		GLFWwindow* glfw_window_ptr							= reinterpret_cast<GLFWwindow*>(CoreService::GetWindowSystem()->GetMainWindowNWH());
+		DFW_ASSERT(main_window_ptr, "Pointer to the main window is invalid, window management might not have been initialised.");
+
+		io.DisplaySize	= ImVec2(
+				static_cast<float>(main_window_ptr->_window_dimension._current_width)
+			,	static_cast<float>(main_window_ptr->_window_dimension._current_height)
+		);
+
 		io.DeltaTime	= 1.0f / 60.0f;
 		// TODO ImGui .ini filepath.
 		io.IniFilename	= NULL;
@@ -39,12 +46,11 @@ namespace DFW
 		SetupStyle();
 
 		/// Render & Platform Initialization and binding.
+		
+		// TODO Implement other window API & implement compiler defines.
+		ImGui_ImplGlfw_InitForOther(glfw_window_ptr, true);
 
-		// TODO: Simply using the imgui ogl example for buttons etc.
-		// Should eventually be all moved to BGFX Window and handle input there as well.
-		ImGui_ImplGlfw_InitForOther(a_main_window._window, true);
-
-		DImGui::ImGui_ImplBGFX_InitWindowPlatform(a_main_window._window);
+		DImGui::ImGui_ImplBGFX_InitWindowPlatform(glfw_window_ptr);
 		DImGui::ImGui_ImplBGFX_InitGraphics();
 
 		// Custom Callbacks.
@@ -56,10 +62,11 @@ namespace DFW
 		// Render & Platform Shutdown
 		DImGui::ImGui_ImplBGFX_ShutdownGraphics();
 		DImGui::ImGui_ImplBGFX_ShutdownWindowPlatform();
-		DImGui::imgui_rendering_context = DImGui::ImGuiRenderingContext();
 
 		// Context
 		ImGui::DestroyContext();
+
+		DImGui::imgui_rendering_context = DImGui::ImGuiRenderingContext();
 	}
 
 	void ImGuiLayer::BeginFrame(float32 const a_delta_time)
@@ -91,12 +98,6 @@ namespace DFW
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
-	}
-
-	void ImGuiLayer::SetMainImGuiWindowSize(WindowResizeEvent& const a_event)
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2(static_cast<float>(a_event.new_width), static_cast<float>(a_event.new_height));
 	}
 
 	void ImGuiLayer::SetupStyle()

@@ -16,9 +16,17 @@ namespace DFW
     }
 
     namespace DWindow
-    {
-        class WindowManagementSystem;
-        
+    {       
+        struct WindowParameters
+        {
+            WindowParameters();
+            WindowParameters(std::string const& a_window_name, int32 const a_window_width, int32 const a_window_height);
+
+            std::string name;
+            int32       width;
+            int32       height;
+        };
+
         struct WindowDimension
         {
             WindowDimension();
@@ -33,24 +41,20 @@ namespace DFW
         {
             WindowInstance();
 
-            WindowDimension _window_dimension;
-
             WindowID        _id;
             std::string     _name;
-
-            GLFWwindow* _window;
+            
+            WindowDimension _window_dimension;
             DInput::InputData* _input_data;
 
             bool _should_be_closed;
-            bool _is_minimized;
-            bool _is_focussed;
-
-        protected:
-            friend WindowManagementSystem;
+            bool is_minimized;
+            bool is_focussed;
 
             ApplicationEventCallbackFunc _application_event_callback_func;
 
         };
+
     } // End of namespace ~ DWindow.
 
 } // End of namespace ~ DFW.

@@ -38,9 +38,9 @@ namespace DFW
 			void InitECS();
 			void TerminateECS();
 			void UpdateECS();
+			void UpdateECSImGui();
 
 		private:
-
 			std::unordered_map<std::string, Universe*> _universes;
 
 			DECS::SystemManager*	_system_manager;

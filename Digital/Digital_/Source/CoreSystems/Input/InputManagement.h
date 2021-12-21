@@ -1,6 +1,9 @@
 #pragma once
 
+#include <CoreSystems/ApplicationEvents.h>
+#include <CoreSystems/Memory.h>
 #include <CoreSystems/Window/WindowID.h>
+#include <CoreSystems/Window/WindowData.h>
 #include <CoreSystems/Input/InputKeys.h>
 #include <Utility/TemplateUtility.h>
 
@@ -14,7 +17,8 @@ namespace DFW
 	// FW Declare.
 	namespace DWindow
 	{
-		class WindowManagementSystem;
+		class WindowManagement;
+		class WindowManagementGLFW;
 		struct WindowInstance;
 	} // End of namespace ~ DWindow.
 
@@ -47,8 +51,7 @@ namespace DFW
 			enum class DirectionalEventType;
 
 		public:
-
-			~InputManagementSystem();
+			~InputManagementSystem() = default;
 
 			void EnableInput();
 			void DisableInput();
@@ -92,12 +95,15 @@ namespace DFW
 			void ProcessInputEvents();
 			void PollClipboardInput();
 
-			friend DWindow::WindowManagementSystem;
+			friend DWindow::WindowManagement;
+			friend DWindow::WindowManagementGLFW;
 
 			void RegisterWindow(DWindow::WindowInstance* a_window);
-			void UnregisterWindow(DWindow::WindowInstance* a_window);
+			void UnregisterWindow(DWindow::WindowID a_window);
 
 		private:
+			void InitInputManagement();
+			void TerminateInputManagement();
 
 			enum class KeyEventType
 			{
@@ -143,6 +149,8 @@ namespace DFW
 				float32 _scroll_y_offset;
 			};
 
+			void OnWindowFocusEvent(WindowFocusEvent const& a_event);
+
 			bool IsKeyPressedInternal(int32 a_key) const;
 			bool IsKeyRepeatedInternal(int32 a_key) const;
 			bool IsKeyDownInternal(int32 a_key) const;
@@ -154,6 +162,8 @@ namespace DFW
 
 			std::vector<KeyEvent>			_key_event_buffer;
 			std::vector<DirectionalEvent>	_dir_event_buffer;
+
+			SharedPtr<DWindow::WindowInstance> _current_foccused_window_ptr;
 
 			bool _has_input_events_buffered;
 			bool _is_input_enabled;
