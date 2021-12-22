@@ -257,7 +257,8 @@ namespace DFW
 
 		void InputManagementSystem::OnWindowFocusEvent(WindowFocusEvent const& a_event)
 		{
-			_current_foccused_window_ptr = CoreService::GetWindowSystem()->GetWindow(a_event.window_id);
+			if (a_event.is_focussed)
+				_current_foccused_window_ptr = CoreService::GetWindowSystem()->GetWindow(a_event.window_id);
 		}
 
 		bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
