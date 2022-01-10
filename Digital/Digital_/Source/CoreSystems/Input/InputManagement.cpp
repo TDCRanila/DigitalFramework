@@ -8,7 +8,7 @@ namespace DFW
 {
 	namespace DInput
 	{
-		InputData::InputData()
+		InputManagementSystem::InputData::InputData()
 			: _cursor_position(0.0f)
 			, _cursor_position_old(0.0f)
 			, _cursor_delta(0.0f)
@@ -119,9 +119,9 @@ namespace DFW
 				return;
 			}
 
+			InputData& data = _input_data;
 			for (const KeyEvent& key_event : _key_event_buffer)
 			{
-				InputData& data = _input_data_storage[key_event._user_id];
 				switch (key_event._event_type)
 				{
 				case (KeyEventType::KEYBOARD):
@@ -151,7 +151,6 @@ namespace DFW
 
 			for (const DirectionalEvent& dir_event : _dir_event_buffer)
 			{
-				InputData& data = _input_data_storage[dir_event._user_id];
 				switch (dir_event._event_type)
 				{
 				case (DirectionalEventType::CURSOR):
@@ -244,17 +243,6 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::RegisterWindow(DWindow::WindowInstance* a_window)
-		{
-			InputData& data = _input_data_storage[a_window->_id];
-			a_window->_input_data = &data;
-		}
-
-		void InputManagementSystem::UnregisterWindow(DWindow::WindowID a_window_id)
-		{
-			_input_data_storage.erase(a_window_id);
-		}
-
 		void InputManagementSystem::OnWindowFocusEvent(WindowFocusEvent const& a_event)
 		{
 			if (a_event.is_focussed)
@@ -263,63 +251,41 @@ namespace DFW
 
 		bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
 		{
-			if (_current_foccused_window_ptr && _current_foccused_window_ptr->_input_data)
-			{
-				const InputData& data = *_current_foccused_window_ptr->_input_data;
-				const DKeyAction& key_action = data._keys[a_key];
-				return (key_action == DKeyAction::PRESSED);
-			}
-
-			return false;
+			const DKeyAction& key_action = _input_data._keys[a_key];
+			return (key_action == DKeyAction::PRESSED);
 		}
 
 		bool InputManagementSystem::IsKeyRepeatedInternal(int32 a_key) const
 		{
-			if (_current_foccused_window_ptr && _current_foccused_window_ptr->_input_data)
-			{
-				const InputData& data = *_current_foccused_window_ptr->_input_data;
-				const DKeyAction& key_action = data._keys[a_key];
-				return (key_action == DKeyAction::REPEATED);
-			}
-
-			return false;
+			const DKeyAction& key_action = _input_data._keys[a_key];
+			return (key_action == DKeyAction::REPEATED);
 		}
 
 		bool InputManagementSystem::IsKeyDownInternal(int32 a_key) const
 		{
-			if (_current_foccused_window_ptr && _current_foccused_window_ptr->_input_data)
-			{
-				const InputData& data = *_current_foccused_window_ptr->_input_data;
-				const DKeyAction& key_action = data._keys[a_key];
-				return (key_action == DKeyAction::PRESSED) || (key_action == DKeyAction::REPEATED);
-			}
-
-			return false;
+			const DKeyAction& key_action = _input_data._keys[a_key];
+			return (key_action == DKeyAction::PRESSED) || (key_action == DKeyAction::REPEATED);
 		}
 
 		bool InputManagementSystem::IsKeyReleasedInternal(int32 a_key) const
 		{
-			if (_current_foccused_window_ptr && _current_foccused_window_ptr->_input_data)
-			{
-				const InputData& data = *_current_foccused_window_ptr->_input_data;
-				auto it_key = data._buffered_keys.find(a_key);
-				if (it_key != data._buffered_keys.end())
-				{
-					const DKeyAction& key_action = data._keys[a_key];
-					return (key_action == DKeyAction::RELEASED);
-				}
-			}
+			InputData const& data = _input_data;
+			if (_input_data._buffered_keys.empty())
+				return false;
 
+			auto it_key = data._buffered_keys.find(a_key);
+			if (it_key != data._buffered_keys.end())
+			{
+				const DKeyAction& key_action = data._keys[a_key];
+				return (key_action == DKeyAction::RELEASED);
+			}
 			return false;
 		}
 
 		void InputManagementSystem::ClearInputDataBuffers()
 		{
-			for (auto& [id, input_data] : _input_data_storage)
-			{
-				input_data._buffered_keys.clear();
-				input_data._buffered_characters.clear();
-			}
+			_input_data._buffered_keys.clear();
+			_input_data._buffered_characters.clear();
 		}
 
 		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier)

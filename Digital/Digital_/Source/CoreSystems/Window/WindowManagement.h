@@ -28,6 +28,7 @@ namespace DFW
 
             virtual SharedPtr<WindowInstance> ConstructWindow(WindowParameters const& a_window_parameters) = 0;
             virtual void RequestWindowClose(WindowID const a_window_id) = 0;
+            virtual void DestroyWindowsRequestedForClosure() = 0;
             bool HaveAllWindowsBeenClosed() const;
 
             WindowID GetMainWindowID() const;
@@ -59,6 +60,7 @@ namespace DFW
             void OnWindowFocusEvent(WindowFocusEvent const& a_event);
 
             WindowContainer _window_instances;
+            std::vector<WindowID> _windows_requested_destruction;
             WindowID _main_window_id;
             WindowID _focussed_window_id;
         

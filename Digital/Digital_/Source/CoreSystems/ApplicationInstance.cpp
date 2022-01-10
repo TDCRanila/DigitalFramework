@@ -161,6 +161,7 @@ namespace DFW
             _game_clock.BeginGameFrame();
             
             _window_management->PollWindowEvents();
+            _window_management->DestroyWindowsRequestedForClosure();
             _input_system.ProcessInputEvents();
 
             // Update Game Instance(s)

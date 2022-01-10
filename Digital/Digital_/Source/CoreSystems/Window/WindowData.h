@@ -45,13 +45,10 @@ namespace DFW
             std::string     _name;
             
             WindowDimension _window_dimension;
-            DInput::InputData* _input_data;
 
             bool _should_be_closed;
             bool is_minimized;
             bool is_focussed;
-
-            ApplicationEventCallbackFunc _application_event_callback_func;
 
         };
 

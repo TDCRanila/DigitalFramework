@@ -35,7 +35,7 @@ namespace DFW
 
                 window_management->RequestWindowClose(user_data->_id);
 
-                application_event_dispatcher->InstantBroadcast<WindowCloseEvent>(user_data->_id);
+                application_event_dispatcher->InstantBroadcast<WindowDestroyedEvent>(user_data->_id);
             }
 
             static void glfw_window_focus_callback(GLFWwindow* a_window, int a_result)
@@ -227,6 +227,27 @@ namespace DFW
             glfwPollEvents();
         }
 
+        void WindowManagementGLFW::DestroyWindowsRequestedForClosure()
+        {
+            for (WindowID const& window_id : _windows_requested_destruction)
+            {
+                if (auto const& it = _window_instances.find(window_id); it == _window_instances.end())
+                {
+                    DFW_ASSERT(false, "Attempting to close a window that does not excist.");
+                }
+                else
+                {
+                    SharedPtr<WindowInstanceGLFW> const& window_ptr = std::static_pointer_cast<WindowInstanceGLFW>(it->second);
+                    glfwDestroyWindow(window_ptr->_glfw_window);
+                    _window_instances.erase(window_ptr->_id);
+
+                    CoreService::GetMainEventHandler()->InstantBroadcast<WindowDestroyedEvent>(window_ptr->_id);
+                }
+            }
+
+            _windows_requested_destruction.clear();
+        }
+
         SharedPtr<WindowInstance> WindowManagementGLFW::ConstructWindow(WindowParameters const& a_window_parameters)
         {
             const char* name = a_window_parameters.name.c_str();
@@ -253,29 +274,32 @@ namespace DFW
                 glfwSetScrollCallback(glfw_window, GLFWWindowCallBacks::glfw_scroll_callback);
             }
 
-            SharedPtr<WindowInstanceGLFW> new_window = MakeShared<WindowInstanceGLFW>();
-            new_window->_id             = DFW::GenerateDUID();
-            new_window->_glfw_window    = glfw_window;
-            new_window->_name           = a_window_parameters.name;
+            SharedPtr<WindowInstanceGLFW> new_window_ptr = MakeShared<WindowInstanceGLFW>();
+            new_window_ptr->_id             = DFW::GenerateDUID();
+            new_window_ptr->_glfw_window    = glfw_window;
+            new_window_ptr->_name           = a_window_parameters.name;
 
-            glfwSetWindowUserPointer(new_window->_glfw_window, new_window.get());
+            glfwSetWindowUserPointer(new_window_ptr->_glfw_window, new_window_ptr.get());
 
-            // TODO Replace direct call to event-based using a 'window created' event.
-            CoreService::GetInputSystem()->RegisterWindow(new_window.get());
+            CoreService::GetMainEventHandler()->InstantBroadcast<WindowCreatedEvent>(new_window_ptr->_id);
 
-            _window_instances.emplace(new_window->_id, new_window);
-            return new_window;
+            _window_instances.emplace(new_window_ptr->_id, new_window_ptr);
+            return new_window_ptr;
         }
 
         void WindowManagementGLFW::RequestWindowClose(WindowID const a_window_id)
-        {
-            SharedPtr<WindowInstanceGLFW> const& window_ptr = std::static_pointer_cast<WindowInstanceGLFW>(GetWindowInternal(a_window_id));
-            
-            glfwDestroyWindow(window_ptr->_glfw_window);
-            _window_instances.erase(window_ptr->_id);
+        {           
+            _windows_requested_destruction.emplace_back(a_window_id);
 
-            // TODO Replace direct call to event-based using a 'window created' event.
-            CoreService::GetInputSystem()->UnregisterWindow(window_ptr->_id);
+            bool const should_close_all = a_window_id == _main_window_id;
+            if (should_close_all)
+            {
+                for (auto const& [id, ptr] : _window_instances)
+                {
+                    if (id != _main_window_id)
+                        RequestWindowClose(id);
+                }
+            }
         }
 
         void* WindowManagementGLFW::GetWindowNWH(WindowID const a_window_id) const

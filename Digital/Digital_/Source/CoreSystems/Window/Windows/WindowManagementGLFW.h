@@ -28,6 +28,7 @@ namespace DFW
 
             virtual SharedPtr<WindowInstance> ConstructWindow(WindowParameters const& a_window_parameters) override;
             virtual void RequestWindowClose(WindowID const a_window_id) override;
+            virtual void DestroyWindowsRequestedForClosure() override;
 
             // Native Window Handle, e.g. GLFWindow*;
             virtual void* GetWindowNWH(WindowID const a_window_id) const override;

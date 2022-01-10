@@ -37,7 +37,6 @@ namespace DFW
         WindowInstance::WindowInstance()
             : _id(DFW::DFW_INVALID_DUID)
             , _name("")
-            , _input_data(nullptr)
             , _should_be_closed(false)
             , is_minimized(false)
             , is_focussed(false)

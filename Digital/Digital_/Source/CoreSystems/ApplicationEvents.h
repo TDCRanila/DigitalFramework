@@ -11,7 +11,7 @@ namespace DFW
 {
 	enum class ApplicationEvents
 	{
-		WindowCloseEvent, WindowFocusEvent, WindowMinimizedEvent, WindowMoveEvent, WindowResizeEvent, WindowFramebufferResizeEvent,
+		WindowCreatedEvent, WindowDestroyedEvent, WindowFocusEvent, WindowMinimizedEvent, WindowMoveEvent, WindowResizeEvent, WindowFramebufferResizeEvent,
 		ApplicationCloseEvent, ApplicationResetEvent, ApplicationSettingsSavedEvent,
 		GameStartEvent, GamePauseEvent, GameUnpauseEvent, GameResetEvent,
 		InputReceivedEvent, InputClipboardEvent, InputItemDropEvent,
@@ -33,14 +33,37 @@ namespace DFW
 	/// <summary>
 	/// Window Events
 	/// </summary>
-	class WindowCloseEvent : public ApplicationEvent
+	
+	class WindowCreatedEvent : public ApplicationEvent
 	{
 	public:
-		WindowCloseEvent(DWindow::WindowID a_window_id)
+		WindowCreatedEvent(DWindow::WindowID a_window_id)
 			: window_id(a_window_id)
 		{}
 
-		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowCloseEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowCreatedEvent);
+
+		std::string GetDebugString() const override
+		{
+			std::stringstream debug_string;
+			debug_string << GetName();
+			debug_string << " - ";
+			debug_string << window_id;
+
+			return debug_string.str();
+		}
+
+		DWindow::WindowID	window_id;
+	};
+
+	class WindowDestroyedEvent : public ApplicationEvent
+	{
+	public:
+		WindowDestroyedEvent(DWindow::WindowID a_window_id)
+			: window_id(a_window_id)
+		{}
+
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowDestroyedEvent);
 
 		std::string GetDebugString() const override
 		{
