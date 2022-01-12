@@ -40,29 +40,25 @@ namespace DFW
 				return;
 			}
 
-			auto const IsSystemNotPaused = [](std::shared_ptr<System> const& system) -> bool
-			{
-				return !system->IsSystemPaused();
-			};
-
-			auto enabled_systems = std::views::values(_systems) | std::views::filter(IsSystemNotPaused);
-
 			// Calling Init of systems.
-			for (auto const& system_ptr : enabled_systems)
+			for (auto const& [system_type, system_ptr] : _systems)
 			{
-				system_ptr->InternalPreUpdate(a_universe);
+				if (!system_ptr->IsSystemPaused())
+					system_ptr->InternalPreUpdate(a_universe);
 			}
 
 			// Calling Init of systems.
-			for (auto const& system_ptr : enabled_systems)
+			for (auto const& [system_type, system_ptr] : _systems)
 			{
-				system_ptr->InternalUpdate(a_universe);
+				if (!system_ptr->IsSystemPaused())
+					system_ptr->InternalUpdate(a_universe);
 			}
 			
 			// Calling Init of systems.
-			for (auto const& system_ptr : enabled_systems)
+			for (auto const& [system_type, system_ptr] : _systems)
 			{
-				system_ptr->InternalPostUpdate(a_universe);
+				if (!system_ptr->IsSystemPaused())
+					system_ptr->InternalPostUpdate(a_universe);
 			}
 		}
 
