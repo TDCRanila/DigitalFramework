@@ -2,8 +2,6 @@
 
 #include <spdlog/fmt/ostr.h>
 
-#include <Defines/IDDefines.h>
-
 #pragma region CoreTypes
 
     // TODO Need to look into this again regarding operators for custom logging types.

@@ -4,53 +4,54 @@
 
 namespace DFW
 {
+    // TODO Make GameClock an interface for multiplatform implementations later on.
+    // TODO Make multi-platform, because this class now uses windows api to querry cpu cycles.
+    // TODO Implement Minimum DeltaTime Setting.
+    // TODO Implement SingleStep Frametime Setting.
     class GameClock
     {
     public:
-
-        GameClock(float32 a_start_time_in_seconds = 0.0f, bool a_start_paused = false);
+        GameClock(TimeUnit a_start_time_in_seconds, bool a_start_paused);
         ~GameClock() = default;
+        
+        void BeginGameFrame();
+        void EndGameFrame();
+        void AdvanceSingleTick(bool a_override_pause);
 
-        float32 GetLastFrameDeltaTime() const;
+        TimeUnit GetLastFrameDeltaTime() const;
         uint64 GetElapsedCycleCount() const;
-        float32 GetElapsedTimeInSeconds() const;
-
-        void AdvanceSingleTick(bool a_override_pause = true);
+        TimeUnit GetElapsedTimeInSeconds() const;
 
         void Pause();
         void Unpause();
-        void Reset();
-
         bool IsPaused() const;
 
-        float32 GetTimeModifier() const;
-        void SetTimeModifier(float32 a_new_time_modifier);
+        void Reset();
 
-        void DebugLog() const;
+        TimeModifier GetTimeModifier() const;
+        void SetTimeModifier(TimeModifier a_new_time_modifier);
 
-    protected:
-        friend class ApplicationInstance;
-
-        void BeginGameFrame();
-        void EndGameFrame();
+        void Debug_LogInfo() const;
 
     private:
-
         void UpdateClock();
 
-        float32 CPUCyclesToSeconds(uint64 a_cpu_cycles) const;
-        uint64 SecondsToCPUCycles(float32 a_seconds) const;
+        void QueryCPUClockFreq(uint64& a_ref_value) const;
+        void QueryCPUClockCounter(uint64& a_ref_value) const;
 
-        uint64 _elapsed_cpu_cycles;
-        uint64 _start_frame_cycle_count;
-        uint64 _end_frame_cycle_count;
-        uint64 _cpu_cycles_per_second;
+        TimeUnit CPUCyclesToSeconds(uint64 a_cpu_cycles) const;
+        uint64 SecondsToCPUCycles(TimeUnit a_seconds) const;
 
-        float32 _timescale_modifier;
-        float32 _last_frame_delta_time;
+        uint64          _elapsed_cpu_cycles;
+        uint64          _start_frame_cycle_count;
+        uint64          _end_frame_cycle_count;
+        uint64          _cpu_cycles_per_second;
 
-        bool _is_clock_paused;
-        bool _has_requested_single_step;
+        TimeModifier    _timescale_modifier;
+        TimeUnit        _last_frame_delta_time;
+
+        bool            _is_clock_paused;
+        bool            _has_requested_single_step;
     };
 
 } // End of namspace ~ DFW.

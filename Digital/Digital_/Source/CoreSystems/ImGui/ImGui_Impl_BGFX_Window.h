@@ -9,7 +9,7 @@ namespace DFW
 {
 	namespace DImGui
 	{
-		bool ImGui_ImplBGFX_InitWindowPlatform(GLFWwindow* a_window);
+		bool ImGui_ImplBGFX_InitWindowPlatform(GLFWwindow* a_main_window);
 		void ImGui_ImplBGFX_ShutdownWindowPlatform();
 		void ImGui_ImplBGFX_NewFrameWindow();
 

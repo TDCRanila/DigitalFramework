@@ -9,8 +9,8 @@ namespace DFW
     class TimeTracker final
     {
     public:
-        TimeTracker(bool a_start_timer = false);
-        ~TimeTracker();
+        TimeTracker(bool a_start_timer);
+        ~TimeTracker() = default;
 
         void StartTimer();
         void StopTimer();

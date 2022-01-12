@@ -294,6 +294,7 @@ namespace DFW
 			bgfx::destroy(DImGui::imgui_rendering_context._texture_handle);
 			bgfx::destroy(DImGui::imgui_rendering_context._texture_uniform_handle);
 			bgfx::destroy(DImGui::imgui_rendering_context._image_lod_uniform_handle);
+			DImGui::imgui_rendering_context._are_graphic_devices_initialized = false;
 
 			ImGui_ImplBGFX_DestroyFontsTexture();
 		}

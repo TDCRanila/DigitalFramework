@@ -21,10 +21,10 @@ namespace DFW
 		class AutoFactory
 		{
 		public:
-			typedef std::function<std::unique_ptr<BaseType>(Args...)>												FuncType;
-			typedef std::pair<std::string, std::type_index>															StringTypePair;
-			typedef std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>						FactoryMap;
-			typedef typename std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>::iterator	FactoryMapIt;
+			using  FuncType			= std::function<std::unique_ptr<BaseType>(Args...)>;
+			using  StringTypePair	= std::pair<std::string, std::type_index>;
+			using  FactoryMap		= std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>;
+			using  FactoryMapIt		= std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>::iterator;
 
 			friend BaseType;
 

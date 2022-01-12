@@ -5,6 +5,7 @@
 #endif 
 
 #include <Defines/Defines.h>
+#include <CoreSystems/Memory.h>
 
 // Boost
 #include <boost/uuid/uuid.hpp>

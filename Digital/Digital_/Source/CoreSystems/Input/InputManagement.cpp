@@ -8,7 +8,7 @@ namespace DFW
 {
 	namespace DInput
 	{
-		InputData::InputData()
+		InputManagementSystem::InputData::InputData()
 			: _cursor_position(0.0f)
 			, _cursor_position_old(0.0f)
 			, _cursor_delta(0.0f)
@@ -20,15 +20,24 @@ namespace DFW
 		}
 
 		InputManagementSystem::InputManagementSystem()
-			: _has_input_events_buffered(false)
+			: _current_foccused_window_ptr(nullptr) 
+			, _has_input_events_buffered(false)
 			, _is_input_enabled(true)
 		{
 			_key_event_buffer.reserve(16);
 			_dir_event_buffer.reserve(16);
 		}
 
-		InputManagementSystem::~InputManagementSystem()
+		void InputManagementSystem::InitInputManagement()
 		{
+			// Register Event Callbacks.
+			CoreService::GetMainEventHandler()->RegisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);
+		}
+
+		void InputManagementSystem::TerminateInputManagement()
+		{
+			// Unregister Event Callbacks.
+			CoreService::GetMainEventHandler()->UnregisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);
 		}
 
 		void InputManagementSystem::EnableInput()
@@ -110,9 +119,9 @@ namespace DFW
 				return;
 			}
 
+			InputData& data = _input_data;
 			for (const KeyEvent& key_event : _key_event_buffer)
 			{
-				InputData& data = _input_data_storage[key_event._user_id];
 				switch (key_event._event_type)
 				{
 				case (KeyEventType::KEYBOARD):
@@ -142,7 +151,6 @@ namespace DFW
 
 			for (const DirectionalEvent& dir_event : _dir_event_buffer)
 			{
-				InputData& data = _input_data_storage[dir_event._user_id];
 				switch (dir_event._event_type)
 				{
 				case (DirectionalEventType::CURSOR):
@@ -181,7 +189,7 @@ namespace DFW
 			_has_input_events_buffered = false;
 		}
 
-		void InputManagementSystem::SendKeyEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
+		void InputManagementSystem::SendKeyEvent(DWindow::WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
 		{
 			if (_is_input_enabled)
 			{
@@ -193,7 +201,7 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::SendMouseEvent(WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
+		void InputManagementSystem::SendMouseEvent(DWindow::WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
 		{
 			if (_is_input_enabled)
 			{
@@ -205,7 +213,7 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::SendCharEvent(WindowID a_id, uint16 a_char)
+		void InputManagementSystem::SendCharEvent(DWindow::WindowID a_id, uint16 a_char)
 		{
 			if (_is_input_enabled)
 			{
@@ -217,7 +225,7 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::SendDirectionalEvent(WindowID a_id, float32 a_x_offset, float32 a_y_offset)
+		void InputManagementSystem::SendDirectionalEvent(DWindow::WindowID a_id, float32 a_x_offset, float32 a_y_offset)
 		{
 			if (_is_input_enabled)
 			{
@@ -226,7 +234,7 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::SendScrollEvent(WindowID a_id, float32 a_scroll_x_offset, float32 a_scroll_y_offset)
+		void InputManagementSystem::SendScrollEvent(DWindow::WindowID a_id, float32 a_scroll_x_offset, float32 a_scroll_y_offset)
 		{
 			if (_is_input_enabled)
 			{
@@ -235,84 +243,52 @@ namespace DFW
 			}
 		}
 
-		void InputManagementSystem::RegisterWindow(DWindow::WindowInstance* a_window)
+		void InputManagementSystem::OnWindowFocusEvent(WindowFocusEvent const& a_event)
 		{
-			InputData& data = _input_data_storage[a_window->_id];
-			a_window->_input_data = &data;
-		}
-
-		void InputManagementSystem::UnregisterWindow(DWindow::WindowInstance* a_window)
-		{
-			_input_data_storage.erase(a_window->_id);
+			if (a_event.is_focussed)
+				_current_foccused_window_ptr = CoreService::GetWindowSystem()->GetWindow(a_event.window_id);
 		}
 
 		bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
 		{
-			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
-			if (focussed_window && focussed_window->_input_data)
-			{
-				const InputData& data = *focussed_window->_input_data;
-				const DKeyAction& key_action = data._keys[a_key];
-				return (key_action == DKeyAction::PRESSED);
-			}
-
-			return false;
+			const DKeyAction& key_action = _input_data._keys[a_key];
+			return (key_action == DKeyAction::PRESSED);
 		}
 
 		bool InputManagementSystem::IsKeyRepeatedInternal(int32 a_key) const
 		{
-			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
-			if (focussed_window && focussed_window->_input_data)
-			{
-				const InputData& data = *focussed_window->_input_data;
-				const DKeyAction& key_action = data._keys[a_key];
-				return (key_action == DKeyAction::REPEATED);
-			}
-
-			return false;
+			const DKeyAction& key_action = _input_data._keys[a_key];
+			return (key_action == DKeyAction::REPEATED);
 		}
 
 		bool InputManagementSystem::IsKeyDownInternal(int32 a_key) const
 		{
-			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
-			if (focussed_window && focussed_window->_input_data)
-			{
-				const InputData& data = *focussed_window->_input_data;
-				const DKeyAction& key_action = data._keys[a_key];
-				return (key_action == DKeyAction::PRESSED) || (key_action == DKeyAction::REPEATED);
-			}
-
-			return false;
+			const DKeyAction& key_action = _input_data._keys[a_key];
+			return (key_action == DKeyAction::PRESSED) || (key_action == DKeyAction::REPEATED);
 		}
 
 		bool InputManagementSystem::IsKeyReleasedInternal(int32 a_key) const
 		{
-			DWindow::WindowInstance const* focussed_window = CoreService::GetWindowSystem()->CurrentFocussedWindow();
-			if (focussed_window && focussed_window->_input_data)
+			InputData const& data = _input_data;
+			if (_input_data._buffered_keys.empty())
+				return false;
+
+			auto it_key = data._buffered_keys.find(a_key);
+			if (it_key != data._buffered_keys.end())
 			{
-				const InputData& data = *focussed_window->_input_data;
-				auto it_key = data._buffered_keys.find(a_key);
-				if (it_key != data._buffered_keys.end())
-				{
-					const DKeyAction& key_action = data._keys[a_key];
-					return (key_action == DKeyAction::RELEASED);
-
-				}
+				const DKeyAction& key_action = data._keys[a_key];
+				return (key_action == DKeyAction::RELEASED);
 			}
-
 			return false;
 		}
 
 		void InputManagementSystem::ClearInputDataBuffers()
 		{
-			for (auto& [id, input_data] : _input_data_storage)
-			{
-				input_data._buffered_keys.clear();
-				input_data._buffered_characters.clear();
-			}
+			_input_data._buffered_keys.clear();
+			_input_data._buffered_characters.clear();
 		}
 
-		InputManagementSystem::KeyEvent::KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier)
+		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier)
 			: _user_id(a_id)
 			, _event_type(a_event_type)
 			, _key(a_key)
@@ -323,7 +299,7 @@ namespace DFW
 		{
 		}
 
-		InputManagementSystem::KeyEvent::KeyEvent(WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
+		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
 			: _user_id(a_id)
 			, _event_type(a_event_type)
 			, _key(a_key)
@@ -333,7 +309,7 @@ namespace DFW
 		{
 		}
 
-		InputManagementSystem::KeyEvent::KeyEvent(WindowID a_id, KeyEventType a_event_type, uint16 a_char)
+		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, uint16 a_char)
 			: _user_id(a_id)
 			, _event_type(a_event_type)
 			, _key(to_underlying(DKey::UNDEFINED))
@@ -341,7 +317,7 @@ namespace DFW
 		{
 		}
 
-		InputManagementSystem::DirectionalEvent::DirectionalEvent(WindowID a_id, DirectionalEventType a_event_type,
+		InputManagementSystem::DirectionalEvent::DirectionalEvent(DWindow::WindowID a_id, DirectionalEventType a_event_type,
 			float32 a_cursor_x_pos, float32 a_cursor_y_pos, float32 a_scroll_x_offset, float32 a_scroll_y_offset)
 			: _user_id(a_id)
 			, _event_type(a_event_type)

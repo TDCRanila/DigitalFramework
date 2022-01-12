@@ -30,10 +30,6 @@ namespace DFW
 	protected:
 		friend class EventLibrary;
 
-		template <typename OwnedEventType>
-		requires EventDispatcherRequirements<OwnedEventType>
-		friend class EventDispatcher;
-
 		inline static int16 _event_type_id = 0; /*8bits;event category - 8bits;event type*/
 
 		struct BaseTag {};
@@ -56,8 +52,6 @@ namespace DFW
 		using TypeTag = EventTag;
 	};
 
-	typedef std::function<void(BaseEvent&)> EventCallbackFunc;
-
 	class ReflectedEvent : public BaseEvent
 	{
 	public:
@@ -79,108 +73,5 @@ namespace DFW
 												virtual std::string GetName() const override	{ return #a_type; } \
 												using TypeTag = ReflectedTag;
 
-	enum class EventAction
-	{
-		None, DeclareDeadOnSucces, DeclareDead
-	};
-	
-	template <typename OwnedEventType>
-	concept EventDispatcherRequirements = IsDerivedFrom<OwnedEventType, BaseEvent> and not AreSameTypes<OwnedEventType, Event>;
-
-	template <typename OwnedEventType>
-	requires EventDispatcherRequirements<OwnedEventType>
-	class EventDispatcher
-	{
-	public:
-		EventDispatcher(OwnedEventType& a_event)
-			: _owned_event(a_event)
-		{
-			// TODO DEBUG TAG/IfElse.
-			DFW_LOG("Starting EventDispatcher with type: {}", typeid(OwnedEventType).name());
-		}
-
-		~EventDispatcher() = default;
-
-		template <typename EventType, typename Func>
-		bool Dispatch(const Func& a_func, EventAction a_event_action);
-
-	private:
-		OwnedEventType& _owned_event;
-
-	};
-
-} // End of namespace ~ Dcore.
-
-#pragma region Template Implementation
-
-// https://stackoverflow.com/questions/1005476/how-to-detect-whether-there-is-a-specific-member-variable-in-class
-// TODO: Add new Dispatch function that only works for T types that have type; (FactoryMap)T::GetFactories. 
-// This is for the reflected events. // otherwise default to the normal one.
-
-namespace DFW
-{
-	template <typename OwnedEventType>
-	requires EventDispatcherRequirements<OwnedEventType>
-	template <typename EventType, typename Func>
-	bool EventDispatcher<OwnedEventType>::Dispatch(const Func& a_func, EventAction a_event_action)
-	{
-		if constexpr (not IsDerivedFrom<EventType, BaseEvent>)
-		{
-			static_assert(IsAlwaysFalse<EventType>, __FUNCTION__ " - EventType's type is not derived from DFW::BaseEvent.");
-			return false;
-		}
-
-		if (_owned_event.IsDead())
-			return false;
-
-		bool comparison_result = false;
-		
-		if constexpr (
-			// BaseEvent/ReflectedEvent === ReflectedEvent
-			(AreSameTypes<OwnedEventType::TypeTag, BaseEvent::ReflectedTag> or AreSameTypes<OwnedEventType::TypeTag, BaseEvent::BaseTag>)
-			and AreSameTypes<EventType::TypeTag, BaseEvent::ReflectedTag>
-			and IsDerivedFrom<EventType, OwnedEventType>)
-		{
-			comparison_result = _owned_event.GetEventTypeID() == EventType::GetStaticType();
-		}
-		else if constexpr (
-			// Event(type A) === Event(type A)
-			AreSameTypes<OwnedEventType::TypeTag, BaseEvent::EventTag>
-			and AreSameTypes<EventType::TypeTag, BaseEvent::EventTag>)
-		{
-			// Event(type A) === Event(type B) : Do not allow comparison between types using different enum classes.
-			if constexpr (not IsDerivedFrom<EventType, OwnedEventType>)
-			{
-				static_assert(IsAlwaysFalse<EventType>, __FUNCTION__ " - EventType's type must be derived from the same (non-reflected) Event Type.");
-				return false;
-			}
-			else
-			{
-				comparison_result = _owned_event.GetEventTypeID() == static_cast<int16>(to_underlying(EventType::GetStaticType()));
-			}
-		}
-		else
-		{
-			// No comparison possible.
-			comparison_result = false;
-		}
-
-		// TODO DEBUG TAG/IfElse.
-		DFW_LOG("Attemping to dispatch with configuration: Result; {}, ReceivingEvent; {}, CompareEvent; {} - CallFunc; {}",
-			comparison_result, typeid(OwnedEventType).name(), typeid(EventType).name(), typeid(Func).name());
-
-		if (comparison_result)
-			a_func();
-
-		if (a_event_action == EventAction::DeclareDead)
-			_owned_event.DeclareDead();
-
-		if (a_event_action == EventAction::DeclareDeadOnSucces && comparison_result)
-			_owned_event.DeclareDead();
-
-		return comparison_result;
-	}
 
 } // End of namespace ~ DFW.
-
-#pragma endregion

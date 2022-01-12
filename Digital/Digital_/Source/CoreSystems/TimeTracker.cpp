@@ -12,10 +12,6 @@ namespace DFW
             StartTimer();
     }
 
-    TimeTracker::~TimeTracker()
-    {
-    }
-
     void TimeTracker::StartTimer()
     {
         if (!IsRunning())
@@ -78,7 +74,7 @@ namespace DFW
 
     TimeUnit TimeTracker::ResetAndFetchElapsedTime(bool a_reset_and_start)
     {
-        const TimeUnit time = FetchElapsedTime();
+        TimeUnit const time = FetchElapsedTime();
         ResetTimer(a_reset_and_start);
         return time;
     }

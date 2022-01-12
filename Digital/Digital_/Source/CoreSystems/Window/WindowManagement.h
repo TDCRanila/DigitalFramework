@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Defines/IDDefines.h>
-
 #include <CoreSystems/Window/WindowData.h>
+
+#include <CoreSystems/Memory.h>
 
 // Forward Declare(s)
 struct GLFWwindow;
@@ -14,88 +14,65 @@ namespace DFW
 
     namespace DWindow
     {
-        class WindowManagementSystem
+        constexpr const char*   DFW_DEFAULT_WINDOW_NAME     = "DIGITAL";
+        constexpr int32         DFW_DEFAULT_WINDOW_WIDTH    = 1280;
+        constexpr int32         DFW_DEFAULT_WINDOW_HEIGHT   = 720;
+
+        using WindowContainer = std::unordered_map<WindowID, SharedPtr<WindowInstance>>;
+
+        class WindowManagement
         {
+            friend ApplicationInstance;
         public:
-            class GLFWWindowCallBacks
-            {
-            public:
-                static void glfw_error_callback(int error, const char* description);
+            virtual ~WindowManagement() = default;
 
-                static void glfw_window_closed_callback(GLFWwindow* a_window);
-                static void glfw_window_focus_callback(GLFWwindow* a_window, int a_focused);
-                static void glfw_window_minimized_callback(GLFWwindow* a_window, int a_iconified);
-
-                static void glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos);
-                static void glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height);
-                static void glfw_framebuffer_resize_callback(GLFWwindow* a_window, int a_width, int a_height);
-
-                static void glfw_framebuffer_resize_callback();
-                static void glfw_window_refresh_callback();
-
-                static void glfw_set_clipboard_string(void* a_user_data, const char* a_text);
-                static const char* glfw_get_clipboard_string(void* a_user_data);
-
-                static void glfw_set_item_drop_callback(GLFWwindow* a_window, int a_count, const char** a_paths);
-
-                static void glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods);
-                static void glfw_char_callback(GLFWwindow* a_window, unsigned int a_char);
-                static void glfw_mouse_callback(GLFWwindow* a_window, double a_x_pos, double a_y_pos);
-                static void glfw_mousebutton_callback(GLFWwindow* a_window, int a_key, int a_action, int a_mods);
-                static void glfw_scroll_callback(GLFWwindow* a_window, double a_x_offset, double a_y_offset);
-            private:
-                GLFWWindowCallBacks() = delete;
-            }; // End of "namespace" ~ GLFWWindowCallBacks
-
-        public:
-            ~WindowManagementSystem();
-
+            virtual SharedPtr<WindowInstance> ConstructWindow(WindowParameters const& a_window_parameters) = 0;
+            virtual void RequestWindowClose(WindowID const a_window_id) = 0;
+            virtual void DestroyWindowsRequestedForClosure() = 0;
             bool HaveAllWindowsBeenClosed() const;
 
-            const DUID GetMainWindow() const;
+            WindowID GetMainWindowID() const;
+            SharedPtr<WindowInstance> const GetMainWindow() const;
+            SharedPtr<WindowInstance> const GetFocussedWindow() const;
+            SharedPtr<WindowInstance> const GetWindow(WindowID const a_window_id) const;
+            SharedPtr<WindowInstance> const GetWindow(std::string const& a_window_name) const;
+            
+            // Native Window Handle, e.g. GLFWindow*;
+            virtual void* GetWindowNWH(WindowID const a_window_id) const = 0;
+            void* GetMainWindowNWH();
+            // Platform Window Handle, e.g. HWND;
+            virtual void* GetWindowPWH(WindowID const a_window_id) const = 0;
+            void* GetMainWindowPWH();
+            
+            bool IsWindowFocussed(WindowID const a_window_id) const;
+            bool IsWindowMinimized(WindowID const a_window_id) const;
 
-            WindowInstance* ConstructWindow(const int32 a_width, const int32 a_height, const std::string  a_name);
-            WindowInstance* ConstructWindow(const int32 a_width, const int32 a_height, const char* a_name);
-
-            void CloseWindow(const std::string  a_name);
-            void CloseWindow(WindowID a_window_id);
-
-            void ChangeDefaultWindowName(const char* a_new_default_window_name);
-            void ChangeDefaultWindowName(const std::string a_new_default_window_name);
-            void ChangeWindowName(WindowID a_window_id, const std::string a_new_window_name);
-
-            const WindowInstance* CurrentFocussedWindow() const;
-            bool IsWindowFocussed(const WindowID a_window_id) const;
-            bool IsWindowMinimized(const WindowID a_window_id) const;
+            virtual void ChangeWindowParameters(WindowID const a_window_id, WindowParameters const& a_window_parameters) = 0;
+            WindowParameters default_window_parameters;
 
         protected:
-            friend ApplicationInstance;
+            WindowManagement() = default;
 
-            WindowManagementSystem(const std::string a_window_name = "DIGITAL");
+            SharedPtr<WindowInstance>& GetWindowInternal(WindowID const a_window_id);
 
-            void InitWindowManagement();
-            void TerminateWindowManagement();
+            void RegisterCommonEventCallbacks();
+            void UnregisterCommonEventCallbacks();
+            void OnWindowFocusEvent(WindowFocusEvent const& a_event);
 
-            void BindApplicationEventFunc(const ApplicationEventCallbackFunc& a_event_callback_func);
-
-            std::unordered_map<WindowID, WindowInstance> _window_instances;
-
+            WindowContainer _window_instances;
+            std::vector<WindowID> _windows_requested_destruction;
+            WindowID _main_window_id;
+            WindowID _focussed_window_id;
+        
         private:
-            void DestructWindow(WindowInstance* a_window);
+            static SharedPtr<WindowManagement> Construct();
 
-            void SetFocussedWindowID(const WindowID a_window_id);
-
-            std::string _default_window_name;
-
-            ApplicationEventCallbackFunc _application_event_callback_func;
-
-            WindowID _default_first_window_id;
-            WindowID _current_focussed_window_id;
-
-            int32 _default_width;
-            int32 _default_height;
+            virtual void InitWindowManagement() = 0;
+            virtual void TerminateWindowManagement() = 0;
+            virtual void PollWindowEvents() = 0;
 
         };
+
 
     } // End of namespace ~ DWindow.
 

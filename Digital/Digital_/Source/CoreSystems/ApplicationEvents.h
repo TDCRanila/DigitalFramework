@@ -2,6 +2,8 @@
 
 #include <CoreSystems/Events/EventImplementation.h>
 
+#include <CoreSystems/Window/WindowID.h>
+
 #include <sstream>
 #include <functional>
 
@@ -9,7 +11,7 @@ namespace DFW
 {
 	enum class ApplicationEvents
 	{
-		WindowCloseEvent, WindowFocusEvent, WindowMinimizedEvent, WindowMoveEvent, WindowResizeEvent, WindowFramebufferResizeEvent,
+		WindowCreatedEvent, WindowDestroyedEvent, WindowFocusEvent, WindowMinimizedEvent, WindowMoveEvent, WindowResizeEvent, WindowFramebufferResizeEvent,
 		ApplicationCloseEvent, ApplicationResetEvent, ApplicationSettingsSavedEvent,
 		GameStartEvent, GamePauseEvent, GameUnpauseEvent, GameResetEvent,
 		InputReceivedEvent, InputClipboardEvent, InputItemDropEvent,
@@ -24,24 +26,64 @@ namespace DFW
 
 	};
 
-	typedef std::function<void(ApplicationEvent&)> ApplicationEventCallbackFunc;
+	using ApplicationEventCallbackFunc = std::function<void(ApplicationEvent const&)>;
+
+#pragma region WindowEvents
 
 	/// <summary>
 	/// Window Events
 	/// </summary>
-	class WindowCloseEvent : public ApplicationEvent
+	
+	class WindowCreatedEvent : public ApplicationEvent
 	{
 	public:
-		WindowCloseEvent() = default;
+		WindowCreatedEvent(DWindow::WindowID a_window_id)
+			: window_id(a_window_id)
+		{}
 
-		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowCloseEvent);
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowCreatedEvent);
+
+		std::string GetDebugString() const override
+		{
+			std::stringstream debug_string;
+			debug_string << GetName();
+			debug_string << " - ";
+			debug_string << window_id;
+
+			return debug_string.str();
+		}
+
+		DWindow::WindowID	window_id;
+	};
+
+	class WindowDestroyedEvent : public ApplicationEvent
+	{
+	public:
+		WindowDestroyedEvent(DWindow::WindowID a_window_id)
+			: window_id(a_window_id)
+		{}
+
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowDestroyedEvent);
+
+		std::string GetDebugString() const override
+		{
+			std::stringstream debug_string;
+			debug_string << GetName();
+			debug_string << " - ";
+			debug_string << window_id;
+
+			return debug_string.str();
+		}
+
+		DWindow::WindowID	window_id;
 	};
 
 	class WindowFocusEvent : public ApplicationEvent
 	{
 	public:
-		WindowFocusEvent(bool a_is_focussed)
-			: _is_focussed(a_is_focussed)
+		WindowFocusEvent(DWindow::WindowID a_window_id, bool a_is_focussed)
+			: window_id(a_window_id)
+			, is_focussed(a_is_focussed)
 		{}			
 
 		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowFocusEvent);
@@ -51,19 +93,23 @@ namespace DFW
 			std::stringstream debug_string;
 			debug_string << GetName();
 			debug_string << " - ";
-			debug_string << (_is_focussed ? "Focussed" : "Unfocussed");
+			debug_string << window_id;
+			debug_string << " - ";
+			debug_string << (is_focussed ? "Focussed" : "Unfocussed");
 
 			return debug_string.str();
 		}
 
-		const bool _is_focussed;
+		DWindow::WindowID	window_id;
+		bool				is_focussed;
 	};
 
 	class WindowMinimizedEvent : public ApplicationEvent
 	{
 	public:
-		WindowMinimizedEvent(bool a_is_minimized)
-			: _is_minimized(a_is_minimized)
+		WindowMinimizedEvent(DWindow::WindowID a_window_id, bool a_is_minimized)
+			: window_id(a_window_id)
+			, is_minimized(a_is_minimized)
 		{}
 
 		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowMinimizedEvent);
@@ -73,22 +119,26 @@ namespace DFW
 			std::stringstream debug_string;
 			debug_string << GetName();
 			debug_string << " - ";
-			debug_string << (_is_minimized ? "Minimized" : "Opened");
+			debug_string << window_id;
+			debug_string << " - ";
+			debug_string << (is_minimized ? "Minimized" : "Opened");
 
 			return debug_string.str();
 		}
 
-		const bool _is_minimized;
+		DWindow::WindowID	window_id;
+		bool				is_minimized;
 	};
 
 	class WindowMoveEvent : public ApplicationEvent
 	{
 	public:
-		WindowMoveEvent(int32 a_old_x_pos, int32 a_old_y_pos, int32 a_new_x_pos, int32 a_new_y_pos)
-			: _old_x_pos(a_old_x_pos)
-			, _old_y_pos(a_old_y_pos)
-			, _new_x_pos(a_new_x_pos)
-			, _new_y_pos(a_new_y_pos)
+		WindowMoveEvent(DWindow::WindowID a_window_id, int32 a_old_x_pos, int32 a_old_y_pos, int32 a_new_x_pos, int32 a_new_y_pos)
+			: window_id(a_window_id)
+			, old_x_pos(a_old_x_pos)
+			, old_y_pos(a_old_y_pos)
+			, new_x_pos(a_new_x_pos)
+			, new_y_pos(a_new_y_pos)
 		{}
 
 		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowMoveEvent);
@@ -99,30 +149,35 @@ namespace DFW
 
 			std::stringstream debug_string;
 			debug_string << GetName();
+			debug_string << " - ";
+			debug_string << window_id;
+			debug_string << " - ";
 			debug_string << " OldPos: ";
-			debug_string << _old_x_pos;
+			debug_string << old_x_pos;
 			debug_string << ",";
-			debug_string << _old_y_pos;
+			debug_string << old_y_pos;
 			debug_string << " - ";
 			debug_string << " NewPos: ";
-			debug_string << _new_x_pos;
+			debug_string << new_x_pos;
 			debug_string << ",";
-			debug_string << _new_y_pos;
+			debug_string << new_y_pos;
 
 			return debug_string.str();
 		}
 
-		const int32 _old_x_pos;
-		const int32 _old_y_pos;
-		const int32 _new_x_pos;
-		const int32 _new_y_pos;
+		DWindow::WindowID	window_id;
+		int32				old_x_pos;
+		int32				old_y_pos;
+		int32				new_x_pos;
+		int32				new_y_pos;
 	};
 
 	class WindowResizeEvent : public ApplicationEvent
 	{
 	public:
-		WindowResizeEvent(int32 a_old_width, int32 a_old_height, int32 a_new_width, int32 a_new_height) 
-			: old_width(a_old_width)
+		WindowResizeEvent(DWindow::WindowID a_window_id, int32 a_old_width, int32 a_old_height, int32 a_new_width, int32 a_new_height)
+			: window_id(a_window_id)
+			, old_width(a_old_width)
 			, old_height(a_old_height)
 			, new_width(a_new_width)
 			, new_height(a_new_height)
@@ -136,6 +191,9 @@ namespace DFW
 
 			std::stringstream debug_string;
 			debug_string << GetName();
+			debug_string << " - ";
+			debug_string << window_id;
+			debug_string << " - ";
 			debug_string << " OldRes: ";
 			debug_string << old_width;
 			debug_string << ",";
@@ -149,22 +207,27 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		const int32 old_width;
-		const int32 old_height;
-		const int32 new_width;
-		const int32 new_height;
+		DWindow::WindowID	window_id;
+		int32				old_width;
+		int32				old_height;
+		int32				new_width;
+		int32				new_height;
 	};
 
 	class WindowFramebufferResizeEvent : public WindowResizeEvent
 	{
 	public:
-		WindowFramebufferResizeEvent(int32 a_old_width, int32 a_old_height, int32 a_new_width, int32 a_new_height)
-			: WindowResizeEvent(a_old_width, a_old_height, a_new_width, a_new_height)
+		WindowFramebufferResizeEvent(DWindow::WindowID a_window_id, int32 a_old_width, int32 a_old_height, int32 a_new_width, int32 a_new_height)
+			: WindowResizeEvent(a_window_id, a_old_width, a_old_height, a_new_width, a_new_height)
 		{}
 
 		DFW_CONSTRUCT_EVENT(ApplicationEvents, WindowFramebufferResizeEvent);
 
 	};
+
+#pragma endregion
+
+#pragma region ApplicationEvents
 
 	/// <summary>
 	/// General Application Events
@@ -193,6 +256,10 @@ namespace DFW
 		DFW_CONSTRUCT_EVENT(ApplicationEvents, ApplicationSettingsSavedEvent);
 	};
 
+#pragma endregion
+
+#pragma region GameEvents
+
 	/// <summary>
 	/// Game Events
 	/// </summary>
@@ -213,7 +280,7 @@ namespace DFW
 
 		DFW_CONSTRUCT_EVENT(ApplicationEvents, GamePauseEvent);
 
-		const bool _paused;
+		bool _paused;
 	};
 
 	class GameResetEvent : public ApplicationEvent
@@ -223,6 +290,10 @@ namespace DFW
 
 		DFW_CONSTRUCT_EVENT(ApplicationEvents, GameResetEvent);
 	};
+
+#pragma endregion
+
+#pragma region InputEvents
 
 	/// <summary>
 	/// Input Events
@@ -255,7 +326,7 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		const char* const _clipboard_input;
+		const char* _clipboard_input;
 	};
 
 	class InputItemDropEvent : public ApplicationEvent
@@ -294,8 +365,10 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		const int32			_item_count;
-		const char** const	_item_paths;
+		int32			_item_count;
+		const char**	_item_paths;
 	};
+
+#pragma endregion
 
 } // End of namespace ~ DFW.
