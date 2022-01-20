@@ -202,6 +202,7 @@ namespace DFW
                 }
 
                 // Render all the submitted items.
+                _render_module->EndFrame();
                 _render_module->RenderFrame();
                 _render_module->Debug_DrawBasicRenderInfo();
             }
