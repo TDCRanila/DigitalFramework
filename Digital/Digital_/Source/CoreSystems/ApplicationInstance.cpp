@@ -39,7 +39,7 @@ namespace DFW
 
         // Allocate Systems
         _window_management  = DWindow::WindowManagement::Construct();
-        _render_module      = MakeUnique<DRender::RenderModuleBGFX>();
+        _render_module      = DRender::RenderModule::Construct();
 
         // Core Services
         CoreService::ProvideGameClock(&_game_clock);

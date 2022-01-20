@@ -1,9 +1,17 @@
 #include <Modules/Rendering/RenderModuleInterface.h>
 
+#include <Modules/Rendering/RenderModule_Impl_BGFX.h>
+
 namespace DFW
 {
     namespace DRender
     {
+        SharedPtr<RenderModule> RenderModule::Construct()
+        {
+            // TODO Implement Platform IfDefs
+            return MakeShared<RenderModuleBGFX>();
+        }
+
         void RenderModule::InitRenderModule()
         {
         }
