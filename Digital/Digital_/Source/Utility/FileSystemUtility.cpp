@@ -151,12 +151,28 @@ namespace DFW
             return fs::path(a_string).extension().string();
         }
 
-        std::istringstream* GetFileData(const std::string& a_path)
+        std::istringstream ReadTextFileIntoStringStream(std::string const& a_path)
         {
-            std::ifstream ifs(a_path.c_str());
-            std::string str((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+            std::ifstream ifs(a_path.c_str(), std::ios::in);
+            std::string const str((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+            ifs.close();
+            return std::istringstream(str);
+        }
 
-            return new std::istringstream(str);
+        uint8* ReadBinaryFileIntoBuffer(std::size_t& a_buffersize, std::string const& a_path)
+        {
+            std::ifstream ifs(a_path.c_str(), std::ios::in | std::ios::binary);
+            std::filebuf* file_buffer = ifs.rdbuf();
+            std::size_t file_buffer_size = file_buffer->pubseekoff(0, ifs.end, ifs.in);
+            file_buffer->pubseekpos(0, ifs.in);
+
+            char* buffer = new char[file_buffer_size];
+            file_buffer->sgetn(buffer, file_buffer_size);
+            
+            ifs.close();
+
+            a_buffersize = file_buffer_size;
+            return reinterpret_cast<uint8*>(buffer);
         }
 
 #else // OTHER SYSTEMS
@@ -223,9 +239,14 @@ namespace DFW
             else { return false; }
         }
 
-        std::istringstream* GetFileData(const std::string& a_path)
+        std::istringstream ReadTextFileIntoStringStream(std::string const& a_path);
         {
-            return new std::istringstream("");
+            return std::istringstream("");
+        }
+
+        uint8* ReadBinaryFileIntoBuffer(std::size_t& a_buffersize, std::string const& a_path)
+        {
+            return uint8*();
         }
 
 #endif // Other Systems
