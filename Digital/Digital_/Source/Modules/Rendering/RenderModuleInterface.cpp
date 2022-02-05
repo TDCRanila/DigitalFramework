@@ -1,4 +1,4 @@
-#include <Modules/Rendering/RenderModule_Impl_BGFX.h>
+#include <Modules/Rendering/RenderModuleInterface.h>
 
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/DUID.h>

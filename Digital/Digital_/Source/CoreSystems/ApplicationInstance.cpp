@@ -8,8 +8,6 @@
 #include <CoreSystems/Logging/Logger.h>
 #include <Defines/InputDefines.h>
 
-#include <Modules/Rendering/RenderModule_Impl_BGFX.h>
-
 #include <array>
 
 namespace DFW
