@@ -6,6 +6,7 @@
 #include <Zynthurism/Game/GameplaySystems/TestSystem.h>
 
 #include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Systems/RenderSystem.h>
 
 #include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
@@ -25,6 +26,7 @@ namespace DGame
 	{
 		// Systems
 		DFW::CoreService::GetECS()->SystemManager()->AddSystem<TestSystem>();
+		DFW::CoreService::GetECS()->SystemManager()->AddSystem<DFW::RenderSystem>();
 
 		// Stages
 		ProvideStageStackController().AttachStage<DFW::DEditor::DockerStage>("MainDockSpace", false);
