@@ -4,14 +4,10 @@
 
 namespace DFW
 {
-    //FW Declare.
-    class ApplicationInstance;
-
     namespace DRender
     {
         class RenderModule
         {
-            friend ApplicationInstance;
         public:
             RenderModule() = default;
             virtual ~RenderModule() = default;
@@ -30,8 +26,6 @@ namespace DFW
             virtual void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
 
             virtual void Debug_DrawBasicRenderInfo() const;
-        private:
-            static SharedPtr<RenderModule> Construct();
 
         };
 

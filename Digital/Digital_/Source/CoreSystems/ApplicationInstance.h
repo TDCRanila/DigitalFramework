@@ -48,7 +48,7 @@ namespace DFW
         SharedPtr<DWindow::WindowManagement>   _window_management;
         DInput::InputManagementSystem          _input_system;
         DECS::ECSModule                        _ecs_module;
-        SharedPtr<DRender::RenderModule>       _render_module;
+        DRender::RenderModule                  _render_module;
  
         ImGuiLayer _imgui;
         

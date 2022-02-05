@@ -39,7 +39,6 @@ namespace DFW
 
         // Allocate Systems
         _window_management  = DWindow::WindowManagement::Construct();
-        _render_module      = DRender::RenderModule::Construct();
 
         // Core Services
         CoreService::ProvideGameClock(&_game_clock);
@@ -111,7 +110,7 @@ namespace DFW
         _input_system.InitInputManagement();
 
         // RenderModule
-        _render_module->InitRenderModule();       
+        _render_module.InitRenderModule();       
 
         // ImGui
         _imgui.InitImGuiLayer();
@@ -135,7 +134,7 @@ namespace DFW
         _imgui.TerminateImGuiLayer();
 
         // Render
-        _render_module->TerminateRenderModule();
+        _render_module.TerminateRenderModule();
 
         // Input
         _input_system.TerminateInputManagement();
@@ -173,7 +172,7 @@ namespace DFW
             {               
                 std::vector<StageBase*> const& _stages = _stage_stack_controller.GetStages();
                 { // Regular Application Update
-                    _render_module->BeginFrame();
+                    _render_module.BeginFrame();
 
                     // Update Stages.
                     for (StageBase* stage : _stages)
@@ -184,7 +183,7 @@ namespace DFW
 
                     _ecs_module.UpdateECS();
 
-                    _render_module->EndFrame();
+                    _render_module.EndFrame();
                 }
 
                 { // ImGui Related Update.
@@ -202,9 +201,9 @@ namespace DFW
                 }
 
                 // Render all the submitted items.
-                _render_module->EndFrame();
-                _render_module->RenderFrame();
-                _render_module->Debug_DrawBasicRenderInfo();
+                _render_module.EndFrame();
+                _render_module.RenderFrame();
+                _render_module.Debug_DrawBasicRenderInfo();
             }
 
             _game_clock.EndGameFrame();
