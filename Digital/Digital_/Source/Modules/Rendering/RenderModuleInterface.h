@@ -10,22 +10,22 @@ namespace DFW
         {
         public:
             RenderModule() = default;
-            virtual ~RenderModule() = default;
+            ~RenderModule() = default;
 
-            virtual void InitRenderModule();
-            virtual void TerminateRenderModule();
+            void InitRenderModule();
+            void TerminateRenderModule();
 
-            virtual void RenderFrame();
+            void RenderFrame();
 
-            virtual void BeginFrame();
-            virtual void EndFrame();
+            void BeginFrame();
+            void EndFrame();
 
-            virtual void SubmitMesh();
-            virtual void SubmitSprite();
+            void SubmitMesh();
+            void SubmitSprite();
 
-            virtual void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
+            void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
 
-            virtual void Debug_DrawBasicRenderInfo() const;
+            void Debug_DrawBasicRenderInfo() const;
 
         };
 
