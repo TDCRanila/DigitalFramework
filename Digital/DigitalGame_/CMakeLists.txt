@@ -91,14 +91,15 @@ function( add_bgfx_shader FILE FOLDER )
 		endif()
 
 		foreach( OUT ${OUTPUTS} )
-			list( APPEND OUTPUT_FILES "\n" ${${OUT}_OUTPUT} " - " )
+			list( APPEND OUTPUT_FILES ${${OUT}_OUTPUT} )
+			list( APPEND OUTPUT_FILES_PRETTY "\n" ${${OUT}_OUTPUT} " - " )
 			list( APPEND COMMANDS COMMAND "$<TARGET_FILE:shaderc>" ${${OUT}} )
 			get_filename_component( OUT_DIR ${${OUT}_OUTPUT} DIRECTORY )
 			file( MAKE_DIRECTORY ${OUT_DIR} )
 		endforeach()
 
 		file( RELATIVE_PATH PRINT_NAME ${FOLDER} ${FILE} )
-        message("OUTPUT_FILES: " + ${OUTPUT_FILES})
+        message("OUTPUT_FILES: " + ${OUTPUT_FILES_PRETTY})
 		add_custom_command(
 			MAIN_DEPENDENCY ${FILE}
 			OUTPUT ${OUTPUT_FILES}
