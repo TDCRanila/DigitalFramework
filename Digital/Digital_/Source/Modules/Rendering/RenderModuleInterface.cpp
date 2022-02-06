@@ -114,10 +114,6 @@ namespace DFW
             {
                 DWindow::WindowDimension const& window_dimension = main_window_ptr->_window_dimension;
 
-                //// This dummy draw call is here to make sure that view 0 is cleared
-                //// if no other draw calls are submitted to view 0.
-                //bgfx::touch(0);
-
                 // bgfx debug Window Information
                 bgfx::dbgTextClear();
 
