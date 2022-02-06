@@ -54,8 +54,11 @@ namespace DFW
         void RenderModule::BeginFrame()
         {
             bgfx::ViewId main_window = 0;
+
             bgfx::setViewRect(main_window, 0, 0, bgfx::BackbufferRatio::Equal);
             bgfx::setViewClear(main_window, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x33333333);
+
+            bgfx::touch(main_window);
         }
 
         void RenderModule::EndFrame()
