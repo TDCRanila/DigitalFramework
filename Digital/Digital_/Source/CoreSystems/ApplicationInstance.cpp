@@ -108,7 +108,7 @@ namespace DFW
         _input_system.InitInputManagement();
 
         // RenderModule
-        _render_module.InitRenderModule();       
+        _render_module.InitRenderModule();
 
         // ImGui
         _imgui.InitImGuiLayer();

@@ -7,13 +7,21 @@
 #include <CoreSystems/ImGui/ImGuiLayer.h>
 #include <CoreSystems/Window/WindowManagement.h>
 
-#include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 
 namespace DFW
 {
     namespace DRender
     {
+        RenderModule::RenderModule()
+        {
+            // Set default initialization settings. 
+            _bgfx_init_settings.type                = bgfx::RendererType::Count;
+            _bgfx_init_settings.resolution.width    = DWindow::DFW_DEFAULT_WINDOW_WIDTH;
+            _bgfx_init_settings.resolution.height   = DWindow::DFW_DEFAULT_WINDOW_HEIGHT;
+            _bgfx_init_settings.resolution.reset    = BGFX_RESET_VSYNC;
+        }
+
         void RenderModule::InitRenderModule()
         {
             // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
@@ -26,15 +34,12 @@ namespace DFW
             platform_data.nwh = CoreService::GetWindowSystem()->GetMainWindowPWH();
             bgfx::setPlatformData(platform_data);
 
-            bgfx::Init bgfx_init;
-            bgfx_init.type              = bgfx::RendererType::Count; // Auto Choose Renderer
-            bgfx_init.resolution.width  = main_window_ptr->_window_dimension._current_width;
-            bgfx_init.resolution.height = main_window_ptr->_window_dimension._current_height;
-            bgfx_init.resolution.reset  = BGFX_RESET_VSYNC;
-            bgfx::init(bgfx_init);
+            bgfx::init(_bgfx_init_settings);
 
             // Register Event Callbacks.
             CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderModule::OnWindowResizeEvent>(this);
+
+            CoreService::GetMainEventHandler()->InstantBroadcast<RendererInitializedEvent>();
         }
 
         void RenderModule::TerminateRenderModule()
@@ -43,6 +48,37 @@ namespace DFW
             CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderModule::OnWindowResizeEvent>(this);
 
             bgfx::shutdown();
+
+            CoreService::GetMainEventHandler()->InstantBroadcast<RendererTerminatedEvent>();
+        }
+
+        void RenderModule::ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags)
+        {
+            // Toggle a flag depending on the input.
+            _bgfx_init_settings.resolution.reset = _bgfx_init_settings.resolution.reset ^ a_bgfx_reset_flags;
+            bgfx::reset(_bgfx_init_settings.resolution.width, _bgfx_init_settings.resolution.height, _bgfx_init_settings.resolution.reset);
+        }
+
+        void RenderModule::ChangeRenderAPI(bgfx::RendererType::Enum a_render_type)
+        {
+            // It is possible to change render api during runtime, but that might cause issues with some hardware.
+            // Calling this function will most likely result in a runtime error if this fix is not applied.
+            // issue: https://github.com/bkaradzic/bgfx/pull/2395
+            // fix: https://github.com/bkaradzic/bgfx/pull/1837/commits/ab13e6281c12b3916883be33e8a15890313443d3
+
+            // TODO Potential issue with non-dx11/dx12 APIs that don't seem to render properly after changing.
+            // Needs further investigation.
+
+            if (_bgfx_init_settings.type == a_render_type)
+                return;
+
+            TerminateRenderModule();
+
+            _bgfx_init_settings.type = a_render_type;
+
+            InitRenderModule();
+
+            CoreService::GetMainEventHandler()->InstantBroadcast<RendererAPIChanged>();
         }
              
         void RenderModule::RenderFrame()
