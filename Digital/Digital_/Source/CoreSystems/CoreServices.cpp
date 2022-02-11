@@ -9,6 +9,7 @@ namespace DFW
     DECS::ECSModule* CoreService::_ecs_service                  = nullptr;
     DInput::InputManagementSystem* CoreService::_input_service  = nullptr;
     DWindow::WindowManagement* CoreService::_window_service     = nullptr;
+    DRender::RenderModule* CoreService::_rm_service             = nullptr;
 
     // TODO: Could provide some game clock null-service instead.
     // maybe not needed for a gameclock but other services such as audio
@@ -67,6 +68,17 @@ namespace DFW
     void CoreService::ProvideWindowSystem(DWindow::WindowManagement* a_provided_service)
     {
         _window_service = a_provided_service;
+    }
+
+    DRender::RenderModule* CoreService::GetRenderModule()
+    {
+        DFW_ASSERT(_rm_service  && "No or invalid Render Module provided.");
+        return _rm_service;
+    }
+
+    void CoreService::ProvideRenderModule(DRender::RenderModule* a_provided_service)
+    {
+        _rm_service = a_provided_service;
     }
 
 } // End of namespace ~ DFW.

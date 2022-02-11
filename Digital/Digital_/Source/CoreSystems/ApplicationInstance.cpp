@@ -44,6 +44,7 @@ namespace DFW
         CoreService::ProvideECS(&_ecs_module);
         CoreService::ProvideInputSystem(&_input_system);
         CoreService::ProvideWindowSystem(_window_management.get());
+        CoreService::ProvideRenderModule(&_render_module);
 
         // Application
         TimeTracker application_timer(false);
