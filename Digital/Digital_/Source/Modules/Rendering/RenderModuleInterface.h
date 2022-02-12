@@ -2,6 +2,8 @@
 
 #include <CoreSystems/ApplicationEvents.h>
 
+#include <Modules/Rendering/ViewTargetDirector.h>
+
 #include <bgfx/bgfx.h>
 
 namespace DFW
@@ -32,6 +34,9 @@ namespace DFW
             void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
 
             void Debug_DrawBasicRenderInfo() const;
+
+            ViewTargetDirector view_director;
+
         private:
             bgfx::Init _bgfx_init_settings;
 

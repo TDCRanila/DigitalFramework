@@ -14,6 +14,9 @@
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
 
+#include <CoreSystems/CoreServices.h>
+#include <Modules/Rendering/RenderModuleInterface.h>
+
 namespace DFW
 {
     namespace DImGui
@@ -107,7 +110,7 @@ namespace DFW
             // Register main window handle (which is owned by the main application, not by the imgui layer implementation.)
             // This is mostly for simplicity and consistency, so that the code (e.g. mouse handling etc.) can use the same logic for main and secondary viewports.
             ImGuiViewportDataBGFX* main_viewport_data = DImGui::imgui_rendering_context._viewports.emplace_back(IM_NEW(ImGuiViewportDataBGFX)());
-            main_viewport_data->_view_id        = ImGui_ImplBGFX_AllocateViewportID();
+            main_viewport_data->_view_id        = CoreService::GetRenderModule()->view_director.AllocateViewTarget("main-imgui")->view_target_id;
             main_viewport_data->_window         = DImGui::main_window;
             main_viewport_data->_window_owned   = false;
             // main_viewport_data->_framebuffer_handle = BGFX_INVALID_HANDLE; // Specifically set to an invalid handle.
@@ -142,7 +145,7 @@ namespace DFW
         void ImGui_ImplBGFX_CreateViewportWindow(ImGuiViewport* a_viewport)
         {
             ImGuiViewportDataBGFX* viewport_data = DImGui::imgui_rendering_context._viewports.emplace_back(IM_NEW(ImGuiViewportDataBGFX)());
-            viewport_data->_view_id = ImGui_ImplBGFX_AllocateViewportID();
+            viewport_data->_view_id = CoreService::GetRenderModule()->view_director.AllocateViewTarget()->view_target_id;
 
             // GLFW 3.2 unfortunately always set focus on glfwCreateWindow() if GLFW_VISIBLE is set, regardless of GLFW_FOCUSED
             // With GLFW 3.3, the hint GLFW_FOCUS_ON_SHOW fixes this problem
@@ -211,7 +214,7 @@ namespace DFW
                 if (bgfx::isValid(viewport_data->_framebuffer_handle))
                     bgfx::destroy(viewport_data->_framebuffer_handle);
 
-                ImGui_ImplBGFX_FreeViewportID(viewport_data->_view_id);
+                CoreService::GetRenderModule()->view_director.FreeViewTarget(viewport_data->_view_id);
 
                 if (viewport_data->_window_owned)
                 {

@@ -54,14 +54,8 @@ namespace DFW
 			bgfx::UniformHandle	_texture_uniform_handle;
 			bgfx::UniformHandle	_image_lod_uniform_handle;
 
-			std::vector<bgfx::ViewId>	_free_viewport_ids;
-			uint32						_viewport_id_counter;
-
-			bool						_are_graphic_devices_initialized;
+			bool _are_graphic_devices_initialized;
 		};
-
-		bgfx::ViewId ImGui_ImplBGFX_AllocateViewportID();
-		void ImGui_ImplBGFX_FreeViewportID(bgfx::ViewId const a_viewport_id);
 
 		extern ImGuiRenderingContext	imgui_rendering_context;
 		extern GLFWwindow* main_window;

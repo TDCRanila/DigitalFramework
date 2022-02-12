@@ -2,6 +2,8 @@
 
 #include <Modules/ECS/Objects/ECSystem.h>
 
+#include <Modules/Rendering/ViewTarget.h>
+
 namespace DFW
 {
     class RenderSystem : public DECS::System::StrictRegistrar<RenderSystem>
@@ -14,6 +16,9 @@ namespace DFW
         virtual void Terminate() override;
 
         virtual void Update(DECS::Universe* const a_universe) override;
+
+    private:
+        SharedPtr<DRender::ViewTarget const> _view_target;
 
     };
 
