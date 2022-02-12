@@ -3,16 +3,14 @@
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/GameClock.h>
 #include <CoreSystems/TimeTracker.h>
+#include <CoreSystems/ImGui/ImGuiLayer.h>
 #include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Stage/StageStackController.h>
 #include <CoreSystems/Stage/StageStackCommunicator.h>
 #include <CoreSystems/Window/WindowManagement.h>
 
 #include <Modules/ECS/ECSModule.h>
-
 #include <Modules/Rendering/RenderModuleInterface.h>
-
-#include <CoreSystems/ImGui/ImGuiLayer.h>
 
 namespace DFW
 {
