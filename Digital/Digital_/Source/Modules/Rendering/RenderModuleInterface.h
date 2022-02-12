@@ -19,25 +19,24 @@ namespace DFW
             void InitRenderModule();
             void TerminateRenderModule();
 
-            void ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags);
-            // ChangeRenderAPI - Experimental - Might cause issues.
-            void ChangeRenderAPI(bgfx::RendererType::Enum a_render_type);
-
-            void RenderFrame();
-
             void BeginFrame();
             void EndFrame();
+            void RenderFrame();
 
             void SubmitMesh();
             void SubmitSprite();
 
-            void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
+            // ChangeRenderAPI - Experimental - Might cause issues.
+            void ChangeRenderAPI(bgfx::RendererType::Enum a_render_type);
+            void ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags);
 
             void Debug_DrawBasicRenderInfo() const;
 
             ViewTargetDirector view_director;
 
         private:
+            void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
+
             bgfx::Init _bgfx_init_settings;
 
         };

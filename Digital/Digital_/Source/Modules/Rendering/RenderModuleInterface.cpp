@@ -53,14 +53,33 @@ namespace DFW
 
             CoreService::GetMainEventHandler()->InstantBroadcast<RendererTerminatedEvent>();
         }
-
-        void RenderModule::ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags)
+                          
+        void RenderModule::BeginFrame()
         {
-            // Toggle a flag depending on the input.
-            _bgfx_init_settings.resolution.reset = _bgfx_init_settings.resolution.reset ^ a_bgfx_reset_flags;
-            bgfx::reset(_bgfx_init_settings.resolution.width, _bgfx_init_settings.resolution.height, _bgfx_init_settings.resolution.reset);
+            SharedPtr<ViewTarget const> const& view_target = view_director.GetViewTarget("main"); 
+            bgfx::setViewRect(*view_target, 0, 0, bgfx::BackbufferRatio::Equal);
+            bgfx::setViewClear(*view_target, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x33333333);
+            bgfx::touch(*view_target);
         }
 
+        void RenderModule::EndFrame()
+        {
+        }
+                          
+        void RenderModule::RenderFrame()
+        {
+            // Advance to next frame. Process submitted rendering primitives.
+            bgfx::frame();
+        }
+
+        void RenderModule::SubmitMesh()
+        {
+        }
+        
+        void RenderModule::SubmitSprite()
+        {
+        }
+          
         void RenderModule::ChangeRenderAPI(bgfx::RendererType::Enum a_render_type)
         {
             // It is possible to change render api during runtime, but that might cause issues with some hardware.
@@ -82,37 +101,12 @@ namespace DFW
 
             CoreService::GetMainEventHandler()->InstantBroadcast<RendererAPIChanged>();
         }
-             
-        void RenderModule::RenderFrame()
-        {
-            // Advance to next frame. Process submitted rendering primitives.
-            bgfx::frame();
-        }
-             
-        void RenderModule::BeginFrame()
-        {
-            SharedPtr<ViewTarget const> const& view_target = view_director.GetViewTarget("main"); 
-            bgfx::setViewRect(*view_target, 0, 0, bgfx::BackbufferRatio::Equal);
-            bgfx::setViewClear(*view_target, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x33333333);
-            bgfx::touch(*view_target);
-        }
 
-        void RenderModule::EndFrame()
+        void RenderModule::ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags)
         {
-        }
-                          
-        void RenderModule::SubmitMesh()
-        {
-        }
-        
-        void RenderModule::SubmitSprite()
-        {
-        }
-          
-        void RenderModule::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
-        {
-            bgfx::reset(a_window_event.new_width, a_window_event.new_height);
-            bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
+            // Toggle a flag depending on the input.
+            _bgfx_init_settings.resolution.reset = _bgfx_init_settings.resolution.reset ^ a_bgfx_reset_flags;
+            bgfx::reset(_bgfx_init_settings.resolution.width, _bgfx_init_settings.resolution.height, _bgfx_init_settings.resolution.reset);
         }
 
         void RenderModule::Debug_DrawBasicRenderInfo() const
@@ -170,7 +164,12 @@ namespace DFW
                 bgfx::dbgTextPrintf(0, 4, 0x0f, "\x1b[;0m    \x1b[;1m    \x1b[; 2m    \x1b[; 3m    \x1b[; 4m    \x1b[; 5m    \x1b[; 6m    \x1b[; 7m    \x1b[0m");
                 bgfx::dbgTextPrintf(0, 5, 0x0f, "\x1b[;8m    \x1b[;9m    \x1b[;10m    \x1b[;11m    \x1b[;12m    \x1b[;13m    \x1b[;14m    \x1b[;15m    \x1b[0m");
             }
+        }
 
+        void RenderModule::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
+        {
+            bgfx::reset(a_window_event.new_width, a_window_event.new_height);
+            bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
         }
 
     } // End of namespace ~ Render.
