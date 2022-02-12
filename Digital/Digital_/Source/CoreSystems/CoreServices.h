@@ -29,6 +29,8 @@ namespace DFW
     class CoreService
     {
     public:
+        static void ReleaseServices();
+
         static GameClock* GetGameClock();
         static void ProvideGameClock(GameClock* a_provided_service);
 

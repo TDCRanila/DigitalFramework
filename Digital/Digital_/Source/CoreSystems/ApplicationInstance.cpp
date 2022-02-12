@@ -38,15 +38,7 @@ namespace DFW
         // Allocate Systems
         _window_management  = DWindow::WindowManagement::Construct();
 
-        // Core Services
-        CoreService::ProvideGameClock(&_game_clock);
-        CoreService::ProvideMainEventHandler(&application_event_handler);
-        CoreService::ProvideECS(&_ecs_module);
-        CoreService::ProvideInputSystem(&_input_system);
-        CoreService::ProvideWindowSystem(_window_management.get());
-        CoreService::ProvideRenderModule(&_render_module);
-
-        // Application
+        // Application ~ Init.
         TimeTracker application_timer(false);
         DFW_INFOLOG("{} - Init Application.", _application_name);
         application_timer.StartTimer();
@@ -54,9 +46,11 @@ namespace DFW
         TimeUnit const elapsed_init_time = application_timer.ResetAndFetchElapsedTime(false);
         DFW_INFOLOG("{} - Init Application Complete - Elapsed Time: {}", _application_name, elapsed_init_time);
 
+        // Application ~ Run.
         DFW_INFOLOG("{} - Running Application.", _application_name);
         UpdateApplication();
         
+        // Application ~ Terminate.
         DFW_INFOLOG("{} - Terminating Application.", _application_name);
         application_timer.StartTimer();
         TerminateApplication();
@@ -90,6 +84,14 @@ namespace DFW
 
     void ApplicationInstance::InitApplication()
     {
+        // Core Services.
+        CoreService::ProvideGameClock(&_game_clock);
+        CoreService::ProvideMainEventHandler(&application_event_handler);
+        CoreService::ProvideECS(&_ecs_module);
+        CoreService::ProvideInputSystem(&_input_system);
+        CoreService::ProvideWindowSystem(_window_management.get());
+        CoreService::ProvideRenderModule(&_render_module);
+
         // User-Implemented Pre-Initialisation.
         PreApplicationInit();
         
@@ -145,10 +147,8 @@ namespace DFW
         _stage_stack_controller.RemoveAllAttachedStages();
         _stage_stack_controller.DeleteAllAttachedStages();
 
-        CoreService::ProvideGameClock(nullptr);
-        CoreService::ProvideECS(nullptr);
-        CoreService::ProvideInputSystem(nullptr);
-        CoreService::ProvideWindowSystem(nullptr);
+        // Core Services.
+        CoreService::ReleaseServices();
     }
 
     void ApplicationInstance::UpdateApplication()
