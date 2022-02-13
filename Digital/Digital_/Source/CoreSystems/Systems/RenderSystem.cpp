@@ -2,7 +2,9 @@
 
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/GameClock.h>
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Logging/Logger.h>
+#include <CoreSystems/Window/WindowManagement.h>
 #include <Modules/ECS/Objects/ECSystem.h>
 #include <Modules/Rendering/ViewTargetDirector.h>
 #include <Modules/Rendering/RenderModuleInterface.h>
@@ -67,10 +69,16 @@ bgfx::ProgramHandle m_program;
 
 namespace DFW
 {
+	RenderSystem::RenderSystem()
+		: window_width(DWindow::DFW_DEFAULT_WINDOW_WIDTH)
+		, window_height(DWindow::DFW_DEFAULT_WINDOW_HEIGHT)
+	{
+	}
+
     void RenderSystem::Init()
     {
 		// View Target
-		_view_target = CoreService::GetRenderModule()->view_director.GetMainViewTarget();
+		_view_target = CoreService::GetRenderModule()->view_director.AllocateViewTarget("rendersystem");
 
 		// Uniform Layouts
 		PosColorVertex::init();
@@ -135,10 +143,16 @@ namespace DFW
 
 		delete fs_filedata;
 		delete vs_filedata;
+
+		// Register Callbacks.
+		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
     }
 
 	void RenderSystem::Terminate()
 	{
+		// Unregister Callbacks.
+		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
+
 		bgfx::destroy(m_vbh);
 		bgfx::destroy(m_ibh);
 		bgfx::destroy(m_program);
@@ -157,27 +171,22 @@ namespace DFW
 			| BGFX_STATE_MSAA
 			;
 
-		// camera
-		bx::Vec3 const at = { 0.0f, 0.0f,   0.0f };
-		bx::Vec3 const eye = { 0.0f, 0.0f, -75.0f };
-
 		DRender::ViewTarget const& view_target = *_view_target;
-		// Set view and projection matrix for view 0.
+		bgfx::touch(view_target);
+		
 		{
+			bx::Vec3 const at	= { 0.0f, 0.0f,   0.0f };
+			bx::Vec3 const eye	= { 0.0f, 0.0f, -75.0f };
+			
 			float32 view[16];
 			bx::mtxLookAt(view, eye, at);
 
 			float32 proj[16];
-			bx::mtxProj(proj, 60.0f, float32(1280) / float32(720), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
+			bx::mtxProj(proj, 60.0f, float32(window_width) / float32(window_height), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
 			bgfx::setViewTransform(view_target, view, proj);
 
-			// Set view 0 default viewport.
-			bgfx::setViewRect(view_target, 0, 0, uint16_t(1280), uint16_t(720));
+			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
 		}
-
-		// This dummy draw call is here to make sure that view 0 is cleared
-		// if no other draw calls are submitted to view 0.
-		bgfx::touch(view_target);
 
 		// Submit 11x11 cubes.
 		auto dt = CoreService::GetGameClock()->GetElapsedTimeInSeconds();
@@ -191,20 +200,22 @@ namespace DFW
 				mtx[13] = -15.0f + float32(yy) * 3.0f;
 				mtx[14] = 0.0f;
 
-				// Set model matrix for rendering.
 				bgfx::setTransform(mtx);
 
-				// Set vertex and index buffer.
 				bgfx::setVertexBuffer(0, m_vbh);
 				bgfx::setIndexBuffer(m_ibh);
 
-				// Set render states.
 				bgfx::setState(state);
 
-				// Submit primitive for rendering to view 0.
 				bgfx::submit(view_target, m_program);
 			}
 		}
     }
+
+	void RenderSystem::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
+	{
+		window_width	= a_window_event.new_width;
+		window_height	= a_window_event.new_height;
+	}
 
 } // End of namespace ~ DFW.

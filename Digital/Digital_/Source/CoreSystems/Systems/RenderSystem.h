@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Modules/ECS/Objects/ECSystem.h>
+#include <CoreSystems/ApplicationEvents.h>
 
+#include <Modules/ECS/Objects/ECSystem.h>
 #include <Modules/Rendering/ViewTarget.h>
 
 namespace DFW
@@ -9,7 +10,7 @@ namespace DFW
     class RenderSystem : public DECS::System::StrictRegistrar<RenderSystem>
     {
     public:
-        RenderSystem() = default;
+        RenderSystem();
         ~RenderSystem() = default;
 
         virtual void Init() override;
@@ -18,7 +19,11 @@ namespace DFW
         virtual void Update(DECS::Universe* const a_universe) override;
 
     private:
+        void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
+
         SharedPtr<DRender::ViewTarget const> _view_target;
+        int32 window_width;
+        int32 window_height;
 
     };
 
