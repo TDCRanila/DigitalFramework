@@ -10,7 +10,7 @@
 #include <CoreSystems/Window/WindowManagement.h>
 
 #include <Modules/ECS/ECSModule.h>
-#include <Modules/Rendering/RenderModuleInterface.h>
+#include <Modules/Rendering/RenderModule.h>
 
 namespace DFW
 {

@@ -15,7 +15,7 @@
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
 
 #include <CoreSystems/CoreServices.h>
-#include <Modules/Rendering/RenderModuleInterface.h>
+#include <Modules/Rendering/RenderModule.h>
 
 namespace DFW
 {

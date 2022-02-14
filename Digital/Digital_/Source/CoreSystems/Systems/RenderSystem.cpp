@@ -5,9 +5,10 @@
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Logging/Logger.h>
 #include <CoreSystems/Window/WindowManagement.h>
+
 #include <Modules/ECS/Objects/ECSystem.h>
 #include <Modules/Rendering/ViewTargetDirector.h>
-#include <Modules/Rendering/RenderModuleInterface.h>
+#include <Modules/Rendering/RenderModule.h>
 
 #include <Utility/FileSystemUtility.h>
 

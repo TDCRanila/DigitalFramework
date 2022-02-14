@@ -1,11 +1,11 @@
-#include <Modules/Rendering/RenderModuleInterface.h>
+#include <Modules/Rendering/RenderModuleContext.h>
 
 #include <CoreSystems/CoreServices.h>
-#include <CoreSystems/DUID.h>
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Input/InputManagement.h>
-#include <CoreSystems/ImGui/ImGuiLayer.h>
 #include <CoreSystems/Window/WindowManagement.h>
+
+#include <Modules/Rendering/ViewTarget.h>
 
 #include <bgfx/platform.h>
 
@@ -13,7 +13,7 @@ namespace DFW
 {
     namespace DRender
     {
-        RenderModule::RenderModule()
+        RenderModuleContext::RenderModuleContext()
         {
             // Set default initialization settings. 
             _bgfx_init_settings.type                = bgfx::RendererType::Count;
@@ -22,7 +22,7 @@ namespace DFW
             _bgfx_init_settings.resolution.reset    = BGFX_RESET_VSYNC;
         }
 
-        void RenderModule::InitRenderModule()
+        void RenderModuleContext::InitRenderModuleContext()
         {
             // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
             bgfx::renderFrame();
@@ -36,51 +36,44 @@ namespace DFW
 
             bgfx::init(_bgfx_init_settings);
 
-            view_director.AllocateViewTarget(ViewTargetDirector::DEFAULT_MAIN_VIEWTARGET_NAME);
-
             // Register Event Callbacks.
-            CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderModule::OnWindowResizeEvent>(this);
-
-            CoreService::GetMainEventHandler()->InstantBroadcast<RendererInitializedEvent>();
+            CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderModuleContext::OnWindowResizeEvent>(this);
         }
 
-        void RenderModule::TerminateRenderModule()
+        void RenderModuleContext::TerminateRenderModuleContext()
         {
             // Unregister Event Callbacks.
-            CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderModule::OnWindowResizeEvent>(this);
+            CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderModuleContext::OnWindowResizeEvent>(this);
 
             bgfx::shutdown();
-
-            CoreService::GetMainEventHandler()->InstantBroadcast<RendererTerminatedEvent>();
         }
                           
-        void RenderModule::BeginFrame()
+        void RenderModuleContext::BeginFrame(SharedPtr<ViewTarget const> const& a_main_viewtarget)
         {
-            SharedPtr<ViewTarget const> const& view_target = view_director.GetViewTarget("main"); 
-            bgfx::setViewRect(*view_target, 0, 0, bgfx::BackbufferRatio::Equal);
-            bgfx::setViewClear(*view_target, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x33333333);
-            bgfx::touch(*view_target);
+            bgfx::setViewRect(*a_main_viewtarget, 0, 0, bgfx::BackbufferRatio::Equal);
+            bgfx::setViewClear(*a_main_viewtarget, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x33333333);
+            bgfx::touch(*a_main_viewtarget);
         }
 
-        void RenderModule::EndFrame()
+        void RenderModuleContext::EndFrame()
         {
         }
                           
-        void RenderModule::RenderFrame()
+        void RenderModuleContext::RenderFrame()
         {
             // Advance to next frame. Process submitted rendering primitives.
             bgfx::frame();
         }
 
-        void RenderModule::SubmitMesh()
+        void RenderModuleContext::SubmitMesh()
         {
         }
         
-        void RenderModule::SubmitSprite()
+        void RenderModuleContext::SubmitSprite()
         {
         }
           
-        void RenderModule::ChangeRenderAPI(bgfx::RendererType::Enum a_render_type)
+        void RenderModuleContext::ChangeRenderAPI(bgfx::RendererType::Enum a_render_type)
         {
             // It is possible to change render api during runtime, but that might cause issues with some hardware.
             // Calling this function will most likely result in a runtime error if this fix is not applied.
@@ -93,23 +86,23 @@ namespace DFW
             if (_bgfx_init_settings.type == a_render_type)
                 return;
 
-            TerminateRenderModule();
+            TerminateRenderModuleContext();
 
             _bgfx_init_settings.type = a_render_type;
 
-            InitRenderModule();
+            InitRenderModuleContext();
 
             CoreService::GetMainEventHandler()->InstantBroadcast<RendererAPIChanged>();
         }
 
-        void RenderModule::ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags)
+        void RenderModuleContext::ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags)
         {
             // Toggle a flag depending on the input.
             _bgfx_init_settings.resolution.reset = _bgfx_init_settings.resolution.reset ^ a_bgfx_reset_flags;
             bgfx::reset(_bgfx_init_settings.resolution.width, _bgfx_init_settings.resolution.height, _bgfx_init_settings.resolution.reset);
         }
 
-        void RenderModule::Debug_DrawBasicRenderInfo() const
+        void RenderModuleContext::Debug_DrawBasicRenderInfo() const
         {
             // Enable stats or debug text.
             static bool switch_debug_stats  = false;
@@ -166,7 +159,7 @@ namespace DFW
             }
         }
 
-        void RenderModule::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
+        void RenderModuleContext::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
         {
             bgfx::reset(a_window_event.new_width, a_window_event.new_height);
             bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);

@@ -2,24 +2,24 @@
 
 #include <CoreSystems/ApplicationEvents.h>
 
-#include <Modules/Rendering/ViewTargetDirector.h>
-
 #include <bgfx/bgfx.h>
 
 namespace DFW
 {
     namespace DRender
     {
-        class RenderModule
+        struct ViewTarget;
+
+        class RenderModuleContext
         {
         public:
-            RenderModule();
-            ~RenderModule() = default;
+            RenderModuleContext();
+            ~RenderModuleContext() = default;
 
-            void InitRenderModule();
-            void TerminateRenderModule();
+            void InitRenderModuleContext();
+            void TerminateRenderModuleContext();
 
-            void BeginFrame();
+            void BeginFrame(SharedPtr<ViewTarget const> const& a_main_viewtarget);
             void EndFrame();
             void RenderFrame();
 
@@ -31,8 +31,6 @@ namespace DFW
             void ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags);
 
             void Debug_DrawBasicRenderInfo() const;
-
-            ViewTargetDirector view_director;
 
         private:
             void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
