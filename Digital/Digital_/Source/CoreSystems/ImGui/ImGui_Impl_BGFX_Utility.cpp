@@ -7,7 +7,7 @@ namespace DFW
     namespace DImGui
     {
         ImGuiRenderingContext   imgui_rendering_context;
-        GLFWwindow* main_window = nullptr;
+        GLFWwindow*             main_window = nullptr;
         bgfx::ViewId            main_window_id = 0;
 
         bool				    mouse_just_pressed[ImGuiMouseButton_COUNT] = { false };
@@ -37,28 +37,8 @@ namespace DFW
             , _texture_handle(BGFX_INVALID_HANDLE)
             , _texture_uniform_handle(BGFX_INVALID_HANDLE)
             , _image_lod_uniform_handle(BGFX_INVALID_HANDLE)
-            , _viewport_id_counter(-1)
             , _are_graphic_devices_initialized(false)
         {
-        }
-
-        bgfx::ViewId ImGui_ImplBGFX_AllocateViewportID()
-        {
-            if (DImGui::imgui_rendering_context._free_viewport_ids.empty())
-            {
-                return ++DImGui::imgui_rendering_context._viewport_id_counter;
-            }
-            else
-            {
-                bgfx::ViewId const free_id = DImGui::imgui_rendering_context._free_viewport_ids.back();
-                DImGui::imgui_rendering_context._free_viewport_ids.pop_back();
-                return free_id;
-            }
-        }
-
-        void ImGui_ImplBGFX_FreeViewportID(bgfx::ViewId const a_viewport_id)
-        {
-            DImGui::imgui_rendering_context._free_viewport_ids.emplace_back(a_viewport_id);
         }
 
     } // End of namespace ~ DImGui.

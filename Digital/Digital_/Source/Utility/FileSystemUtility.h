@@ -87,12 +87,21 @@ namespace DFW
         std::string GetFileExtension(std::string a_string);
 
         /*
-        *   Loads all content from a file into a std::istringstream.
+        *   Loads all content from a text file into a std::istringstream.
         *   std::istringstream is created on the heap, so make sure to delete this pointer when you're done with it.
         *	@param a_path The path (with filename) to the file
-        *	@return std::istringstream pointer. Use 'delete' to delete this pointer after using it.
+        *	@return std::istringstream pointer.
         */
-        std::istringstream* GetFileData(const std::string& a_path);
+        std::istringstream ReadTextFileIntoStringStream(std::string const& a_path);
+
+        /*
+        *   Loads all content from a binary file into a buffer.
+        *   The buffer is created on the heap, so make sure to delete this pointer when you're done with it.
+        *	@param a_buffersize The buffersize of the allocated buffer.
+        *	@param a_path The path (with filename) to the file
+        *	@return uint8 pointer.
+        */
+        uint8* ReadBinaryFileIntoBuffer(std::size_t& a_buffersize, std::string const& a_path);
 
     } // End of namespace ~ DUtility
 

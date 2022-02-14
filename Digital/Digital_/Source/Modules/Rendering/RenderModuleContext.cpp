@@ -1,20 +1,28 @@
-#include <Modules/Rendering/RenderModule_Impl_BGFX.h>
+#include <Modules/Rendering/RenderModuleContext.h>
 
 #include <CoreSystems/CoreServices.h>
-#include <CoreSystems/DUID.h>
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Input/InputManagement.h>
-#include <CoreSystems/ImGui/ImGuiLayer.h>
 #include <CoreSystems/Window/WindowManagement.h>
 
-#include <bgfx/bgfx.h>
+#include <Modules/Rendering/ViewTarget.h>
+
 #include <bgfx/platform.h>
 
 namespace DFW
 {
     namespace DRender
     {
-        void RenderModuleBGFX::InitRenderModule()
+        RenderModuleContext::RenderModuleContext()
+        {
+            // Set default initialization settings. 
+            _bgfx_init_settings.type                = bgfx::RendererType::Count;
+            _bgfx_init_settings.resolution.width    = DWindow::DFW_DEFAULT_WINDOW_WIDTH;
+            _bgfx_init_settings.resolution.height   = DWindow::DFW_DEFAULT_WINDOW_HEIGHT;
+            _bgfx_init_settings.resolution.reset    = BGFX_RESET_VSYNC;
+        }
+
+        void RenderModuleContext::InitRenderModuleContext()
         {
             // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
             bgfx::renderFrame();
@@ -26,57 +34,75 @@ namespace DFW
             platform_data.nwh = CoreService::GetWindowSystem()->GetMainWindowPWH();
             bgfx::setPlatformData(platform_data);
 
-            bgfx::Init bgfx_init;
-            bgfx_init.type              = bgfx::RendererType::Count; // Auto Choose Renderer
-            bgfx_init.resolution.width  = main_window_ptr->_window_dimension._current_width;
-            bgfx_init.resolution.height = main_window_ptr->_window_dimension._current_height;
-            bgfx_init.resolution.reset  = BGFX_RESET_VSYNC;
-            bgfx::init(bgfx_init);
+            bgfx::init(_bgfx_init_settings);
 
             // Register Event Callbacks.
-            CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderModuleBGFX::OnWindowResizeEvent>(this);
+            CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderModuleContext::OnWindowResizeEvent>(this);
         }
 
-        void RenderModuleBGFX::TerminateRenderModule()
+        void RenderModuleContext::TerminateRenderModuleContext()
         {
             // Unregister Event Callbacks.
-            CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderModuleBGFX::OnWindowResizeEvent>(this);
+            CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderModuleContext::OnWindowResizeEvent>(this);
 
             bgfx::shutdown();
         }
-             
-        void RenderModuleBGFX::RenderFrame()
+                          
+        void RenderModuleContext::BeginFrame(SharedPtr<ViewTarget const> const& a_main_viewtarget)
+        {
+            bgfx::setViewRect(*a_main_viewtarget, 0, 0, bgfx::BackbufferRatio::Equal);
+            bgfx::setViewClear(*a_main_viewtarget, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x33333333);
+            bgfx::touch(*a_main_viewtarget);
+        }
+
+        void RenderModuleContext::EndFrame()
+        {
+        }
+                          
+        void RenderModuleContext::RenderFrame()
         {
             // Advance to next frame. Process submitted rendering primitives.
             bgfx::frame();
         }
-             
-        void RenderModuleBGFX::BeginFrame()
-        {
-            bgfx::ViewId main_window = 0;
-            bgfx::setViewRect(main_window, 0, 0, bgfx::BackbufferRatio::Equal);
-            bgfx::setViewClear(main_window, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x33333333);
-        }
 
-        void RenderModuleBGFX::EndFrame()
-        {
-        }
-                          
-        void RenderModuleBGFX::SubmitMesh()
+        void RenderModuleContext::SubmitMesh()
         {
         }
         
-        void RenderModuleBGFX::SubmitSprite()
+        void RenderModuleContext::SubmitSprite()
         {
         }
           
-        void RenderModuleBGFX::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
+        void RenderModuleContext::ChangeRenderAPI(bgfx::RendererType::Enum a_render_type)
         {
-            bgfx::reset(a_window_event.new_width, a_window_event.new_height);
-            bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
+            // It is possible to change render api during runtime, but that might cause issues with some hardware.
+            // Calling this function will most likely result in a runtime error if this fix is not applied.
+            // issue: https://github.com/bkaradzic/bgfx/pull/2395
+            // fix: https://github.com/bkaradzic/bgfx/pull/1837/commits/ab13e6281c12b3916883be33e8a15890313443d3
+
+            // TODO Potential issue with non-dx11/dx12 APIs that don't seem to render properly after changing.
+            // Needs further investigation.
+
+            if (_bgfx_init_settings.type == a_render_type)
+                return;
+
+            TerminateRenderModuleContext();
+
+            _bgfx_init_settings.type = a_render_type;
+
+            InitRenderModuleContext();
+
+            CoreService::GetMainEventHandler()->InstantBroadcast<RendererAPIChanged>();
         }
 
-        void RenderModuleBGFX::Debug_DrawBasicRenderInfo() const
+        void RenderModuleContext::ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags)
+        {
+            // Toggle a flag depending on the input.
+            _bgfx_init_settings.resolution.reset = _bgfx_init_settings.resolution.reset ^ a_bgfx_reset_flags;
+            bgfx::reset(_bgfx_init_settings.resolution.width, _bgfx_init_settings.resolution.height, _bgfx_init_settings.resolution.reset);
+        }
+
+        void RenderModuleContext::Debug_DrawBasicRenderInfo() const
         {
             // Enable stats or debug text.
             static bool switch_debug_stats  = false;
@@ -111,10 +137,6 @@ namespace DFW
             {
                 DWindow::WindowDimension const& window_dimension = main_window_ptr->_window_dimension;
 
-                //// This dummy draw call is here to make sure that view 0 is cleared
-                //// if no other draw calls are submitted to view 0.
-                //bgfx::touch(0);
-
                 // bgfx debug Window Information
                 bgfx::dbgTextClear();
 
@@ -135,7 +157,12 @@ namespace DFW
                 bgfx::dbgTextPrintf(0, 4, 0x0f, "\x1b[;0m    \x1b[;1m    \x1b[; 2m    \x1b[; 3m    \x1b[; 4m    \x1b[; 5m    \x1b[; 6m    \x1b[; 7m    \x1b[0m");
                 bgfx::dbgTextPrintf(0, 5, 0x0f, "\x1b[;8m    \x1b[;9m    \x1b[;10m    \x1b[;11m    \x1b[;12m    \x1b[;13m    \x1b[;14m    \x1b[;15m    \x1b[0m");
             }
+        }
 
+        void RenderModuleContext::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
+        {
+            bgfx::reset(a_window_event.new_width, a_window_event.new_height);
+            bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
         }
 
     } // End of namespace ~ Render.

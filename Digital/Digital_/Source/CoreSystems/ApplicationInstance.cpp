@@ -8,8 +8,6 @@
 #include <CoreSystems/Logging/Logger.h>
 #include <Defines/InputDefines.h>
 
-#include <Modules/Rendering/RenderModule_Impl_BGFX.h>
-
 #include <array>
 
 namespace DFW
@@ -39,16 +37,8 @@ namespace DFW
 
         // Allocate Systems
         _window_management  = DWindow::WindowManagement::Construct();
-        _render_module      = MakeUnique<DRender::RenderModuleBGFX>();
 
-        // Core Services
-        CoreService::ProvideGameClock(&_game_clock);
-        CoreService::ProvideMainEventHandler(&application_event_handler);
-        CoreService::ProvideECS(&_ecs_module);
-        CoreService::ProvideInputSystem(&_input_system);
-        CoreService::ProvideWindowSystem(_window_management.get());
-
-        // Application
+        // Application ~ Init.
         TimeTracker application_timer(false);
         DFW_INFOLOG("{} - Init Application.", _application_name);
         application_timer.StartTimer();
@@ -56,9 +46,11 @@ namespace DFW
         TimeUnit const elapsed_init_time = application_timer.ResetAndFetchElapsedTime(false);
         DFW_INFOLOG("{} - Init Application Complete - Elapsed Time: {}", _application_name, elapsed_init_time);
 
+        // Application ~ Run.
         DFW_INFOLOG("{} - Running Application.", _application_name);
         UpdateApplication();
         
+        // Application ~ Terminate.
         DFW_INFOLOG("{} - Terminating Application.", _application_name);
         application_timer.StartTimer();
         TerminateApplication();
@@ -92,6 +84,14 @@ namespace DFW
 
     void ApplicationInstance::InitApplication()
     {
+        // Core Services.
+        CoreService::ProvideGameClock(&_game_clock);
+        CoreService::ProvideMainEventHandler(&application_event_handler);
+        CoreService::ProvideECS(&_ecs_module);
+        CoreService::ProvideInputSystem(&_input_system);
+        CoreService::ProvideWindowSystem(_window_management.get());
+        CoreService::ProvideRenderModule(&_render_module);
+
         // User-Implemented Pre-Initialisation.
         PreApplicationInit();
         
@@ -111,7 +111,7 @@ namespace DFW
         _input_system.InitInputManagement();
 
         // RenderModule
-        _render_module->InitRenderModule();       
+        _render_module.InitRenderModule();
 
         // ImGui
         _imgui.InitImGuiLayer();
@@ -135,7 +135,7 @@ namespace DFW
         _imgui.TerminateImGuiLayer();
 
         // Render
-        _render_module->TerminateRenderModule();
+        _render_module.TerminateRenderModule();
 
         // Input
         _input_system.TerminateInputManagement();
@@ -147,10 +147,8 @@ namespace DFW
         _stage_stack_controller.RemoveAllAttachedStages();
         _stage_stack_controller.DeleteAllAttachedStages();
 
-        CoreService::ProvideGameClock(nullptr);
-        CoreService::ProvideECS(nullptr);
-        CoreService::ProvideInputSystem(nullptr);
-        CoreService::ProvideWindowSystem(nullptr);
+        // Core Services.
+        CoreService::ReleaseServices();
     }
 
     void ApplicationInstance::UpdateApplication()
@@ -173,7 +171,7 @@ namespace DFW
             {               
                 std::vector<StageBase*> const& _stages = _stage_stack_controller.GetStages();
                 { // Regular Application Update
-                    _render_module->BeginFrame();
+                    _render_module.BeginFrame();
 
                     // Update Stages.
                     for (StageBase* stage : _stages)
@@ -184,7 +182,7 @@ namespace DFW
 
                     _ecs_module.UpdateECS();
 
-                    _render_module->EndFrame();
+                    _render_module.EndFrame();
                 }
 
                 { // ImGui Related Update.
@@ -202,8 +200,9 @@ namespace DFW
                 }
 
                 // Render all the submitted items.
-                _render_module->RenderFrame();
-                _render_module->Debug_DrawBasicRenderInfo();
+                _render_module.EndFrame();
+                _render_module.RenderFrame();
+                _render_module.Debug_RendererInfo();
             }
 
             _game_clock.EndGameFrame();

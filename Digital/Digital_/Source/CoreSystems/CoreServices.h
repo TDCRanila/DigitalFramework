@@ -21,9 +21,16 @@ namespace DFW
         class WindowManagement;
     } // End of namespace ~ DWindow.
 
+    namespace DRender
+    {
+        class RenderModule;
+    } // End of namespace ~ DRender.
+
     class CoreService
     {
     public:
+        static void ReleaseServices();
+
         static GameClock* GetGameClock();
         static void ProvideGameClock(GameClock* a_provided_service);
 
@@ -39,12 +46,16 @@ namespace DFW
         static DWindow::WindowManagement* GetWindowSystem();
         static void ProvideWindowSystem(DWindow::WindowManagement* a_provided_service);
 
+        static DRender::RenderModule* GetRenderModule();
+        static void ProvideRenderModule(DRender::RenderModule* a_provided_service);
+
     private:
         static GameClock*                       _gc_service;
         static EventDispatcher*                 _meh_service;
         static DECS::ECSModule*                 _ecs_service;
         static DInput::InputManagementSystem*   _input_service;
         static DWindow::WindowManagement*       _window_service;
+        static DRender::RenderModule*           _rm_service;
 
     };
 

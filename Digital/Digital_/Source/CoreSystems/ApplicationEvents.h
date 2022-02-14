@@ -16,6 +16,7 @@ namespace DFW
 		GameStartEvent, GamePauseEvent, GameUnpauseEvent, GameResetEvent,
 		InputReceivedEvent, InputClipboardEvent, InputItemDropEvent,
 		StageAttachedEvent, StageRemovedEvent, StageEnabledEvent, StageDisabledEvent,
+		RendererInitializedEvent, RendererTerminatedEvent, RendererAPIChanged
 	};
 
 	class ApplicationEvent : public Event
@@ -370,5 +371,60 @@ namespace DFW
 	};
 
 #pragma endregion
+
+#pragma region RenderEvents
+
+	class RendererInitializedEvent : public ApplicationEvent
+	{
+	public:
+		RendererInitializedEvent() = default;
+
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, RendererInitializedEvent);
+
+		std::string GetDebugString() const override
+		{
+			std::stringstream debug_string;
+			debug_string << GetName();
+
+			return debug_string.str();
+		}
+
+	};
+
+	class RendererTerminatedEvent : public ApplicationEvent
+	{
+	public:
+		RendererTerminatedEvent() = default;
+
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, RendererTerminatedEvent);
+
+		std::string GetDebugString() const override
+		{
+			std::stringstream debug_string;
+			debug_string << GetName();
+
+			return debug_string.str();
+		}
+
+	};
+
+	class RendererAPIChanged : public ApplicationEvent
+	{
+	public:
+		RendererAPIChanged() = default;
+
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, RendererAPIChanged);
+
+		std::string GetDebugString() const override
+		{
+			std::stringstream debug_string;
+			debug_string << GetName();
+
+			return debug_string.str();
+		}
+
+	};
+
+#pragma endregion 
 
 } // End of namespace ~ DFW.
