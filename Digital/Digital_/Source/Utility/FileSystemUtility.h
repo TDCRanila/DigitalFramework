@@ -12,7 +12,7 @@ namespace DFW
         *	@param	std::string a_directory_path The filepath of the directory that you want to check.
         *	@return std::vector<std::string> Vector of directory names.
         */
-        std::vector<std::string> LoadFilesInDirectory(std::string a_directory_path);
+        std::vector<std::string> LoadFilesInDirectory(std::string const& a_directory_path);
 
         /*
         *   Checks whether a file exist in a directory relative to the working directory.
@@ -20,21 +20,23 @@ namespace DFW
         *   @param std::string a_file The name of the file path that you want to search for.
         *	@return bool True ~ if the file has been found - False ~ if the file cannot be found.
         */
-        bool DoesFileExistInDir(std::string a_directory_path, std::string a_file);
+        bool DoesFileExistInDir(std::string const& a_directory_path, std::string const& a_file);
 
         /*
         *   Creates a directory relative to the working directory. Also works if the directory already exists.
         *	@param std::string a_directory_path The path of the new directory.
         *   @return bool True ~ if the file got created - False ~ if the file it did't get created.
         */
-        bool CreateNewDirectory(std::string a_directory_path);
+        bool CreateNewDirectory(std::string const& a_directory_path);
+
+        bool DoesFileExist(std::string const& a_file_path);
 
         /*
         *   Checks if a directory, relative to the working directory, exists.
         *	@param std::string a_directory_path The path of the directory.
         *   @return bool True ~ if the directory exists - False ~ if the directory doesn't exist.
         */
-        bool DoesDirectoryExist(std::string a_directory_path);
+        bool DoesDirectoryExist(std::string const& a_directory_path);
 
         /**
         *   Gets the path of the working directory.
@@ -48,7 +50,7 @@ namespace DFW
         *   @param std::string& a_returned_path The returned path.
         *   @return bool True ~ if there where no errors - False ~ if there errors.
         */
-        std::string GetParentPath(std::string a_file_path);
+        std::string GetParentPath(std::string const& a_file_path);
 
         /*
         *   Removes all of the line ending of the string that is passed through.
@@ -69,7 +71,7 @@ namespace DFW
         *	@param std::string a_file_path String of the filepath.
         *	@return std::string The parsed string.
         */
-        std::string GetFileName(std::string a_file_path);
+        std::string GetFileName(std::string const& a_file_path);
 
         /*
         *   Parses the given filePath to get the name and extension.
@@ -77,14 +79,14 @@ namespace DFW
         *	@param std::string a_file_path String of the filepath.
         *	@return The parsed string.
         */
-        std::string GetFileStem(std::string a_file_path);
+        std::string GetFileStem(std::string const& a_file_path);
 
         /*
         *   Returns the file extension of a given file.
         *	@param std::string a_string File path of the file.
         *	@return std::string Returns a string of the file extension.
         */
-        std::string GetFileExtension(std::string a_string);
+        std::string GetFileExtension(std::string const& a_string);
 
         /*
         *   Loads all content from a text file into a std::istringstream.
