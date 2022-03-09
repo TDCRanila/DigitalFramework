@@ -6,8 +6,6 @@
 
 #include <Modules/Rendering/RenderModuleContext.h>
 
-#include <bgfx/platform.h>
-
 namespace DFW
 {
     namespace DRender
