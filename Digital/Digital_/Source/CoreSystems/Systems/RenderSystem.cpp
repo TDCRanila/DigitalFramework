@@ -1,14 +1,17 @@
 #include <CoreSystems/Systems/RenderSystem.h>
 
 #include <CoreSystems/CoreServices.h>
-#include <CoreSystems/GameClock.h>
 #include <CoreSystems/Events/EventDispatcher.h>
+#include <CoreSystems/GameClock.h>
+#include <CoreSystems/Memory.h>
 #include <CoreSystems/Logging/Logger.h>
 #include <CoreSystems/Window/WindowManagement.h>
 
 #include <Modules/ECS/Objects/ECSystem.h>
 #include <Modules/Rendering/ViewTargetDirector.h>
 #include <Modules/Rendering/RenderModule.h>
+#include <Modules/Rendering/ShaderLibrary.h>
+#include <Modules/Rendering/ShaderProgram.h>
 
 #include <Utility/FileSystemUtility.h>
 
@@ -67,6 +70,7 @@ static const uint16 s_cubeTriList[] =
 bgfx::VertexBufferHandle m_vbh;
 bgfx::IndexBufferHandle m_ibh;
 bgfx::ProgramHandle m_program;
+DFW::SharedPtr<DFW::DRender::ShaderProgram> _program_ptr;
 
 namespace DFW
 {
@@ -97,53 +101,7 @@ namespace DFW
 		);
 
 		// Shaders		
-		std::string resource_directory;
-		DUtility::GetWorkDirectory(resource_directory);
-		std::string shaderfolder_path(resource_directory + DIR_SLASH_CHAR + "shaders");
-		std::string shader_type;
-
-		bgfx::RendererType::Enum const render_type = bgfx::getRendererType();
-		switch (render_type)
-		{
-			case bgfx::RendererType::Noop:
-			case bgfx::RendererType::Direct3D9:  shader_type = "dx9";   break;
-			case bgfx::RendererType::Direct3D11:
-			case bgfx::RendererType::Direct3D12: shader_type = "dx11";  break;
-			case bgfx::RendererType::Agc:
-			case bgfx::RendererType::Gnm:        shader_type = "pssl";  break;
-			case bgfx::RendererType::Metal:      shader_type = "metal"; break;
-			case bgfx::RendererType::Nvn:        shader_type = "nvn";   break;
-			case bgfx::RendererType::OpenGL:     shader_type = "glsl";  break;
-			case bgfx::RendererType::OpenGLES:   shader_type = "essl";  break;
-			case bgfx::RendererType::Vulkan:     shader_type = "spirv"; break;
-			case bgfx::RendererType::WebGPU:     shader_type = "spirv"; break;
-
-			case bgfx::RendererType::Count: DFW_ASSERT(false, "Failed to load shader, as the requested type is not supported. RenderAPI: {}", render_type); break;
-		}
-		
-		std::string const vs_filename("vs_basic");
-		std::string const fs_filename("fs_basic");
-		std::string const shader_gen_fileextension(".bin");
-		std::string const vs_filepath(shaderfolder_path + DIR_SLASH_CHAR + shader_type + DIR_SLASH_CHAR + vs_filename + shader_gen_fileextension);
-		std::string const fs_filepath(shaderfolder_path + DIR_SLASH_CHAR + shader_type + DIR_SLASH_CHAR + fs_filename + shader_gen_fileextension);
-
-		DFW_INFOLOG("Working Directory: {}", resource_directory);
-		DFW_INFOLOG("VS File Path: {}", vs_filepath);
-		DFW_INFOLOG("FS File Path: {}", fs_filepath);
-
-		size_t buffer_size;
-		uint8* const vs_filedata = DUtility::ReadBinaryFileIntoBuffer(buffer_size, vs_filepath);
-		bgfx::Memory const* vs_mem = bgfx::copy(vs_filedata, static_cast<uint32>(buffer_size));
-		uint8* const fs_filedata = DUtility::ReadBinaryFileIntoBuffer(buffer_size, fs_filepath);
-		bgfx::Memory const* fs_mem = bgfx::copy(fs_filedata, static_cast<uint32>(buffer_size));
-
-		bgfx::ShaderHandle const vs_handle = bgfx::createShader(vs_mem);
-		bgfx::ShaderHandle const fs_handle = bgfx::createShader(fs_mem);
-
-		m_program = bgfx::createProgram(vs_handle, fs_handle);
-
-		delete fs_filedata;
-		delete vs_filedata;
+		_program_ptr = CoreService::GetRenderModule()->shader_library.ConstructProgram("vs_basic", "fs_basic");
 
 		// Register Callbacks.
 		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
@@ -156,11 +114,13 @@ namespace DFW
 
 		bgfx::destroy(m_vbh);
 		bgfx::destroy(m_ibh);
-		bgfx::destroy(m_program);
 	}
     
     void RenderSystem::Update(DECS::Universe* const /*a_universe*/)
     {
+		if (!_program_ptr)
+			return;
+
 		uint64_t state = 0
 			| BGFX_STATE_WRITE_R
 			| BGFX_STATE_WRITE_G
@@ -208,7 +168,7 @@ namespace DFW
 
 				bgfx::setState(state);
 
-				bgfx::submit(view_target, m_program);
+				bgfx::submit(view_target, _program_ptr->shader_program_handle);
 			}
 		}
     }
