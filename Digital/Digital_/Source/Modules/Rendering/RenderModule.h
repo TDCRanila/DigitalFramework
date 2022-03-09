@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Modules/Rendering/ShaderLibrary.h>
 #include <Modules/Rendering/ViewTargetDirector.h>
 #include <Modules/Rendering/ViewTarget.h>
 
@@ -31,6 +32,8 @@ namespace DFW
             void Debug_RendererInfo(/*RenderModuleDebugOptions& const a_debug_option*/);
 
             ViewTargetDirector view_director;
+
+            ShaderLibrary shader_library;
 
         private:
             UniquePtr<RenderModuleContext> _render_module_context;

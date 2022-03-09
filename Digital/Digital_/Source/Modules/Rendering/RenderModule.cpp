@@ -27,6 +27,8 @@ namespace DFW
 
         void RenderModule::TerminateRenderModule()
         {
+            shader_library.FreeLibraryResources();
+
             _render_module_context->TerminateRenderModuleContext();
 
             CoreService::GetMainEventHandler()->InstantBroadcast<RendererTerminatedEvent>();
