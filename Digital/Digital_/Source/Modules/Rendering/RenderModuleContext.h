@@ -26,6 +26,7 @@ namespace DFW
             void SubmitMesh();
             void SubmitSprite();
 
+            bgfx::RendererType::Enum GetRenderAPIType() const;
             // ChangeRenderAPI - Experimental - Might cause issues.
             void ChangeRenderAPI(bgfx::RendererType::Enum a_render_type);
             void ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags);
