@@ -75,7 +75,7 @@ namespace DFW
           
         bgfx::RendererType::Enum RenderModuleContext::GetRenderAPIType() const
         {
-            bgfx::getRendererType();
+            return bgfx::getRendererType();
         }
 
         void RenderModuleContext::ChangeRenderAPI(bgfx::RendererType::Enum a_render_type)
