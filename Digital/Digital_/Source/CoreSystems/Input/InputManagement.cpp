@@ -125,6 +125,26 @@ namespace DFW
 			return IsKeyReleasedInternal(to_underlying(a_gamepad_key));
 		}
 
+		glm::vec2 InputManagementSystem::GetMousePos() const
+		{
+			return _input_data._cursor_position;
+		}
+
+		glm::vec2 InputManagementSystem::GetMousePosDelta() const
+		{
+			return _input_data._cursor_delta;
+		}
+
+		glm::vec2 InputManagementSystem::GetMouseScrollOffset() const
+		{
+			return _input_data._scroll_offset;
+		}
+
+		glm::vec2 InputManagementSystem::GetMouseScrollDelta() const
+		{
+			return _input_data._scroll_delta;
+		}
+
 		void InputManagementSystem::ProcessInputEvents()
 		{
 			_input_data.ClearBuffers();

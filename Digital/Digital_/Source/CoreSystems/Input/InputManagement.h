@@ -111,6 +111,12 @@ namespace DFW
 			bool IsKeyDown(DGamePad a_gamepad_key) const;
 			bool IsKeyReleased(DGamePad a_gamepad_key) const;
 
+			glm::vec2 GetMousePos() const; // top-left[0,0];bottom-right[window_size.x,window_size.y]
+			glm::vec2 GetMousePosDelta() const;
+
+			glm::vec2 GetMouseScrollOffset() const;
+			glm::vec2 GetMouseScrollDelta() const;
+
 			bool HasAnyKeyBeenPressed() const;
 			bool HasCursorMoved() const;
 			bool HasScrolled() const;
