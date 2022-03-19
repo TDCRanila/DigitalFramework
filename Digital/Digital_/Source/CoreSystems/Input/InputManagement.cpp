@@ -15,8 +15,23 @@ namespace DFW
 			, _scroll_offset(0.0f)
 			, _scroll_offset_old(0.0f)
 			, _scroll_delta(0.0f)
+			, _has_buffered_data(false)
 		{
 			_buffered_keys.reserve(16);
+		}
+
+		void InputManagementSystem::InputData::ClearBuffers()
+		{
+			if (!_has_buffered_data)
+				return;
+
+			_has_buffered_data = false;
+
+			_buffered_keys.clear();
+			_buffered_characters.clear();
+
+			_cursor_delta = glm::vec2(0.0f);
+			_scroll_delta = glm::vec2(0.0f);
 		}
 
 		InputManagementSystem::InputManagementSystem()
@@ -112,7 +127,7 @@ namespace DFW
 
 		void InputManagementSystem::ProcessInputEvents()
 		{
-			ClearInputDataBuffers();
+			_input_data.ClearBuffers();
 
 			if (!_has_input_events_buffered || !_is_input_enabled)
 			{
@@ -120,6 +135,7 @@ namespace DFW
 			}
 
 			InputData& data = _input_data;
+			data._has_buffered_data = true;
 			for (const KeyEvent& key_event : _key_event_buffer)
 			{
 				switch (key_event._event_type)
@@ -280,12 +296,6 @@ namespace DFW
 				return (key_action == DKeyAction::RELEASED);
 			}
 			return false;
-		}
-
-		void InputManagementSystem::ClearInputDataBuffers()
-		{
-			_input_data._buffered_keys.clear();
-			_input_data._buffered_characters.clear();
 		}
 
 		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier)

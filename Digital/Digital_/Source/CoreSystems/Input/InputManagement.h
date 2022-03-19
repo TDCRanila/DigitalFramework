@@ -29,6 +29,8 @@ namespace DFW
 			{
 				InputData();
 
+				void ClearBuffers();
+
 				std::array<DKeyAction, 1024>			_keys{ DKeyAction::UNDEFINED };
 				std::unordered_map<int32, DKeyAction>	_buffered_keys;
 				std::vector<uint32>						_buffered_characters;
@@ -41,6 +43,7 @@ namespace DFW
 				glm::vec2 _scroll_offset_old;
 				glm::vec2 _scroll_delta;
 
+				bool _has_buffered_data;
 			};
 
 			enum class KeyEventType
@@ -136,7 +139,6 @@ namespace DFW
 			bool IsKeyRepeatedInternal(int32 a_key) const;
 			bool IsKeyDownInternal(int32 a_key) const;
 			bool IsKeyReleasedInternal(int32 a_key) const;
-			void ClearInputDataBuffers();
 
 		private:
 			std::vector<KeyEvent>			_key_event_buffer;
