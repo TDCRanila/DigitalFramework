@@ -119,6 +119,26 @@ namespace DFW
 			return _input_data.scroll_delta;
 		}
 
+		bool InputManagementSystem::HasAnyKeyBeenPressed() const
+		{
+			return _input_data.has_received_key_input_this_frame;
+		}
+
+		bool InputManagementSystem::HasAnyMouseButtonBeenPressed() const
+		{
+			return _input_data.has_received_mouse_input_this_frame;
+		}
+
+		bool InputManagementSystem::HasCursorMoved() const
+		{
+			return _input_data.has_mouse_moved_this_frame;
+		}
+
+		bool InputManagementSystem::HasScrolled() const
+		{
+			return _input_data.has_received_scroll_input_this_frame;
+		}
+
 		void InputManagementSystem::ProcessInputEvents()
 		{
 			_input_data.ClearBuffers();
@@ -135,6 +155,7 @@ namespace DFW
 				switch (key_event.event_type)
 				{
 				case (KeyEventType::KEYBOARD):
+					data.has_received_key_input_this_frame = true;
 				case (KeyEventType::MOUSE):
 				{
 					DKey const defined_key			= static_cast<DKey>(key_event.key);
@@ -142,12 +163,15 @@ namespace DFW
 
 					data.keys[key_event.key] = defined_action;
 					data.buffered_keys.emplace(to_underlying(defined_key), defined_action);
-
+					
+					data.has_received_mouse_input_this_frame = true;
+					
 					break;
 				}
 				case(KeyEventType::CHARACTER):
 				{
 					data.buffered_characters.emplace_back(key_event.character);
+					data.has_received_key_input_this_frame = true;
 					break;
 				}
 				case (KeyEventType::DEFAULT):
@@ -170,6 +194,9 @@ namespace DFW
 
 					data.cursor_position.x = dir_event.cursor_x_position;
 					data.cursor_position.y = dir_event.cursor_y_position;
+
+					data.has_mouse_moved_this_frame = true;
+
 					break;
 				}
 				case (DirectionalEventType::SCROLL):
@@ -182,6 +209,9 @@ namespace DFW
 
 					data.scroll_offset.x += dir_event.scroll_x_offset;
 					data.scroll_offset.y += dir_event.scroll_y_offset;
+
+					data.has_received_scroll_input_this_frame = true;
+
 					break;
 				}
 				case (DirectionalEventType::DEFAULT):

@@ -31,6 +31,11 @@ namespace DFW
 			std::vector<uint32>						buffered_characters;
 
 			bool has_buffered_data;
+
+			bool has_mouse_moved_this_frame;
+			bool has_received_mouse_input_this_frame;
+			bool has_received_scroll_input_this_frame;
+			bool has_received_key_input_this_frame;
 		};
 
 	} // End of namespace ~ DInput.

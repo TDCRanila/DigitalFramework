@@ -53,6 +53,7 @@ namespace DFW
 			glm::vec2 GetMouseScrollDelta() const;
 
 			bool HasAnyKeyBeenPressed() const;
+			bool HasAnyMouseButtonBeenPressed() const;
 			bool HasCursorMoved() const;
 			bool HasScrolled() const;
 
