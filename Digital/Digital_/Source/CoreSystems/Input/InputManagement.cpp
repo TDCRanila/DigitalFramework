@@ -289,8 +289,13 @@ namespace DFW
 
 		bool InputManagementSystem::IsKeyPressedInternal(int16 a_key) const
 		{
-			DKeyAction const& key_action = _input_data.keys[a_key];
-			return (key_action == DKeyAction::PRESSED);
+			if (_input_data.buffered_keys.empty())
+				return false;
+
+			if (auto const& it_key = _input_data.buffered_keys.find(a_key); it_key != _input_data.buffered_keys.end())
+				return (it_key->second == DKeyAction::PRESSED);
+			else
+				return false;
 		}
 
 		bool InputManagementSystem::IsKeyRepeatedInternal(int16 a_key) const
@@ -310,13 +315,10 @@ namespace DFW
 			if (_input_data.buffered_keys.empty())
 				return false;
 
-			auto const& it_key = _input_data.buffered_keys.find(a_key);
-			if (it_key != _input_data.buffered_keys.end())
-			{
-				DKeyAction const& key_action = _input_data.keys[a_key];
-				return (key_action == DKeyAction::RELEASED);
-			}
-			return false;
+			if (auto const& it_key = _input_data.buffered_keys.find(a_key); it_key != _input_data.buffered_keys.end())
+				return (it_key->second == DKeyAction::RELEASED);
+			else
+				return false;
 		}
 	} // End of namespace ~ DInput.
 
