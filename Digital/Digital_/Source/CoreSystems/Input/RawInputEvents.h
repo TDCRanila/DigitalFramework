@@ -35,7 +35,7 @@ namespace DFW
 			int32	scancode;
 			int32	action;
 			int32	modifier;
-			uint32	character;
+			uint16	character;
 		};
 
 		struct DirectionalEvent

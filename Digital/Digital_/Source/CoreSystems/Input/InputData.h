@@ -26,9 +26,9 @@ namespace DFW
 			glm::vec2 scroll_offset_old;
 			glm::vec2 scroll_delta;
 
-			std::array<DKeyAction, 1024>			keys{ DKeyAction::UNDEFINED };
-			std::unordered_map<int32, DKeyAction>	buffered_keys;
-			std::vector<uint32>						buffered_characters;
+			std::array<DKeyAction, DFW_NUM_KEYINPUT_ENTRIES>	keys { DKeyAction::UNDEFINED };
+			std::unordered_map<int16, DKeyAction>				buffered_keys;
+			std::vector<uint16>									buffered_characters;
 
 			bool has_buffered_data;
 

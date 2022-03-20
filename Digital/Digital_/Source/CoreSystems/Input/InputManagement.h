@@ -77,10 +77,10 @@ namespace DFW
 			void OnWindowFocusEvent(WindowFocusEvent const& a_event);
 
 			void ProcessInputEvents();
-			bool IsKeyPressedInternal(int32 a_key) const;
-			bool IsKeyRepeatedInternal(int32 a_key) const;
-			bool IsKeyDownInternal(int32 a_key) const;
-			bool IsKeyReleasedInternal(int32 a_key) const;
+			bool IsKeyPressedInternal(int16 a_key) const;
+			bool IsKeyRepeatedInternal(int16 a_key) const;
+			bool IsKeyDownInternal(int16 a_key) const;
+			bool IsKeyReleasedInternal(int16 a_key) const;
 
 		private:
 			std::vector<KeyEvent>			_key_event_buffer;

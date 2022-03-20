@@ -287,25 +287,25 @@ namespace DFW
 				_current_foccused_window_ptr = CoreService::GetWindowSystem()->GetWindow(a_event.window_id);
 		}
 
-		bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
+		bool InputManagementSystem::IsKeyPressedInternal(int16 a_key) const
 		{
 			DKeyAction const& key_action = _input_data.keys[a_key];
 			return (key_action == DKeyAction::PRESSED);
 		}
 
-		bool InputManagementSystem::IsKeyRepeatedInternal(int32 a_key) const
+		bool InputManagementSystem::IsKeyRepeatedInternal(int16 a_key) const
 		{
 			DKeyAction const& key_action = _input_data.keys[a_key];
 			return (key_action == DKeyAction::REPEATED);
 		}
 
-		bool InputManagementSystem::IsKeyDownInternal(int32 a_key) const
+		bool InputManagementSystem::IsKeyDownInternal(int16 a_key) const
 		{
 			DKeyAction const& key_action = _input_data.keys[a_key];
 			return (key_action == DKeyAction::PRESSED) || (key_action == DKeyAction::REPEATED);
 		}
 
-		bool InputManagementSystem::IsKeyReleasedInternal(int32 a_key) const
+		bool InputManagementSystem::IsKeyReleasedInternal(int16 a_key) const
 		{
 			if (_input_data.buffered_keys.empty())
 				return false;
