@@ -155,7 +155,16 @@ namespace DFW
 				switch (key_event.event_type)
 				{
 				case (KeyEventType::KEYBOARD):
+				{
+					DKey const defined_key = static_cast<DKey>(key_event.key);
+					DKeyAction const defined_action = static_cast<DKeyAction>(key_event.action);
+
+					data.keys[key_event.key] = defined_action;
+					data.buffered_keys.emplace(to_underlying(defined_key), defined_action);
+
 					data.has_received_key_input_this_frame = true;
+					break;
+				}
 				case (KeyEventType::MOUSE):
 				{
 					DKey const defined_key			= static_cast<DKey>(key_event.key);
