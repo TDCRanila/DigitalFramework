@@ -1,39 +1,13 @@
 #include <CoreSystems/Input/InputManagement.h>
 
 #include <CoreSystems/ApplicationInstance.h>
-#include <CoreSystems/Logging/Logger.h>
 #include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {
 	namespace DInput
 	{
-		InputManagementSystem::InputData::InputData()
-			: _cursor_position(0.0f)
-			, _cursor_position_old(0.0f)
-			, _cursor_delta(0.0f)
-			, _scroll_offset(0.0f)
-			, _scroll_offset_old(0.0f)
-			, _scroll_delta(0.0f)
-			, _has_buffered_data(false)
-		{
-			_buffered_keys.reserve(16);
-		}
-
-		void InputManagementSystem::InputData::ClearBuffers()
-		{
-			if (!_has_buffered_data)
-				return;
-
-			_has_buffered_data = false;
-
-			_buffered_keys.clear();
-			_buffered_characters.clear();
-
-			_cursor_delta = glm::vec2(0.0f);
-			_scroll_delta = glm::vec2(0.0f);
-		}
-
 		InputManagementSystem::InputManagementSystem()
 			: _current_foccused_window_ptr(nullptr) 
 			, _has_input_events_buffered(false)
@@ -64,7 +38,7 @@ namespace DFW
 		{
 			_is_input_enabled = false;
 		}
-
+		
 		bool InputManagementSystem::IsKeyPressed(DKey a_key) const
 		{
 			return IsKeyPressedInternal(to_underlying(a_key));
@@ -127,22 +101,22 @@ namespace DFW
 
 		glm::vec2 InputManagementSystem::GetMousePos() const
 		{
-			return _input_data._cursor_position;
+			return _input_data.cursor_position;
 		}
 
 		glm::vec2 InputManagementSystem::GetMousePosDelta() const
 		{
-			return _input_data._cursor_delta;
+			return _input_data.cursor_delta;
 		}
 
 		glm::vec2 InputManagementSystem::GetMouseScrollOffset() const
 		{
-			return _input_data._scroll_offset;
+			return _input_data.scroll_offset;
 		}
 
 		glm::vec2 InputManagementSystem::GetMouseScrollDelta() const
 		{
-			return _input_data._scroll_delta;
+			return _input_data.scroll_delta;
 		}
 
 		void InputManagementSystem::ProcessInputEvents()
@@ -155,26 +129,25 @@ namespace DFW
 			}
 
 			InputData& data = _input_data;
-			data._has_buffered_data = true;
-			for (const KeyEvent& key_event : _key_event_buffer)
+			data.has_buffered_data = true;
+			for (KeyEvent const& key_event : _key_event_buffer)
 			{
-				switch (key_event._event_type)
+				switch (key_event.event_type)
 				{
 				case (KeyEventType::KEYBOARD):
 				case (KeyEventType::MOUSE):
 				{
-					// TODO Special Event Callbacks for Ctrl C & Ctrl V that send a message to Application
-					DKey defined_key = static_cast<DKey>(key_event._key);
-					DKeyAction defined_action = static_cast<DKeyAction>(key_event._action);
+					DKey const defined_key			= static_cast<DKey>(key_event.key);
+					DKeyAction const defined_action = static_cast<DKeyAction>(key_event.action);
 
-					data._keys[key_event._key] = defined_action;
-					data._buffered_keys.emplace(to_underlying(defined_key), defined_action);
+					data.keys[key_event.key] = defined_action;
+					data.buffered_keys.emplace(to_underlying(defined_key), defined_action);
 
 					break;
 				}
 				case(KeyEventType::CHARACTER):
 				{
-					data._buffered_characters.emplace_back(key_event._char);
+					data.buffered_characters.emplace_back(key_event.character);
 					break;
 				}
 				case (KeyEventType::DEFAULT):
@@ -183,34 +156,32 @@ namespace DFW
 				}
 			}
 
-			_key_event_buffer.clear();
-
 			for (const DirectionalEvent& dir_event : _dir_event_buffer)
 			{
-				switch (dir_event._event_type)
+				switch (dir_event.event_type)
 				{
 				case (DirectionalEventType::CURSOR):
 				{
-					data._cursor_position_old.x = data._cursor_position.x;
-					data._cursor_position_old.y = data._cursor_position.y;
+					data.cursor_position_old.x = data.cursor_position.x;
+					data.cursor_position_old.y = data.cursor_position.y;
 
-					data._cursor_delta.x = dir_event._cursor_x_position - data._cursor_position.x;
-					data._cursor_delta.y = dir_event._cursor_y_position - data._cursor_position.y;
+					data.cursor_delta.x = dir_event.cursor_x_position - data.cursor_position.x;
+					data.cursor_delta.y = dir_event.cursor_y_position - data.cursor_position.y;
 
-					data._cursor_position.x = dir_event._cursor_x_position;
-					data._cursor_position.y = dir_event._cursor_y_position;
+					data.cursor_position.x = dir_event.cursor_x_position;
+					data.cursor_position.y = dir_event.cursor_y_position;
 					break;
 				}
 				case (DirectionalEventType::SCROLL):
 				{
-					data._scroll_delta.x = dir_event._scroll_x_offset;
-					data._scroll_delta.y = dir_event._scroll_y_offset;
+					data.scroll_delta.x = dir_event.scroll_x_offset;
+					data.scroll_delta.y = dir_event.scroll_y_offset;
 
-					data._scroll_offset_old.x = data._scroll_offset.x;
-					data._scroll_offset_old.y = data._scroll_offset.y;
+					data.scroll_offset_old.x = data.scroll_offset.x;
+					data.scroll_offset_old.y = data.scroll_offset.y;
 
-					data._scroll_offset.x += dir_event._scroll_x_offset;
-					data._scroll_offset.y += dir_event._scroll_y_offset;
+					data.scroll_offset.x += dir_event.scroll_x_offset;
+					data.scroll_offset.y += dir_event.scroll_y_offset;
 					break;
 				}
 				case (DirectionalEventType::DEFAULT):
@@ -220,6 +191,7 @@ namespace DFW
 				}
 			}
 
+			_key_event_buffer.clear();
 			_dir_event_buffer.clear();
 
 			_has_input_events_buffered = false;
@@ -227,37 +199,28 @@ namespace DFW
 
 		void InputManagementSystem::SendKeyEvent(DWindow::WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
 		{
-			if (_is_input_enabled)
+			if (_is_input_enabled && (a_key >= 0) && (a_key < 1024))
 			{
-				if ((a_key >= 0) && (a_key < 1024))
-				{
-					_has_input_events_buffered = true;
-					_key_event_buffer.emplace_back(a_id, KeyEventType::KEYBOARD, a_key, a_scancode, a_action, a_modifier);
-				}
+				_has_input_events_buffered = true;
+				_key_event_buffer.emplace_back(a_id, KeyEventType::KEYBOARD, a_key, a_scancode, a_action, a_modifier);
 			}
 		}
 
 		void InputManagementSystem::SendMouseEvent(DWindow::WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
 		{
-			if (_is_input_enabled)
+			if (_is_input_enabled && (a_key >= 0) && (a_key < 1024))
 			{
-				if ((a_key >= 0) && (a_key < 1024))
-				{
-					_has_input_events_buffered = true;
-					_key_event_buffer.emplace_back(a_id, KeyEventType::MOUSE, a_key, a_scancode, a_action, a_modifier);
-				}
+				_has_input_events_buffered = true;
+				_key_event_buffer.emplace_back(a_id, KeyEventType::MOUSE, a_key, a_scancode, a_action, a_modifier);
 			}
 		}
 
 		void InputManagementSystem::SendCharEvent(DWindow::WindowID a_id, uint16 a_char)
 		{
-			if (_is_input_enabled)
+			if (_is_input_enabled && (a_char >= 0))
 			{
-				if (a_char >= 0)
-				{
-					_has_input_events_buffered = true;
-					_key_event_buffer.emplace_back(a_id, KeyEventType::CHARACTER, a_char);
-				}
+				_has_input_events_buffered = true;
+				_key_event_buffer.emplace_back(a_id, KeyEventType::CHARACTER, a_char);
 			}
 		}
 
@@ -287,77 +250,35 @@ namespace DFW
 
 		bool InputManagementSystem::IsKeyPressedInternal(int32 a_key) const
 		{
-			const DKeyAction& key_action = _input_data._keys[a_key];
+			DKeyAction const& key_action = _input_data.keys[a_key];
 			return (key_action == DKeyAction::PRESSED);
 		}
 
 		bool InputManagementSystem::IsKeyRepeatedInternal(int32 a_key) const
 		{
-			const DKeyAction& key_action = _input_data._keys[a_key];
+			DKeyAction const& key_action = _input_data.keys[a_key];
 			return (key_action == DKeyAction::REPEATED);
 		}
 
 		bool InputManagementSystem::IsKeyDownInternal(int32 a_key) const
 		{
-			const DKeyAction& key_action = _input_data._keys[a_key];
+			DKeyAction const& key_action = _input_data.keys[a_key];
 			return (key_action == DKeyAction::PRESSED) || (key_action == DKeyAction::REPEATED);
 		}
 
 		bool InputManagementSystem::IsKeyReleasedInternal(int32 a_key) const
 		{
-			InputData const& data = _input_data;
-			if (_input_data._buffered_keys.empty())
+			if (_input_data.buffered_keys.empty())
 				return false;
 
-			auto it_key = data._buffered_keys.find(a_key);
-			if (it_key != data._buffered_keys.end())
+			auto const& it_key = _input_data.buffered_keys.find(a_key);
+			if (it_key != _input_data.buffered_keys.end())
 			{
-				const DKeyAction& key_action = data._keys[a_key];
+				DKeyAction const& key_action = _input_data.keys[a_key];
 				return (key_action == DKeyAction::RELEASED);
 			}
 			return false;
 		}
-
-		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier)
-			: _user_id(a_id)
-			, _event_type(a_event_type)
-			, _key(a_key)
-			, _char(a_char)
-			, _scancode(a_scancode)
-			, _action(a_action)
-			, _modifier(a_modifier)
-		{
-		}
-
-		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
-			: _user_id(a_id)
-			, _event_type(a_event_type)
-			, _key(a_key)
-			, _scancode(a_scancode)
-			, _action(a_action)
-			, _modifier(a_modifier)
-		{
-		}
-
-		InputManagementSystem::KeyEvent::KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, uint16 a_char)
-			: _user_id(a_id)
-			, _event_type(a_event_type)
-			, _key(to_underlying(DKey::UNDEFINED))
-			, _char(a_char)
-		{
-		}
-
-		InputManagementSystem::DirectionalEvent::DirectionalEvent(DWindow::WindowID a_id, DirectionalEventType a_event_type,
-			float32 a_cursor_x_pos, float32 a_cursor_y_pos, float32 a_scroll_x_offset, float32 a_scroll_y_offset)
-			: _user_id(a_id)
-			, _event_type(a_event_type)
-			, _cursor_x_position(a_cursor_x_pos)
-			, _cursor_y_position(a_cursor_y_pos)
-			, _scroll_x_offset(a_scroll_x_offset)
-			, _scroll_y_offset(a_scroll_y_offset)
-		{
-		}
-
 	} // End of namespace ~ DInput.
 
 } // End of namespace ~ DFW.
