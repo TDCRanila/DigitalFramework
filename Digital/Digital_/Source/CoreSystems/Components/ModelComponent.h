@@ -15,7 +15,7 @@ namespace DFW
         struct ShaderProgram;
     }
 
-    SharedPtr<DRender::ModelData> CreateBasicCube();
+    SharedPtr<DRender::ModelData> Debug_CreateBasicCube();
 
     struct ModelComponent : public DECS::Component::StrictRegistrar<ModelComponent>
     {
