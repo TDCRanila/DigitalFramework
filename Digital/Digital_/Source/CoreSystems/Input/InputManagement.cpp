@@ -21,12 +21,14 @@ namespace DFW
 		{
 			// Register Event Callbacks.
 			CoreService::GetMainEventHandler()->RegisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);
+			CoreService::GetMainEventHandler()->RegisterCallback<InputMouseCursorReleasedEvent, &InputManagementSystem::OnMouseCursorReleasedEvent>(this);
 		}
 
 		void InputManagementSystem::TerminateInputManagement()
 		{
 			// Unregister Event Callbacks.
 			CoreService::GetMainEventHandler()->UnregisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);
+			CoreService::GetMainEventHandler()->UnregisterCallback<InputMouseCursorReleasedEvent, &InputManagementSystem::OnMouseCursorReleasedEvent>(this);
 		}
 
 		void InputManagementSystem::EnableInput()
@@ -285,6 +287,14 @@ namespace DFW
 		{
 			if (a_event.is_focussed)
 				_current_foccused_window_ptr = CoreService::GetWindowSystem()->GetWindow(a_event.window_id);
+		}
+
+		void InputManagementSystem::OnMouseCursorReleasedEvent(InputMouseCursorReleasedEvent const& a_event)
+		{
+			glm::vec2 const reset_cursor_position(a_event._new_mouse_pos_x, a_event._new_mouse_pos_y);
+			_input_data.cursor_position		= reset_cursor_position;
+			_input_data.cursor_position_old = reset_cursor_position;
+			_input_data.cursor_delta		= glm::vec2(0.0f);
 		}
 
 		bool InputManagementSystem::IsKeyPressedInternal(int16 a_key) const

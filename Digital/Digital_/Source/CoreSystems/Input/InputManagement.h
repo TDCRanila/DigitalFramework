@@ -75,6 +75,7 @@ namespace DFW
 			void TerminateInputManagement();
 
 			void OnWindowFocusEvent(WindowFocusEvent const& a_event);
+			void OnMouseCursorReleasedEvent(InputMouseCursorReleasedEvent const& a_event);
 
 			void ProcessInputEvents();
 			bool IsKeyPressedInternal(int16 a_key) const;

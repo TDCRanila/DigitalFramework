@@ -4,8 +4,10 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
+#include <CoreSystems/ApplicationEvents.h>
 #include <CoreSystems/ApplicationInstance.h>
 #include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Logging/Logger.h>
 #include <Defines/Defines.h>
@@ -321,8 +323,28 @@ namespace DFW
 
             // Window Resize
             // Lend the glfw window callback
-            GLFWwindow* const glfw_window = window_ptr.get()->_glfw_window;
+            GLFWwindow* const glfw_window = window_ptr->_glfw_window;
             GLFWWindowCallBacks::glfw_window_resize_callback(glfw_window, a_window_parameters.width, a_window_parameters.height);
+        }
+
+        void WindowManagementGLFW::RequestMouseCursorCapture()
+        {
+            SharedPtr<WindowInstanceGLFW> const& window_ptr = std::static_pointer_cast<WindowInstanceGLFW>(GetWindowInternal(_main_window_id));
+            glfwSetInputMode(window_ptr->_glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+            CoreService::GetMainEventHandler()->InstantBroadcast<InputMouseCursorCapturedEvent>(window_ptr->_id);
+        }
+
+        void WindowManagementGLFW::RequestMouseCursorRelease()
+        {
+            SharedPtr<WindowInstanceGLFW> const& window_ptr = std::static_pointer_cast<WindowInstanceGLFW>(GetWindowInternal(_main_window_id));
+            glfwSetInputMode(window_ptr->_glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+            float32 const window_half_width    = window_ptr->_window_dimension._current_width  * 0.5f;
+            float32 const window_half_height   = window_ptr->_window_dimension._current_height * 0.5f;
+            glfwSetCursorPos(window_ptr->_glfw_window, window_half_width, window_half_height);
+
+            CoreService::GetMainEventHandler()->InstantBroadcast<InputMouseCursorReleasedEvent>(window_ptr->_id, window_half_width, window_half_height);
         }
 
     } // End of namespace ~ DWindow.
