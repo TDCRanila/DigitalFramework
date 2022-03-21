@@ -10,7 +10,7 @@ namespace DFW
 		{
 		}
 
-		Entity Component::GetOwner() const
+		Entity const& Component::GetOwner()
 		{
 			return _owner;
 		}

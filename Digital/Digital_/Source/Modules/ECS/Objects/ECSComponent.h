@@ -19,14 +19,14 @@ namespace DFW
 			Component(Key);
 			virtual ~Component() = default;
 
-			Entity GetOwner() const;
+			Entity const& GetOwner();
 			DFW::DUID GetID() const;
 
 		protected:
 			friend class ComponentManager;
 
 			DFW::DUID	_id;
-			Entity	_owner;
+			Entity		_owner;
 
 		};
 
