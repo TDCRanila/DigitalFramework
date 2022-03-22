@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 
 namespace DFW
 {
@@ -12,6 +13,9 @@ namespace DFW
 
     template <typename T>
     using WeakPtr = std::weak_ptr<T>;
+
+    template <typename T>
+    using RefWrap = std::reference_wrapper<T>;
 
     template <typename T, typename... TArgs>
     constexpr SharedPtr<T> MakeShared(TArgs&& ... a_args)
