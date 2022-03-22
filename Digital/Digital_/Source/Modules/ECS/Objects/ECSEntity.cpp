@@ -45,10 +45,8 @@ namespace DFW
 
 		DFW::DUID Entity::GetID() const
 		{
-			if (_handle != DFW_NULL_ENTITY_HANDLE)
-				return _universe->_entity_data_registration[_handle]->id;
-
-			return DFW::DUID();
+			DFW_ASSERT(_handle != DFW_NULL_ENTITY_HANDLE);
+			return _universe->_entity_data_registration.at(_handle).get().id;
 		}
 
 		EntityHandle Entity::GetHandle() const

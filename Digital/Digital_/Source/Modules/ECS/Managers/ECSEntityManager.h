@@ -34,10 +34,13 @@ namespace DFW
 			Entity AttachEntity(Entity const& a_child, Entity const& a_parent) const;
 
 			template <typename ComponentType, typename... TArgs>
-			ComponentType* const AddComponent(Entity const& a_entity, TArgs&&...a_args) const;
+			ComponentType& AddComponent(Entity const& a_entity, TArgs&&...a_args) const;
 
 			template <typename ComponentType>
-			ComponentType* const GetComponent(Entity const& a_entity) const;
+			ComponentType& GetComponent(Entity const& a_entity) const;
+
+			template <typename ComponentType>
+			ComponentType* const TryGetComponent(Entity const& a_entity) const;
 
 			template <typename... TArgs>
 			bool HasComponents(Entity const& a_entity) const;
@@ -79,8 +82,10 @@ namespace DFW
 			// entity_data_ptr->type_id = TypeID<EntityType>::Get();
 
 			a_universe->_entities.emplace_back(handle);
-			a_universe->_entity_data_registration.emplace(handle,
-				AddComponent<EntityRegistrationComponent>(entity, DFW::GenerateDUID(), "Default Entity Name"));
+			a_universe->_entity_data_registration.emplace(
+				handle, 
+				AddComponent<EntityRegistrationComponent>(entity, DFW::GenerateDUID(), "Default Entity Name")
+			);
 
 			// TODO - Should be in something like a WorldManager -  Add any additional default components here; e.g. transform, name component
 			// _component_manager.AddComponent<TransformComponent>(entity, a_universe);
@@ -97,15 +102,21 @@ namespace DFW
 		}
 
 		template <typename ComponentType, typename... TArgs>
-		ComponentType* const EntityManager::AddComponent(Entity const& a_entity, TArgs&&...a_args) const
+		ComponentType& EntityManager::AddComponent(Entity const& a_entity, TArgs&&...a_args) const
 		{
 			return _component_manager.AddComponent<ComponentType>(a_entity, std::forward<TArgs&&>(a_args)...);
 		}
 
 		template <typename ComponentType>
-		ComponentType* const EntityManager::GetComponent(Entity const& a_entity) const
+		ComponentType& EntityManager::GetComponent(Entity const& a_entity) const
 		{
 			return _component_manager.GetComponent<ComponentType>(a_entity);
+		}
+
+		template <typename ComponentType>
+		ComponentType* const EntityManager::TryGetComponent(Entity const& a_entity) const
+		{
+			return _component_manager.TryGetComponent<ComponentType>(a_entity);
 		}
 
 		template <typename... TArgs>

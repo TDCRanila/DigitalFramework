@@ -1,6 +1,7 @@
 #pragma once
 
 #include <CoreSystems/DUID.h>
+#include <CoreSystems/Memory.h>
 
 #include <Modules/ECS/Objects/ECSEntity.h>
 #include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
@@ -9,6 +10,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <functional>
 
 namespace DFW
 {
@@ -21,7 +23,7 @@ namespace DFW
 
         const int64 DFW_UNIVERSE_ENTITY_RESERVATION_SIZE = 256;
 
-        using EntityRegistrationMap = std::unordered_map<EntityHandle, EntityRegistrationComponent*>;
+        using EntityRegistrationMap = std::unordered_map<EntityHandle, DFW::RefWrap<EntityRegistrationComponent>>;
 
         class Universe final
         {

@@ -17,24 +17,28 @@ namespace DFW
 
 		class ComponentManager final
 		{
+		private:
+			friend EntityManager;
+
 		public:
 			~ComponentManager() = default;
 
 			template <typename ComponentType>
-			ComponentType* const GetComponent(Entity const& a_entity) const;
+			ComponentType& GetComponent(Entity const& a_entity) const;
+
+			template <typename ComponentType>
+			ComponentType* const TryGetComponent(Entity const& a_entity) const;
 
 			template <typename... TArgs>
 			bool HasComponents(Entity const& a_entity) const;
 
 			template <typename ComponentType, typename ...TArgs>
-			ComponentType* const AddComponent(Entity const& a_entity, TArgs&&...a_args) const;
+			ComponentType& AddComponent(Entity const& a_entity, TArgs&&...a_args) const;
 
 			template <typename ComponentType>
 			bool DeleteComponent(Entity const& a_entity) const;
 
 		protected:
-			friend EntityManager;
-
 			ComponentManager();
 
 		private:
@@ -45,7 +49,22 @@ namespace DFW
 #pragma region Template Function Implementation
 
 		template <typename ComponentType>
-		ComponentType* const ComponentManager::GetComponent(Entity const& a_entity) const
+		ComponentType& ComponentManager::GetComponent(Entity const& a_entity) const
+		{
+			if constexpr (not IsValidComponentType<ComponentType>)
+			{
+				static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to get a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
+			}
+			else if constexpr (IsValidComponentType<ComponentType>)
+			{
+				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component of an invalid entity.");
+				DFW_ASSERT(HasComponents<ComponentType>(a_entity) && "Trying to get a component that the entity doesn't own.");
+				return a_entity._universe->_registry.get<ComponentType>(a_entity);
+			}
+		}
+
+		template <typename ComponentType>
+		ComponentType* const ComponentManager::TryGetComponent(Entity const& a_entity) const
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
@@ -54,9 +73,8 @@ namespace DFW
 			}
 			else if constexpr (IsValidComponentType<ComponentType>)
 			{
-				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component to an invalid entity.");
-				ComponentType* component = a_entity._universe->_registry.try_get<ComponentType>(a_entity);
-				return component;
+				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component of an invalid entity.");
+				return a_entity._universe->_registry.try_get<ComponentType>(a_entity);
 			}
 		}
 
@@ -76,29 +94,31 @@ namespace DFW
 			else
 			{
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to read component data from an invalid entity.");
-				bool result = a_entity._universe->_registry.all_of<TArgs...>(a_entity);
-				return result;
+				return a_entity._universe->_registry.all_of<TArgs...>(a_entity);
 			}
 		}
 
 		template <typename ComponentType, typename... TArgs>
-		ComponentType* const ComponentManager::AddComponent(Entity const& a_entity, TArgs&&... a_args) const
+		ComponentType& ComponentManager::AddComponent(Entity const& a_entity, TArgs&&... a_args) const
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
-				static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to add a Component of type ComponentType that isn'ComponentType derived from DECS::Component.");
-				return nullptr;
+				static_assert(always_false<ComponentType>::value, __FUNCTION__ " - Trying to add a Component of type ComponentType that isn't derived from DECS::Component.");
 			}
 			else if constexpr (IsValidComponentType<ComponentType>)
 			{
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to add a component to an invalid entity.");
-				if (!HasComponents<ComponentType>(a_entity))
+				if (HasComponents<ComponentType>(a_entity))
 				{
-					ComponentType& component = a_entity._universe->_registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
-					component._owner = a_entity;
-					component._id = DFW::GenerateDUID();
+					return GetComponent<ComponentType>(a_entity);
+				}
+				else
+				{
+					ComponentType& component	= a_entity._universe->_registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
+					component._owner			= a_entity;
+					component._id				= DFW::GenerateDUID();
 
-					// Special Case for Entity Registration Component.
+					// Special Case for the Entity Registration Component as Entity will not have been registered yet.
 					// TODO: Not all that nice, could look in an alternative.
 					if constexpr (AreSameTypes<EntityRegistrationComponent, ComponentType>)
 					{
@@ -106,15 +126,13 @@ namespace DFW
 					}
 					else
 					{
-						auto const reg_comp = a_entity._universe->_entity_data_registration[a_entity._handle];
-						_keylock_system.SetComponentBits<ComponentType>(reg_comp->comp_list);
+						EntityRegistrationComponent& reg_comp = a_entity._universe->_entity_data_registration.at(a_entity._handle).get();
+						_keylock_system.SetComponentBits<ComponentType>(reg_comp.comp_list);
 					}
 
-					return &component;
+					return component;
 				}
 			}
-
-			return nullptr;
 		}
 
 		template <typename ComponentType>
@@ -132,14 +150,16 @@ namespace DFW
 				{
 					a_entity._universe->_registry.remove<ComponentType>(a_entity);
 
-					auto const reg_comp = a_entity._universe->_entity_data_registration[a_entity._handle];
-					_keylock_system.ResetComponentBits<ComponentType>(reg_comp->comp_list);
+					EntityRegistrationComponent& reg_comp = a_entity._universe->_entity_data_registration.at(a_entity._handle).get();
+					_keylock_system.ResetComponentBits<ComponentType>(reg_comp.comp_list);
 
 					return true;
 				}
+				else
+				{
+					return false;
+				}
 			}
-
-			return false;
 		}
 
 #pragma endregion

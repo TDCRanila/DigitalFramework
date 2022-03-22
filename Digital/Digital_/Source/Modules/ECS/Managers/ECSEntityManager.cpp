@@ -38,7 +38,7 @@ namespace DFW
 			DFW_ASSERT(a_universe && "Attempting to find an entity in an invalid universe.");
 
 			auto const& result = std::find_if(a_universe->_entity_data_registration.begin(), a_universe->_entity_data_registration.end()
-				, [&a_entity_id](auto const& it) { return it.second->id == a_entity_id; });
+				, [&a_entity_id](auto const& it) { return it.second.get().id == a_entity_id; });
 
 			if (result != a_universe->_entity_data_registration.end())
 				return Entity(result->first, a_universe);
