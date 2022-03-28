@@ -21,6 +21,7 @@ namespace DFW
 			friend EntityManager;
 
 		public:
+			ComponentManager();
 			~ComponentManager() = default;
 
 			template <typename ComponentType>
@@ -37,9 +38,6 @@ namespace DFW
 
 			template <typename ComponentType>
 			bool DeleteComponent(Entity const& a_entity) const;
-
-		protected:
-			ComponentManager();
 
 		private:
 			KeyLockSystem _keylock_system;
@@ -59,7 +57,7 @@ namespace DFW
 			{
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component of an invalid entity.");
 				DFW_ASSERT(HasComponents<ComponentType>(a_entity) && "Trying to get a component that the entity doesn't own.");
-				return a_entity._universe->_registry.get<ComponentType>(a_entity);
+				return a_entity._universe->registry.get<ComponentType>(a_entity);
 			}
 		}
 
@@ -74,7 +72,7 @@ namespace DFW
 			else if constexpr (IsValidComponentType<ComponentType>)
 			{
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component of an invalid entity.");
-				return a_entity._universe->_registry.try_get<ComponentType>(a_entity);
+				return a_entity._universe->registry.try_get<ComponentType>(a_entity);
 			}
 		}
 
@@ -94,7 +92,7 @@ namespace DFW
 			else
 			{
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to read component data from an invalid entity.");
-				return a_entity._universe->_registry.all_of<TArgs...>(a_entity);
+				return a_entity._universe->registry.all_of<TArgs...>(a_entity);
 			}
 		}
 
@@ -114,7 +112,7 @@ namespace DFW
 				}
 				else
 				{
-					ComponentType& component	= a_entity._universe->_registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
+					ComponentType& component	= a_entity._universe->registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
 					component._owner			= a_entity;
 					component._id				= DFW::GenerateDUID();
 
@@ -148,7 +146,7 @@ namespace DFW
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to remove a component from an invalid entity.");
 				if (HasComponents<ComponentType>(a_entity))
 				{
-					a_entity._universe->_registry.remove<ComponentType>(a_entity);
+					a_entity._universe->registry.remove<ComponentType>(a_entity);
 
 					EntityRegistrationComponent& reg_comp = a_entity._universe->_entity_data_registration.at(a_entity._handle).get();
 					_keylock_system.ResetComponentBits<ComponentType>(reg_comp.comp_list);

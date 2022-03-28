@@ -10,12 +10,12 @@ namespace DFW
 {
 	namespace DECS
 	{
-		bool KeyLockSystem::_generated_component_keys = false;
+		bool KeyLockSystem::_has_generated_component_keys = false;
 		std::unordered_map<std::type_index, int8> KeyLockSystem::_component_bit_placement;
 
 		void KeyLockSystem::GenerateComponentKeys()
 		{
-			if (_generated_component_keys)
+			if (_has_generated_component_keys)
 			{
 				DFW_INFOLOG("KeyLockSystem has already generated the component keys.");
 				return;
@@ -33,7 +33,7 @@ namespace DFW
 				}
 			}
 
-			_generated_component_keys = true;
+			_has_generated_component_keys = true;
 		}
 
 	} // End of namespace ~ DECS.

@@ -20,9 +20,13 @@ namespace DFW
 
 		class Entity : public DFactory::AutoFactory<Entity>
 		{
+		private:
+			friend EntityManager;
+			friend ComponentManager;
+
 		public:
 			Entity();
-			Entity(EntityHandle const& a_entity_handle, Universe* const a_universe);
+			Entity(EntityHandle a_entity_handle, Universe& a_universe);
 			virtual ~Entity() = default;
 
 			std::strong_ordering operator<=>(Entity const& a_other) const;
@@ -32,15 +36,13 @@ namespace DFW
 
 			DFW::DUID GetID() const;
 			EntityHandle GetHandle() const;
-			Universe* GetUniverse() const;
+			Universe& GetUniverse() const;
 
 			bool IsEntityValid() const;
 			bool IsPendingDeletion() const;
 
 		private:
-			friend EntityManager;
-			friend ComponentManager;
-
+			DUID			_id;
 			EntityHandle	_handle;
 			Universe*		_universe;
 

@@ -22,8 +22,12 @@ namespace DFW
 
 		class SystemManager final
 		{
+		private:
+			friend ECSModule;
+
 		public:
-			~SystemManager() = default;
+			SystemManager();
+			~SystemManager();
 
 			template <typename SystemType, typename ...TArgs>
 			requires IsValidSystemType<SystemType>
@@ -35,11 +39,11 @@ namespace DFW
 
 			template <typename SystemType>
 			requires IsValidSystemType<SystemType>
-				bool EnableSystem();
+				void EnableSystem();
 
 			template <typename SystemType>
 			requires IsValidSystemType<SystemType>
-				bool DisableSystem();
+				void DisableSystem();
 
 			template <typename SystemType>
 			requires IsValidSystemType<SystemType>
@@ -53,24 +57,24 @@ namespace DFW
 			requires IsValidSystemType<SystemType>
 				bool IsSystemPresent();
 
-			// TODO Implement System Dependencies / Priority
-
-		protected:
-			friend ECSModule;
-
-			void Init();
-			void Terminate();
-			void UpdateSystems(Universe* const a_universe);
-
-			void UpdateSystemsImGui(Universe* const a_universe);
-
-			SystemManager();
+			// TODO Implement System Dependencies / Priority.
 
 		private:
-			// TODO Potentially better to use integer values instead of type_index for possibily 
-			// a slight performance boost, but that depends on the comparisson implementation of 
-			// typeinfo/type_index.
-			std::unordered_map<std::type_index, std::shared_ptr<System>> _systems;
+			void Init();
+			void Terminate();
+
+			void UpdateSystems(Universe& a_universe);
+			void UpdateSystemsImGui(Universe& a_universe);
+
+			template <typename SystemType>
+			requires IsValidSystemType<SystemType>
+				std::unordered_map<std::type_index, SharedPtr<System>>::iterator FindSystem();
+
+		private:
+			std::unordered_map<std::type_index, SharedPtr<System>> _systems;
+			using SystemMapIterator = std::unordered_map<std::type_index, SharedPtr<System>>::iterator;
+
+			EntityManager* _entity_manager;
 
 		};
 
@@ -80,116 +84,89 @@ namespace DFW
 		requires IsValidSystemType<SystemType>
 			void SystemManager::AddSystem(TArgs&&... a_args)
 		{
-			auto& type = typeid(SystemType);
+			type_info const& type = typeid(SystemType);
 			if (_systems.contains(type))
 			{
 				DFW_WARNLOG("Trying to add a new System that is already registered in the manager.");
+				return;
 			}
-			else
-			{
-				std::shared_ptr<SystemType> system_ptr = std::make_shared<SystemType>(std::forward<TArgs>(a_args)...);
+			
+			SharedPtr<SystemType> system_ptr = MakeShared<SystemType>(std::forward<TArgs>(a_args)...);
 
-				system_ptr->_name = type.name();
-				system_ptr->_id = DFW::GenerateDUID();
-				system_ptr->_entity_manager = CoreService::GetECS()->EntityManager();
+			system_ptr->_name			= type.name();
+			system_ptr->_id				= DFW::GenerateDUID();
+			system_ptr->_entity_manager = _entity_manager;
 
-				_systems[type] = system_ptr;
+			_systems.emplace(type, system_ptr);
 
-				system_ptr->InternalInit();
-			}
+			system_ptr->InternalInit();
+			
 		}
 
 		template <typename SystemType>
 		requires IsValidSystemType<SystemType>
 			void SystemManager::RemoveSystem()
 		{
-			auto const it = _systems.find(typeid(SystemType));
-			if (it == _systems.end())
-			{
-				DFW_WARNLOG("Trying to remove an System that is not registered in the manager.");
-			}
-			else
-			{
-				auto& [system_type, system_ptr] = (*it);
-				system_ptr->InternalTerminate();
-				_systems.erase(it);
-			}
+			SystemMapIterator const& it = FindSystem<SystemType>();
+			it->second->InternalTerminate();
+			_systems.erase(it);
 		}
 
 		template <typename SystemType>
 		requires IsValidSystemType<SystemType>
-			bool SystemManager::EnableSystem()
+			void SystemManager::EnableSystem()
 		{
-			if (SystemType* system_ptr = GetSystem<SystemType>())
-			{
-				system_ptr->InternalPauseSystem(false);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			SystemMapIterator const& it = FindSystem<SystemType>();
+			return (it->second)->InternalPauseSystem(false);
 		}
 
 		template <typename SystemType>
 		requires IsValidSystemType<SystemType>
-			bool SystemManager::DisableSystem()
+			void SystemManager::DisableSystem()
 		{
-			if (SystemType* system_ptr = GetSystem<SystemType>())
-			{
-				system_ptr->InternalPauseSystem(true);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			SystemMapIterator const& it = FindSystem<SystemType>();
+			return (it->second)->InternalPauseSystem(true);
 		}
 
 		template <typename SystemType>
 		requires IsValidSystemType<SystemType>
 			bool SystemManager::IsSystemDisabled() const
 		{
-			if (SystemType const* const system_ptr = const_cast<SystemManager*>(this)->GetSystem<SystemType>())
-				return system_ptr->IsSystemPaused();
-			else
-				return false;
+			SystemMapIterator const& it = FindSystem<SystemType>();
+			return (it->second)->IsSystemPaused();
 		}
 
 		template <typename SystemType>
 		requires IsValidSystemType<SystemType>
 			SystemType* SystemManager::GetSystem()
 		{
-			auto& type = typeid(SystemType);
-			auto it = _systems.find(type);
-			if (it == _systems.end())
-			{
-				DFW_ERRORLOG("Unable to find System of T: {}", type.name());
-				return {};
-			}
-			else
-			{
-				// TODO Research some more if this unique_ptr usage is fine, it is not
-				// that we are moving the ownership or anything.
-				return static_cast<SystemType*>((*it).second.get());
-			}
-
+			SystemMapIterator const& it = FindSystem<SystemType>();
+			return std::static_pointer_cast<SystemType>(it->second).get();
 		}
 
 		template <typename SystemType>
 		requires IsValidSystemType<SystemType>
 			bool SystemManager::IsSystemPresent()
 		{
-			auto const& type = typeid(SystemType);
-			if (!_systems.contains(type))
+			if (_systems.contains(typeid(SystemType)))
+				return true;
+			else
+				return false;
+		}
+
+		template <typename SystemType>
+		requires IsValidSystemType<SystemType>
+			SystemManager::SystemMapIterator SystemManager::FindSystem()
+		{
+			type_info const& type = typeid(SystemType);
+			SystemManager::SystemMapIterator const& it = _systems.find(type);
+			if (it == _systems.end())
 			{
 				DFW_ERRORLOG("Unable to find System of T: {}", type.name());
-				return false;
+				DFW_ASSERT(false && "Unable to find System");
 			}
-			else
-			{
-				return true;
-			}
+
+			return it;
 		}
 
 #pragma endregion 

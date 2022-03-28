@@ -8,7 +8,7 @@
 
 #include <entt/entity/registry.hpp>
 
-#include <vector>
+#include <unordered_set>
 #include <unordered_map>
 #include <functional>
 
@@ -27,30 +27,28 @@ namespace DFW
 
         class Universe final
         {
+        private:
+            friend EntityManager;
+            friend ComponentManager;
+            friend Entity;
 
         public:
             Universe();
             ~Universe();
 
+            bool IsValid() const;
+
             std::strong_ordering operator<=>(Universe const& a_other) const = default;
 
             std::vector<Entity> GetEntities();
-            std::vector<EntityHandle> const& GetEntityHandles() const;
-            EntityRegistrationMap const& GetEntityRegistrationMap() const;
 
-            entt::registry      _registry;
-            DFW::DUID const   _id;
+            entt::registry  registry;
+            DFW::DUID const id;
 
-        protected:
-            friend EntityManager;
-            friend ComponentManager;
-            friend Entity;
-
-            // TODO Could use a pool alocator here.
-            // TODO Can remove _entities container and replace GetEntityHandles with a range.
-            EntityRegistrationMap       _entity_data_registration;
-            std::vector<EntityHandle>   _entities;
-            std::vector<EntityHandle>   _deleted_entities;
+        private:
+            EntityRegistrationMap               _entity_data_registration;
+            std::unordered_set<EntityHandle>    _entities;
+            std::unordered_set<EntityHandle>    _pending_deletion_entities;
 
         };
 

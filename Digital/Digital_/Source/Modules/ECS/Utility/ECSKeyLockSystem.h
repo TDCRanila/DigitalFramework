@@ -52,7 +52,7 @@ namespace DFW
 
 		private:
 			static std::unordered_map<std::type_index, int8> _component_bit_placement;
-			static bool _generated_component_keys;
+			static bool _has_generated_component_keys;
 
 		};
 

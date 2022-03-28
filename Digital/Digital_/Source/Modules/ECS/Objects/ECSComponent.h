@@ -15,6 +15,9 @@ namespace DFW
 
 		class Component : public DFactory::AutoFactory<Component>
 		{
+		private:
+			friend ComponentManager;
+
 		public:
 			Component(Key);
 			virtual ~Component() = default;
@@ -22,9 +25,7 @@ namespace DFW
 			Entity const& GetOwner();
 			DFW::DUID GetID() const;
 
-		protected:
-			friend class ComponentManager;
-
+		private:
 			DFW::DUID	_id;
 			Entity		_owner;
 

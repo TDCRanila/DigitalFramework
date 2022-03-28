@@ -7,20 +7,25 @@ namespace DFW
     namespace DECS
     {
         Universe::Universe()
-            : _id(DFW::GenerateDUID())
+            : id(DFW::GenerateDUID())
         {
-            _registry.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
+            registry.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
             _entity_data_registration.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
             _entities.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
-            _deleted_entities.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
+            _pending_deletion_entities.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
         }
 
         Universe::~Universe()
         {
-            _registry.clear();
+            registry.clear();
             _entity_data_registration.clear();
             _entities.clear();
-            _deleted_entities.clear();
+            _pending_deletion_entities.clear();
+        }
+
+        bool Universe::IsValid() const
+        {
+            return id != DFW_INVALID_DUID;
         }
 
         std::vector<Entity>  Universe::GetEntities()
@@ -39,16 +44,6 @@ namespace DFW
                 entities.emplace_back(entity_handle);
             }
             return entities;
-        }
-
-        std::vector<EntityHandle> const& Universe::GetEntityHandles() const
-        {
-            return _entities;
-        }
-
-        EntityRegistrationMap const& Universe::GetEntityRegistrationMap() const
-        {
-            return _entity_data_registration;
         }
 
     } // End of namespace ~ DECS.

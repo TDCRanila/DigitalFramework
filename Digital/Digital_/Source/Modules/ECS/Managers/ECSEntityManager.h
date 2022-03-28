@@ -18,19 +18,22 @@ namespace DFW
 
 		class EntityManager final
 		{
+		private:
+			friend ECSModule;
+
 		public:
+			EntityManager() = default;
 			~EntityManager() = default;
 
 			template <typename EntityType, typename... TArgs>
-			EntityType CreateEntity(Universe* a_universe, TArgs&&... a_args) const;
-			Entity CreateEntity(Universe* a_universe) const;
+			EntityType CreateEntity(Universe& a_universe, TArgs&&... a_args) const;
+			Entity CreateEntity(Universe& a_universe) const;
 
 			void DestroyEntity(Entity const& a_entity) const;
-			void DestroyEntity(DFW::DUID a_entity_id, Universe* a_universe) const;
+			void DestroyEntity(DFW::DUID const a_entity_id, Universe& a_universe) const;
 
-			Entity GetEntity(DFW::DUID a_entity_id, Universe* a_universe) const;
+			Entity GetEntity(DFW::DUID const a_entity_id, Universe& a_universe) const;
 
-			Entity AttachEntity(DFW::DUID a_child_id, DFW::DUID a_parent_id, Universe* a_universe) const;
 			Entity AttachEntity(Entity const& a_child, Entity const& a_parent) const;
 
 			template <typename ComponentType, typename... TArgs>
@@ -48,12 +51,8 @@ namespace DFW
 			template <typename ComponentType>
 			bool DeleteComponent(Entity const& a_entity) const;
 
-		protected:
-			friend ECSModule;
-
-			EntityManager() = default;
-
-			void ManageDeletedEntities(Universe* a_universe);
+		private:
+			void ManageDeletedEntities(Universe& a_universe);
 
 		private:
 			ComponentManager _component_manager;
@@ -63,30 +62,36 @@ namespace DFW
 #pragma region Template Function Implementation
 
 		template <typename EntityType, typename... TArgs>
-		EntityType EntityManager::CreateEntity(Universe* a_universe, TArgs&&... a_args) const
+		EntityType EntityManager::CreateEntity(Universe& a_universe, TArgs&&... a_args) const
 		{
-			if (!a_universe)
+			if (!a_universe.IsValid())
 			{
 				DFW_ERRORLOG("Attempting to create a new entitiy, but the universe is invalid.");
-				DFW_ASSERT(a_universe && "Attempting to create a new entitiy, but the universe is invalid.");
+				DFW_ASSERT(a_universe.IsValid() && "Attempting to create a new entitiy, but the universe is invalid.");
 				return EntityType();
 			}
 
-			entt::entity handle = a_universe->_registry.create();
+			// Request a new entity handle from the registry.
+			EntityHandle new_handle = a_universe.registry.create();
 
+			// TODO - Should be in something like a WorldManager
+			// Construct an Entity from template.
 			EntityType entity(std::forward<TArgs>(a_args)...);
-			entity._handle = handle;
-			entity._universe = a_universe;
+			entity._handle		= new_handle;
+			entity._universe	= &a_universe;
+			entity._id			= DFW::GenerateDUID();
+
+			// Store entity information in universe containers.
+			a_universe._entities.emplace(new_handle);
+
+			a_universe._entity_data_registration.emplace(
+				new_handle, 
+				AddComponent<EntityRegistrationComponent>(entity, entity._id, "Default Entity Name")
+			);
 
 			// TODO Set Class/Entity Type ID.
 			// entity_data_ptr->type_id = TypeID<EntityType>::Get();
-
-			a_universe->_entities.emplace_back(handle);
-			a_universe->_entity_data_registration.emplace(
-				handle, 
-				AddComponent<EntityRegistrationComponent>(entity, DFW::GenerateDUID(), "Default Entity Name")
-			);
-
+			
 			// TODO - Should be in something like a WorldManager -  Add any additional default components here; e.g. transform, name component
 			// _component_manager.AddComponent<TransformComponent>(entity, a_universe);
 

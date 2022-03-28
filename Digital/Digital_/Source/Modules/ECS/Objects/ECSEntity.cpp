@@ -11,14 +11,18 @@ namespace DFW
 	{
 		Entity::Entity()
 			: _handle(DFW_NULL_ENTITY_HANDLE)
+			, _id(DFW::DFW_INVALID_DUID)
 			, _universe(nullptr)
 		{
 		}
 
-		Entity::Entity(EntityHandle const& a_entity_handle, Universe* const a_universe)
+		Entity::Entity(EntityHandle a_entity_handle, Universe& a_universe)
 			: _handle(a_entity_handle)
-			, _universe(a_universe)
+			, _universe(&a_universe)
 		{
+			DFW_ASSERT(a_universe.IsValid());
+			EntityRegistrationComponent const& comp = a_universe._entity_data_registration.at(_handle);
+			_id = comp.id;
 		}
 
 		std::strong_ordering Entity::operator<=>(Entity const& a_other) const
@@ -26,8 +30,7 @@ namespace DFW
 			if (auto comparison = this->_handle <=> a_other._handle; comparison != 0)
 				return comparison;
 
-			if (this->_universe || a_other._universe)
-				if (auto comparison = this->_universe <=> a_other._universe; comparison != 0)
+			if (auto comparison = (this->_universe <=> a_other._universe); comparison != 0)
 					return comparison;
 
 			return std::strong_ordering();
@@ -45,8 +48,7 @@ namespace DFW
 
 		DFW::DUID Entity::GetID() const
 		{
-			DFW_ASSERT(_handle != DFW_NULL_ENTITY_HANDLE);
-			return _universe->_entity_data_registration.at(_handle).get().id;
+			return _id;
 		}
 
 		EntityHandle Entity::GetHandle() const
@@ -54,9 +56,10 @@ namespace DFW
 			return _handle;
 		}
 
-		Universe* Entity::GetUniverse() const
+		Universe& Entity::GetUniverse() const
 		{
-			return _universe;
+			DFW_ASSERT(_universe);
+			return (*_universe);
 		}
 
 		bool Entity::IsEntityValid() const
@@ -64,10 +67,10 @@ namespace DFW
 			if (_handle == DFW_NULL_ENTITY_HANDLE)
 				return false;
 
-			if (_universe == nullptr)
+			if (!_universe)
 				return false;
 
-			if (!_universe->_registry.valid(_handle))
+			if (!_universe->registry.valid(_handle))
 				return false;
 
 			return true;
@@ -75,14 +78,8 @@ namespace DFW
 
 		bool Entity::IsPendingDeletion() const
 		{
-			if (_handle != DFW_NULL_ENTITY_HANDLE)
-			{
-				auto const it = std::find(_universe->_deleted_entities.begin(), _universe->_deleted_entities.end(), _handle);
-				if (it != _universe->_deleted_entities.end())
-					return true;
-			}
-
-			return false;
+			DFW_ASSERT(_universe);
+			return _universe->_pending_deletion_entities.end() != _universe->_pending_deletion_entities.find(_handle);
 		}
 
 	} // End of namespace ~ DECS.

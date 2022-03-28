@@ -22,19 +22,19 @@ namespace DFW
 		{
 		}
 
-		void System::PreUpdate(Universe* const /*a_universe*/)
+		void System::PreUpdate(Universe& /*a_universe*/)
 		{
 		}
 
-		void System::Update(Universe* const /*a_universe*/)
+		void System::Update(Universe& /*a_universe*/)
 		{
 		}
 
-		void System::PostUpdate(Universe* const /*a_universe*/)
+		void System::PostUpdate(Universe& /*a_universe*/)
 		{
 		}
 
-		void System::UpdateSystemImGui(Universe* const /*a_universe*/)
+		void System::UpdateSystemImGui(Universe& /*a_universe*/)
 		{
 		}
 
@@ -53,7 +53,7 @@ namespace DFW
 			return _name;
 		}
 
-		EntityManager* const System::EntityManager() const
+		EntityManager* System::EntityManager() const
 		{
 			return _entity_manager;
 		}
@@ -72,21 +72,21 @@ namespace DFW
 			this->Terminate();
 		}
 
-		void System::InternalPreUpdate(Universe* const a_universe)
+		void System::InternalPreUpdate(Universe& a_universe)
 		{
 			DFW_LOG("PreUpdate System: {} - {}", _id, _name);
 
 			this->PreUpdate(a_universe);
 		}
 
-		void System::InternalUpdate(Universe* const a_universe)
+		void System::InternalUpdate(Universe& a_universe)
 		{
 			DFW_LOG("Update System: {} - {}", _id, _name);
 
 			this->Update(a_universe);
 		}
 
-		void System::InternalPostUpdate(Universe* const a_universe)
+		void System::InternalPostUpdate(Universe& a_universe)
 		{
 			DFW_LOG("PostUpdate System: {} - {}", _id, _name);
 
