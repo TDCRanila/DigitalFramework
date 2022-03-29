@@ -1,4 +1,4 @@
-#include <CoreSystems/Systems/RenderSystem.h>
+#include <GameWorld/Graphics/RenderSystem.h>
 
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/Events/EventDispatcher.h>
@@ -7,9 +7,14 @@
 #include <CoreSystems/Logging/Logger.h>
 #include <CoreSystems/Window/WindowManagement.h>
 
-#include <CoreSystems/Components/ModelComponent.h>
-#include <CoreSystems/Components/TransformComponent.h>
+#include <GameWorld/Camera/CameraComponent.h>
+#include <GameWorld/Camera/CameraSystem.h>
+#include <GameWorld/TransformComponent.h>
+#include <GameWorld/Graphics/ModelComponent.h>
 
+#include <Modules/ECS/ECSModule.h>
+#include <Modules/ECS/Managers/ECSystemManager.h>
+#include <Modules/ECS/Managers/ECSEntityManager.h>
 #include <Modules/ECS/Objects/ECSystem.h>
 #include <Modules/ECS/Objects/ECSUniverse.h>
 
@@ -52,7 +57,7 @@ namespace DFW
 		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
 	}
     
-    void RenderSystem::Update(DECS::Universe* const a_universe)
+    void RenderSystem::Update(DECS::Universe& a_universe)
     {
 		if (!_program_ptr)
 			return;
@@ -71,32 +76,45 @@ namespace DFW
 		DRender::ViewTarget const& view_target = *_view_target;
 		bgfx::touch(view_target);
 		
+		CameraComponent& camera_comp = CoreService::GetECS()->SystemManager().GetSystem<CameraSystem>()->GetActiveCamera();
+		TransformComponent& camera_transform = EntityManager()->GetComponent<TransformComponent>(camera_comp.GetOwner());
+
 		{
-			bx::Vec3 const at	= { 0.0f, 0.0f,   0.0f };
-			bx::Vec3 const eye	= { 0.0f, 0.0f, -5.0f };
-			
+			bx::Vec3 const at	= { 0.0f, 0.0f, 0.0f };
+			bx::Vec3 const eye	= { 0.0f, 0.0f, -1.0f };
+			bx::Vec3 const eye_cam = { camera_transform.translation.x, camera_transform.translation.y, camera_transform.translation.z };
+			bx::Vec3 const at_cam = { camera_transform.translation.x + camera_comp.front.x, 
+				camera_transform.translation.y + camera_comp.front.y, 
+				camera_transform.translation.z + camera_comp.front.z };
+
 			float32 view[16];
 			bx::mtxLookAt(view, eye, at);
+			//bx::mtxLookAt(view, eye_cam, at_cam);
 
 			float32 proj[16];
-			bx::mtxProj(proj, 60.0f, float32(window_width) / float32(window_height), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
+			// bx::mtxProj(proj, 90.0f, float32(window_width) / float32(window_height), 0.1f, 100.0f, bgfx::getCaps().homogeneousDepth);
+
 			bgfx::setViewTransform(view_target, view, proj);
+			//bgfx::setViewTransform(view_target, &camera_comp.view[0][0], proj);
+			bgfx::setViewTransform(view_target, &camera_comp.view[0][0], &camera_comp.projection[0][0]);
 
 			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
 		}
 
-		auto view = a_universe->_registry.view<TransformComponent, ModelComponent>();
+		auto view = a_universe.registry.view<TransformComponent, ModelComponent>();
 		for (DECS::EntityHandle const& entity : view)
 		{
 			ModelComponent const& model = view.get<ModelComponent>(entity);
 			if (!model.is_visible)
 				continue;
 
+			auto a = a_universe.registry.try_get<TransformComponent>(entity);
+
 			TransformComponent const& transform	= view.get<TransformComponent>(entity);
 			bgfx::setTransform(&transform.Transform()[0][0]);
 
-			bgfx::setVertexBuffer(0, model.data->submodels[0].vbh);
-			bgfx::setIndexBuffer(model.data->submodels[0].ibh);
+			bgfx::setVertexBuffer(0, model.model->submodels[0].vbh);
+			bgfx::setIndexBuffer(model.model->submodels[0].ibh);
 
 			bgfx::setState(state);
 

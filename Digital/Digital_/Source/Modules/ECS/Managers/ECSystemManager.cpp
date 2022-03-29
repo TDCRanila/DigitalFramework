@@ -1,6 +1,6 @@
 #include <Modules/ECS/Managers/ECSystemManager.h>
 
-#include <AutoFactory/Autofactory.h>
+#include <Utility/AutoFactory/AutoFactory.h>
 
 #include <CoreSystems/CoreServices.h>
 

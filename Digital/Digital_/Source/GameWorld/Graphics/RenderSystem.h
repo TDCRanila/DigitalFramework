@@ -1,6 +1,7 @@
 #pragma once
 
 #include <CoreSystems/ApplicationEvents.h>
+#include <CoreSystems/Memory.h>
 
 #include <Modules/ECS/Objects/ECSystem.h>
 #include <Modules/Rendering/ViewTarget.h>
@@ -16,7 +17,7 @@ namespace DFW
         virtual void Init() override;
         virtual void Terminate() override;
 
-        virtual void Update(DECS::Universe* const a_universe) override;
+        virtual void Update(DECS::Universe& a_universe) override;
 
     private:
         void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);

@@ -1,6 +1,6 @@
 #include <Modules/ECS/Utility/ECSKeyLockSystem.h>
 
-#include <AutoFactory/AutoFactory.h>
+#include <Utility/AutoFactory/AutoFactory.h>
 
 #include <CoreSystems/Logging/Logger.h>
 

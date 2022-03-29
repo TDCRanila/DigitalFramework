@@ -3,7 +3,7 @@
 #include <CoreSystems/Stage/StageID.h>
 #include <CoreSystems/Events/EventImplementation.h>
 
-#include <AutoFactory/AutoFactory.h>
+#include <Utility/AutoFactory/AutoFactory.h>
 
 #include <string>
 #include <sstream>

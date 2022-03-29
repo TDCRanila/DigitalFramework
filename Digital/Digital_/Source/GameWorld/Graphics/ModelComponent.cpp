@@ -1,4 +1,4 @@
-#include <CoreSystems/Components/ModelComponent.h>
+#include <GameWorld/Graphics/ModelComponent.h>
 
 #include <Modules/Rendering/ModelData.h>
 #include <Modules/Rendering/TextureData.h>

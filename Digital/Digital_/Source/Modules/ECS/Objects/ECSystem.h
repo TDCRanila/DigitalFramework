@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Autofactory/AutoFactory.h>
+#include <Utility/AutoFactory/AutoFactory.h>
 
 #include <CoreSystems/DUID.h>
 #include <CoreSystems/Memory.h>

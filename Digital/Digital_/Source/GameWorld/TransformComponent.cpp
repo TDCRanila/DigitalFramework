@@ -1,4 +1,4 @@
-#include <CoreSystems/Components/TransformComponent.h>
+#include <GameWorld/TransformComponent.h>
 
 namespace DFW
 {
