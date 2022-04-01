@@ -60,7 +60,6 @@ namespace DFW
         : _active_camera(nullptr)
         , _has_enabled_camera_controls(true)
     {
-        _input_system = DFW::CoreService::GetInputSystem();
     }
 
     CameraComponent& CameraSystem::CreateCamera(DECS::Entity const& a_entity, std::string const& a_camera_name)
@@ -192,6 +191,12 @@ namespace DFW
     void CameraSystem::EnableAdvancedCamera(CameraComponent& a_camera_component)
     {
         a_camera_component.has_enabled_six_degrees_rotation = true;
+    }
+
+    void CameraSystem::Init()
+    {
+        _input_system = DFW::CoreService::GetInputSystem();
+        DFW_ASSERT(_input_system);
     }
 
     void CameraSystem::Update(DECS::Universe& a_universe)

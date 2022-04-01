@@ -65,6 +65,7 @@ namespace DFW
 		void EnableSimpleCamera(CameraComponent& a_camera_component);
 		void EnableAdvancedCamera(CameraComponent& a_camera_component);
 
+		virtual void Init() override;
 		virtual void Update(DECS::Universe& a_universe) override;
 
     private:
