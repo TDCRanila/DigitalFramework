@@ -22,7 +22,7 @@ namespace DFW
 			Component(Key);
 			virtual ~Component() = default;
 
-			Entity const& GetOwner();
+			Entity const& GetOwner() const;
 			DFW::DUID GetID() const;
 
 		private:
