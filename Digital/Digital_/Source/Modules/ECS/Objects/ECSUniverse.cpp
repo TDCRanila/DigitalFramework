@@ -6,8 +6,9 @@ namespace DFW
 {
     namespace DECS
     {
-        Universe::Universe()
-            : id(DFW::GenerateDUID())
+        Universe::Universe(DFW::DUID a_universe_id, std::string const& a_universe_name)
+            : id(a_universe_id)
+            , name(a_universe_name)
         {
             registry.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
             _entity_data_registration.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);

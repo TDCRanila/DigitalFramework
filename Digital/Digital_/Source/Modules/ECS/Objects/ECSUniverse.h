@@ -33,7 +33,7 @@ namespace DFW
             friend Entity;
 
         public:
-            Universe();
+            Universe(DFW::DUID a_universe_id, std::string const& a_universe_name);
             ~Universe();
 
             bool IsValid() const;
@@ -43,7 +43,9 @@ namespace DFW
             std::vector<Entity> GetEntities();
 
             entt::registry  registry;
+
             DFW::DUID const id;
+            std::string const name;
 
         private:
             EntityRegistrationMap               _entity_data_registration;

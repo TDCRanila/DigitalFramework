@@ -98,7 +98,7 @@ namespace DFW
 		Universe* ECSModule::RegisterUniverse(std::string const& a_universe_name)
 		{
 			if (!_universes.contains(a_universe_name))
-				_universes.emplace(a_universe_name, MakeShared<Universe>());
+				_universes.emplace(a_universe_name, MakeShared<Universe>(DFW::GenerateDUID(), a_universe_name));
 
 			return _universes.at(a_universe_name).get();
 		}
