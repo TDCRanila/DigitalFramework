@@ -76,7 +76,7 @@ namespace DFW
             DFW_ASSERT(false);
         }
 
-        CameraIdentifier const registration(a_entity.GetUniverse().id, a_camera_name);
+        CameraIdentifier const registration(a_entity.GetUniverse().name, a_camera_name);
         if (auto const& it = registered_cameras.find(registration);
             it != registered_cameras.end())
         {
