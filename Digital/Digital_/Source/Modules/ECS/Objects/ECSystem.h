@@ -9,13 +9,14 @@
 
 namespace DFW
 {
+	// FW Declare
+	class EventDispatcher;
+	
 	namespace DECS
 	{
-		// FW Declare
-		class ECSModule;
 		class Universe;
-		class EntityManager;
 		class SystemManager;
+		class EntityManager;
 
 		class System : public DFactory::AutoFactory<System>
 		{
@@ -50,11 +51,15 @@ namespace DFW
 			void InternalPauseSystem(bool a_pause_on_true);
 
 		protected:
-			EntityManager* EntityManager() const;
+			inline DFW::DECS::SystemManager& SystemManager() const { return *_system_manager; }
+			inline DFW::DECS::EntityManager& EntityManager() const { return *_entity_manager; }
+			inline DFW::EventDispatcher& ECSEventHandler() const { return *_event_handler; }
 
 		private:
 			DFW::DUID _id;
-			DFW::DECS::EntityManager*	_entity_manager;
+			DFW::DECS::SystemManager* _system_manager;
+			DFW::DECS::EntityManager* _entity_manager;
+			DFW::EventDispatcher* _event_handler;
 			std::string _name;
 			bool _paused;
 

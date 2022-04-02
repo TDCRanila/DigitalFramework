@@ -34,9 +34,6 @@ namespace DFW
 			_system_manager = MakeUnique<DECS::SystemManager>();
 			_event_handler	= MakeUnique<EventDispatcher>();
 
-			// Init.
-			_system_manager->Init();
-
 			_initialized = true;
 		}
 

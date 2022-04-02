@@ -3,6 +3,7 @@
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/Logging/Logger.h>
 
+#include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Objects/ECSystem.h>
 #include <Modules/ECS/Utility/ECSConcepts.h>
 
@@ -60,7 +61,6 @@ namespace DFW
 			// TODO Implement System Dependencies / Priority.
 
 		private:
-			void Init();
 			void Terminate();
 
 			void UpdateSystems(Universe& a_universe);
@@ -73,8 +73,6 @@ namespace DFW
 		private:
 			std::unordered_map<std::type_index, SharedPtr<System>> _systems;
 			using SystemMapIterator = std::unordered_map<std::type_index, SharedPtr<System>>::iterator;
-
-			EntityManager* _entity_manager;
 
 		};
 
@@ -95,12 +93,16 @@ namespace DFW
 
 			system_ptr->_name			= type.name();
 			system_ptr->_id				= DFW::GenerateDUID();
-			system_ptr->_entity_manager = _entity_manager;
+			system_ptr->_system_manager	= this;
+			system_ptr->_entity_manager	= &CoreService::GetECS()->EntityManager();
+			system_ptr->_event_handler	= &CoreService::GetECS()->EventHandler();
+
+			DFW_ASSERT(system_ptr->_entity_manager);
+			DFW_ASSERT(system_ptr->_event_handler);
 
 			_systems.emplace(type, system_ptr);
 
 			system_ptr->InternalInit();
-			
 		}
 
 		template <typename SystemType>

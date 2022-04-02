@@ -1,11 +1,8 @@
 #include <Modules/ECS/Managers/ECSystemManager.h>
 
-#include <Utility/AutoFactory/AutoFactory.h>
-
-#include <CoreSystems/CoreServices.h>
-
-#include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Objects/ECSUniverse.h>
+
+#include <Utility/AutoFactory/AutoFactory.h>
 
 #include <ranges>
 
@@ -19,11 +16,6 @@ namespace DFW
 		}
 
 		SystemManager::~SystemManager() = default;
-
-		void SystemManager::Init()
-		{
-			_entity_manager = &CoreService::GetECS()->EntityManager();
-		}
 
 		void SystemManager::Terminate()
 		{

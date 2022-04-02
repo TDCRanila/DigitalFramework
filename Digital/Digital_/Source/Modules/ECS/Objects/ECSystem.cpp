@@ -53,11 +53,6 @@ namespace DFW
 			return _name;
 		}
 
-		EntityManager* System::EntityManager() const
-		{
-			return _entity_manager;
-		}
-
 		void System::InternalInit()
 		{
 			DFW_INFOLOG("Initialization System: {} - {}", _id, _name);
