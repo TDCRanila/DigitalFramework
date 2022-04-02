@@ -80,11 +80,11 @@ namespace DFW
         if (auto const& it = registered_cameras.find(registration);
             it != registered_cameras.end())
         {
-            return EntityManager()->GetComponent<CameraComponent>(a_entity);;
+            return EntityManager().GetComponent<CameraComponent>(a_entity);;
         }
 
         // Create
-        CameraComponent& camera = EntityManager()->AddComponent<CameraComponent>(a_entity);
+        CameraComponent& camera = EntityManager().AddComponent<CameraComponent>(a_entity);
         camera.name = a_camera_name;
 
         // Register
@@ -93,7 +93,7 @@ namespace DFW
         // Communicate
         DUID const camera_id        = camera.GetID();
         DUID const camera_owner_id  = camera.GetOwner().GetID();
-        CoreService::GetECS()->EventHandler().Broadcast<CameraCreatedEvent>(camera.name, camera_id, camera_owner_id);
+        ECSEventHandler().Broadcast<CameraCreatedEvent>(camera.name, camera_id, camera_owner_id);
 
         return camera;
     }
@@ -111,12 +111,12 @@ namespace DFW
             // Destroy camera component.
             CameraComponent const& found_camera = it->second.get();
             DECS::Entity const& camera_owner = found_camera.GetOwner();
-            EntityManager()->DeleteComponent<CameraComponent>(camera_owner);
+            EntityManager().DeleteComponent<CameraComponent>(camera_owner);
 
-            // Communicate
+            // Communicate.
             DUID const camera_id        = found_camera.GetID();
             DUID const camera_owner_id  = found_camera.GetOwner().GetID();
-            CoreService::GetECS()->EventHandler().Broadcast<CameraDestroyedEvent>(found_camera.name, camera_id, camera_owner_id);
+            ECSEventHandler().Broadcast<CameraDestroyedEvent>(found_camera.name, camera_id, camera_owner_id);
         }
     }
 
@@ -133,21 +133,24 @@ namespace DFW
         return nullptr;
     }
 
-    CameraComponent& CameraSystem::GetActiveCamera() const
+    CameraComponent* CameraSystem::GetActiveCamera() const
     {
-        DFW_ASSERT(_active_camera && "No active camera set.");
-        return *_active_camera;
+        return _active_camera;
     }
 
     void CameraSystem::SetActiveCamera(DECS::Entity const& a_entity)
     {
         DFW_ASSERT(a_entity.IsEntityValid());
-        SetActiveCamera(EntityManager()->GetComponent<CameraComponent>(a_entity));
+        SetActiveCamera(EntityManager().GetComponent<CameraComponent>(a_entity));
     }
 
     void CameraSystem::SetActiveCamera(CameraComponent& a_camera_component)
     {
         _active_camera = &a_camera_component;
+
+        // Communicate.
+        Entity const& owner = a_camera_component.GetOwner();
+        ECSEventHandler().Broadcast<CameraNewActiveEvent>(CameraIdentifier(owner.GetUniverse().name, a_camera_component.name), owner.GetID());
     }
 
     void CameraSystem::ChangeCameraProjPerspective(CameraComponent& a_camera_component, float32 a_fov, float32 a_viewport_aspect, ClipSpace a_clip)

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <GameWorld/GameEvents.h>
+#include <GameWorld/Camera/CameraEvents.h>
+
 #include <CoreSystems/ApplicationEvents.h>
 #include <CoreSystems/Memory.h>
 
@@ -8,6 +11,8 @@
 
 namespace DFW
 {
+    struct CameraComponent;
+
     class RenderSystem : public DECS::System::StrictRegistrar<RenderSystem>
     {
     public:
@@ -21,8 +26,11 @@ namespace DFW
 
     private:
         void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
+        void OnCameraNewActiveEvent(CameraNewActiveEvent const& a_camera_event);
 
         SharedPtr<DRender::ViewTarget const> _view_target;
+        CameraComponent* _rendering_camera;
+
         int32 window_width;
         int32 window_height;
 

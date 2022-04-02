@@ -4,8 +4,7 @@ namespace DFW
 {
     enum class GameEvents
     {
-        CameraCreatedEvent, CameraDestroyedEvent
+        CameraCreatedEvent, CameraDestroyedEvent, CameraNewActiveEvent
     };
-
 
 } // End of namespace ~ DFW.

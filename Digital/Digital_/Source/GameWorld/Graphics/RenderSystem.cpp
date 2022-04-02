@@ -12,10 +12,8 @@
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Graphics/ModelComponent.h>
 
-#include <Modules/ECS/ECSModule.h>
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
-#include <Modules/ECS/Managers/ECSEntityManager.h>
-#include <Modules/ECS/Objects/ECSystem.h>
 #include <Modules/ECS/Objects/ECSUniverse.h>
 
 #include <Modules/Rendering/ViewTargetDirector.h>
@@ -24,7 +22,7 @@
 #include <Modules/Rendering/ShaderProgram.h>
 #include <Modules/Rendering/ModelData.h>
 
-#include <Utility/FileSystemUtility.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <bgfx/bgfx.h>
 #include <bx/math.h>
@@ -34,7 +32,8 @@ DFW::SharedPtr<DFW::DRender::ShaderProgram> _program_ptr;
 namespace DFW
 {
 	RenderSystem::RenderSystem()
-		: window_width(DWindow::DFW_DEFAULT_WINDOW_WIDTH)
+		: _rendering_camera(nullptr)
+		, window_width(DWindow::DFW_DEFAULT_WINDOW_WIDTH)
 		, window_height(DWindow::DFW_DEFAULT_WINDOW_HEIGHT)
 	{
 	}
@@ -49,12 +48,14 @@ namespace DFW
 
 		// Register Callbacks.
 		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
+		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &RenderSystem::OnCameraNewActiveEvent>(this);
     }
 
 	void RenderSystem::Terminate()
 	{
 		// Unregister Callbacks.
 		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
+		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &RenderSystem::OnCameraNewActiveEvent>(this);
 	}
     
     void RenderSystem::Update(DECS::Universe& a_universe)
@@ -73,45 +74,38 @@ namespace DFW
 			| BGFX_STATE_MSAA
 			;
 
+		// Clear Target.
 		DRender::ViewTarget const& view_target = *_view_target;
 		bgfx::touch(view_target);
 		
-		CameraComponent& camera_comp = CoreService::GetECS()->SystemManager().GetSystem<CameraSystem>()->GetActiveCamera();
-		TransformComponent& camera_transform = EntityManager()->GetComponent<TransformComponent>(camera_comp.GetOwner());
-
+		// Camera Setup.
+		if (_rendering_camera)
 		{
-			bx::Vec3 const at	= { 0.0f, 0.0f, 0.0f };
-			bx::Vec3 const eye	= { 0.0f, 0.0f, -1.0f };
-			bx::Vec3 const eye_cam = { camera_transform.translation.x, camera_transform.translation.y, camera_transform.translation.z };
-			bx::Vec3 const at_cam = { camera_transform.translation.x + camera_comp.front.x, 
-				camera_transform.translation.y + camera_comp.front.y, 
-				camera_transform.translation.z + camera_comp.front.z };
-
+			bgfx::setViewTransform(view_target, glm::value_ptr(_rendering_camera->view), glm::value_ptr(_rendering_camera->projection));
+			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
+		}
+		else
+		{
+			// No camera present, create a "camera" at world origin.
 			float32 view[16];
+			bx::Vec3 const at	= { 0.0f, 0.0f, 1.0f };
+			bx::Vec3 const eye	= { 0.0f, 0.0f, 0.0f };
 			bx::mtxLookAt(view, eye, at);
-			//bx::mtxLookAt(view, eye_cam, at_cam);
 
 			float32 proj[16];
-			// bx::mtxProj(proj, 90.0f, float32(window_width) / float32(window_height), 0.1f, 100.0f, bgfx::getCaps().homogeneousDepth);
+			bx::mtxProj(proj, DFW_DEFAULT_CAMERA_FOV, float32(window_width) / float32(window_height), 0.1f, 1000.0f, bgfx::getCaps()->homogeneousDepth);
 
 			bgfx::setViewTransform(view_target, view, proj);
-			//bgfx::setViewTransform(view_target, &camera_comp.view[0][0], proj);
-			bgfx::setViewTransform(view_target, &camera_comp.view[0][0], &camera_comp.projection[0][0]);
-
 			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
 		}
 
-		auto view = a_universe.registry.view<TransformComponent, ModelComponent>();
-		for (DECS::EntityHandle const& entity : view)
+		// Submit Primitives
+		for (auto&& [entity, model, transform] : a_universe.registry.view<ModelComponent, TransformComponent>().each())
 		{
-			ModelComponent const& model = view.get<ModelComponent>(entity);
 			if (!model.is_visible)
 				continue;
 
-			auto a = a_universe.registry.try_get<TransformComponent>(entity);
-
-			TransformComponent const& transform	= view.get<TransformComponent>(entity);
-			bgfx::setTransform(&transform.Transform()[0][0]);
+			bgfx::setTransform(glm::value_ptr(transform.Transform()));
 
 			bgfx::setVertexBuffer(0, model.model->submodels[0].vbh);
 			bgfx::setIndexBuffer(model.model->submodels[0].ibh);
@@ -126,6 +120,11 @@ namespace DFW
 	{
 		window_width	= a_window_event.new_width;
 		window_height	= a_window_event.new_height;
+	}
+
+	void RenderSystem::OnCameraNewActiveEvent(CameraNewActiveEvent const& a_camera_event)
+	{
+		_rendering_camera = SystemManager().GetSystem<CameraSystem>()->GetCamera(a_camera_event.camera_identifier);
 	}
 
 } // End of namespace ~ DFW.
