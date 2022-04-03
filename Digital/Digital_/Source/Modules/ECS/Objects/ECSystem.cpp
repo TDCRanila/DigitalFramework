@@ -7,11 +7,23 @@ namespace DFW
 	namespace DECS
 	{
 		System::System(Key)
-			: _id(DFW::DFW_INVALID_DUID)
+			: _system_manager(nullptr)
 			, _entity_manager(nullptr)
+			, _event_handler(nullptr)
+			, _id(DFW::DFW_INVALID_DUID)
 			, _name("Default System Name.")
 			, _paused(false)
 		{
+		}
+
+		DFW::DUID System::GetID() const
+		{
+			return _id;
+		}
+
+		std::string System::GetName() const
+		{
+			return _name;
 		}
 
 		void System::Init()
@@ -41,16 +53,6 @@ namespace DFW
 		bool System::IsSystemPaused() const
 		{
 			return _paused;
-		}
-
-		DFW::DUID System::GetID() const
-		{
-			return _id;
-		}
-
-		std::string System::GetName() const
-		{
-			return _name;
 		}
 
 		void System::InternalInit()

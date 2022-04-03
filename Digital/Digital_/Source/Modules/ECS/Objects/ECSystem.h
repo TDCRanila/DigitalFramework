@@ -27,20 +27,27 @@ namespace DFW
 			System(Key);
 			virtual ~System() = default;
 
-			virtual void Init();
-			virtual void Terminate();
-
-			virtual void PreUpdate(Universe& a_universe);
-			virtual void Update(Universe& a_universe);
-			virtual void PostUpdate(Universe & a_universe);
-
-			virtual void UpdateSystemImGui(Universe& a_universe);
-
 			DFW::DUID GetID() const;
 			std::string GetName() const;
 			bool IsSystemPaused() const;
 
 		protected:
+			// Can be overwritten by derived class.
+			virtual void Init();
+			virtual void Terminate();
+
+			virtual void PreUpdate(Universe& a_universe);
+			virtual void Update(Universe& a_universe);
+			virtual void PostUpdate(Universe& a_universe);
+
+			virtual void UpdateSystemImGui(Universe& a_universe);
+
+			inline DFW::DECS::SystemManager& SystemManager() const { return *_system_manager; }
+			inline DFW::DECS::EntityManager& EntityManager() const { return *_entity_manager; }
+			inline DFW::EventDispatcher& ECSEventHandler() const { return *_event_handler; }
+
+		private:
+			// Called by ECSystemManager.
 			void InternalInit();
 			void InternalTerminate();
 
@@ -50,18 +57,14 @@ namespace DFW
 
 			void InternalPauseSystem(bool a_pause_on_true);
 
-		protected:
-			inline DFW::DECS::SystemManager& SystemManager() const { return *_system_manager; }
-			inline DFW::DECS::EntityManager& EntityManager() const { return *_entity_manager; }
-			inline DFW::EventDispatcher& ECSEventHandler() const { return *_event_handler; }
-
 		private:
-			DFW::DUID _id;
 			DFW::DECS::SystemManager* _system_manager;
 			DFW::DECS::EntityManager* _entity_manager;
 			DFW::EventDispatcher* _event_handler;
+
+			DFW::DUID	_id;
 			std::string _name;
-			bool _paused;
+			bool		_paused;
 
 		};
 

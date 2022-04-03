@@ -19,12 +19,12 @@ namespace DFW
         RenderSystem();
         ~RenderSystem() = default;
 
+    private:
         virtual void Init() override;
         virtual void Terminate() override;
 
         virtual void Update(DECS::Universe& a_universe) override;
 
-    private:
         void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
         void OnCameraNewActiveEvent(CameraNewActiveEvent const& a_camera_event);
 
