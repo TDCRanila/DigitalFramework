@@ -1,15 +1,15 @@
 #include <Zynthurism/GameApplication.h>
 
 #include <Zynthurism/GameMaster.h>
-
 #include <Zynthurism/Game/TestStage.h>
-#include <Zynthurism/Game/GameplaySystems/TestSystem.h>
 
 #include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Systems/RenderSystem.h>
 
 #include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
+
+#include <GameWorld/Camera/CameraSystem.h>
+#include <GameWorld/Graphics/RenderSystem.h>
 
 #include <Editor/MainDockStage.h>
 #include <Editor/Console/MainConsole.h>
@@ -25,14 +25,12 @@ namespace DGame
 	void GameApplication::PostApplicationInit()
 	{
 		// Systems
-		DFW::CoreService::GetECS()->SystemManager()->AddSystem<TestSystem>();
-		DFW::CoreService::GetECS()->SystemManager()->AddSystem<DFW::RenderSystem>();
+		DFW::CoreService::GetECS()->SystemManager().AddSystem<DFW::RenderSystem>();
+		DFW::CoreService::GetECS()->SystemManager().AddSystem<DFW::CameraSystem>();
 
 		// Stages
 		ProvideStageStackController().AttachStage<DFW::DEditor::DockerStage>("MainDockSpace", false);
 		ProvideStageStackController().AttachStage<DFW::DEditor::MainConsole>("Console", false);
-		//ProvideStageStackController().AttachStage<DFW::StageExample>("StageOne", false);
-		//ProvideStageStackController().AttachStage<DFW::StageExample>("StageTwo", false);
 		ProvideStageStackController().AttachStage<DGame::TestStage>("Test Stage", false);
 
 	}
