@@ -186,8 +186,42 @@ target_include_directories(${LIB_NAME} PUBLIC "${SPDLOG_INCLUDE_DIR}/include")
 
 message("\n")
 
+## assimp
+include(CMake/ASSIMPSettings.cmake)
+
+message("Adding Submodule: assimp")
+set(ASSIMP_LIB_NAME assimp)
+set(ASSIMP_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/assimp)
+set(ASSIMP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/assimp/include)
+set(ASSIMP_INCLUDE_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR})
+find_path(ASSIMP_FOUND NAMES "aabb.h" PATHS "${ASSIMP_INCLUDE_DIR}/assimp")
+if((NOT ASSIMP_FOUND) OR (NOT EXISTS ${ASSIMP_INCLUDE_DIR}))
+    message("Unable to find Submodule: ${ASSIMP_LIB_NAME} or file aabb.h")
+    execute_process(COMMAND git submodule update --init -- ${ASSIMP_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+    message("Found Submodule: ${ASSIMP_LIB_NAME}")
+endif()
+add_subdirectory(${ASSIMP_DIR} ${ASSIMP_LIB_NAME})
+target_link_libraries(${LIB_NAME} ${ASSIMP_LIB_NAME})
+set_target_properties(${ASSIMP_LIB_NAME}  PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
+set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
+set_target_properties(zlibstatic PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
+target_include_directories(${LIB_NAME} PUBLIC ${ASSIMP_INCLUDE_DIR} ${ASSIMP_INCLUDE_GEN_DIR})
+
+message("\n")
+
 ## Boost - 
-message("Adding Files: boost")
+message("Adding File(s): boost")
 set(BOOST_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/boost)
 set(BOOST_LIB_NAME Boost)
-target_include_directories(${LIB_NAME} PUBLIC "${BOOST_INCLUDE_DIR}")
+target_include_directories(${LIB_NAME} PUBLIC ${BOOST_INCLUDE_DIR})
+
+message("\n")
+
+# stb
+message("Adding File(s): stb")
+set (STB_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/DEPENDENCY/stb)
+set (STB_LIB_NAME stb)
+target_include_directories(${LIB_NAME} PUBLIC ${STB_INCLUDE_DIR})
+
+message("\n")
