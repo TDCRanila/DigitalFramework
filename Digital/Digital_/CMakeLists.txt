@@ -220,7 +220,7 @@ message("\n")
 
 # stb
 message("Adding File(s): stb")
-set (STB_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/DEPENDENCY/stb)
+set (STB_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/stb)
 set (STB_LIB_NAME stb)
 target_include_directories(${LIB_NAME} PUBLIC ${STB_INCLUDE_DIR})
 
