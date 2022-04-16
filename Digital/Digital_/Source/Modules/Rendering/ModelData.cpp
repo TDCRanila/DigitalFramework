@@ -4,22 +4,18 @@ namespace DFW
 {
     namespace DRender
     {
-        Primitive::Primitive()
-            : start_vertices(0)
-            , start_index(0)
-            , num_vertices(0)
-            , num_indices(0)
-        {
-        }
-
-        SubModelData::SubModelData()
-            : vertices(nullptr)
-            , indices(nullptr)
-            , num_vertices(0)
-            , num_indices(0)  
+        SubMeshData::SubMeshData()
+            : num_vertices(0)
+            , num_faces(0)
         {
             vbh.idx = bgfx::kInvalidHandle;
             ibh.idx = bgfx::kInvalidHandle;
+        }
+
+        MeshData::MeshData()
+            : file_name("")
+            , source_file("")
+        {
         }
 
     } // End of namespace ~ DRender.

@@ -1,10 +1,12 @@
 #pragma once
 
+#include <Modules/Rendering/TextureData.h>
 #include <Modules/Math/Geometry.h>
 
 #include <bgfx/bgfx.h>
 
 #include <vector>
+#include <array>
 
 namespace DFW
 {
@@ -12,28 +14,24 @@ namespace DFW
     {
         struct Primitive
         {
-            Primitive();
+            Primitive() = default;
+            ~Primitive() = default;
 
-            uint32 start_vertices;
-            uint32 start_index;
-            uint32 num_vertices;
-            uint32 num_indices;
-            
-            DMath::OBB obb;
-            DMath::AABB aabb;
-            DMath::Sphere sphere;
-
+            std::array<uint32, 3> vertex_indices;
+            std::array<uint16, 3> indices;            
         };
 
-        struct SubModelData
+        struct SubMeshData
         {
-            SubModelData();
+            SubMeshData();
+            ~SubMeshData() = default;
 
-            uint16* vertices;
-            uint16* indices;
+            std::vector<float32> vertices;
+            std::vector<uint16> indices;
             uint32  num_vertices;
-            uint32  num_indices;
+            uint32  num_faces;
 
+            bgfx::VertexLayout vertex_layout; // TODO: Check if the vertexlayout can be in MeshData and be shared between submeshes?
             bgfx::VertexBufferHandle vbh;
             bgfx::IndexBufferHandle ibh;
 
@@ -41,14 +39,18 @@ namespace DFW
             DMath::AABB aabb;
             DMath::Sphere sphere;
 
+            std::vector<SharedPtr<DRender::TextureData>> textures;
             std::vector<Primitive> primitives;
-
         };
 
-        struct ModelData
+        struct MeshData
         {
-            bgfx::VertexLayout vertex_layout;
-            std::vector<SubModelData> submodels;
+            MeshData();
+            ~MeshData() = default;
+
+            std::vector<SubMeshData> submeshes;
+            std::string file_name;
+            std::string source_file;
 
         };
 

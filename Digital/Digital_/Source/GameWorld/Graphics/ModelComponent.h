@@ -2,8 +2,6 @@
 
 #include <Modules/ECS/Objects/ECSComponent.h>
 
-#include <Modules/Rendering/TextureData.h>
-
 #include <CoreSystems/Memory.h>
 
 namespace DFW
@@ -11,18 +9,18 @@ namespace DFW
     // FW Declare.
     namespace DRender
     {
-        struct ModelData;
+        struct MeshData;
         struct ShaderProgram;
     }
 
-    SharedPtr<DRender::ModelData> Debug_CreateBasicCube();
+    SharedPtr<DRender::MeshData> Debug_CreateBasicCube();
 
     struct ModelComponent : public DECS::Component::StrictRegistrar<ModelComponent>
     {
         ModelComponent();
         ~ModelComponent() = default;
 
-        SharedPtr<DRender::ModelData> model;
+        SharedPtr<DRender::MeshData> model;
         SharedPtr<DRender::ShaderProgram> shader;
 
         bool is_visible;

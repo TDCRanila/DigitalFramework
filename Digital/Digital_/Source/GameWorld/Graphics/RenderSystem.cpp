@@ -105,14 +105,21 @@ namespace DFW
 			if (!model.is_visible)
 				continue;
 
-			bgfx::setTransform(glm::value_ptr(transform.Transform()));
+			for (DRender::SubMeshData const& submodel : model.model->submeshes)
+			{
+				bgfx::setTransform(glm::value_ptr(transform.Transform()));
+				bgfx::setVertexBuffer(0, submodel.vbh);
+				bgfx::setIndexBuffer(submodel.ibh);
+				
+				if (!submodel.textures.empty())
+				{
+					SharedPtr<DRender::TextureData> const& texture = submodel.textures[0];
+					bgfx::setTexture(texture->stage, texture->sampler, texture->handle);
+				}
 
-			bgfx::setVertexBuffer(0, model.model->submodels[0].vbh);
-			bgfx::setIndexBuffer(model.model->submodels[0].ibh);
-
-			bgfx::setState(state);
-
-			bgfx::submit(view_target, _program_ptr->shader_program_handle);
+				bgfx::setState(state);
+				bgfx::submit(view_target, _program_ptr->shader_program_handle);
+			}
 		}
     }
 

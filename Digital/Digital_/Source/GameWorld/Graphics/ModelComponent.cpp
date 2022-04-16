@@ -61,21 +61,21 @@ namespace DFW
 
     } // End of namespace ~ Detail.
 
-    SharedPtr<DRender::ModelData> Debug_CreateBasicCube()
+    SharedPtr<DRender::MeshData> Debug_CreateBasicCube()
     {
-		static SharedPtr<DRender::ModelData> data;
+		static SharedPtr<DRender::MeshData> data;
 
 		if (data != nullptr)
 			return data;
 
-		data = MakeShared<DRender::ModelData>();
+		data = MakeShared<DRender::MeshData>();
 
 		// Uniform Layouts
 		Detail::PosColorVertex::init();
-		data->vertex_layout = Detail::PosColorVertex::ms_layout;
 
 		// Buffers
-		DRender::SubModelData& submodel = data->submodels.emplace_back();
+		DRender::SubMeshData& submodel = data->submeshes.emplace_back();
+		submodel.vertex_layout = Detail::PosColorVertex::ms_layout;
 		submodel.vbh = bgfx::createVertexBuffer(
 			  bgfx::makeRef(Detail::s_cubeVertices, sizeof(Detail::s_cubeVertices))
 			, Detail::PosColorVertex::ms_layout
