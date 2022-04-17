@@ -10,8 +10,10 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/details/null_mutex.h>
 
-#include <CoreSystems/DUID.h>
 #include <CoreSystems/Logging/CustomTypes.h>
+
+#include <CoreSystems/DUID.h>
+#include <CoreSystems/Memory.h>
 
 #include <mutex>
 #include <unordered_map>
@@ -43,7 +45,7 @@ namespace DFW
 		DFWSinkImpl();
 		~DFWSinkImpl();
 	protected:
-		void sink_it_(const spdlog::details::log_msg& msg) override;
+		void sink_it_(spdlog::details::log_msg const& a_msg) override;
 		void flush_() override;
 
 	};
@@ -55,33 +57,33 @@ namespace DFW
 
 	class Logger
 	{
+	private:
+		friend DFWSink_mt;
+		friend DFWSink_st;
 	public:
-		Logger();
-		~Logger();
+		Logger() = default;
+		~Logger() = default;
 
-		static void Init(bool a_enable_automatic_flush, int32 a_flush_interval_in_ms);
+		static void Init(bool const a_enable_automatic_flush, int32 const a_flush_interval_in_ms);
 		static void ManuelFlush();
 
 		static spdlog::logger& ProvideMainLogger();
-		static void AdjustLoggingLevel(LogType a_logger, LogLevel a_log_level);
+		static void AdjustLoggingLevel(LogType const a_logger, LogLevel const a_log_level);
 
 		// TODO Find a way to clean this function up some more, to avoid having the user to call std::bind(func, object, placeholder)
 		// Could then also force the user to use a shared_ptr to an object?
-		static void AddSubscriber(DUID a_subscriber_id, const LogSubscriberMessageFunc& a_func);
-		static void RemoveSubscriber(DUID a_subscriber_id, const LogSubscriberMessageFunc& a_func);
-
-	protected:
-		friend DFWSink_mt;
-		friend DFWSink_st;
-		static std::unordered_map<DUID, LogSubscriberMessageFunc> _dfw_sink_subscribers;
+		static void AddSubscriber(DUID const a_subscriber_id, LogSubscriberMessageFunc const& a_func);
+		static void RemoveSubscriber(DUID const a_subscriber_id, LogSubscriberMessageFunc const& a_func);
 
 	private:
 		static spdlog::logger _main_logger;
 
+		static std::unordered_map<DUID, LogSubscriberMessageFunc> _dfw_sink_subscribers;
+
 		// TODO ST -> MT
-		static std::shared_ptr<spdlog::sinks::wincolor_stdout_sink_st> _console_sink;
-		static std::shared_ptr<DFWSink_st> _dfw_sink;
-		static std::shared_ptr<spdlog::sinks::basic_file_sink_st> _file_sink;
+		static SharedPtr<spdlog::sinks::wincolor_stdout_sink_st> _console_sink;
+		static SharedPtr<DFWSink_st> _framework_sink;
+		static SharedPtr<spdlog::sinks::basic_file_sink_st> _file_sink;
 
 	};
 
@@ -108,30 +110,29 @@ namespace DFW
 namespace DFW
 {
 #pragma region Template Implementation
-	template<class Mutex> 
+	template<class Mutex>
 	DFWSinkImpl<Mutex>::DFWSinkImpl()
 	{
 	}
 
-	template<class Mutex> 
+	template<class Mutex>
 	DFWSinkImpl<Mutex>::~DFWSinkImpl()
 	{
 	}
 
 	template<class Mutex> 
-	void DFWSinkImpl<Mutex>::sink_it_(const spdlog::details::log_msg& msg)
+	void DFWSinkImpl<Mutex>::sink_it_(spdlog::details::log_msg const& a_msg)
 	{
 		spdlog::memory_buf_t formatted;
-		std::string formatted_string;
+		//std::string formatted_string;
 
-		spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
-		formatted_string = fmt::to_string(formatted);
-		
-		for (const auto&[id, func] : Logger::_dfw_sink_subscribers)
+		spdlog::sinks::base_sink<Mutex>::formatter_->format(a_msg, formatted);
+		std::string const formatted_string(fmt::to_string(formatted));
+
+		for (auto const& [sink_id, sink_func] : Logger::_dfw_sink_subscribers)
 		{
-			func(formatted_string);
+			sink_func(formatted_string);
 		}
-
 	}
 
 	template<class Mutex> 

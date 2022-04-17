@@ -8,20 +8,13 @@ namespace DFW
 {
 	spdlog::logger Logger::_main_logger("Main Log");
 
-	std::shared_ptr<spdlog::sinks::wincolor_stdout_sink_st> Logger::_console_sink;
-	std::shared_ptr<DFWSink_st> Logger::_dfw_sink;
-	std::shared_ptr<spdlog::sinks::basic_file_sink_st> Logger::_file_sink;
 	std::unordered_map<DUID, LogSubscriberMessageFunc> Logger::_dfw_sink_subscribers;
+	
+	SharedPtr<spdlog::sinks::wincolor_stdout_sink_st> Logger::_console_sink;
+	SharedPtr<DFWSink_st> Logger::_framework_sink;
+	SharedPtr<spdlog::sinks::basic_file_sink_st> Logger::_file_sink;
 
-	Logger::Logger()
-	{
-	}
-
-	Logger::~Logger()
-	{
-	}
-
-	void Logger::Init(bool a_enable_automatic_flush, int32 a_flush_interval_in_ms)
+	void Logger::Init(bool const a_enable_automatic_flush, int32 const a_flush_interval_in_ms)
 	{
 		//trace		= SPDLOG_LEVEL_TRACE,
 		//debug		= SPDLOG_LEVEL_DEBUG,
@@ -31,33 +24,32 @@ namespace DFW
 		//critical	= SPDLOG_LEVEL_CRITICAL,
 		//off		= SPDLOG_LEVEL_OFF,
 
-		_console_sink	= std::make_shared<spdlog::sinks::wincolor_stdout_sink_st>();
-		_dfw_sink		= std::make_shared<DFWSink_st>();
-
-		// TODO Proper File Path Set
-		std::string log_folder_name = std::string("logs");
-		if (!DUtility::CreateNewDirectory("logs"))
-		{
-			DFW_ERRORLOG("Cannot create new directory named 'logs'.");
-		}
-
-		std::string log_file_type	= std::string(".txt");
-		std::string log_file_date	= DUtility::GetTimeAndDateStamp();
-		DUtility::FindAndRemoveChar(log_file_date, ':');
-		std::string log_file_name	= std::string("DFW-debuglog-" + log_file_date + log_file_type);
-
-		_file_sink = std::make_shared<spdlog::sinks::basic_file_sink_st>(std::string(log_folder_name + DIR_SLASH + log_file_name));
-
+		// Main logger should track all log events.
 		_main_logger.set_level(spdlog::level::trace);
 
+		// Console Logger.
+		_console_sink = MakeShared<spdlog::sinks::wincolor_stdout_sink_st>();
 		_main_logger.sinks().emplace_back(_console_sink);
 		_console_sink->set_level(spdlog::level::debug);
 		_console_sink->set_pattern("[%H:%M:%S] [%n] [%^%l%$] %v (%s@%#)"); // "[23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
 
-		_main_logger.sinks().emplace_back(_dfw_sink);
-		_dfw_sink->set_level(spdlog::level::debug);
-		_dfw_sink->set_pattern("[%H:%M:%S] [%n] [%^%l%$] %v (%s@%#)"); // "[23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
+		// Framework Logger.
+		_framework_sink = MakeShared<DFWSink_st>();
+		_main_logger.sinks().emplace_back(_framework_sink);
+		_framework_sink->set_level(spdlog::level::debug);
+		_framework_sink->set_pattern("[%H:%M:%S] [%n] [%^%l%$] %v (%s@%#)"); // "[23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
 
+		// File Logger.
+		// TODO Proper File Path Set.
+		std::string const log_folder_name("logs");
+		DFW_ASSERT(DUtility::CreateNewDirectory(log_folder_name) && "Cannot create new directory named with provided name.");
+
+		std::string log_file_date(DUtility::GetTimeAndDateStamp());
+		DUtility::FindAndRemoveChar(log_file_date, ':');
+
+		std::string const log_file_extension(".txt");
+		std::string const log_file_name("DFW-debuglog-" + log_file_date + log_file_extension);
+		_file_sink = MakeShared<spdlog::sinks::basic_file_sink_st>(std::string(log_folder_name + DIR_SLASH + log_file_name));
 		_main_logger.sinks().emplace_back(_file_sink);
 		_file_sink->set_level(spdlog::level::debug);
 		_file_sink->set_pattern("[%D %H:%M:%S] [%n] [%l] %v (%s@%#)"); //"[2014-10-31 23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
@@ -67,7 +59,6 @@ namespace DFW
 			_main_logger.flush_on(spdlog::level::trace);
 			spdlog::flush_every(std::chrono::seconds(static_cast<int32>(a_flush_interval_in_ms * 0.001f)));
 		}
-
 	}
 
 	void Logger::ManuelFlush()
@@ -80,7 +71,7 @@ namespace DFW
 		return _main_logger;
 	}
 
-	void Logger::AdjustLoggingLevel(LogType a_logger, LogLevel a_log_level)
+	void Logger::AdjustLoggingLevel(LogType const a_logger, LogLevel const a_log_level)
 	{
 		spdlog::level::level_enum new_log_level;
 		switch (a_log_level)
@@ -104,8 +95,8 @@ namespace DFW
 			}
 			case LogType::FrameworkLogger:
 			{
-				if (_dfw_sink->level() != new_log_level)
-					_dfw_sink->set_level(new_log_level);
+				if (_framework_sink->level() != new_log_level)
+					_framework_sink->set_level(new_log_level);
 				break;
 			}
 			case LogType::FileLogger:
@@ -123,16 +114,15 @@ namespace DFW
 		}
 	}
 
-	void Logger::AddSubscriber(DUID a_subscriber_id, const LogSubscriberMessageFunc& a_func)
+	void Logger::AddSubscriber(DUID const a_subscriber_id, LogSubscriberMessageFunc const& a_func)
 	{
 		DFW_INFOLOG("Adding logging subscriber with ID: {}", a_subscriber_id);
 		_dfw_sink_subscribers.emplace(a_subscriber_id, a_func);
 	}
 
-	void Logger::RemoveSubscriber(DUID a_subscriber_id, const LogSubscriberMessageFunc& a_func)
+	void Logger::RemoveSubscriber(DUID const a_subscriber_id, LogSubscriberMessageFunc const& a_func)
 	{
-		auto it_result = _dfw_sink_subscribers.find(a_subscriber_id);
-		if (it_result == _dfw_sink_subscribers.end())
+		if (auto const& it_result = _dfw_sink_subscribers.find(a_subscriber_id); it_result == _dfw_sink_subscribers.end())
 		{
 			DFW_LOG("Couldn't find logging subscriber with ID: {} when trying to remove it.", a_subscriber_id);
 		}
