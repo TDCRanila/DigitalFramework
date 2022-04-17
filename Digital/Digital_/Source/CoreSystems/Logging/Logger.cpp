@@ -98,19 +98,19 @@ namespace DFW
 		{
 			case LogType::PlatformConsole: 
 			{
-				if (_console_sink->level() != new_log_level);
+				if (_console_sink->level() != new_log_level)
 					_console_sink->set_level(new_log_level);
 				break;
 			}
 			case LogType::FrameworkLogger:
 			{
-				if (_dfw_sink->level() != new_log_level);
+				if (_dfw_sink->level() != new_log_level)
 					_dfw_sink->set_level(new_log_level);
 				break;
 			}
 			case LogType::FileLogger:
 			{
-				if (_file_sink->level() != new_log_level);
+				if (_file_sink->level() != new_log_level)
 					_file_sink->set_level(new_log_level);
 				break;
 			}
