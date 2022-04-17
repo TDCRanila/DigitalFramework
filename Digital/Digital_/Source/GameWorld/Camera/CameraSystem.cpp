@@ -258,6 +258,19 @@ namespace DFW
         
         a_camera.orientation = glm::normalize(a_camera.orientation);
 
+        // Camera Speed
+        float32 const scroll_offset = DFW::CoreService().GetInputSystem()->GetMouseScrollDelta().y;
+        float32 const scroll_multiplier(25.0f);
+        a_camera.fly_speed += scroll_offset * scroll_multiplier;
+        
+        float32 const min_fly_speed(1.0f);
+        if (a_camera.fly_speed < min_fly_speed)
+            a_camera.fly_speed = min_fly_speed;
+
+        float32 const max_fly_speed(10000.f);
+        if (a_camera.fly_speed > max_fly_speed)
+            a_camera.fly_speed = max_fly_speed;
+
         // Positional.
         glm::vec3 dir(0.0f);
         if (DFW::CoreService().GetInputSystem()->IsKeyDown(DFW::DInput::DKey::LEFT))
