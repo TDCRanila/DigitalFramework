@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Modules/Rendering/ShaderLibrary.h>
+#include <Modules/Rendering/UniformLibrary.h>
 #include <Modules/Rendering/ViewTargetDirector.h>
 
 namespace DFW
@@ -34,6 +35,7 @@ namespace DFW
             ViewTargetDirector view_director;
 
             ShaderLibrary shader_library;
+            UniformLibrary uniform_library;
 
         private:
             UniquePtr<RenderModuleContext> _render_module_context;
