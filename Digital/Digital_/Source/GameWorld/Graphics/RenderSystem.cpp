@@ -16,9 +16,7 @@
 #include <Modules/ECS/Managers/ECSystemManager.h>
 #include <Modules/ECS/Objects/ECSUniverse.h>
 
-#include <Modules/Rendering/ViewTargetDirector.h>
 #include <Modules/Rendering/RenderModule.h>
-#include <Modules/Rendering/ShaderLibrary.h>
 #include <Modules/Rendering/ShaderProgram.h>
 #include <Modules/Rendering/ModelData.h>
 
@@ -40,11 +38,16 @@ namespace DFW
 
     void RenderSystem::Init()
     {
+		DRender::RenderModule* render_module(CoreService::GetRenderModule());
+
 		// View Target
-		_view_target = CoreService::GetRenderModule()->view_director.AllocateViewTarget("rendersystem");
+		_view_target = render_module->view_director.AllocateViewTarget("rendersystem");
 
 		// Shaders		
-		_program_ptr = CoreService::GetRenderModule()->shader_library.ConstructProgram("vs_basic", "fs_basic");
+		_program_ptr = render_module->shader_library.ConstructProgram("vs_basic", "fs_basic");
+
+		// Uniforms
+		_texture_sampler_uniform = render_module->uniform_library.CreateUniform("s_texture", DRender::UniformTypes::Sampler);
 
 		// Register Callbacks.
 		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
@@ -53,6 +56,9 @@ namespace DFW
 
 	void RenderSystem::Terminate()
 	{
+		// Uniforms
+		CoreService::GetRenderModule()->uniform_library.DestroyUniform(*_texture_sampler_uniform.get());
+
 		// Unregister Callbacks.
 		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
 		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &RenderSystem::OnCameraNewActiveEvent>(this);
@@ -114,7 +120,7 @@ namespace DFW
 				if (!submodel.textures.empty())
 				{
 					SharedPtr<DRender::TextureData> const& texture = submodel.textures[0];
-					bgfx::setTexture(texture->stage, texture->sampler, texture->handle);
+					bgfx::setTexture(texture->stage, _texture_sampler_uniform->handle, texture->handle);
 				}
 
 				bgfx::setState(state);

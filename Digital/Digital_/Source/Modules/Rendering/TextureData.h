@@ -9,10 +9,9 @@ namespace DFW
         struct TextureData
         {
             TextureData();
-            TextureData(bgfx::TextureHandle a_handle, bgfx::UniformHandle a_sampler, uint64 a_flags, uint8 a_stage);
+            TextureData(bgfx::TextureHandle a_handle, uint64 a_flags, uint8 a_stage);
 
             bgfx::TextureHandle handle;
-            bgfx::UniformHandle sampler;
             uint64 flags;
             uint8 stage;
         };

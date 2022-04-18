@@ -373,12 +373,8 @@ namespace DFW
                                 , data
                             );
 
-                            static bgfx::UniformHandle sampler_texture(BGFX_INVALID_HANDLE);
-                            if (!bgfx::isValid(sampler_texture))
-                                sampler_texture = bgfx::createUniform("s_texture", bgfx::UniformType::Sampler);
-
                             // Store Texture.
-                            material_textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, sampler_texture, BGFX_TEXTURE_NONE, 0));
+                            material_textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, BGFX_TEXTURE_NONE, 0));
                         }
 
                         return material_textures;

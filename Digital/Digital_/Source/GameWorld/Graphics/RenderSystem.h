@@ -8,6 +8,7 @@
 
 #include <Modules/ECS/Objects/ECSystem.h>
 #include <Modules/Rendering/ViewTarget.h>
+#include <Modules/Rendering/Uniform.h>
 
 namespace DFW
 {
@@ -30,6 +31,8 @@ namespace DFW
 
         SharedPtr<DRender::ViewTarget const> _view_target;
         CameraComponent* _rendering_camera;
+
+        SharedPtr<DRender::Uniform> _texture_sampler_uniform;
 
         int32 window_width;
         int32 window_height;
