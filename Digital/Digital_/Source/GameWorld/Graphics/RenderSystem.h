@@ -18,7 +18,7 @@ namespace DFW
     {
     public:
         RenderSystem();
-        ~RenderSystem() = default;
+        virtual ~RenderSystem() = default;
 
     private:
         virtual void Init() override;
