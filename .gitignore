@@ -3,6 +3,12 @@
 
 # Shaders   
 Digital/Resources/shaders/**/*.bin
+Digital/Resources/sample-models
+Digital/Resources/temp
+
+# Blender
+*.blend
+*.blend1
 
 # CMAKE
 Digital/build

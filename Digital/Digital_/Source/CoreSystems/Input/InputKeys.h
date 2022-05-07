@@ -6,7 +6,7 @@ namespace DFW
 {
 	namespace DInput
 	{
-		enum class DKeyMod : int32
+		enum class DKeyMod : int8
 		{
 			DMOD_SHIFT		= 1,
 			DMOD_CONTROL	= 2,
@@ -14,7 +14,7 @@ namespace DFW
 			DMOD_SUPER		= 8
 		};
 
-		enum class DKeyAction : int32
+		enum class DKeyAction : int8
 		{
 			UNDEFINED	= GLFW_KEY_UNKNOWN,
 
@@ -23,7 +23,7 @@ namespace DFW
 			REPEATED	= GLFW_REPEAT,
 		};
 
-		enum class DKey : int32
+		enum class DKey : int16
 		{
 			UNDEFINED		= GLFW_KEY_UNKNOWN,
 
@@ -151,7 +151,7 @@ namespace DFW
 			LAST			= GLFW_KEY_LAST
 		};
 
-		enum class DMouse : int32
+		enum class DMouse : int8
 		{
 			BUTTON_1		= GLFW_MOUSE_BUTTON_1,
 			BUTTON_2		= GLFW_MOUSE_BUTTON_2,
@@ -167,7 +167,7 @@ namespace DFW
 			BUTTON_MIDDLE	= BUTTON_3
 		};
 
-		enum class DGamePad : int32
+		enum class DGamePad : int8
 		{
 			GAMEPAD_1		= GLFW_JOYSTICK_1,
 			GAMEPAD_2		= GLFW_JOYSTICK_2,
@@ -187,6 +187,8 @@ namespace DFW
 			GAMEPAD_16		= GLFW_JOYSTICK_16,
 			GAMEPAD_LAST	= GAMEPAD_16
 		};
+
+		constexpr int16 DFW_NUM_KEYINPUT_ENTRIES = to_underlying(DKey::LAST);
 
 	} // End of namespace ~ DInput.
 

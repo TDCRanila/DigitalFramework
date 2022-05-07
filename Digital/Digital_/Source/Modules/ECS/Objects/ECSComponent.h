@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Autofactory/AutoFactory.h>
+#include <Utility/AutoFactory/AutoFactory.h>
 
 #include <CoreSystems/DUID.h>
 
@@ -15,18 +15,19 @@ namespace DFW
 
 		class Component : public DFactory::AutoFactory<Component>
 		{
+		private:
+			friend ComponentManager;
+
 		public:
 			Component(Key);
 			virtual ~Component() = default;
 
-			Entity GetOwner() const;
+			Entity const& GetOwner() const;
 			DFW::DUID GetID() const;
 
-		protected:
-			friend class ComponentManager;
-
+		private:
 			DFW::DUID	_id;
-			Entity	_owner;
+			Entity		_owner;
 
 		};
 

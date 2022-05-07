@@ -1,10 +1,8 @@
 #include <Modules/ECS/Managers/ECSystemManager.h>
 
-#include <AutoFactory/Autofactory.h>
+#include <Modules/ECS/Objects/ECSUniverse.h>
 
-#include <CoreSystems/CoreServices.h>
-
-#include <Modules/ECS/ECSModule.h>
+#include <Utility/AutoFactory/AutoFactory.h>
 
 #include <ranges>
 
@@ -12,15 +10,12 @@ namespace DFW
 {
 	namespace DECS
 	{
-
 		SystemManager::SystemManager()
 		{
 			_systems.reserve(DFW_SYSTEM_RESERVE_AMOUNT);
 		}
 
-		void SystemManager::Init()
-		{
-		}
+		SystemManager::~SystemManager() = default;
 
 		void SystemManager::Terminate()
 		{
@@ -31,9 +26,9 @@ namespace DFW
 			}
 		}
 
-		void SystemManager::UpdateSystems(Universe* const a_universe)
+		void SystemManager::UpdateSystems(Universe& a_universe)
 		{
-			DFW_ASSERT(a_universe && "Updating DECS Systems, but universe is invalid.");
+			DFW_ASSERT(a_universe.IsValid() && "Updating DECS Systems, but universe is invalid.");
 
 			if (_systems.empty())
 			{
@@ -62,7 +57,7 @@ namespace DFW
 			}
 		}
 
-		void SystemManager::UpdateSystemsImGui(Universe* const a_universe)
+		void SystemManager::UpdateSystemsImGui(Universe& a_universe)
 		{
 			if (_systems.empty())
 			{

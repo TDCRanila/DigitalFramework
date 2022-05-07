@@ -37,6 +37,9 @@ namespace DFW
 
             virtual void ChangeWindowParameters(WindowID const a_window_id, WindowParameters const& a_window_parameters) override;
 
+            virtual void RequestMouseCursorCapture() override;
+            virtual void RequestMouseCursorRelease() override;
+
         private:
             virtual void InitWindowManagement() override;
             virtual void TerminateWindowManagement() override;

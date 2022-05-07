@@ -14,7 +14,7 @@ namespace DFW
 		WindowCreatedEvent, WindowDestroyedEvent, WindowFocusEvent, WindowMinimizedEvent, WindowMoveEvent, WindowResizeEvent, WindowFramebufferResizeEvent,
 		ApplicationCloseEvent, ApplicationResetEvent, ApplicationSettingsSavedEvent,
 		GameStartEvent, GamePauseEvent, GameUnpauseEvent, GameResetEvent,
-		InputReceivedEvent, InputClipboardEvent, InputItemDropEvent,
+		InputReceivedEvent, InputClipboardEvent, InputItemDropEvent, InputMouseCursorCapturedEvent, InputMouseCursorReleasedEvent,
 		StageAttachedEvent, StageRemovedEvent, StageEnabledEvent, StageDisabledEvent,
 		RendererInitializedEvent, RendererTerminatedEvent, RendererAPIChanged
 	};
@@ -368,6 +368,58 @@ namespace DFW
 
 		int32			_item_count;
 		const char**	_item_paths;
+	};
+
+	class InputMouseCursorCapturedEvent : public ApplicationEvent
+	{
+	public:
+		InputMouseCursorCapturedEvent(DWindow::WindowID a_window_id)
+			: _window_id(a_window_id)
+		{}
+
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, InputMouseCursorCapturedEvent);
+
+		std::string GetDebugString() const override
+		{
+			std::stringstream debug_string;
+			debug_string << GetName();
+			debug_string << " - ";
+			debug_string << "Mouse Cursor captured in Window(ID):";
+			debug_string << _window_id;
+
+			return debug_string.str();
+		}
+
+		DWindow::WindowID _window_id;
+		
+	};
+
+	class InputMouseCursorReleasedEvent : public ApplicationEvent
+	{
+	public:
+		InputMouseCursorReleasedEvent(DWindow::WindowID const a_window_id, float32 const a_mouse_pos_x, float32 const a_mouse_pos_y)
+			: _window_id(a_window_id)
+			, _new_mouse_pos_x(a_mouse_pos_x)
+			, _new_mouse_pos_y(a_mouse_pos_y)
+		{}
+
+		DFW_CONSTRUCT_EVENT(ApplicationEvents, InputMouseCursorReleasedEvent);
+
+		std::string GetDebugString() const override
+		{
+			std::stringstream debug_string;
+			debug_string << GetName();
+			debug_string << " - ";
+			debug_string << "Mouse Cursor released from Window(ID):";
+			debug_string << _window_id;
+
+			return debug_string.str();
+		}
+
+		DWindow::WindowID _window_id;
+		float32 _new_mouse_pos_x;
+		float32 _new_mouse_pos_y;
+
 	};
 
 #pragma endregion

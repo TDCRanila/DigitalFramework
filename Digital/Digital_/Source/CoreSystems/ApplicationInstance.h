@@ -38,7 +38,9 @@ namespace DFW
         void TerminateApplication();
         void UpdateApplication();
 
-        void Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval);
+        bool Debug_CheckForEmergencyApplicationExit() const;
+        void Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval) const;
+        void Debug_ToggleMouseCursorCapture() const;
 
         StageStackController _stage_stack_controller;
         std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;

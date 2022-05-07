@@ -13,25 +13,13 @@ namespace DFW
     {
         struct EntityRegistrationComponent final : public DECS::Component::StrictRegistrar<EntityRegistrationComponent>
         {
-            EntityRegistrationComponent()
-                : name("")
-                , id(DFW_INVALID_DUID)
-                , comp_list(0)
-            {
-            }
-
-            EntityRegistrationComponent(DFW::DUID a_id, std::string a_name)
-                : name(a_name)
-                , id(a_id)
-                , comp_list(0)
-            {
-            }
-
+            EntityRegistrationComponent();
+            EntityRegistrationComponent(DFW::DUID const a_id, std::string const& a_name);
             ~EntityRegistrationComponent() = default;
 
-            std::string         name;
-            DFW::DUID         id;
-            ComponentBitList    comp_list;
+            DFW::DUID id;
+            ComponentBitList comp_list;
+            std::string name;
         };
 
     } // End of namespace ~ DECS.

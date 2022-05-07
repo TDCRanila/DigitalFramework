@@ -1,7 +1,8 @@
 #pragma once
 
+#include <Modules/Rendering/ShaderLibrary.h>
+#include <Modules/Rendering/UniformLibrary.h>
 #include <Modules/Rendering/ViewTargetDirector.h>
-#include <Modules/Rendering/ViewTarget.h>
 
 namespace DFW
 {
@@ -9,6 +10,7 @@ namespace DFW
     {
         // FW Declare.
         class RenderModuleContext;
+        struct ViewTarget;
 
         class RenderModule
         {
@@ -31,6 +33,9 @@ namespace DFW
             void Debug_RendererInfo(/*RenderModuleDebugOptions& const a_debug_option*/);
 
             ViewTargetDirector view_director;
+
+            ShaderLibrary shader_library;
+            UniformLibrary uniform_library;
 
         private:
             UniquePtr<RenderModuleContext> _render_module_context;

@@ -73,6 +73,11 @@ namespace DFW
         {
         }
           
+        bgfx::RendererType::Enum RenderModuleContext::GetRenderAPIType() const
+        {
+            return bgfx::getRendererType();
+        }
+
         void RenderModuleContext::ChangeRenderAPI(bgfx::RendererType::Enum a_render_type)
         {
             // It is possible to change render api during runtime, but that might cause issues with some hardware.

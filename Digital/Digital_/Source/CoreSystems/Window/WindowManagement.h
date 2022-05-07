@@ -48,6 +48,10 @@ namespace DFW
             bool IsWindowMinimized(WindowID const a_window_id) const;
 
             virtual void ChangeWindowParameters(WindowID const a_window_id, WindowParameters const& a_window_parameters) = 0;
+
+            virtual void RequestMouseCursorCapture() = 0;
+            virtual void RequestMouseCursorRelease() = 0;
+            
             WindowParameters default_window_parameters;
 
         protected:
@@ -57,6 +61,7 @@ namespace DFW
 
             void RegisterCommonEventCallbacks();
             void UnregisterCommonEventCallbacks();
+
             void OnWindowFocusEvent(WindowFocusEvent const& a_event);
 
             WindowContainer _window_instances;

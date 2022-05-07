@@ -1,16 +1,17 @@
 #pragma once
 
 #include <CoreSystems/ApplicationEvents.h>
-#include <CoreSystems/Memory.h>
-#include <CoreSystems/Window/WindowID.h>
-#include <CoreSystems/Window/WindowData.h>
+
 #include <CoreSystems/Input/InputKeys.h>
-#include <Utility/TemplateUtility.h>
+#include <CoreSystems/Input/InputData.h>
+#include <CoreSystems/Input/RawInputEvents.h>
+
+#include <CoreSystems/Memory.h>
+
+#include <CoreSystems/Window/WindowData.h>
+#include <CoreSystems/Window/WindowID.h>
 
 #include <glm/glm.hpp>
-
-#include <array>
-#include <functional>
 
 namespace DFW
 {
@@ -23,69 +24,6 @@ namespace DFW
 		{
 		private:
 			friend ApplicationInstance;
-
-		private:
-			struct InputData
-			{
-				InputData();
-
-				std::array<DKeyAction, 1024>			_keys{ DKeyAction::UNDEFINED };
-				std::unordered_map<int32, DKeyAction>	_buffered_keys;
-				std::vector<uint32>						_buffered_characters;
-
-				glm::vec2 _cursor_position;
-				glm::vec2 _cursor_position_old;
-				glm::vec2 _cursor_delta;
-
-				glm::vec2 _scroll_offset;
-				glm::vec2 _scroll_offset_old;
-				glm::vec2 _scroll_delta;
-
-			};
-
-			enum class KeyEventType
-			{
-				DEFAULT = 0,
-				KEYBOARD = 1,
-				MOUSE = 2,
-				CHARACTER = 3,
-			};
-
-			enum class DirectionalEventType
-			{
-				DEFAULT = 0,
-				CURSOR = 1,
-				SCROLL = 2,
-			};
-
-			struct KeyEvent
-			{
-				KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, uint16 a_char, int32 a_scancode, int32 a_action, int32 a_modifier);
-				KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier);
-				KeyEvent(DWindow::WindowID a_id, KeyEventType a_event_type, uint16 a_char);
-
-				KeyEventType	_event_type;
-				DWindow::WindowID		_user_id;
-
-				int32			_key;
-				int32			_scancode;
-				int32			_action;
-				int32			_modifier;
-				uint32			_char;
-			};
-
-			struct DirectionalEvent
-			{
-				DirectionalEvent(DWindow::WindowID a_id, DirectionalEventType a_event_type, float32 a_cursor_x_pos, float32 a_cursor_y_pos, float32 a_scroll_x_offset, float32 a_scroll_y_offset);
-
-				DirectionalEventType _event_type;
-				DWindow::WindowID _user_id;
-
-				float32 _cursor_x_position;
-				float32 _cursor_y_position;
-				float32 _scroll_x_offset;
-				float32 _scroll_y_offset;
-			};
 
 		public:
 			~InputManagementSystem() = default;
@@ -108,7 +46,14 @@ namespace DFW
 			bool IsKeyDown(DGamePad a_gamepad_key) const;
 			bool IsKeyReleased(DGamePad a_gamepad_key) const;
 
+			glm::vec2 GetMousePos() const; // top-left[0,0];bottom-right[window_size.x,window_size.y]
+			glm::vec2 GetMousePosDelta() const;
+
+			glm::vec2 GetMouseScrollOffset() const;
+			glm::vec2 GetMouseScrollDelta() const;
+
 			bool HasAnyKeyBeenPressed() const;
+			bool HasAnyMouseButtonBeenPressed() const;
 			bool HasCursorMoved() const;
 			bool HasScrolled() const;
 
@@ -130,13 +75,13 @@ namespace DFW
 			void TerminateInputManagement();
 
 			void OnWindowFocusEvent(WindowFocusEvent const& a_event);
+			void OnMouseCursorReleasedEvent(InputMouseCursorReleasedEvent const& a_event);
 
 			void ProcessInputEvents();
-			bool IsKeyPressedInternal(int32 a_key) const;
-			bool IsKeyRepeatedInternal(int32 a_key) const;
-			bool IsKeyDownInternal(int32 a_key) const;
-			bool IsKeyReleasedInternal(int32 a_key) const;
-			void ClearInputDataBuffers();
+			bool IsKeyPressedInternal(int16 a_key) const;
+			bool IsKeyRepeatedInternal(int16 a_key) const;
+			bool IsKeyDownInternal(int16 a_key) const;
+			bool IsKeyReleasedInternal(int16 a_key) const;
 
 		private:
 			std::vector<KeyEvent>			_key_event_buffer;

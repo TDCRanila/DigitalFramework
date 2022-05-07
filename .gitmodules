@@ -16,3 +16,6 @@
 [submodule "Digital/Dependency/External/imgui/imgui"]
 	path = Digital/Dependency/External/imgui/imgui
 	url = https://github.com/TDCRanila/imgui.git
+[submodule "Digital/Dependency/External/assimp"]
+	path = Digital/Dependency/External/assimp
+	url = https://github.com/assimp/assimp.git

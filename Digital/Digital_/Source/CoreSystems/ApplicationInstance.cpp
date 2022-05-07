@@ -161,9 +161,10 @@ namespace DFW
             _window_management->PollWindowEvents();
             _window_management->DestroyWindowsRequestedForClosure();
             _input_system.ProcessInputEvents();
+            Debug_ToggleMouseCursorCapture();
 
             // Update Game Instance(s)
-            if (_window_management->HaveAllWindowsBeenClosed())
+            if (_window_management->HaveAllWindowsBeenClosed() || Debug_CheckForEmergencyApplicationExit())
             {
                 should_run = false;
             }
@@ -200,7 +201,6 @@ namespace DFW
                 }
 
                 // Render all the submitted items.
-                _render_module.EndFrame();
                 _render_module.RenderFrame();
                 _render_module.Debug_RendererInfo();
             }
@@ -211,13 +211,36 @@ namespace DFW
         }
     }
 
-    void ApplicationInstance::Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval)
+    bool ApplicationInstance::Debug_CheckForEmergencyApplicationExit() const
+    {
+        return _input_system.IsKeyDown(DFW::DInput::DKey::ESCAPE);
+    }
+
+    void ApplicationInstance::Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval) const
     {
         static TimeTracker game_clock_log_timer(true);
         if (game_clock_log_timer.FetchElapsedTime() > a_log_interval)
         {
             game_clock_log_timer.ResetTimer(true);
             _game_clock.Debug_LogInfo();
+        }
+    }
+
+    void ApplicationInstance::Debug_ToggleMouseCursorCapture() const
+    {
+        static bool cursor_toggle(false);
+        if (_input_system.IsKeyPressed(DFW::DInput::DKey::F2))
+        {
+            if (cursor_toggle)
+            {
+                cursor_toggle = false;
+                _window_management->RequestMouseCursorRelease();
+            }
+            else
+            {
+                cursor_toggle = true;
+                _window_management->RequestMouseCursorCapture();
+            }
         }
     }
 

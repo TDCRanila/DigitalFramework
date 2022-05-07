@@ -13,14 +13,14 @@ namespace DFW
     {
 #if defined (DFW_PLATFORM_WINDOWS)
 
-        std::vector<std::string> LoadFilesInDirectory(std::string a_directory_path)
+        std::vector<std::string> LoadFilesInDirectory(std::string const& a_directory_path)
         {
             std::vector<std::string> file_path;
             std::stringstream buffer;
             std::string temp;
 
             fs::directory_iterator dir_it(a_directory_path);
-            for (auto& directory_entry : dir_it)
+            for (auto const& directory_entry : dir_it)
             {
                 buffer << directory_entry << std::endl;
                 temp = buffer.str();
@@ -37,7 +37,7 @@ namespace DFW
         bool GetWorkDirectory(std::string& a_directory_path)
         {
             std::error_code error;
-            fs::path path(fs::current_path(error));
+            fs::path const path(fs::current_path(error));
             if (error.value())
             {
                 std::cerr << error.message() << std::endl;
@@ -50,10 +50,10 @@ namespace DFW
             }
         }
 
-        std::string GetParentPath(std::string a_file_path)
+        std::string GetParentPath(std::string const& a_file_path)
         {
             std::error_code error;
-            fs::path path(a_file_path);
+            fs::path const path(a_file_path);
             if (error.value())
             {
                 std::cerr << error.message() << std::endl;
@@ -62,14 +62,13 @@ namespace DFW
             return path.parent_path().string();
         }
 
-        bool DoesFileExistInDir(std::string a_directory_path, std::string a_file)
+        bool DoesFileExistInDir(std::string const& a_directory_path, std::string const& a_file)
         {
             std::stringstream buffer;
             std::string compare_path;
-            std::string full_file_path_string = std::string(a_directory_path + DIR_SLASH + a_file);
+            std::string full_file_path_string(std::string(a_directory_path + DIR_SLASH + GetFileName(a_file)));
 
-            fs::directory_iterator dir_it(a_directory_path);
-            for (auto& directory_entry : dir_it)
+            for (auto const& directory_entry : fs::directory_iterator{a_directory_path})
             {
                 buffer << directory_entry << std::endl;
                 compare_path = buffer.str();
@@ -84,7 +83,7 @@ namespace DFW
             return false;
         }
 
-        bool CreateNewDirectory(std::string a_directory_path)
+        bool CreateNewDirectory(std::string const& a_directory_path)
         {
             std::error_code error;
             fs::create_directory(a_directory_path, error);
@@ -99,7 +98,12 @@ namespace DFW
             }
         }
 
-        bool DoesDirectoryExist(std::string a_directory_path)
+        bool DoesFileExist(std::string const& a_file_path)
+        {
+            return fs::exists(a_file_path);
+        }
+
+        bool DoesDirectoryExist(std::string const& a_directory_path)
         {
             return fs::exists(a_directory_path);
         }
@@ -130,23 +134,21 @@ namespace DFW
             }
         }
 
-        std::string GetFileName(std::string a_file_path)
+        std::string GetFileName(std::string const& a_file_path)
         {
             std::stringstream buffer;
-
             buffer << fs::path(a_file_path).filename();
             return (buffer.str());
         }
 
-        std::string GetFileStem(std::string a_file_path)
+        std::string GetFileStem(std::string const& a_file_path)
         {
             std::stringstream buffer;
-
             buffer << fs::path(a_file_path).stem();
             return (buffer.str());
         }
 
-        std::string GetFileExtension(std::string a_string)
+        std::string GetFileExtension(std::string const& a_string)
         {
             return fs::path(a_string).extension().string();
         }
@@ -184,17 +186,17 @@ namespace DFW
             return file_path;
         }
 
-        bool DoesFileExistInDir(std::string a_directory_path, std::string a_file)
+        bool DoesFileExistInDir(std::string const& a_directory_path, std::string const& a_file)
         {
             return false;
         }
 
-        bool CreateNewDirectory(std::string a_directory_path)
+        bool CreateNewDirectory(std::string const& a_directory_path)
         {
             return true;
         }
 
-        bool DoesDirectoryExist(std::string a_directory_path)
+        bool DoesDirectoryExist(std::string const& a_directory_path)
         {
             return false;
         }
@@ -205,34 +207,34 @@ namespace DFW
             a_string.erase(std::remove(a_string.begin(), a_string.end(), '\r'), a_string.end());
         }
 
-        bool DeleteFile(std::string a_file_path)
+        bool DeleteFile(std::string const& a_file_path)
         {
             RemoveLineEndings(a_file_path);
             return false;
         }
 
 
-        std::string GetFileName(std::string a_file_path)
+        std::string GetFileName(std::string const& a_file_path)
         {
             return ("");
         }
 
-        std::string GetFileStem(std::string a_file_path)
+        std::string GetFileStem(std::string const& a_file_path)
         {
             return ("");
         }
 
-        std::string GetFileExtension(std::string a_string)
+        std::string GetFileExtension(std::string const& a_string)
         {
             return ("");
         }
 
-        bool ContainsChar(const std::string a_string, char a_chararcter)
+        bool ContainsChar(std::string const& a_string, char const a_chararcter)
         {
             return a_string.find(a_chararcter) != std::string::npos;
         }
 
-        bool StringToBool(std::string a_string)
+        bool StringToBool(std::string const& a_string)
         {
             if (a_string == "0") { return false; }
             else if (a_string == "1") { return true; }
