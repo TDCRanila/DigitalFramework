@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GameWorld/Graphics/Renderable.h>
+
 #include <Modules/ECS/Objects/ECSComponent.h>
 
 #include <CoreSystems/Memory.h>
@@ -15,15 +17,13 @@ namespace DFW
 
     SharedPtr<DRender::MeshData> Debug_CreateBasicCube();
 
-    struct ModelComponent : public DECS::Component::StrictRegistrar<ModelComponent>
+    struct ModelComponent : public Renderable, DECS::Component::StrictRegistrar<ModelComponent>
     {
-        ModelComponent();
+        ModelComponent() = default;
         ~ModelComponent() = default;
 
         SharedPtr<DRender::MeshData> model;
         SharedPtr<DRender::ShaderProgram> shader;
-
-        bool is_visible;
 
     };
 

@@ -97,9 +97,4 @@ namespace DFW
 		return mesh_data;
     }
 
-	ModelComponent::ModelComponent()
-		: is_visible(true)
-	{
-	}
-
 } // End of namespace ~ DFW.

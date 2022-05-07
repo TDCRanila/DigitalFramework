@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GameWorld/Graphics/Renderable.h>
+
 #include <Modules/Rendering/TextureData.h>
 #include <Modules/ECS/Objects/ECSComponent.h>
 
@@ -10,15 +12,13 @@
 
 namespace DFW
 {
-    struct SpriteComponent final : public DECS::Component::StrictRegistrar<SpriteComponent>
+    struct SpriteComponent final : public Renderable, DECS::Component::StrictRegistrar<SpriteComponent>
     {
     public:
-        SpriteComponent();
+        SpriteComponent() = default;
         virtual ~SpriteComponent() = default;
 
         SharedPtr<DRender::TextureData> texture;
-        glm::vec4 colour;
-        bool is_visible = true;
     };
 
 } // End of namespace ~ DFW.
