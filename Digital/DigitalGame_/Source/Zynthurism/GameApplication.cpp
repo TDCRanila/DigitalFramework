@@ -10,6 +10,7 @@
 
 #include <GameWorld/Camera/CameraSystem.h>
 #include <GameWorld/Graphics/RenderSystem.h>
+#include <GameWorld/Graphics/SpriteSystem.h>
 
 #include <Editor/MainDockStage.h>
 #include <Editor/Console/MainConsole.h>
@@ -26,6 +27,7 @@ namespace DGame
 	{
 		// Systems
 		DFW::CoreService::GetECS()->SystemManager().AddSystem<DFW::RenderSystem>();
+		DFW::CoreService::GetECS()->SystemManager().AddSystem<DFW::SpriteSystem>();
 		DFW::CoreService::GetECS()->SystemManager().AddSystem<DFW::CameraSystem>();
 
 		// Stages
