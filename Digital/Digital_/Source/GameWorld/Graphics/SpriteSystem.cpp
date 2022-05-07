@@ -64,7 +64,7 @@ namespace Detail
 	{
 		static size_t GetLayoutStride()
 		{
-			static size_t layout_stride(
+			static constexpr size_t layout_stride(
 				sizeof(transform)
 				+ sizeof(colour)
 				+ sizeof(texture_index)
@@ -169,6 +169,10 @@ namespace DFW
 		DRender::ViewTarget const& view_target = *_view_target;
 		bgfx::touch(view_target);
 
+		uint32 const num_sprites(static_cast<uint32>(a_universe.registry.view<SpriteComponent>().size()));
+		if (num_sprites <= 0)
+			return;
+
 		// Camera Setup.
 		if (_rendering_camera)
 		{
@@ -196,7 +200,6 @@ namespace DFW
 		// a_universe.registry.sort<SpriteComponent>();
 		
 		// Prepare Instance Buffers.
-		uint32 const num_sprites(static_cast<uint32>(a_universe.registry.view<SpriteComponent>().size()));
 		size_t const instance_stride(Detail::SpriteInstanceDataLayout::GetLayoutStride());
 		uint32 const max_num_drawable_sprites(bgfx::getAvailInstanceDataBuffer(num_sprites, static_cast<uint16>(instance_stride)));
 
