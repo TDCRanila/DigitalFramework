@@ -63,18 +63,18 @@ namespace DFW
 
     SharedPtr<DRender::MeshData> Debug_CreateBasicCube()
     {
-		static SharedPtr<DRender::MeshData> data;
+		static SharedPtr<DRender::MeshData> mesh_data;
 
-		if (data != nullptr)
-			return data;
+		if (mesh_data != nullptr)
+			return mesh_data;
 
-		data = MakeShared<DRender::MeshData>();
+		mesh_data = MakeShared<DRender::MeshData>();
 
 		// Uniform Layouts
 		Detail::PosColorVertex::init();
 
 		// Buffers
-		DRender::SubMeshData& submodel = data->submeshes.emplace_back();
+		DRender::SubMeshData& submodel = mesh_data->submeshes.emplace_back();
 		submodel.vertex_layout = Detail::PosColorVertex::ms_layout;
 		submodel.vbh = bgfx::createVertexBuffer(
 			  bgfx::makeRef(Detail::s_cubeVertices, sizeof(Detail::s_cubeVertices))
@@ -85,7 +85,16 @@ namespace DFW
 			bgfx::makeRef(Detail::s_cubeTriList, sizeof(Detail::s_cubeTriList))
 		);
 
-		return data;
+		// Texture
+		{
+			std::array<uint8, 3> pixel_texture = { 255, 255, 255 };
+			bgfx::TextureFormat::Enum texture_format = bgfx::TextureFormat::RGB8;
+			bgfx::Memory const* data = bgfx::copy(pixel_texture.data(), static_cast<uint32>(pixel_texture.size() * sizeof(uint8)));
+			bgfx::TextureHandle texture_handle = bgfx::createTexture2D(1, 1, false, 1, texture_format, 0, data);
+			submodel.textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, BGFX_TEXTURE_NONE, 0));
+		}
+
+		return mesh_data;
     }
 
 	ModelComponent::ModelComponent()
