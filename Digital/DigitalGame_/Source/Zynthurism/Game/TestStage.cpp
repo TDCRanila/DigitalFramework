@@ -9,10 +9,15 @@
 #include <Modules/ECS/Managers/ECSystemManager.h>
 #include <Modules/ECS/Objects/ECSUniverse.h>
 
+#include <Modules/Resource/Mesh/MeshLoader.h>
+
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Camera/CameraComponent.h>
 #include <GameWorld/Camera/CameraSystem.h>
 #include <GameWorld/Graphics/ModelComponent.h>
+#include <GameWorld/Graphics/SpriteComponent.h>
+
+#include <Utility/FileSystemUtility.h>
 
 namespace DGame
 {
@@ -47,10 +52,6 @@ namespace DGame
         transform.translation.x += dir.x * dt * speed;
         transform.translation.y += dir.y * dt * speed;
         transform.translation.z += dir.z * dt * speed;
-
-        transform.rotation.x += 1.0f * dt;
-        transform.rotation.y += 0.75f * dt;
-        transform.rotation.z += 1.25f * dt;
     }
 
     void TestStage::OnAttached()
@@ -58,30 +59,6 @@ namespace DGame
         // Create Universe.
         _universe = ecs->RegisterUniverse("Main");
         
-        // Create Simple Cube Field.
-        glm::vec3 const extends(4.0f);
-        float32 const spacing(4.5f);
-        glm::vec3 cube_pos(0.0f);
-        for (int32 x = -extends.x; x < extends.x; ++x)
-        {
-            cube_pos.x = x * spacing;
-            for (int32 y = -extends.y; y < extends.y; ++y)
-            {
-                cube_pos.y = y * spacing;
-                for (int32 z = -extends.z; z < extends.z; ++z)
-                {
-                    cube_pos.z = z * spacing;
-
-                    main_entity = ecs->EntityManager().CreateEntity(*_universe);
-                    DFW::TransformComponent& transform = ecs->EntityManager().AddComponent<DFW::TransformComponent>(main_entity);
-                    transform.translation = cube_pos;
-
-                    DFW::ModelComponent& model = ecs->EntityManager().AddComponent<DFW::ModelComponent>(main_entity);
-                    model.model = DFW::Debug_CreateBasicCube();
-                }
-            }
-        }
-
         // Create Main Camera.
         camera_entity = ecs->EntityManager().CreateEntity(*_universe);
         ecs->EntityManager().AddComponent<DFW::TransformComponent>(camera_entity);
@@ -90,6 +67,31 @@ namespace DGame
         DFW::CameraComponent& camera = camera_system->CreateCamera(camera_entity, "camera-one");
         camera_system->ChangeCameraProjPerspective(camera, 90.f, (16.f/9.f), DFW::ClipSpace(0.1f, 5000.f));
         camera_system->SetActiveCamera(camera_entity);
+
+        std::string work_dir;
+        DFW::DUtility::GetWorkDirectory(work_dir);
+        std::string model_dir(work_dir + DIR_SLASH + "models");
+
+        // XYZ Representation.
+        DFW::Entity xyz = ecs->EntityManager().CreateEntity(*_universe);
+        DFW::TransformComponent& xyz_transform = ecs->EntityManager().AddComponent<DFW::TransformComponent>(xyz);
+        DFW::ModelComponent& xyz_model = ecs->EntityManager().AddComponent<DFW::ModelComponent>(xyz);
+        xyz_transform.translation = glm::vec3(0.0f, 0.0f, 0.0f);
+        xyz_model.model = DFW::DResource::LoadMesh(model_dir + DIR_SLASH + "xyz" + DIR_SLASH + "xyz_10x10m.glb");
+
+        // Sponza Scene.
+        DFW::Entity sponza = ecs->EntityManager().CreateEntity(*_universe);
+        ecs->EntityManager().AddComponent<DFW::TransformComponent>(sponza);
+        DFW::ModelComponent& sponza_model = ecs->EntityManager().AddComponent<DFW::ModelComponent>(sponza);
+        sponza_model.model = DFW::DResource::LoadMesh(model_dir + DIR_SLASH + "sponza" + DIR_SLASH + "sponza.gltf");
+
+        // Movable Entity.
+        main_entity = ecs->EntityManager().CreateEntity(*_universe);
+        DFW::TransformComponent& transform = ecs->EntityManager().AddComponent<DFW::TransformComponent>(main_entity);
+        transform.translation = glm::vec3(0.0f, 5.0f, 0.0f);
+        transform.scale = glm::vec3(2.0f);
+        DFW::ModelComponent& model = ecs->EntityManager().AddComponent<DFW::ModelComponent>(main_entity);
+        model.model = DFW::Debug_CreateBasicCube();
     }
 
     void TestStage::OnRemoved()
