@@ -53,6 +53,14 @@ for /f %%d in ('dir  %basepath%\Resources\shaders /b /ad') do (
     )
 )
 
+echo {} - Copying Resources ~ Models
+for /f %%d in ('dir  %basepath%\Resources\models /b /ad') do (
+    robocopy  %basepath%\Resources\models\%%d %execpath%\models\%%d  *.* /s
+    for /f %%e in ('dir  %basepath%\Resources\\models%%d /b /ad') do (
+        robocopy  %basepath%\Resources\\models%%d\%%e %execpath%\\models\%%d\%%e *.* /s
+    )
+)
+
 :: Finish
 echo {} - Build Completed.
 
