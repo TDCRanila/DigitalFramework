@@ -134,7 +134,7 @@ namespace DFW
             {
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
-                application_event_dispatcher->InstantBroadcast<InputItemDropEvent>(a_count, a_paths);
+                application_event_dispatcher->InstantBroadcast<InputItemDropEvent>(user_data->_id, a_count, a_paths);
             }
 
             static void glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods)
