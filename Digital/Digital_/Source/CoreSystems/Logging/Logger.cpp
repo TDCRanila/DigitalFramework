@@ -73,7 +73,7 @@ namespace DFW
 
 	void Logger::AdjustLoggingLevel(LogType const a_logger, LogLevel const a_log_level)
 	{
-		spdlog::level::level_enum new_log_level;
+		spdlog::level::level_enum new_log_level(spdlog::level::off);
 		switch (a_log_level)
 		{
 			case LogLevel::None:	new_log_level = spdlog::level::off;		break;
@@ -120,7 +120,7 @@ namespace DFW
 		_dfw_sink_subscribers.emplace(a_subscriber_id, a_func);
 	}
 
-	void Logger::RemoveSubscriber(DUID const a_subscriber_id, LogSubscriberMessageFunc const& a_func)
+	void Logger::RemoveSubscriber(DUID const a_subscriber_id)
 	{
 		if (auto const& it_result = _dfw_sink_subscribers.find(a_subscriber_id); it_result == _dfw_sink_subscribers.end())
 		{

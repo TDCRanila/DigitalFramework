@@ -333,8 +333,9 @@ namespace DFW
 	class InputItemDropEvent : public ApplicationEvent
 	{
 	public:
-		InputItemDropEvent(int32 a_item_count, const char** a_item_paths) 
-			: _item_count(a_item_count)
+		InputItemDropEvent(DWindow::WindowID a_window_id, int32 a_item_count, const char** a_item_paths)
+			: _window_id(a_window_id)
+			, _item_count(a_item_count)
 			, _item_paths(a_item_paths)
 		{}
 
@@ -346,26 +347,21 @@ namespace DFW
 			std::stringstream debug_string;
 			debug_string << GetName();
 			debug_string << " - ";
-			
-			if (_item_count == 1)
+			debug_string << "Items dropped in Window with ID: ";
+			debug_string << _window_id;
+			debug_string << " - ";
+
+			for (int32 path_index(0); path_index < _item_count; ++path_index)
 			{
 				debug_string << "{";
-				debug_string << _item_paths[0];
-				debug_string << "} ";
-			}
-			else
-			{
-				for (int32 it = 0; it < _item_count; ++it)
-				{
-					debug_string << "{";
-					debug_string << _item_paths[it];
-					debug_string << "}, ";
-				}
+				debug_string << _item_paths[path_index];
+				debug_string << "}, ";
 			}
 
 			return debug_string.str();
 		}
 
+		DWindow::WindowID _window_id;
 		int32			_item_count;
 		const char**	_item_paths;
 	};

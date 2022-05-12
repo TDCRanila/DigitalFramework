@@ -77,17 +77,14 @@ namespace DFW
 
         SharedPtr<WindowInstance>& WindowManagement::GetWindowInternal(WindowID const a_window_id)
         {
-            if (auto const it = _window_instances.find(a_window_id); it != _window_instances.end())
-            {
-                return (*it).second;
-            }
-            else
+            auto const it = _window_instances.find(a_window_id);
+            if (it == _window_instances.end())
             {
                 DFW_ERRORLOG("Attempting to find a window with ID: {}, but it cannot be found.", a_window_id);
-                DFW_ASSERT((*it).second);
-                SharedPtr<WindowInstance> ptr;
-                return ptr;
+                DFW_ASSERT((*it).second && "Attempting to find a window, but it cannot be found.");
             }
+
+            return (*it).second;
         }
 
         void WindowManagement::RegisterCommonEventCallbacks()

@@ -121,9 +121,7 @@ namespace DFW
 
             static void glfw_set_clipboard_string(void* a_user_data, const char* a_text)
             {
-                WindowInstance* user_data = reinterpret_cast<WindowInstance*>(a_user_data);
                 glfwSetClipboardString(reinterpret_cast<GLFWwindow*>(a_user_data), a_text);
-
                 application_event_dispatcher->InstantBroadcast<InputClipboardEvent>(a_text);
             }
 

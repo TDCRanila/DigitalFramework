@@ -28,11 +28,11 @@ namespace DFW
 	{
 	}
 	
-	void StageBase::OnApplicationEvent(ApplicationEvent const& a_event)
+	void StageBase::OnApplicationEvent(ApplicationEvent const& /*a_event*/)
 	{
 	}
 
-	void StageBase::OnStageEvent(StageEvent const& a_event)
+	void StageBase::OnStageEvent(StageEvent const& /*a_event*/)
 	{
 	}
 	

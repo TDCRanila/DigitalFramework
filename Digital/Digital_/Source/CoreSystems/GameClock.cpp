@@ -81,8 +81,8 @@ namespace DFW
         }
         else
         {
-            uint64 delta_counter = (_end_frame_cycle_count - _start_frame_cycle_count) * _timescale_modifier;
-            _last_frame_delta_time = delta_counter / static_cast<float64>(_cpu_cycles_per_second);
+            uint64 delta_counter = static_cast<uint64>((_end_frame_cycle_count - _start_frame_cycle_count) * _timescale_modifier);
+            _last_frame_delta_time = delta_counter / static_cast<TimeUnit>(_cpu_cycles_per_second);
             _elapsed_cpu_cycles += delta_counter;
         }
     }

@@ -24,7 +24,7 @@ namespace DFW
         MainConsole::~MainConsole()
         {
             // Formally unsubscribe from the logger.
-            DFW::Logger::RemoveSubscriber(this->GetID(), DFW_BIND_FUNC(LogMessageCallback));
+            DFW::Logger::RemoveSubscriber(this->GetID());
         }
 
         void MainConsole::RenderImGui()
