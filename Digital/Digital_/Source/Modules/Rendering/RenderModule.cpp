@@ -18,7 +18,8 @@ namespace DFW
             _render_module_context = MakeUnique<RenderModuleContext>();
             _render_module_context->InitRenderModuleContext();
 
-            _main_view_target = view_director.AllocateViewTarget(ViewTargetDirector::DEFAULT_MAIN_VIEWTARGET_NAME);
+            view_director.Init();
+            _main_view_target = view_director.AllocateViewTarget(ViewTargetDirector::DEFAULT_MAIN_VIEWTARGET_NAME, DRender::ViewTargetInsertion::Front);
 
             CoreService::GetMainEventHandler()->InstantBroadcast<RendererInitializedEvent>();
         }

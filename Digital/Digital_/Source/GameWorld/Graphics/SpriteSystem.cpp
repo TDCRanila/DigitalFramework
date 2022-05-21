@@ -140,7 +140,7 @@ namespace DFW
 
 		DRender::RenderModule* render_module(CoreService::GetRenderModule());
 		// View Target
-		_view_target = render_module->view_director.AllocateViewTarget("spritesystem");
+		_view_target = render_module->view_director.AllocateViewTarget("spritesystem", DRender::ViewTargetInsertion::Front);
 
 		// Shaders
 		_program_ptr = render_module->shader_library.ConstructProgram("vs_sprites", "fs_sprites");

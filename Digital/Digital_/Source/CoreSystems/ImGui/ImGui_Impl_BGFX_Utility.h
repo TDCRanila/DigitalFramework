@@ -58,8 +58,8 @@ namespace DFW
 		};
 
 		extern ImGuiRenderingContext	imgui_rendering_context;
-		extern GLFWwindow* main_window;
-		extern bgfx::ViewId				main_window_id;
+		extern GLFWwindow*				main_application_window;
+		extern bgfx::ViewId				main_view_id;
 
 		extern bool					mouse_just_pressed[ImGuiMouseButton_COUNT];
 		extern bool                 installed_callbacks;

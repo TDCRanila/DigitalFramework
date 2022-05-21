@@ -41,7 +41,7 @@ namespace DFW
 		DRender::RenderModule* render_module(CoreService::GetRenderModule());
 
 		// View Target
-		_view_target = render_module->view_director.AllocateViewTarget("rendersystem");
+		_view_target = render_module->view_director.AllocateViewTarget("rendersystem", DRender::ViewTargetInsertion::Front);
 
 		// Shaders		
 		_program_ptr = render_module->shader_library.ConstructProgram("vs_basic", "fs_basic");

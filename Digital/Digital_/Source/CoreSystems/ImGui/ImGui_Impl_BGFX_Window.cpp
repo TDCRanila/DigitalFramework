@@ -23,7 +23,7 @@ namespace DFW
     {
         bool ImGui_ImplBGFX_InitWindowPlatform(GLFWwindow* a_main_window)
         {
-            DImGui::main_window = a_main_window;
+            DImGui::main_application_window = a_main_window;
 
             ImGuiViewport* main_viewport = ImGui::GetMainViewport();
             main_viewport->PlatformHandle = static_cast<void*>(a_main_window);
@@ -72,6 +72,9 @@ namespace DFW
                 if (bgfx::isValid(viewport_data->_framebuffer_handle))
                     bgfx::destroy(viewport_data->_framebuffer_handle);
             }
+
+            // Free ImGui ViewID.
+            CoreService::GetRenderModule()->view_director.FreeViewTarget(DImGui::main_view_id);
         }
 
         void ImGui_ImplBGFX_NewFrameWindow()
@@ -107,19 +110,20 @@ namespace DFW
             platform_io.Platform_SetImeInputPos = ImGui_ImplWin32_SetImeInputPos;
 #endif
 
+            // Set ViewID for ImGui rendering.
+            DImGui::main_view_id = CoreService::GetRenderModule()->view_director.AllocateViewTarget("main-imgui-window", DRender::ViewTargetInsertion::Back)->view_target_id;
+
             // Register main window handle (which is owned by the main application, not by the imgui layer implementation.)
             // This is mostly for simplicity and consistency, so that the code (e.g. mouse handling etc.) can use the same logic for main and secondary viewports.
             ImGuiViewportDataBGFX* main_viewport_data = DImGui::imgui_rendering_context._viewports.emplace_back(IM_NEW(ImGuiViewportDataBGFX)());
-            main_viewport_data->_view_id        = CoreService::GetRenderModule()->view_director.AllocateViewTarget("main-imgui")->view_target_id;
-            main_viewport_data->_window         = DImGui::main_window;
+            main_viewport_data->_view_id        = DImGui::main_view_id;
+            main_viewport_data->_window         = DImGui::main_application_window;
             main_viewport_data->_window_owned   = false;
             // main_viewport_data->_framebuffer_handle = BGFX_INVALID_HANDLE; // Specifically set to an invalid handle.
             
             ImGuiViewport* main_viewport        = ImGui::GetMainViewport();
             main_viewport->PlatformUserData     = main_viewport_data;
-            main_viewport->PlatformHandle       = static_cast<void*>(DImGui::main_window);
-
-            DImGui::main_window_id = main_viewport_data->_view_id;
+            main_viewport->PlatformHandle       = static_cast<void*>(DImGui::main_application_window);
         }
 
         void ImGui_ImplBGFX_ShutdownPlatformInterface()
@@ -145,7 +149,7 @@ namespace DFW
         void ImGui_ImplBGFX_CreateViewportWindow(ImGuiViewport* a_viewport)
         {
             ImGuiViewportDataBGFX* viewport_data = DImGui::imgui_rendering_context._viewports.emplace_back(IM_NEW(ImGuiViewportDataBGFX)());
-            viewport_data->_view_id = CoreService::GetRenderModule()->view_director.AllocateViewTarget()->view_target_id;
+            viewport_data->_view_id = CoreService::GetRenderModule()->view_director.AllocateViewTarget(DRender::ViewTargetInsertion::Back)->view_target_id;
 
             // GLFW 3.2 unfortunately always set focus on glfwCreateWindow() if GLFW_VISIBLE is set, regardless of GLFW_FOCUSED
             // With GLFW 3.3, the hint GLFW_FOCUS_ON_SHOW fixes this problem
@@ -400,7 +404,7 @@ namespace DFW
 
             void ImGui_ImplBGFX_MouseButtonCallback(GLFWwindow* a_window, int a_button, int a_action, int a_mods)
             {
-                if (DImGui::prev_user_callback_mousebutton != NULL && a_window == DImGui::main_window)
+                if (DImGui::prev_user_callback_mousebutton != NULL && a_window == DImGui::main_application_window)
                     DImGui::prev_user_callback_mousebutton(a_window, a_button, a_action, a_mods);
 
                 if (a_action == GLFW_PRESS && a_button >= 0 && a_button < IM_ARRAYSIZE(DImGui::mouse_just_pressed))
@@ -409,7 +413,7 @@ namespace DFW
 
             void ImGui_ImplBGFX_ScrollCallback(GLFWwindow* a_window, double a_xoffset, double a_yoffset)
             {
-                if (DImGui::prev_user_callback_scroll != NULL && a_window == DImGui::main_window)
+                if (DImGui::prev_user_callback_scroll != NULL && a_window == DImGui::main_application_window)
                     DImGui::prev_user_callback_scroll(a_window, a_xoffset, a_yoffset);
 
                 ImGuiIO& io = ImGui::GetIO();
@@ -419,7 +423,7 @@ namespace DFW
 
             void ImGui_ImplBGFX_KeyCallback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods)
             {
-                if (DImGui::prev_user_callback_key != NULL && a_window == DImGui::main_window)
+                if (DImGui::prev_user_callback_key != NULL && a_window == DImGui::main_application_window)
                     DImGui::prev_user_callback_key(a_window, a_key, a_scancode, a_action, a_mods);
 
                 ImGuiIO& io = ImGui::GetIO();
@@ -441,7 +445,7 @@ namespace DFW
 
             void ImGui_ImplBGFX_CharCallback(GLFWwindow* a_window, unsigned int a_c)
             {
-                if (DImGui::prev_user_callback_char != NULL && a_window == DImGui::main_window)
+                if (DImGui::prev_user_callback_char != NULL && a_window == DImGui::main_application_window)
                     DImGui::prev_user_callback_char(a_window, a_c);
 
                 ImGuiIO& io = ImGui::GetIO();

@@ -90,7 +90,7 @@ namespace DFW
 
 		ImGui::Render();
 
-		DImGui::ImGui_ImplBGFX_RenderDrawData(ImGui::GetMainViewport()->DrawData, DImGui::main_window_id);
+		DImGui::ImGui_ImplBGFX_RenderDrawData(ImGui::GetMainViewport()->DrawData, DImGui::main_view_id);
 		
 		// Update and Render additional Viewports / Platform Windows
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
