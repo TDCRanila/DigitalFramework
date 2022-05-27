@@ -48,11 +48,11 @@ namespace DFW
             bgfx::shutdown();
         }
                           
-        void RenderModuleContext::BeginFrame(SharedPtr<ViewTarget const> const& a_main_viewtarget)
+        void RenderModuleContext::BeginFrame(ViewTarget const& a_main_viewtarget)
         {
-            bgfx::setViewRect(*a_main_viewtarget, 0, 0, bgfx::BackbufferRatio::Equal);
-            bgfx::setViewClear(*a_main_viewtarget, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
-            bgfx::touch(*a_main_viewtarget);
+            bgfx::setViewRect(a_main_viewtarget, 0, 0, bgfx::BackbufferRatio::Equal);
+            bgfx::setViewClear(a_main_viewtarget, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
+            bgfx::touch(a_main_viewtarget);
         }
 
         void RenderModuleContext::EndFrame()
