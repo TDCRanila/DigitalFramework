@@ -35,7 +35,7 @@ namespace DFW
                           
         void RenderModule::BeginFrame()
         {
-            _render_module_context->BeginFrame(_main_view_target);
+            _render_module_context->BeginFrame(*_main_view_target);
         }
 
         void RenderModule::EndFrame()
