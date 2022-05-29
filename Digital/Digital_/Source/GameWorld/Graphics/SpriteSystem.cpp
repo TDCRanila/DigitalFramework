@@ -287,7 +287,7 @@ namespace DFW
 
 		for (uint8 texture_index_counter(0); uint16 texture_handle : a_sprite_batch.unique_texture_handles)
 		{
-			bgfx::setTexture(texture_index_counter, _texture_sampler_uniform->handle, bgfx::TextureHandle(texture_handle));
+			bgfx::setTexture(texture_index_counter, _texture_sampler_uniform->handle, bgfx::TextureHandle(texture_handle), BGFX_SAMPLER_POINT);
 			++texture_index_counter;
 		}
 

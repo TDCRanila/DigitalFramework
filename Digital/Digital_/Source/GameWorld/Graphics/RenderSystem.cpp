@@ -113,7 +113,7 @@ namespace DFW
 				if (!submodel.textures.empty())
 				{
 					SharedPtr<DRender::TextureData> const& texture = submodel.textures[0];
-					bgfx::setTexture(texture->stage, _texture_sampler_uniform->handle, texture->handle);
+					bgfx::setTexture(texture->stage, _texture_sampler_uniform->handle, texture->handle, texture->flags | BGFX_SAMPLER_POINT);
 				}
 
 				bgfx::setState(state);
