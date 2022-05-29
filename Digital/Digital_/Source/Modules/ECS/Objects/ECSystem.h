@@ -24,7 +24,7 @@ namespace DFW
 			friend SystemManager;
 
 		public:
-			System(Key);
+			System();
 			virtual ~System() = default;
 
 			DFW::DUID GetID() const;

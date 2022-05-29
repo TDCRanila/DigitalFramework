@@ -27,6 +27,7 @@ namespace DFW
         void RenderModule::TerminateRenderModule()
         {
             shader_library.FreeLibraryResources();
+            render_target_director.FreeAllRenderTargets();
 
             _render_module_context->TerminateRenderModuleContext();
 

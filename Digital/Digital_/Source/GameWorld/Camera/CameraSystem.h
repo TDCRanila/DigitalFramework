@@ -44,7 +44,7 @@ namespace DFW
 		std::string camera_name;
 	};
 
-	class CameraSystem : public DECS::System::StrictRegistrar<CameraSystem>
+	class CameraSystem : public DECS::System::Registrar<CameraSystem>
     {
     public:
         CameraSystem();

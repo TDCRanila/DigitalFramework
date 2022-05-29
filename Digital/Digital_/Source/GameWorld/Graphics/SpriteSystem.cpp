@@ -2,15 +2,17 @@
 
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Camera/CameraComponent.h>
-#include <GameWorld/Camera/CameraSystem.h>
 #include <GameWorld/Graphics/SpriteComponent.h>
 
-#include <Modules/ECS/Managers/ECSystemManager.h>
 #include <Modules/ECS/Objects/ECSUniverse.h>
 #include <Modules/Rendering/RenderModule.h>
+#include <Modules/Rendering/RenderTarget.h>
+#include <Modules/Rendering/ViewTarget.h>
+#include <Modules/Rendering/ShaderProgram.h>
+#include <Modules/Rendering/Uniform.h>
 
+#include <CoreSystems/CoreServices.h>
 #include <CoreSystems/Events/EventDispatcher.h>
-#include <CoreSystems/Window/WindowManagement.h>
 
 #include <bgfx/bgfx.h>
 #include <bx/math.h>
@@ -109,13 +111,6 @@ namespace DFW
 		uint32 num_sprites_to_draw;
 	};
 
-	SpriteSystem::SpriteSystem()
-		: _rendering_camera(nullptr)
-		, window_width(DWindow::DFW_DEFAULT_WINDOW_WIDTH)
-		, window_height(DWindow::DFW_DEFAULT_WINDOW_HEIGHT)
-	{
-	}
-
 	void SpriteSystem::Init()
 	{
 		Detail::max_texture_samplers_per_batch = bgfx::getCaps()->limits.maxTextureSamplers;
@@ -149,8 +144,8 @@ namespace DFW
 		_texture_sampler_uniform = render_module->uniform_library.CreateUniform("s_texture", DRender::UniformTypes::Sampler);
 
 		// Register Callbacks.
-		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &SpriteSystem::OnWindowResizeEvent>(this);
-		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &SpriteSystem::OnCameraNewActiveEvent>(this);
+		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
 
 	void SpriteSystem::Terminate()
@@ -159,8 +154,8 @@ namespace DFW
 		CoreService::GetRenderModule()->shader_library.DestroyProgram(_program_ptr);
 
 		// Unregister Callbacks.
-		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &SpriteSystem::OnWindowResizeEvent>(this);
-		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &SpriteSystem::OnCameraNewActiveEvent>(this);
+		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
 
 	void SpriteSystem::Update(DECS::Universe& a_universe)
@@ -309,17 +304,6 @@ namespace DFW
 		bgfx::setState(state);
 
 		bgfx::submit(a_view_target, _program_ptr->shader_program_handle);
-	}
-
-	void SpriteSystem::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
-	{
-		window_width = a_window_event.new_width;
-		window_height = a_window_event.new_height;
-	}
-
-	void SpriteSystem::OnCameraNewActiveEvent(CameraNewActiveEvent const& a_camera_event)
-	{
-		_rendering_camera = SystemManager().GetSystem<CameraSystem>()->GetCamera(a_camera_event.camera_identifier);
 	}
 
 } // End of namespace ~ DFW.
