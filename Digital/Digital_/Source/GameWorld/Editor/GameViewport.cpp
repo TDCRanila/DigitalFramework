@@ -1,4 +1,4 @@
-#include <Editor/Game/EditorGameViewport.h>
+#include <GameWorld/Editor/GameViewport.h>
 
 #include <GameWorld/Graphics/RenderSystem.h>
 

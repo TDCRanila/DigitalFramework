@@ -1,4 +1,4 @@
-#include <Editor/Console/MainConsole.h>
+#include <Modules/Editor/Console/MainConsole.h>
 
 #include <imgui/imgui.h>
 

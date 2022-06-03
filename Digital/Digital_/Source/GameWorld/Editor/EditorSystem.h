@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Editor/EditorElementContainer.h>
-#include <Editor/Game/EditorGameViewport.h>
+#include <Modules/Editor/EditorElementContainer.h>
 
 #include <CoreSystems/Stage/Stage.h>
 

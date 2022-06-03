@@ -12,8 +12,8 @@
 #include <GameWorld/Graphics/RenderSystem.h>
 #include <GameWorld/Graphics/SpriteSystem.h>
 
-#include <Editor/MainDockStage.h>
-#include <Editor/Console/MainConsole.h>
+#include <GameWorld/Editor/EditorSystem.h>
+#include <Modules/Editor/Console/MainConsole.h>
 
 namespace DGame
 {

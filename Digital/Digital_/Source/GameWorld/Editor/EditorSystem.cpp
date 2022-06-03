@@ -1,6 +1,8 @@
-#include <Editor/MainDockStage.h>
+#include <GameWorld/Editor/EditorSystem.h>
 
-#include <Editor/EditorElementFiller.h>
+#include <GameWorld/Editor/GameViewport.h>
+
+#include <Modules/Editor/EditorElementFiller.h>
 
 #include <imgui/imgui_internal.h>
 
