@@ -14,7 +14,7 @@ namespace DFW
 {
     namespace DEditor
     {
-        void EditorGameViewport::Init()
+        void GameViewport::Init()
         {
             bgfx::TextureHandle texture_handle[2];
             texture_handle[0] = bgfx::createTexture2D(bgfx::BackbufferRatio::Equal, false, 1, bgfx::TextureFormat::RGBA8, BGFX_TEXTURE_RT);
@@ -27,7 +27,7 @@ namespace DFW
             CoreService::GetECS()->SystemManager().GetSystem<RenderSystem>()->RenderToRenderTarget(_viewport_render_target);
         }
 
-        void EditorGameViewport::Terminate()
+        void GameViewport::Terminate()
         {
             CoreService::GetECS()->SystemManager().GetSystem<RenderSystem>()->RenderToDefault();
 
@@ -35,7 +35,7 @@ namespace DFW
             rtd.FreeRenderTarget(*_viewport_render_target);
         }
 
-        void EditorGameViewport::Display()
+        void GameViewport::Display()
         {
             ImGui::Begin(GetNameID().c_str(), &_is_viewport_window_open, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
             

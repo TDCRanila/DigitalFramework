@@ -65,7 +65,7 @@ namespace DFW
 
         void DockerStage::OnAttached()
         {
-            element_container.AddEditorElement<EditorGameViewport>("Viewport");
+            element_container.AddEditorElement<GameViewport>("Viewport");
             element_container.AddEditorElement<EditorElementFiller>("Toolbar");
             element_container.AddEditorElement<EditorElementFiller>("Viewer");
         }

@@ -14,11 +14,11 @@ namespace DFW
 {
     namespace DEditor
     {
-        class EditorGameViewport : public EditorElement
+        class GameViewport final : public EditorElement
         {
         public:
-            EditorGameViewport() = default;
-            virtual ~EditorGameViewport() = default;
+            GameViewport() = default;
+            virtual ~GameViewport() = default;
 
             virtual void Init() override;
             virtual void Terminate() override;
