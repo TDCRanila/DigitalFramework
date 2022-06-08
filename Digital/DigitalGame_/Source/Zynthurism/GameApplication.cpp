@@ -3,17 +3,18 @@
 #include <Zynthurism/GameMaster.h>
 #include <Zynthurism/Game/TestStage.h>
 
+#include <GameWorld/Camera/CameraSystem.h>
+#include <GameWorld/Editor/EditorDockerStage.h>
+#include <GameWorld/Graphics/RenderSystem.h>
+#include <GameWorld/Graphics/SpriteSystem.h>
+
+#include <Modules/Editor/Console/MainConsole.h>
+#include <Modules/Editor/MainMenuBar.h>
+
 #include <CoreSystems/CoreServices.h>
 
 #include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
-
-#include <GameWorld/Camera/CameraSystem.h>
-#include <GameWorld/Graphics/RenderSystem.h>
-#include <GameWorld/Graphics/SpriteSystem.h>
-
-#include <GameWorld/Editor/EditorSystem.h>
-#include <Modules/Editor/Console/MainConsole.h>
 
 namespace DGame
 {
@@ -31,7 +32,8 @@ namespace DGame
 		DFW::CoreService::GetECS()->SystemManager().AddSystem<DFW::CameraSystem>();
 
 		// Stages
-		ProvideStageStackController().AttachStage<DFW::DEditor::DockerStage>("MainDockSpace", false);
+		ProvideStageStackController().AttachStage<DFW::DEditor::EditorDocker>("EditorDocker", false);
+		ProvideStageStackController().AttachStage<DFW::DEditor::MainMenuBar>("MainMenuBar", false);
 		ProvideStageStackController().AttachStage<DFW::DEditor::MainConsole>("Console", false);
 		ProvideStageStackController().AttachStage<DGame::TestStage>("Test Stage", false);
 

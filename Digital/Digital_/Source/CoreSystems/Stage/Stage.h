@@ -17,11 +17,11 @@ namespace DFW
 		StageBase(std::string const& a_stage_name, bool a_start_disabled);
 		virtual ~StageBase() = default;
 		
-		virtual void Update()		= 0;
+		virtual void Update() = 0;
 		virtual void RenderImGui();
 
-		virtual void OnAttached()	= 0;
-		virtual void OnRemoved()	= 0;
+		virtual void OnAttached();
+		virtual void OnRemoved();
 				
 		bool IsDisabled() const;
 		virtual void OnEnable();

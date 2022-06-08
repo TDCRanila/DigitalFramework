@@ -15,6 +15,14 @@ namespace DFW
 	{
 	}
 
+	void StageBase::OnAttached()
+	{
+	}
+
+	void StageBase::OnRemoved()
+	{
+	}
+
 	bool StageBase::IsDisabled() const
 	{
 		return _is_disabled;
