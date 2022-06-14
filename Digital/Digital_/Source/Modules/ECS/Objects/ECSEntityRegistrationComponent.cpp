@@ -5,7 +5,7 @@ namespace DFW
     namespace DECS
     {
         EntityRegistrationComponent::EntityRegistrationComponent()
-            : name("")
+            : name(DFW_DEFAULT_ENTITY_NAME)
             , id(DFW_INVALID_DUID)
             , comp_list(0)
         {

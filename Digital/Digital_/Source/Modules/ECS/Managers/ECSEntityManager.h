@@ -86,7 +86,7 @@ namespace DFW
 
 			a_universe._entity_data_registration.emplace(
 				new_handle, 
-				AddComponent<EntityRegistrationComponent>(entity, entity._id, "Default Entity Name")
+				AddComponent<EntityRegistrationComponent>(entity, entity._id, DFW_DEFAULT_ENTITY_NAME)
 			);
 
 			// TODO Set Class/Entity Type ID.
