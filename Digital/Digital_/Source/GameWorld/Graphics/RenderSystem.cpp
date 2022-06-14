@@ -106,7 +106,7 @@ namespace DFW
 
 			for (DRender::SubMeshData const& submodel : model.model->submeshes)
 			{
-				bgfx::setTransform(glm::value_ptr(transform.Transform()));
+				bgfx::setTransform(glm::value_ptr(transform.GetTransformMatrix()));
 				bgfx::setVertexBuffer(0, submodel.vbh);
 				bgfx::setIndexBuffer(submodel.ibh);
 				

@@ -10,6 +10,7 @@
 #include <GameWorld/Camera/CameraComponent.h>
 #include <GameWorld/Camera/CameraEvents.h>
 #include <GameWorld/TransformComponent.h>
+#include <GameWorld/Transform.h>
 
 #include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Managers/ECSEntityManager.h>
@@ -214,7 +215,7 @@ namespace DFW
             UpdateCameraMatrices(camera_comp, transform_comp);
     }
 
-    void CameraSystem::ControlCamera(CameraComponent& a_camera, TransformComponent& a_transform)
+    void CameraSystem::ControlCamera(CameraComponent& a_camera, Transform& a_transform)
     {
         // Directional.
 
@@ -287,13 +288,13 @@ namespace DFW
         a_transform.translation += a_camera.front * (dir.z * dt * a_camera.fly_speed);
     }
 
-    void CameraSystem::UpdateCameraMatrices(CameraComponent& a_camera, TransformComponent& a_transform)
+    void CameraSystem::UpdateCameraMatrices(CameraComponent& a_camera, Transform& a_transform)
     {      
         a_camera.right  = glm::rotate(_active_camera->orientation, Detail::world_right);
         a_camera.up     = glm::rotate(_active_camera->orientation, Detail::world_up);
         a_camera.front  = glm::rotate(_active_camera->orientation, Detail::world_front);
 
-        a_camera.view   = glm::inverse(a_transform.Transform() * glm::toMat4(_active_camera->orientation));
+        a_camera.view   = glm::inverse(a_transform.GetTransformMatrix() * glm::toMat4(_active_camera->orientation));
     }
 
     void CameraSystem::Debug_ToggleCameraMode()

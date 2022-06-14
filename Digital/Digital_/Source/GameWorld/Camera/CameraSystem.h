@@ -21,7 +21,7 @@ namespace DFW
 {
     // FW Declare.
     struct CameraComponent;
-	struct TransformComponent;
+	struct Transform;
 
 	namespace DInput
 	{
@@ -69,8 +69,8 @@ namespace DFW
 		virtual void Init() override;
 		virtual void Update(DECS::Universe& a_universe) override;
 
-		void ControlCamera(CameraComponent& a_camera, TransformComponent& a_transform);
-		void UpdateCameraMatrices(CameraComponent& a_camera, TransformComponent& a_transform);
+		void ControlCamera(CameraComponent& a_camera, Transform& a_transform);
+		void UpdateCameraMatrices(CameraComponent& a_camera, Transform& a_transform);
 
 		void Debug_ToggleCameraMode();
 
