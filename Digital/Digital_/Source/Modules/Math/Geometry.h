@@ -36,7 +36,7 @@ namespace DFW
             glm::vec3 max;
         };
 
-        typedef Box AABB;
+        using AABB = Box;
 
         struct OBB
         {
