@@ -6,8 +6,12 @@
 #include <Modules/ECS/Objects/ECSEntity.h>
 #include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
 #include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Utility/ECSEntityType.h>
 
-#include <entt/entity/registry.hpp>
+#include <Utility/FamiltyTypeID.h>
+#include <Utility/TemplateUtility.h>
+
+#include <string>
 
 namespace DFW
 {
@@ -15,6 +19,9 @@ namespace DFW
 	{
 		// FW Declare.
 		class ECSModule;
+
+		template <typename EntityType>
+		concept IsValidEntityType = IsBasedOf<EntityType, Entity>;
 
 		class EntityManager final
 		{
@@ -25,17 +32,25 @@ namespace DFW
 			EntityManager() = default;
 			~EntityManager() = default;
 
-			template <typename EntityType, typename... TArgs>
-			EntityType CreateEntity(Universe& a_universe, TArgs&&... a_args) const;
-			Entity CreateEntity(Universe& a_universe) const;
-
+			template <typename EntityType = Entity, typename... TArgs>
+			requires IsValidEntityType<EntityType>
+			Entity CreateEntity(Universe& a_universe, TArgs&&... a_args) const;
+			
 			void DestroyEntity(Entity const& a_entity) const;
-			void DestroyEntity(DFW::DUID const a_entity_id, Universe& a_universe) const;
-
 			Entity GetEntity(DFW::DUID const a_entity_id, Universe& a_universe) const;
-
+			
 			Entity AttachEntity(Entity const& a_child, Entity const& a_parent) const;
+			
+			void SetEntityName(Entity const& a_entity, std::string const& a_new_entity_name);
+			std::string GetEntityName(Entity const& a_entity) const;
 
+			template <typename EntityType>
+			requires IsValidEntityType<EntityType>
+			EntityTypeID GetEntityTypeID() const;
+			EntityTypeID GetEntityTypeID(Entity const& a_entity) const;
+
+		public:
+			// Forwarded Component Mangement Functions.
 			template <typename ComponentType, typename... TArgs>
 			ComponentType& AddComponent(Entity const& a_entity, TArgs&&...a_args) const;
 
@@ -54,7 +69,6 @@ namespace DFW
 		private:
 			void ManageDeletedEntities(Universe& a_universe);
 
-		private:
 			ComponentManager _component_manager;
 
 		};
@@ -62,7 +76,8 @@ namespace DFW
 #pragma region Template Function Implementation
 
 		template <typename EntityType, typename... TArgs>
-		EntityType EntityManager::CreateEntity(Universe& a_universe, TArgs&&... a_args) const
+		requires IsValidEntityType<EntityType>
+		Entity EntityManager::CreateEntity(Universe& a_universe, TArgs&&... a_args) const
 		{
 			if (!a_universe.IsValid())
 			{
@@ -71,39 +86,28 @@ namespace DFW
 				return EntityType();
 			}
 
-			// Request a new entity handle from the registry.
-			EntityHandle new_handle = a_universe.registry.create();
-
-			// TODO - Should be in something like a WorldManager
 			// Construct an Entity from template.
 			EntityType entity(std::forward<TArgs>(a_args)...);
-			entity._handle		= new_handle;
+			entity._handle		= a_universe.registry.create();
 			entity._universe	= &a_universe;
 			entity._id			= DFW::GenerateDUID();
 
-			// Store entity information in universe containers.
-			a_universe._entities.emplace(new_handle);
+			// Register Additional Entity Data in Universe registries.
+			EntityDataComponent& reg_comp = AddComponent<EntityDataComponent>(entity);
+			reg_comp.id		= entity._id;
+			reg_comp.type	= DUtility::FamilyType<Entity>::GetTypeID<EntityType>();
+			reg_comp.name	= DFW_DEFAULT_ENTITY_NAME;
 
-			a_universe._entity_data_registration.emplace(
-				new_handle, 
-				AddComponent<EntityRegistrationComponent>(entity, entity._id, DFW_DEFAULT_ENTITY_NAME)
-			);
-
-			// TODO Set Class/Entity Type ID.
-			// entity_data_ptr->type_id = TypeID<EntityType>::Get();
+			a_universe.RegisterEntity(entity, reg_comp);
 			
-			// TODO - Should be in something like a WorldManager -  Add any additional default components here; e.g. transform, name component
-			// _component_manager.AddComponent<TransformComponent>(entity, a_universe);
-
-			// TODO - Should be in something like a WorldManager -  
-			// GameObject Custom Arguments.
-			// Add EntityCreate Event Broadcast
-			/*if constexpr (IsDerivedFrom<EntityType, DFW::GameObject>)
-			{
-				entity_handle.OnCreate();
-			}*/
-
 			return entity;
+		}
+
+		template <typename EntityType>
+		requires IsValidEntityType<EntityType>
+		EntityTypeID EntityManager::GetEntityTypeID() const
+		{
+			return DUtility::FamilyType<Entity>::GetTypeID<EntityType>();
 		}
 
 		template <typename ComponentType, typename... TArgs>

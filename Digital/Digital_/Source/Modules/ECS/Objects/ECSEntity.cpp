@@ -21,7 +21,7 @@ namespace DFW
 			, _universe(&a_universe)
 		{
 			DFW_ASSERT(a_universe.IsValid());
-			EntityRegistrationComponent const& comp = a_universe._entity_data_registration.at(_handle);
+			EntityDataComponent const& comp = a_universe._entity_handle_registration.at(_handle);
 			_id = comp.id;
 		}
 
