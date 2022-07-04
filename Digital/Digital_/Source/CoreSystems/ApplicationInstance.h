@@ -26,7 +26,7 @@ namespace DFW
         EventDispatcher application_event_handler;
 
     protected:
-        void RegisterStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator);
+        void RegisterStageStackCommunicator(SharedPtr<StageStackCommunicator> a_stack_communicator);
 
         StageStackController& ProvideStageStackController();
 
@@ -43,7 +43,7 @@ namespace DFW
         void Debug_ToggleMouseCursorCapture() const;
 
         StageStackController _stage_stack_controller;
-        std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;
+        SharedPtr<StageStackCommunicator> _stage_stack_communicator;
 
         SharedPtr<DWindow::WindowManagement>   _window_management;
         DInput::InputManagementSystem          _input_system;

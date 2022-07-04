@@ -51,7 +51,7 @@ namespace DFW
 	protected:
 		friend class ApplicationInstance;
 
-		void SetStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_communicator);
+		void SetStageStackCommunicator(SharedPtr<StageStackCommunicator> a_communicator);
 
 		void RemoveAllAttachedStages();
 
@@ -62,7 +62,7 @@ namespace DFW
 
 		int64 _stage_insert_index;
 		
-		std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;
+		SharedPtr<StageStackCommunicator> _stage_stack_communicator;
 
 		std::vector<StageBase*> _stages;
 

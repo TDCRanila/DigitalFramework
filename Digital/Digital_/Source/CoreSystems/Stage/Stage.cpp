@@ -93,7 +93,7 @@ namespace DFW
 		}
 	}
 
-	void StageBase::SetStageStackCommunicator(std::shared_ptr<StageStackCommunicator> const& a_communicator)
+	void StageBase::SetStageStackCommunicator(SharedPtr<StageStackCommunicator> const& a_communicator)
 	{
 		_stage_stack_communicator = a_communicator;
 	}
@@ -103,7 +103,7 @@ namespace DFW
 		_stage_event_callback_func(a_event);
 	}
 
-	std::shared_ptr<StageStackCommunicator> StageBase::GetStageStackCommunicator() const
+	SharedPtr<StageStackCommunicator> StageBase::GetStageStackCommunicator() const
 	{
 		return _stage_stack_communicator;
 	}
