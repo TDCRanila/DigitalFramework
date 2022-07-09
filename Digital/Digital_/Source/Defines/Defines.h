@@ -20,8 +20,8 @@ using uint64	= uint64_t;
 #if defined(DFW_PDEBUG64) || defined(DFW_DEBUG64) || defined(DFW_PRERELEASE64)
 	#include <assert.h>
 	#define DFW_ASSERT(...) assert(__VA_ARGS__)
-#elif defined(DFW_RELEASE64) || defined(DFW_FINAL64)
-	#define DFW_ASSERT(...) { /*EMPTY*/ }
+#elif defined(DFW_RELEASE64)
+	#define DFW_ASSERT(...)
 #endif
 
 // Directory Slashes Defines

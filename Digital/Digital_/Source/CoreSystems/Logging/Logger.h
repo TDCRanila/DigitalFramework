@@ -97,7 +97,7 @@ namespace DFW
 #define DFW_WARNLOG(...)	SPDLOG_LOGGER_WARN(&DFW::Logger::ProvideMainLogger(), __VA_ARGS__)
 #define DFW_ERRORLOG(...)	SPDLOG_LOGGER_ERROR(&DFW::Logger::ProvideMainLogger(), __VA_ARGS__)
 
-#elif defined(DFW_RELEASE64) || defined(DFW_FINAL64)
+#elif defined(DFW_RELEASE64)
 
 #define DFW_LOG(...)		{ /*EMPTY*/ }
 #define DFW_DEBUGLOG(...)	{ /*EMPTY*/ }
