@@ -99,11 +99,11 @@ namespace DFW
 
 #elif defined(DFW_RELEASE64)
 
-#define DFW_LOG(...)		{ /*EMPTY*/ }
-#define DFW_DEBUGLOG(...)	{ /*EMPTY*/ }
-#define DFW_INFOLOG(...)	{ /*EMPTY*/ }
-#define DFW_WARNLOG(...)	{ /*EMPTY*/ }
-#define DFW_ERRORLOG(...)	{ /*EMPTY*/ }
+#define DFW_LOG(...)
+#define DFW_DEBUGLOG(...)
+#define DFW_INFOLOG(...)
+#define DFW_WARNLOG(...)
+#define DFW_ERRORLOG(...)
 
 #endif
 
