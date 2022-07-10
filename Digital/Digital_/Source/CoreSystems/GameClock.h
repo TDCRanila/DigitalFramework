@@ -19,7 +19,7 @@ namespace DFW
         void AdvanceSingleTick(bool a_override_pause);
 
         TimeUnit GetLastFrameDeltaTime() const;
-        uint64 GetElapsedCycleCount() const;
+        int64 GetElapsedCycleCount() const;
         TimeUnit GetElapsedTimeInSeconds() const;
 
         void Pause();
@@ -36,16 +36,9 @@ namespace DFW
     private:
         void UpdateClock();
 
-        void QueryCPUClockFreq(uint64& a_ref_value) const;
-        void QueryCPUClockCounter(uint64& a_ref_value) const;
-
-        TimeUnit CPUCyclesToSeconds(uint64 a_cpu_cycles) const;
-        uint64 SecondsToCPUCycles(TimeUnit a_seconds) const;
-
-        uint64          _elapsed_cpu_cycles;
-        uint64          _start_frame_cycle_count;
-        uint64          _end_frame_cycle_count;
-        uint64          _cpu_cycles_per_second;
+        int64          _elapsed_cpu_cycles;
+        int64          _start_frame_cycle_count;
+        int64          _end_frame_cycle_count;
 
         TimeModifier    _timescale_modifier;
         TimeUnit        _last_frame_delta_time;
