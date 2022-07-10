@@ -37,8 +37,8 @@ if (MSVC)
     set(CMAKE_EXE_LINKER_FLAGS_PRERELEASE "/DEBUG:FASTLINK")
 
     # Release Config - WarningLVL4, Warning=Error, Speed Optimized, WholeProgramOptimization, MultiProccesor
-    set(CMAKE_CXX_FLAGS_RELEASE "/W4 /O2 /Oi /GL /MP /DDFW_RELEASE64")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "")
+    set(CMAKE_CXX_FLAGS_RELEASE "/W4 /WX /O2 /Oi /GL /MP /DDFW_RELEASE64")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO /LTCG:INCREMENTAL")
 else()
     message("Unsupported Build Configurations.")
 endif()
