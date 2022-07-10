@@ -27,8 +27,6 @@ namespace DFW
 
 	};
 
-	using ApplicationEventCallbackFunc = std::function<void(ApplicationEvent const&)>;
-
 #pragma region WindowEvents
 
 	/// <summary>
