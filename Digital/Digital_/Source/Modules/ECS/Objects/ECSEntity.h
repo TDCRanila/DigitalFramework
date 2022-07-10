@@ -41,7 +41,7 @@ namespace DFW
 			bool IsEntityValid() const;
 			bool IsPendingDeletion() const;
 
-		private:
+		protected:
 			DUID			_id;
 			EntityHandle	_handle;
 			Universe*		_universe;

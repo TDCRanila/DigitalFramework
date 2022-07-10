@@ -6,6 +6,8 @@
 #include <CoreSystems/Logging/Logger.h>
 #include <Utility/FileSystemUtility.h>
 
+#include <Defines/MathDefines.h>
+
 #include <assimp/mesh.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -60,13 +62,13 @@ namespace DFW
 
             void ParseAssimpNode(aiNode const* a_assimp_node, aiScene const* a_assimp_scene, auto a_mesh_parser_func)
             {
-                for (int32 mesh_index(0); mesh_index < a_assimp_node->mNumMeshes; ++mesh_index)
+                for (uint32 mesh_index(0); mesh_index < a_assimp_node->mNumMeshes; ++mesh_index)
                 {
                     uint32 const mesh_index_in_scene(a_assimp_node->mMeshes[mesh_index]);
                     a_mesh_parser_func(AssimpMesh(a_assimp_scene->mMeshes[mesh_index_in_scene], mesh_index), a_assimp_scene);
                 }
 
-                for (int32 child_node_index(0); child_node_index < a_assimp_node->mNumChildren; ++child_node_index)
+                for (uint32 child_node_index(0); child_node_index < a_assimp_node->mNumChildren; ++child_node_index)
                     ParseAssimpNode(a_assimp_node->mChildren[child_node_index], a_assimp_scene, a_mesh_parser_func);
             }
 
@@ -82,7 +84,7 @@ namespace DFW
             Assimp::Importer assimp_importer;
             DFW_ASSERT(assimp_importer.IsExtensionSupported(file_extension));
 
-            uint32 const assimp_process_flags(
+            uint32 const assimp_process_flags(static_cast<uint32>(
                   aiPostProcessSteps::aiProcess_CalcTangentSpace
                 | aiPostProcessSteps::aiProcess_Triangulate
                 | aiPostProcessSteps::aiProcess_JoinIdenticalVertices
@@ -93,7 +95,7 @@ namespace DFW
                 | aiPostProcessSteps::aiProcess_FlipUVs
                 | aiPostProcessSteps::aiProcess_GenBoundingBoxes
                 | aiPostProcessSteps::aiProcess_Triangulate
-            );
+            ));
 
             // Import
             aiScene const* assimp_scene = assimp_importer.ReadFile(a_filepath, assimp_process_flags);
@@ -111,7 +113,6 @@ namespace DFW
             {
                 // Setup.
                 aiMesh const* assimp_mesh = a_mesh.mesh;
-                uint32 mesh_index = a_mesh.index_in_scene;
 
                 // Add new submesh.
                 DRender::SubMeshData& submesh = model->submeshes.emplace_back();
@@ -170,8 +171,8 @@ namespace DFW
                 uint32 const floats_per_stride(layout_stride / sizeof(float32));
                 submesh.vertices.reserve(submesh.num_vertices * floats_per_stride);
 
-                uint32 const floats_per_index(assimp_mesh->mFaces[0].mNumIndices);
-                submesh.indices.reserve(submesh.num_faces * floats_per_index);
+                uint32 const indices_per_face(assimp_mesh->mFaces[0].mNumIndices);
+                submesh.indices.reserve(submesh.num_faces * indices_per_face);
 
                 // submesh.vertices.
                 for (uint32 mesh_vertex_index = 0; mesh_vertex_index < assimp_mesh->mNumVertices; ++mesh_vertex_index)
@@ -223,9 +224,13 @@ namespace DFW
                 for (uint32 mesh_face_index = 0; mesh_face_index < assimp_mesh->mNumFaces; ++mesh_face_index)
                 {
                     aiFace const& face = assimp_mesh->mFaces[mesh_face_index];
-                    uint16 const index1(face.mIndices[0]);
-                    uint16 const index2(face.mIndices[1]);
-                    uint16 const index3(face.mIndices[2]);
+
+                    DFW_ASSERT(face.mIndices[0] <= DMath::int16_max && "32-bit index buffer not support - See BGFX_BUFFER_INDEX32 flag.");
+                    DFW_ASSERT(face.mIndices[1] <= DMath::int16_max && "32-bit index buffer not support - See BGFX_BUFFER_INDEX32 flag.");
+                    DFW_ASSERT(face.mIndices[2] <= DMath::int16_max && "32-bit index buffer not support - See BGFX_BUFFER_INDEX32 flag.");
+                    uint16 const index1(static_cast<uint16>(face.mIndices[0]));
+                    uint16 const index2(static_cast<uint16>(face.mIndices[1]));
+                    uint16 const index3(static_cast<uint16>(face.mIndices[2]));
 
                     submesh.indices.emplace_back(index1);
                     submesh.indices.emplace_back(index2);
@@ -239,16 +244,18 @@ namespace DFW
                         , index3 * floats_per_stride 
                     };
 
-                    primitive.indices   = { index1, index2, index3 };
+                    primitive.indices = { index1, index2, index3 };
                 }
 
                 // Create Vertex and Index Buffers.
                 DFW_ASSERT(submesh.vertices.size() == submesh.num_vertices * floats_per_stride);
-                bgfx::Memory const* vertex_mem = bgfx::copy(submesh.vertices.data(), submesh.vertices.size() * sizeof(decltype(submesh.vertices[0])));
+                uint32 vertex_data_size(static_cast<uint32>(submesh.vertices.size() * sizeof(decltype(submesh.vertices[0]))));
+                bgfx::Memory const* vertex_mem = bgfx::copy(submesh.vertices.data(), vertex_data_size);
                 submesh.vbh = bgfx::createVertexBuffer(vertex_mem, submesh.vertex_layout);
 
-                DFW_ASSERT(submesh.indices.size() == submesh.num_faces * floats_per_index);
-                bgfx::Memory const* indices_mem = bgfx::copy(submesh.indices.data(), submesh.indices.size() * sizeof(decltype(submesh.indices[0])));
+                DFW_ASSERT(submesh.indices.size() == submesh.num_faces * indices_per_face);
+                uint32 const index_data_size(static_cast<uint32>(submesh.indices.size() * sizeof(decltype(submesh.indices[0]))));
+                bgfx::Memory const* indices_mem = bgfx::copy(submesh.indices.data(), index_data_size);
                 submesh.ibh = bgfx::createIndexBuffer(indices_mem);
 
                 // AABB.
@@ -300,7 +307,7 @@ namespace DFW
                         std::vector<SharedPtr<DRender::TextureData>> material_textures;
                         
                         uint32 const texture_count(a_assimp_material->GetTextureCount(a_texture_type));
-                        for (int32 texture_index(0); texture_index < texture_count; ++texture_index)
+                        for (uint32 texture_index(0); texture_index < texture_count; ++texture_index)
                         {
                             // Check Texture.
                             aiString texture_path;
@@ -338,9 +345,9 @@ namespace DFW
                                 
                                 size_t texture_size(0);
                                 if (is_texture_compressed)
-                                    texture_size = texture->mWidth;
+                                    texture_size = static_cast<size_t>(texture->mWidth);
                                 else
-                                    texture_size = texture->mWidth * texture->mHeight * sizeof(aiTexel);
+                                    texture_size = static_cast<size_t>(texture->mWidth * texture->mHeight * sizeof(aiTexel));
 
                                 image = LoadImageDataFromMemory(reinterpret_cast<uint8 const*>(texture->pcData), texture_size);
                                 DFW_ASSERT(image);
@@ -356,15 +363,16 @@ namespace DFW
                             }
 
                             // Create Texture.
-                            bgfx::TextureFormat::Enum texture_format;
+                            bgfx::TextureFormat::Enum texture_format(bgfx::TextureFormat::Unknown);
                             if (image->components_per_pixel == 3)
                                 texture_format = bgfx::TextureFormat::RGB8;
                             else if (image->components_per_pixel == 4)
                                 texture_format = bgfx::TextureFormat::RGBA8;
+                            DFW_ASSERT(texture_format != bgfx::TextureFormat::Unknown);
 
-                            bgfx::Memory const* data = bgfx::copy(image->data, image->data_size);
+                            bgfx::Memory const* data = bgfx::copy(image->data, static_cast<uint32>(image->data_size));
                             bgfx::TextureHandle texture_handle = bgfx::createTexture2D(
-                                image->width
+                                  image->width
                                 , image->height
                                 , false
                                 , 1
@@ -374,7 +382,7 @@ namespace DFW
                             );
 
                             // Store Texture.
-                            material_textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, BGFX_TEXTURE_NONE, 0));
+                            material_textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, BGFX_TEXTURE_NONE, uint8(0)));
                         }
 
                         return material_textures;
@@ -388,7 +396,7 @@ namespace DFW
                     //}
                 }
             };
-            
+
             Detail::ParseAssimpNode(assimp_scene->mRootNode, assimp_scene, AssimpMeshParser);
             return model;
         }

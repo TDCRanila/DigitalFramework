@@ -4,9 +4,6 @@
 
 #include <CoreSystems/ApplicationEvents.h>
 
-// Forward Declare(s)
-struct GLFWwindow;
-
 namespace DFW
 {
     // Forward Declare(s)

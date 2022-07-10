@@ -6,30 +6,31 @@ namespace DFW
 {
     namespace DECS
     {
-        Universe::Universe(DFW::DUID a_universe_id, std::string const& a_universe_name)
+        Universe::Universe(DFW::DUID const a_universe_id, std::string const& a_universe_name)
             : id(a_universe_id)
             , name(a_universe_name)
         {
             registry.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
-            _entity_data_registration.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
+
             _entities.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
             _pending_deletion_entities.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
+            
+            _entity_handle_registration.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
+            _entity_duid_registration.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
         }
 
         Universe::~Universe()
         {
             registry.clear();
-            _entity_data_registration.clear();
+            
             _entities.clear();
             _pending_deletion_entities.clear();
+
+            _entity_handle_registration.clear();
+            _entity_duid_registration.clear();
         }
 
-        bool Universe::IsValid() const
-        {
-            return id != DFW_INVALID_DUID;
-        }
-
-        std::vector<Entity>  Universe::GetEntities()
+        std::vector<Entity> Universe::GetEntities()
         {
             //// TODO Not using ranges/view as of right now due to C20.
             //auto range = _entities | std::ranges::views::transform([this](EntityHandle const& a_handle) { return Entity(a_handle, this); });
@@ -45,6 +46,29 @@ namespace DFW
                 entities.emplace_back(entity_handle);
             }
             return entities;
+        }
+
+        bool Universe::IsValid() const
+        {
+            return id != DFW_INVALID_DUID;
+        }
+
+        void Universe::RegisterEntity(Entity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp)
+        {
+            DFW_ASSERT(a_entity.IsEntityValid());
+            EntityHandle const handle = a_entity.GetHandle();
+            _entities.emplace(handle);
+            _entity_handle_registration.emplace(handle, a_registration_comp);
+            _entity_duid_registration.emplace(a_entity.GetID(), handle);
+        }
+
+        void Universe::UnregisterEntity(Entity const& a_entity)
+        {
+            DFW_ASSERT(a_entity.IsEntityValid());
+            EntityHandle const handle = a_entity.GetHandle();
+            _entities.erase(handle);
+            _entity_handle_registration.erase(handle);
+            _entity_duid_registration.erase(a_entity.GetID());
         }
 
     } // End of namespace ~ DECS.

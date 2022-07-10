@@ -112,21 +112,20 @@ namespace DFW
 				}
 				else
 				{
-					ComponentType& component	= a_entity._universe->registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
+					// Construct and emplace the Component.
+					Universe& universe(*a_entity._universe);
+					ComponentType& component	= universe.registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
 					component._owner			= a_entity;
 					component._id				= DFW::GenerateDUID();
 
-					// Special Case for the Entity Registration Component as Entity will not have been registered yet.
-					// TODO: Not all that nice, could look in an alternative.
-					if constexpr (AreSameTypes<EntityRegistrationComponent, ComponentType>)
-					{
-						_keylock_system.SetComponentBits<ComponentType>(component.comp_list);
-					}
+					// Update ComponentBitList of the entity
+					EntityDataComponent* reg_comp;
+					if constexpr (AreSameTypes<EntityDataComponent, ComponentType>)
+						reg_comp = &component;
 					else
-					{
-						EntityRegistrationComponent& reg_comp = a_entity._universe->_entity_data_registration.at(a_entity._handle).get();
-						_keylock_system.SetComponentBits<ComponentType>(reg_comp.comp_list);
-					}
+						reg_comp = &universe._entity_handle_registration.at(a_entity).get();
+
+					_keylock_system.SetComponentBits<ComponentType>(reg_comp->comp_list);
 
 					return component;
 				}
@@ -146,9 +145,10 @@ namespace DFW
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to remove a component from an invalid entity.");
 				if (HasComponents<ComponentType>(a_entity))
 				{
-					a_entity._universe->registry.remove<ComponentType>(a_entity);
+					Universe& universe(*a_entity._universe);
+					universe.registry.remove<ComponentType>(a_entity);
 
-					EntityRegistrationComponent& reg_comp = a_entity._universe->_entity_data_registration.at(a_entity._handle).get();
+					EntityDataComponent& reg_comp = universe._entity_handle_registration.at(a_entity).get();
 					_keylock_system.ResetComponentBits<ComponentType>(reg_comp.comp_list);
 
 					return true;

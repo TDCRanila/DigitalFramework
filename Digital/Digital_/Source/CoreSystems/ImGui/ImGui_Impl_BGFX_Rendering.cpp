@@ -202,13 +202,13 @@ namespace DFW
 			ImGui_ImplBGFX_RenderDrawData(viewport->DrawData, view_id);
 		}
 
-		void ImGui_ImplBGFX_SwapBuffers(ImGuiViewport* a_viewport, void*)
+		void ImGui_ImplBGFX_SwapBuffers(ImGuiViewport* /*a_viewport*/, void*)
 		{
 		}
 
 		bool ImGui_ImplBGFX_CreateFontsTexture()
 		{
-			ImGuiIO& const io = ImGui::GetIO();
+			ImGuiIO const& io = ImGui::GetIO();
 			{
 				ImFontConfig config;
 				config.FontDataOwnedByAtlas = false;

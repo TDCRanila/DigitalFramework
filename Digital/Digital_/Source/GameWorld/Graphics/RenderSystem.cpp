@@ -1,47 +1,33 @@
 #include <GameWorld/Graphics/RenderSystem.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Events/EventDispatcher.h>
-#include <CoreSystems/GameClock.h>
-#include <CoreSystems/Memory.h>
-#include <CoreSystems/Logging/Logger.h>
-#include <CoreSystems/Window/WindowManagement.h>
-
 #include <GameWorld/Camera/CameraComponent.h>
-#include <GameWorld/Camera/CameraSystem.h>
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Graphics/ModelComponent.h>
 
-#include <CoreSystems/Events/EventDispatcher.h>
-#include <Modules/ECS/Managers/ECSystemManager.h>
 #include <Modules/ECS/Objects/ECSUniverse.h>
 
 #include <Modules/Rendering/RenderModule.h>
 #include <Modules/Rendering/ShaderProgram.h>
 #include <Modules/Rendering/ModelData.h>
+#include <Modules/Rendering/RenderTarget.h>
+#include <Modules/Rendering/Uniform.h>
+
+#include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Events/EventDispatcher.h>
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include <bgfx/bgfx.h>
 #include <bx/math.h>
 
-DFW::SharedPtr<DFW::DRender::ShaderProgram> _program_ptr;
-
 namespace DFW
 {
-	RenderSystem::RenderSystem()
-		: _rendering_camera(nullptr)
-		, window_width(DWindow::DFW_DEFAULT_WINDOW_WIDTH)
-		, window_height(DWindow::DFW_DEFAULT_WINDOW_HEIGHT)
-	{
-	}
-
     void RenderSystem::Init()
     {
 		DRender::RenderModule* render_module(CoreService::GetRenderModule());
 
 		// View Target
-		_view_target = render_module->view_director.AllocateViewTarget("rendersystem");
+		_view_target = render_module->view_director.AllocateViewTarget("rendersystem", DRender::ViewTargetInsertion::Front);
 
 		// Shaders		
 		_program_ptr = render_module->shader_library.ConstructProgram("vs_basic", "fs_basic");
@@ -50,8 +36,8 @@ namespace DFW
 		_texture_sampler_uniform = render_module->uniform_library.CreateUniform("s_texture", DRender::UniformTypes::Sampler);
 
 		// Register Callbacks.
-		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
-		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &RenderSystem::OnCameraNewActiveEvent>(this);
+		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
     }
 
 	void RenderSystem::Terminate()
@@ -60,8 +46,8 @@ namespace DFW
 		CoreService::GetRenderModule()->uniform_library.DestroyUniform(*_texture_sampler_uniform.get());
 
 		// Unregister Callbacks.
-		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderSystem::OnWindowResizeEvent>(this);
-		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &RenderSystem::OnCameraNewActiveEvent>(this);
+		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
     
     void RenderSystem::Update(DECS::Universe& a_universe)
@@ -82,8 +68,15 @@ namespace DFW
 
 		// Clear Target.
 		DRender::ViewTarget const& view_target = *_view_target;
+		bgfx::setViewClear(view_target, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
 		bgfx::touch(view_target);
 		
+		// If nullptr, RenderSystem will be drawing to the default framebuffer.
+		if (_render_target)
+		{
+			bgfx::setViewFrameBuffer(view_target, _render_target->fbh);
+		}
+
 		// Camera Setup.
 		if (_rendering_camera)
 		{
@@ -113,14 +106,14 @@ namespace DFW
 
 			for (DRender::SubMeshData const& submodel : model.model->submeshes)
 			{
-				bgfx::setTransform(glm::value_ptr(transform.Transform()));
+				bgfx::setTransform(glm::value_ptr(transform.GetTransformMatrix()));
 				bgfx::setVertexBuffer(0, submodel.vbh);
 				bgfx::setIndexBuffer(submodel.ibh);
 				
 				if (!submodel.textures.empty())
 				{
 					SharedPtr<DRender::TextureData> const& texture = submodel.textures[0];
-					bgfx::setTexture(texture->stage, _texture_sampler_uniform->handle, texture->handle);
+					bgfx::setTexture(texture->stage, _texture_sampler_uniform->handle, texture->handle, texture->flags | BGFX_SAMPLER_POINT);
 				}
 
 				bgfx::setState(state);
@@ -128,16 +121,5 @@ namespace DFW
 			}
 		}
     }
-
-	void RenderSystem::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
-	{
-		window_width	= a_window_event.new_width;
-		window_height	= a_window_event.new_height;
-	}
-
-	void RenderSystem::OnCameraNewActiveEvent(CameraNewActiveEvent const& a_camera_event)
-	{
-		_rendering_camera = SystemManager().GetSystem<CameraSystem>()->GetCamera(a_camera_event.camera_identifier);
-	}
 
 } // End of namespace ~ DFW.

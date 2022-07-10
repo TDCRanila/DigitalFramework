@@ -13,21 +13,14 @@ namespace DFW
 		class MainConsole : public DFW::StageBase
 		{
 		public:
-			MainConsole(std::string a_stage_name, bool a_start_disabled = false);
-
+			MainConsole(std::string const& a_stage_name, bool a_start_disabled);
 			~MainConsole();
-
-			virtual void RenderImGui() override;
-
-			virtual void Update() override;
-
-			virtual void OnAttached() override;
-
-			virtual void OnRemoved() override;
 
 			void LogMessageCallback(std::string a_log_message);
 
 		private:
+			virtual void Update() override;
+			virtual void RenderImGui() override;
 
 			struct ConsoleLogFilter
 			{

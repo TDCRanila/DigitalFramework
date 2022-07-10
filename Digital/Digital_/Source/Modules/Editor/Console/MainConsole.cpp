@@ -1,4 +1,4 @@
-#include <Editor/Console/MainConsole.h>
+#include <Modules/Editor/Console/MainConsole.h>
 
 #include <imgui/imgui.h>
 
@@ -6,7 +6,7 @@ namespace DFW
 {
     namespace DEditor
     {
-        MainConsole::MainConsole(std::string a_stage_name, bool a_start_disabled)
+        MainConsole::MainConsole(std::string const& a_stage_name, bool a_start_disabled)
             : DFW::StageBase(a_stage_name, a_start_disabled)
             , _have_filters_changed(false)
             , _default_history_limit(500)
@@ -24,7 +24,15 @@ namespace DFW
         MainConsole::~MainConsole()
         {
             // Formally unsubscribe from the logger.
-            DFW::Logger::RemoveSubscriber(this->GetID(), DFW_BIND_FUNC(LogMessageCallback));
+            DFW::Logger::RemoveSubscriber(this->GetID());
+        }
+
+        void MainConsole::Update()
+        {
+            if (_have_filters_changed)
+            {
+                // apply show or not
+            }
         }
 
         void MainConsole::RenderImGui()
@@ -61,22 +69,6 @@ namespace DFW
             ImGui::PopStyleVar(2);
 
             ImGui::End();
-        }
-
-        void MainConsole::Update()
-        {
-            if (_have_filters_changed)
-            {
-                // apply show or not
-            }
-        }
-
-        void MainConsole::OnAttached()
-        {
-        }
-
-        void MainConsole::OnRemoved()
-        {
         }
 
         void MainConsole::ParseLogMessage(ParsedLogMessageStruct& a_log_struct, std::string a_log_string)

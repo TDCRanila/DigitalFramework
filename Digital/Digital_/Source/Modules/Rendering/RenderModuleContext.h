@@ -19,7 +19,7 @@ namespace DFW
             void InitRenderModuleContext();
             void TerminateRenderModuleContext();
 
-            void BeginFrame(SharedPtr<ViewTarget const> const& a_main_viewtarget);
+            void BeginFrame(ViewTarget const& a_main_viewtarget);
             void EndFrame();
             void RenderFrame();
 

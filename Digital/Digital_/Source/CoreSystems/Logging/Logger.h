@@ -73,7 +73,7 @@ namespace DFW
 		// TODO Find a way to clean this function up some more, to avoid having the user to call std::bind(func, object, placeholder)
 		// Could then also force the user to use a shared_ptr to an object?
 		static void AddSubscriber(DUID const a_subscriber_id, LogSubscriberMessageFunc const& a_func);
-		static void RemoveSubscriber(DUID const a_subscriber_id, LogSubscriberMessageFunc const& a_func);
+		static void RemoveSubscriber(DUID const a_subscriber_id);
 
 	private:
 		static spdlog::logger _main_logger;
@@ -97,13 +97,13 @@ namespace DFW
 #define DFW_WARNLOG(...)	SPDLOG_LOGGER_WARN(&DFW::Logger::ProvideMainLogger(), __VA_ARGS__)
 #define DFW_ERRORLOG(...)	SPDLOG_LOGGER_ERROR(&DFW::Logger::ProvideMainLogger(), __VA_ARGS__)
 
-#elif defined(DFW_RELEASE64) || defined(DFW_FINAL64)
+#elif defined(DFW_RELEASE64)
 
-#define DFW_LOG(...)		{ /*EMPTY*/ }
-#define DFW_DEBUGLOG(...)	{ /*EMPTY*/ }
-#define DFW_INFOLOG(...)	{ /*EMPTY*/ }
-#define DFW_WARNLOG(...)	{ /*EMPTY*/ }
-#define DFW_ERRORLOG(...)	{ /*EMPTY*/ }
+#define DFW_LOG(...)
+#define DFW_DEBUGLOG(...)
+#define DFW_INFOLOG(...)
+#define DFW_WARNLOG(...)
+#define DFW_ERRORLOG(...)
 
 #endif
 

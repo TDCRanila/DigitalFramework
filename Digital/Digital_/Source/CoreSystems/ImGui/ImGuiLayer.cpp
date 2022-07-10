@@ -83,14 +83,14 @@ namespace DFW
 	void ImGuiLayer::EndFrame()
 	{
 		// TODO Debug: Software Cursor
-		ImGuiIO& const io = ImGui::GetIO();
+		ImGuiIO const& io = ImGui::GetIO();
 		ImGui::GetForegroundDrawList()->AddCircleFilled(io.MousePos, 4.0f, 0xFFFFFFFF);
 		
 		Debug_DrawViewportRenderingInformation();
 
 		ImGui::Render();
 
-		DImGui::ImGui_ImplBGFX_RenderDrawData(ImGui::GetMainViewport()->DrawData, DImGui::main_window_id);
+		DImGui::ImGui_ImplBGFX_RenderDrawData(ImGui::GetMainViewport()->DrawData, DImGui::main_view_id);
 		
 		// Update and Render additional Viewports / Platform Windows
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -192,7 +192,7 @@ namespace DFW
 
 	void ImGuiLayer::Debug_DrawViewportRenderingInformation() const
 	{
-		ImGuiIO& const io = ImGui::GetIO();
+		ImGuiIO const& io = ImGui::GetIO();
 		ImGui::Text("DisplaySize: [%f | %f]", io.DisplaySize.x, io.DisplaySize.y);
 		ImGui::Text("DisplayFramebufferScale: [%f | %f]", io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
 		ImGui::Text("[%f | %f]", io.MousePos.x, io.MousePos.y);

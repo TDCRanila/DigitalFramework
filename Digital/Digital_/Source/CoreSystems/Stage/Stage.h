@@ -17,11 +17,11 @@ namespace DFW
 		StageBase(std::string const& a_stage_name, bool a_start_disabled);
 		virtual ~StageBase() = default;
 		
-		virtual void Update()		= 0;
+		virtual void Update() = 0;
 		virtual void RenderImGui();
 
-		virtual void OnAttached()	= 0;
-		virtual void OnRemoved()	= 0;
+		virtual void OnAttached();
+		virtual void OnRemoved();
 				
 		bool IsDisabled() const;
 		virtual void OnEnable();
@@ -37,12 +37,12 @@ namespace DFW
 	
 	protected:
 		void RequestEventBroadcast(StageEvent& a_event);
-		std::shared_ptr<StageStackCommunicator> GetStageStackCommunicator() const;
+		SharedPtr<StageStackCommunicator> GetStageStackCommunicator() const;
 	
 	protected:
 		friend StageStackController;
 
-		void SetStageStackCommunicator(std::shared_ptr<StageStackCommunicator> const& a_communicator);
+		void SetStageStackCommunicator(SharedPtr<StageStackCommunicator> const& a_communicator);
 		void BindStageEventFunc(StageEventCallbackFunc const& a_event_callback_func);
 
 	protected:
@@ -55,7 +55,7 @@ namespace DFW
 		StageID _id;
 		std::string _name; // TODO DEBUG IFElse
 
-		std::shared_ptr<StageStackCommunicator> _stage_stack_communicator;
+		SharedPtr<StageStackCommunicator> _stage_stack_communicator;
 		StageEventCallbackFunc _stage_event_callback_func;
 
 		bool _is_disabled;

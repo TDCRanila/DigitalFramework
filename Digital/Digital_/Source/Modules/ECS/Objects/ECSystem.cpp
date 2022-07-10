@@ -6,7 +6,7 @@ namespace DFW
 {
 	namespace DECS
 	{
-		System::System(Key)
+		System::System()
 			: _system_manager(nullptr)
 			, _entity_manager(nullptr)
 			, _event_handler(nullptr)

@@ -14,7 +14,7 @@ namespace DFW
                     case(UniformTypes::Mat3): return bgfx::UniformType::Mat3; break;
                     case(UniformTypes::Mat4): return bgfx::UniformType::Mat4; break;
                     case(UniformTypes::Vec4): return bgfx::UniformType::Vec4; break;
-                    default: DFW_ASSERT(false && "Unrecognised uniform detected."); break;
+                    default: DFW_ASSERT(false && "Unrecognised uniform detected."); return bgfx::UniformType::End;  break;
                 }
             }
         } // End of namespace ~ Detail.

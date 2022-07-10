@@ -20,29 +20,25 @@ endif()
 ### Build Configurations.
 if (MSVC)
     if(CMAKE_CONFIGURATION_TYPES)
-        set(CMAKE_CONFIGURATION_TYPES PreProcessorDebug;Debug;PreRelease;Release;Final)
+        set(CMAKE_CONFIGURATION_TYPES PreProcessorDebug;Debug;PreRelease;Release)
         set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}")
     endif()
 
-    # PreProcessorDebug Config
-    set(CMAKE_CXX_FLAGS_PREPROCESSORDEBUG "/W4 /Zi /Od /Ob0 /RTC1 /MDd /P /DDFW_PDEBUG64")
-    set(CMAKE_EXE_LINKER_FLAGS_PREPROCESSORDEBUG "/DEBUG:FULL")
+    # PreProcessorDebug Config -  WarningLVL4, No Optimization, PDB, RunTimeErrorChecks, PreprocessingOutput, MultiProccesor
+    set(CMAKE_CXX_FLAGS_PREPROCESSORDEBUG "/W4 /Od /Ob0 /Zi /Zf /RTC1 /P /MP /DDFW_PDEBUG64")
+    set(CMAKE_EXE_LINKER_FLAGS_PREPROCESSORDEBUG "/DEBUG:FASTLINK")
 
-    # Debug Config
-    set(CMAKE_CXX_FLAGS_DEBUG "/W4 /Zi /Od /Ob0 /RTC1 /MDd /DDFW_DEBUG64")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG:FULL")
+    # Debug Config - WarningLVL4, No Optimization, PDB, RunTimeErrorChecks, MultiProccesor
+    set(CMAKE_CXX_FLAGS_DEBUG "/W4 /Od /Ob0 /Zi /Zf /RTC1 /MP /DDFW_DEBUG64")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG:FASTLINK")
 
-    # PreRelease Config
-    set(CMAKE_CXX_FLAGS_PRERELEASE "/W4 /Zi /Od /Ob0 /RTC1 /MDd /DDFW_PRERELEASE64")
+    # PreRelease Config - WarningLVL4, Speed Optimized, DebugForOptimized, MultiProccesor
+    set(CMAKE_CXX_FLAGS_PRERELEASE "/W4 /O2 /Ob0 /Zo /MP /DDFW_PRERELEASE64")
     set(CMAKE_EXE_LINKER_FLAGS_PRERELEASE "/DEBUG:FASTLINK")
 
-    # Release Config
-    set(CMAKE_CXX_FLAGS_RELEASE "/W4 /WX /O2 /Oi /Ot /MD /DDFW_RELEASE64")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "")
-
-    # Final Config
-    set(CMAKE_CXX_FLAGS_FINAL "/W4 /WX /O2 /Oi /Ot /MD /DDFW_FINAL64")
-    set(CMAKE_EXE_LINKER_FLAGS_FINAL "")
+    # Release Config - WarningLVL4, Warning=Error, Speed Optimized, WholeProgramOptimization, MultiProccesor
+    set(CMAKE_CXX_FLAGS_RELEASE "/W4 /WX /O2 /Oi /GL /MP /DDFW_RELEASE64")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO /LTCG:INCREMENTAL")
 else()
     message("Unsupported Build Configurations.")
 endif()

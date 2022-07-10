@@ -28,9 +28,9 @@ namespace DFW
                 image->data         = data;
                 image->data_size    = image_width * image_height * image_components * sizeof(stbi_uc);
 
-                image->width        = image_width;
-                image->height       = image_height;
-                image->components_per_pixel = image_components;
+                image->width        = static_cast<uint16>(image_width);
+                image->height       = static_cast<uint16>(image_height);
+                image->components_per_pixel = static_cast<uint8>(image_components);
 
                 image->file_name        = DUtility::GetFileStem(a_filepath);
                 image->file_extension   = DUtility::GetFileExtension(a_filepath);
@@ -47,7 +47,7 @@ namespace DFW
             int32 image_width(0);
             int32 image_height(0);
             int32 image_components(0);
-            stbi_uc* data = stbi_load_from_memory(static_cast<stbi_uc const*>(a_image_data), a_image_size, &image_width, &image_height, &image_components, STBI_default);
+            stbi_uc* data = stbi_load_from_memory(static_cast<stbi_uc const*>(a_image_data), static_cast<int32>(a_image_size), &image_width, &image_height, &image_components, STBI_default);
 
             DFW::UniquePtr<ImageData> image;
             if (data)
@@ -57,9 +57,9 @@ namespace DFW
                 image->data         = data;
                 image->data_size    = image_width * image_height * image_components * sizeof(stbi_uc);
 
-                image->width        = image_width;
-                image->height       = image_height;
-                image->components_per_pixel = image_components;
+                image->width        = static_cast<uint16>(image_width);
+                image->height       = static_cast<uint16>(image_height);
+                image->components_per_pixel = static_cast<uint8>(image_components);
 
                 image->file_name        = "loaded-from-memory";
                 image->file_extension   = "loaded-from-memory";

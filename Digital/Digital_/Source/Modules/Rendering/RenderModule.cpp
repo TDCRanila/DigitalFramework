@@ -18,7 +18,8 @@ namespace DFW
             _render_module_context = MakeUnique<RenderModuleContext>();
             _render_module_context->InitRenderModuleContext();
 
-            _main_view_target = view_director.AllocateViewTarget(ViewTargetDirector::DEFAULT_MAIN_VIEWTARGET_NAME);
+            view_director.Init();
+            _main_view_target = view_director.AllocateViewTarget(ViewTargetDirector::DEFAULT_MAIN_VIEWTARGET_NAME, DRender::ViewTargetInsertion::Front);
 
             CoreService::GetMainEventHandler()->InstantBroadcast<RendererInitializedEvent>();
         }
@@ -26,6 +27,7 @@ namespace DFW
         void RenderModule::TerminateRenderModule()
         {
             shader_library.FreeLibraryResources();
+            render_target_director.FreeAllRenderTargets();
 
             _render_module_context->TerminateRenderModuleContext();
 
@@ -34,7 +36,7 @@ namespace DFW
                           
         void RenderModule::BeginFrame()
         {
-            _render_module_context->BeginFrame(_main_view_target);
+            _render_module_context->BeginFrame(*_main_view_target);
         }
 
         void RenderModule::EndFrame()

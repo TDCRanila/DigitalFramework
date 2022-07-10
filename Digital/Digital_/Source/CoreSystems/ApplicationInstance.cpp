@@ -63,7 +63,7 @@ namespace DFW
         return _stage_stack_controller;
     }
 
-    void ApplicationInstance::RegisterStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_stack_communicator)
+    void ApplicationInstance::RegisterStageStackCommunicator(SharedPtr<StageStackCommunicator> a_stack_communicator)
     {
         if (auto ptr = a_stack_communicator.get())
         {

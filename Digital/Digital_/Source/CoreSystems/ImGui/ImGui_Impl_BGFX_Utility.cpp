@@ -7,8 +7,8 @@ namespace DFW
     namespace DImGui
     {
         ImGuiRenderingContext   imgui_rendering_context;
-        GLFWwindow*             main_window = nullptr;
-        bgfx::ViewId            main_window_id = 0;
+        GLFWwindow*             main_application_window = nullptr;
+        bgfx::ViewId            main_view_id = DMath::GetMinValueOfType<bgfx::ViewId>();
 
         bool				    mouse_just_pressed[ImGuiMouseButton_COUNT] = { false };
         bool                    installed_callbacks = false;

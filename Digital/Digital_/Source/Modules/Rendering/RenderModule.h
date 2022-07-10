@@ -3,6 +3,7 @@
 #include <Modules/Rendering/ShaderLibrary.h>
 #include <Modules/Rendering/UniformLibrary.h>
 #include <Modules/Rendering/ViewTargetDirector.h>
+#include <Modules/Rendering/RenderTargetDirector.h>
 
 namespace DFW
 {
@@ -33,6 +34,7 @@ namespace DFW
             void Debug_RendererInfo(/*RenderModuleDebugOptions& const a_debug_option*/);
 
             ViewTargetDirector view_director;
+            RenderTargetDirector render_target_director;
 
             ShaderLibrary shader_library;
             UniformLibrary uniform_library;

@@ -2,17 +2,10 @@
 
 #include <CoreSystems/Logging/Logger.h>
 
-#include <vector>
-
 namespace DFW
 {
 	namespace DECS
 	{
-		Entity EntityManager::CreateEntity(Universe& a_universe) const
-		{
-			return CreateEntity<Entity>(a_universe);
-		}
-
 		void EntityManager::DestroyEntity(Entity const& a_entity) const
 		{
 			if (!a_entity.IsEntityValid())
@@ -26,22 +19,38 @@ namespace DFW
 				DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
 		}
 
-		Entity EntityManager::GetEntity(DFW::DUID a_entity_id, Universe& a_universe) const
+		Entity EntityManager::GetEntity(DFW::DUID const a_entity_id, Universe& a_universe) const
 		{
-			// TODO : If function becomes used very frequently - might need to rework this function/container. 
-			// (Adding a separate container or a bi map; DUID - EntityHandle)
-			DFW_ASSERT(a_universe.IsValid() && "Attempting to find an entity in an invalid universe.");
+			if (!a_universe.IsValid())
+			{
+				DFW_ERRORLOG("Attempting to find an entitiy, but the universe is invalid.");
+				DFW_ASSERT(a_universe.IsValid() && "Attempting to find an entity in an invalid universe.");
+				return Entity();
+			}
 
-			auto search_func = [&a_entity_id](auto const& it) -> bool { return it.second.get().id == a_entity_id; };
-			auto const& result = std::find_if(
-					a_universe._entity_data_registration.begin()
-				,	a_universe._entity_data_registration.end()
-				,	search_func);
+			EntityDUIDRegistrationMap const& umap = a_universe._entity_duid_registration;
+			if (auto const& it = umap.find(a_entity_id); it == umap.end())
+				return Entity();
+			else
+				return Entity(it->second, a_universe);
+		}
 
-			if (result != a_universe._entity_data_registration.end())
-				return Entity(result->first, a_universe);
+		EntityTypeID EntityManager::GetEntityTypeID(Entity const& a_entity) const
+		{
+			DFW_ASSERT(a_entity.IsEntityValid());
+			return GetComponent<EntityDataComponent>(a_entity).type;
+		}
 
-			return Entity();
+		void EntityManager::SetEntityName(Entity const& a_entity, std::string const& a_new_entity_name)
+		{
+			DFW_ASSERT(a_entity.IsEntityValid());
+			GetComponent<EntityDataComponent>(a_entity).name = a_new_entity_name;
+		}
+		
+		std::string EntityManager::GetEntityName(Entity const& a_entity) const
+		{
+			DFW_ASSERT(a_entity.IsEntityValid());
+			return GetComponent<EntityDataComponent>(a_entity).name;			
 		}
 
 		void EntityManager::ManageDeletedEntities(Universe& a_universe)
@@ -53,10 +62,7 @@ namespace DFW
 
 			for (EntityHandle const handle : a_universe._pending_deletion_entities)
 			{
-				// TODO Destroy Entity Event Broadcast.
-
-				a_universe._entity_data_registration.erase(handle);				
-				a_universe._entities.erase(handle);
+				a_universe.UnregisterEntity(Entity(handle, a_universe));
 				a_universe.registry.destroy(handle);
 			}
 

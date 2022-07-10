@@ -21,7 +21,7 @@ namespace DFW
 		class AutoFactory
 		{
 		public:
-			using  FuncType			= std::function<std::unique_ptr<BaseType>(Args...)>;
+			using  FuncType			= std::function<UniquePtr<BaseType>(Args...)>;
 			using  StringTypePair	= std::pair<std::string, std::type_index>;
 			using  FactoryMap		= std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>;
 			using  FactoryMapIt		= std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>::iterator;
@@ -29,7 +29,7 @@ namespace DFW
 			friend BaseType;
 
 			template <typename... Args>
-			static std::unique_ptr<BaseType> Construct(const std::string& a_type_name, Args&&...a_args)
+			static UniquePtr<BaseType> Construct(const std::string& a_type_name, Args&&...a_args)
 			{
 
 				// Create Compare Lambda used to find the type_name in the factories map.
@@ -45,7 +45,7 @@ namespace DFW
 				if (it == fac.end())
 				{
 					_ASSERT(false); // -> Element has not been found in factory_map.
-					return std::unique_ptr<BaseType>();
+					return UniquePtr<BaseType>();
 				}
 				else
 				{
@@ -69,9 +69,9 @@ namespace DFW
 				static bool RegisterType()
 				{
 					// Create Factory Construction Lambda for Type RegistrarType.
-					FuncType constructor_lambda = [](Args... a_args) -> std::unique_ptr<BaseType>
+					FuncType constructor_lambda = [](Args... a_args) -> UniquePtr<BaseType>
 					{
-						return std::make_unique<RegistrarType>(std::forward<Args>(a_args)...);
+						return MakeUnique<RegistrarType>(std::forward<Args>(a_args)...);
 					};
 
 					const std::type_index type_id = typeid(RegistrarType);
@@ -102,9 +102,9 @@ namespace DFW
 				static bool RegisterType()
 				{
 					// Create Factory Construction Lambda for Type RegistrarType.
-					FuncType constructor_lambda = [](Args... a_args) -> std::unique_ptr<BaseType>
+					FuncType constructor_lambda = [](Args... a_args) -> UniquePtr<BaseType>
 					{
-						return std::make_unique<RegistrarType>(std::forward<Args>(a_args)...);
+						return MakeUnique<RegistrarType>(std::forward<Args>(a_args)...);
 					};
 
 					const std::type_index type_id = typeid(RegistrarType);

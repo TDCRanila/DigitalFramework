@@ -14,7 +14,7 @@ namespace DFW
 		DeleteAllAttachedStages();
 	}
 
-	void StageStackController::SetStageStackCommunicator(std::shared_ptr<StageStackCommunicator> a_communicator)
+	void StageStackController::SetStageStackCommunicator(SharedPtr<StageStackCommunicator> a_communicator)
 	{
 		_stage_stack_communicator = a_communicator;
 

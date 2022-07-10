@@ -1,7 +1,6 @@
 #pragma once
 
 #include <CoreSystems/DUID.h>
-#include <CoreSystems/Memory.h>
 
 #include <Modules/ECS/Objects/ECSEntity.h>
 #include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
@@ -10,7 +9,7 @@
 
 #include <unordered_set>
 #include <unordered_map>
-#include <functional>
+#include <vector>
 
 namespace DFW
 {
@@ -23,7 +22,8 @@ namespace DFW
 
         const int64 DFW_UNIVERSE_ENTITY_RESERVATION_SIZE = 256;
 
-        using EntityRegistrationMap = std::unordered_map<EntityHandle, DFW::RefWrap<EntityRegistrationComponent>>;
+        using EntityHandleRegistrationMap   = std::unordered_map<EntityHandle, DFW::RefWrap<EntityDataComponent>>;
+        using EntityDUIDRegistrationMap     = std::unordered_map<DFW::DUID, EntityHandle>;
 
         class Universe final
         {
@@ -33,22 +33,25 @@ namespace DFW
             friend Entity;
 
         public:
-            Universe(DFW::DUID a_universe_id, std::string const& a_universe_name);
+            Universe(DFW::DUID const a_universe_id, std::string const& a_universe_name);
             ~Universe();
+
+            std::strong_ordering operator<=>(Universe const& a_other) const = default;
+            
+            std::vector<Entity> GetEntities();
 
             bool IsValid() const;
 
-            std::strong_ordering operator<=>(Universe const& a_other) const = default;
-
-            std::vector<Entity> GetEntities();
-
             entt::registry  registry;
-
             DFW::DUID const id;
             std::string const name;
 
         private:
-            EntityRegistrationMap               _entity_data_registration;
+            void RegisterEntity(Entity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp);
+            void UnregisterEntity(Entity const& a_entity);
+
+            EntityHandleRegistrationMap         _entity_handle_registration;
+            EntityDUIDRegistrationMap           _entity_duid_registration;
             std::unordered_set<EntityHandle>    _entities;
             std::unordered_set<EntityHandle>    _pending_deletion_entities;
 
