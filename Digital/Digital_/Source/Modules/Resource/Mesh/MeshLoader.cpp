@@ -104,18 +104,18 @@ namespace DFW
             DFW_ASSERT(assimp_scene->HasMeshes() && "How?");
 
             // Allocate.
-            UniquePtr<DRender::MeshData> model = MakeUnique<DRender::MeshData>();
-            model->source_file = a_filepath;
-            model->file_name = DUtility::GetFileName(a_filepath);
+            UniquePtr<DRender::MeshData> mesh = MakeUnique<DRender::MeshData>();
+            mesh->source_file = a_filepath;
+            mesh->file_name = DUtility::GetFileName(a_filepath);
 
             // Parse all nodes starting from the root.
-            auto AssimpMeshParser = [&model](Detail::AssimpMesh a_mesh, aiScene const* a_assimp_scene) -> void
+            auto AssimpMeshParser = [&mesh](Detail::AssimpMesh a_mesh, aiScene const* a_assimp_scene) -> void
             {
                 // Setup.
                 aiMesh const* assimp_mesh = a_mesh.mesh;
 
                 // Add new submesh.
-                DRender::SubMeshData& submesh = model->submeshes.emplace_back();
+                DRender::SubMeshData& submesh = mesh->submeshes.emplace_back();
 
                 if (!assimp_mesh->HasPositions() || !assimp_mesh->HasFaces())
                     DFW_ASSERT(false && "Must have vertex and index data.");
@@ -302,7 +302,7 @@ namespace DFW
                     //}
                     //else
                     //{
-                    auto ParseMaterial = [&a_assimp_scene, &model](aiMaterial const* a_assimp_material, aiTextureType const a_texture_type) -> std::vector<SharedPtr<DRender::TextureData>>
+                    auto ParseMaterial = [&a_assimp_scene, &mesh](aiMaterial const* a_assimp_material, aiTextureType const a_texture_type) -> std::vector<SharedPtr<DRender::TextureData>>
                     {
                         std::vector<SharedPtr<DRender::TextureData>> material_textures;
                         
@@ -357,7 +357,7 @@ namespace DFW
                             }
                             else
                             {
-                                std::string const image_path(DUtility::GetParentPath(model->source_file) + DIR_SLASH + texture_path.C_Str());
+                                std::string const image_path(DUtility::GetParentPath(mesh->source_file) + DIR_SLASH + texture_path.C_Str());
                                 image = LoadImageData(image_path);
                                 DFW_ASSERT(image);
                             }
@@ -398,7 +398,7 @@ namespace DFW
             };
 
             Detail::ParseAssimpNode(assimp_scene->mRootNode, assimp_scene, AssimpMeshParser);
-            return model;
+            return mesh;
         }
 
     } // End of namespace ~ DResource.

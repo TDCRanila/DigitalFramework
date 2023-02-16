@@ -23,6 +23,7 @@ namespace DGame
 {
     TestStage::TestStage(std::string a_stage_name, bool a_start_disabled)
         : DGame::GameStageBase(a_stage_name, a_start_disabled)
+        , _universe(nullptr)
     {
         ecs = DFW::CoreService::GetECS();
     }
@@ -48,7 +49,7 @@ namespace DGame
 
         DFW::TimeUnit const dt = DFW::CoreService().GetGameClock()->GetLastFrameDeltaTime();
         float32 const speed = 10.0f;
-        DFW::TransformComponent& transform = ecs->EntityManager().GetComponent<DFW::TransformComponent>(main_entity);
+        DFW::Transform& transform = ecs->EntityManager().GetComponent<DFW::TransformComponent>(main_entity);
         transform.translation.x += dir.x * dt * speed;
         transform.translation.y += dir.y * dt * speed;
         transform.translation.z += dir.z * dt * speed;
@@ -59,9 +60,11 @@ namespace DGame
         // Create Universe.
         _universe = ecs->RegisterUniverse("Main");
         
+        DFW::DECS::EntityManager& em = ecs->EntityManager();
+
         // Create Main Camera.
-        camera_entity = ecs->EntityManager().CreateEntity(*_universe);
-        ecs->EntityManager().AddComponent<DFW::TransformComponent>(camera_entity);
+        camera_entity = em.CreateEntity(*_universe);
+        em.AddComponent<DFW::TransformComponent>(camera_entity);
 
         DFW::CameraSystem* camera_system = ecs->SystemManager().GetSystem<DFW::CameraSystem>();
         DFW::CameraComponent& camera = camera_system->CreateCamera(camera_entity, "camera-one");
@@ -73,25 +76,25 @@ namespace DGame
         std::string model_dir(work_dir + DIR_SLASH + "models");
 
         // XYZ Representation.
-        DFW::Entity xyz = ecs->EntityManager().CreateEntity(*_universe);
-        DFW::TransformComponent& xyz_transform = ecs->EntityManager().AddComponent<DFW::TransformComponent>(xyz);
-        DFW::ModelComponent& xyz_model = ecs->EntityManager().AddComponent<DFW::ModelComponent>(xyz);
+        DFW::Entity xyz = em.CreateEntity(*_universe);
+        DFW::Transform& xyz_transform = em.AddComponent<DFW::TransformComponent>(xyz);
         xyz_transform.translation = glm::vec3(0.0f, 0.0f, 0.0f);
-        xyz_model.model = DFW::DResource::LoadMesh(model_dir + DIR_SLASH + "xyz" + DIR_SLASH + "xyz_10x10m.glb");
+        DFW::ModelComponent& xyz_model = em.AddComponent<DFW::ModelComponent>(xyz);
+        xyz_model.mesh = DFW::DResource::LoadMesh(model_dir + DIR_SLASH + "xyz" + DIR_SLASH + "xyz_10x10m.glb");
 
         // Sponza Scene.
-        DFW::Entity sponza = ecs->EntityManager().CreateEntity(*_universe);
-        ecs->EntityManager().AddComponent<DFW::TransformComponent>(sponza);
-        DFW::ModelComponent& sponza_model = ecs->EntityManager().AddComponent<DFW::ModelComponent>(sponza);
-        sponza_model.model = DFW::DResource::LoadMesh(model_dir + DIR_SLASH + "sponza" + DIR_SLASH + "sponza.gltf");
+        DFW::Entity sponza = em.CreateEntity(*_universe);
+        em.AddComponent<DFW::TransformComponent>(sponza);
+        DFW::ModelComponent& sponza_model = em.AddComponent<DFW::ModelComponent>(sponza);
+        sponza_model.mesh = DFW::DResource::LoadMesh(model_dir + DIR_SLASH + "sponza" + DIR_SLASH + "sponza.gltf");
 
         // Movable Entity.
-        main_entity = ecs->EntityManager().CreateEntity(*_universe);
-        DFW::TransformComponent& transform = ecs->EntityManager().AddComponent<DFW::TransformComponent>(main_entity);
+        main_entity = em.CreateEntity(*_universe);
+        DFW::Transform& transform = em.AddComponent<DFW::TransformComponent>(main_entity);
         transform.translation = glm::vec3(0.0f, 5.0f, 0.0f);
         transform.scale = glm::vec3(2.0f);
-        DFW::ModelComponent& model = ecs->EntityManager().AddComponent<DFW::ModelComponent>(main_entity);
-        model.model = DFW::Debug_CreateBasicCube();
+        DFW::ModelComponent& model = em.AddComponent<DFW::ModelComponent>(main_entity);
+        model.mesh = DFW::Debug_CreateBasicCube();
     }
 
     void TestStage::OnRemoved()

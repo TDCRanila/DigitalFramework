@@ -22,7 +22,7 @@ namespace DFW
         ModelComponent() = default;
         ~ModelComponent() = default;
 
-        SharedPtr<DRender::MeshData> model;
+        SharedPtr<DRender::MeshData> mesh;
         SharedPtr<DRender::ShaderProgram> shader;
 
     };

@@ -94,8 +94,9 @@ target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
 target_include_directories(${LIB_NAME} PUBLIC "${BIMG_INCLUDE_DIR}")
 target_include_directories(${LIB_NAME} PUBLIC "${BX_INCLUDE_DIR}")
 
-target_compile_definitions(bx PUBLIC "$<$<CONFIG:PreProcessorDebug>:BX_CONFIG_DEBUG=1>")
-target_compile_definitions(bx PUBLIC "$<$<CONFIG:PreRelease>:BX_CONFIG_DEBUG=0>")
+target_compile_definitions(bx PUBLIC 
+    "$<$<CONFIG:PreProcessorDebug>:BX_CONFIG_DEBUG=1>"
+    "$<$<CONFIG:PreRelease>:BX_CONFIG_DEBUG=1>")
 
 message("\n")
 
