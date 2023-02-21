@@ -43,6 +43,7 @@ namespace DFW
         UniquePtr<ImGuiLayer> _imgui;
  
         std::string _application_name;
+        bool _should_application_run;
 
     private:
         bool Debug_CheckForEmergencyApplicationExit() const;
