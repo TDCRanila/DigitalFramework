@@ -37,6 +37,7 @@ namespace DFW
 		
 		bool RemoveStage(StageID a_id);
 		bool RemoveStageBack(StageID a_id);
+		void RemoveAllAttachedStages();
 
 		std::vector<StageBase*>::iterator begin() { return _stages.begin(); }
 		std::vector<StageBase*>::iterator end() { return _stages.end(); }
@@ -48,22 +49,9 @@ namespace DFW
 		std::vector<StageBase*>::const_reverse_iterator rbegin() const { return _stages.rbegin(); }
 		std::vector<StageBase*>::const_reverse_iterator rend() const { return _stages.rend(); }
 
-	protected:
-		friend class ApplicationInstance;
-
-		void SetStageStackCommunicator(SharedPtr<StageStackCommunicator> a_communicator);
-
-		void RemoveAllAttachedStages();
-
-		const std::vector<StageBase*>& GetStages() const;
-
 	private:
-		void DeleteAllAttachedStages();
-
 		int64 _stage_insert_index;
 		
-		SharedPtr<StageStackCommunicator> _stage_stack_communicator;
-
 		std::vector<StageBase*> _stages;
 
 	};
@@ -92,15 +80,9 @@ namespace DFW
 		stage_ptr = new TStage(std::forward<Args>(a_args)...);
 		++_stage_insert_index;
 
-		stage_ptr->SetStageStackCommunicator(_stage_stack_communicator);
-		stage_ptr->BindStageEventFunc(DFW_BIND_FUNC(_stage_stack_communicator->OnStageEventReceived));
-
 		DFW_INFOLOG("Attaching New Stage with ID: {}", stage_ptr->GetID());
 
 		stage_ptr->OnAttached();
-
-		StageAttachedEvent event(stage_ptr->GetID(), stage_ptr->GetName(), stage_ptr->IsDisabled());
-		_stage_stack_communicator->OnStageEventReceived(event);
 
 		return stage_ptr->GetID();
 	}
@@ -120,15 +102,9 @@ namespace DFW
 		StageBase*& stage_ptr	= _stages.emplace_back();
 		stage_ptr				= new TStage(std::forward<Args>(a_args)...);
 
-		stage_ptr->SetStageStackCommunicator(_stage_stack_communicator);
-		stage_ptr->BindStageEventFunc(DFW_BIND_FUNC(_stage_stack_communicator->OnStageEventReceived));
-
 		DFW_INFOLOG("Attaching New Stage at the back of the stack with ID: {}", stage_ptr->GetID());
 
 		stage_ptr->OnAttached();
-
-		StageAttachedEvent event(stage_ptr->GetID(), stage_ptr->GetName(), stage_ptr->IsDisabled());
-		_stage_stack_communicator->OnStageEventReceived(event);
 
 		return stage_ptr->GetID();
 	}

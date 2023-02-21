@@ -13,8 +13,7 @@
 namespace DFW
 {    
     ApplicationInstance::ApplicationInstance()
-        : _stage_stack_communicator(nullptr)
-        , _application_name("")
+        : _application_name("")
         , _game_clock(0.0f, false)
     {
     }
@@ -58,20 +57,9 @@ namespace DFW
         DFW_INFOLOG("{} - Terminating Application Complete - Elapsed Time: {}", _application_name, elapsed_termination_time);
     }
 
-    StageStackController& ApplicationInstance::ProvideStageStackController()
+    StageStackController& ApplicationInstance::GetStageStackController()
     {
-        return _stage_stack_controller;
-    }
-
-    void ApplicationInstance::RegisterStageStackCommunicator(SharedPtr<StageStackCommunicator> a_stack_communicator)
-    {
-        if (auto ptr = a_stack_communicator.get())
-        {
-            _stage_stack_communicator = a_stack_communicator;
-
-            _stage_stack_communicator->SetStageStackController(_stage_stack_controller);
-            _stage_stack_controller.SetStageStackCommunicator(_stage_stack_communicator);
-        }
+        return _stage_stack;
     }
 
     void ApplicationInstance::PreApplicationInit()
@@ -94,10 +82,6 @@ namespace DFW
 
         // User-Implemented Pre-Initialisation.
         PreApplicationInit();
-        
-        // Stage Communicator
-        if (_stage_stack_communicator == nullptr)
-            DFW_WARNLOG("Potentially not registering a stage stack communicator before application load. This might cause issues.");
 
         // Event Library
         DFW::EventLibrary::ProcessEventCollection<DFW::StageEvent>();
@@ -144,8 +128,7 @@ namespace DFW
         _window_management->TerminateWindowManagement();
 
         // Gracefully remove attached stages.
-        _stage_stack_controller.RemoveAllAttachedStages();
-        _stage_stack_controller.DeleteAllAttachedStages();
+        _stage_stack.RemoveAllAttachedStages();
 
         // Core Services.
         CoreService::ReleaseServices();
@@ -170,12 +153,11 @@ namespace DFW
             }
             else
             {               
-                std::vector<StageBase*> const& _stages = _stage_stack_controller.GetStages();
                 { // Regular Application Update
                     _render_module.BeginFrame();
 
                     // Update Stages.
-                    for (StageBase* stage : _stages)
+                    for (StageBase* stage : _stage_stack)
                     {
                         if (!stage->IsDisabled())
                             stage->Update();
@@ -189,7 +171,7 @@ namespace DFW
                 { // ImGui Related Update.
                     _imgui.BeginFrame(_game_clock.GetLastFrameDeltaTime());
 
-                    for (StageBase* stage : _stages)
+                    for (StageBase* stage : _stage_stack)
                     {
                         if (!stage->IsDisabled())
                             stage->RenderImGui();

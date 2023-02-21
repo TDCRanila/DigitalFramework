@@ -23,13 +23,10 @@ namespace DFW
         void RunApplication(char const* a_name);
         void RunApplication(std::string const& a_name);
 
-        EventDispatcher application_event_handler;
+        EventDispatcher& GetEventDispatcher();
+        StageStackController& GetStageStackController();
 
     protected:
-        void RegisterStageStackCommunicator(SharedPtr<StageStackCommunicator> a_stack_communicator);
-
-        StageStackController& ProvideStageStackController();
-
         virtual void PreApplicationInit();
         virtual void PostApplicationInit();
 
@@ -42,13 +39,13 @@ namespace DFW
         void Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval) const;
         void Debug_ToggleMouseCursorCapture() const;
 
-        StageStackController _stage_stack_controller;
-        SharedPtr<StageStackCommunicator> _stage_stack_communicator;
+        EventDispatcher application_event_handler;
+        StageStackController _stage_stack;
 
-        SharedPtr<DWindow::WindowManagement>   _window_management;
-        DInput::InputManagementSystem          _input_system;
         DECS::ECSModule                        _ecs_module;
-        DRender::RenderModule                  _render_module;
+        SharedPtr<DWindow::WindowManagement>    _window_management;
+        DInput::InputManagementSystem           _input_system;
+        DRender::RenderModule                   _render_module;
  
         ImGuiLayer _imgui;
         
