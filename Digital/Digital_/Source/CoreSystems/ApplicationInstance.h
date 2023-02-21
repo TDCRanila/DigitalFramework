@@ -23,9 +23,6 @@ namespace DFW
         void RunApplication(char const* a_name);
         void RunApplication(std::string const& a_name);
 
-        EventDispatcher& GetEventDispatcher();
-        StageStackController& GetStageStackController();
-
     protected:
         virtual void PreApplicationInit();
         virtual void PostApplicationInit();
@@ -35,23 +32,22 @@ namespace DFW
         void TerminateApplication();
         void UpdateApplication();
 
+        SharedPtr<GameClock> _game_clock;
+        SharedPtr<EventDispatcher> _application_event_handler;
+        SharedPtr<StageStackController> _stage_controller;
+
+        SharedPtr<DWindow::WindowManagement> _window_management;
+        SharedPtr<DInput::InputManagementSystem> _input_management;
+        SharedPtr<DRender::RenderModule> _render_module;
+ 
+        UniquePtr<ImGuiLayer> _imgui;
+ 
+        std::string _application_name;
+
+    private:
         bool Debug_CheckForEmergencyApplicationExit() const;
         void Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval) const;
         void Debug_ToggleMouseCursorCapture() const;
-
-        EventDispatcher application_event_handler;
-        StageStackController _stage_stack;
-
-        DECS::ECSModule                        _ecs_module;
-        SharedPtr<DWindow::WindowManagement>    _window_management;
-        DInput::InputManagementSystem           _input_system;
-        DRender::RenderModule                   _render_module;
- 
-        ImGuiLayer _imgui;
-        
-        GameClock _game_clock;
- 
-        std::string _application_name;
     };
 
 } // End of namespace ~ DFW.

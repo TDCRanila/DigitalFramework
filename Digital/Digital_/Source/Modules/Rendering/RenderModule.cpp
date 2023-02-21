@@ -21,7 +21,7 @@ namespace DFW
             view_director.Init();
             _main_view_target = view_director.AllocateViewTarget(ViewTargetDirector::DEFAULT_MAIN_VIEWTARGET_NAME, DRender::ViewTargetInsertion::Front);
 
-            CoreService::GetMainEventHandler()->InstantBroadcast<RendererInitializedEvent>();
+            CoreService::GetAppEventHandler()->InstantBroadcast<RendererInitializedEvent>();
         }
 
         void RenderModule::TerminateRenderModule()
@@ -31,7 +31,7 @@ namespace DFW
 
             _render_module_context->TerminateRenderModuleContext();
 
-            CoreService::GetMainEventHandler()->InstantBroadcast<RendererTerminatedEvent>();
+            CoreService::GetAppEventHandler()->InstantBroadcast<RendererTerminatedEvent>();
         }
                           
         void RenderModule::BeginFrame()

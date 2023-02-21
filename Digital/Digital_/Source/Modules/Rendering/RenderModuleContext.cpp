@@ -27,23 +27,23 @@ namespace DFW
             // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
             bgfx::renderFrame();
 
-            SharedPtr<DWindow::WindowInstance> main_window_ptr = CoreService::GetWindowSystem()->GetMainWindow();
+            SharedPtr<DWindow::WindowInstance> main_window_ptr = CoreService::GetWindowManagement()->GetMainWindow();
             DFW_ASSERT(main_window_ptr, "Pointer to the main window is invalid, window mangement might not have been initialised.");
 
             bgfx::PlatformData platform_data;
-            platform_data.nwh = CoreService::GetWindowSystem()->GetMainWindowPWH();
+            platform_data.nwh = CoreService::GetWindowManagement()->GetMainWindowPWH();
             bgfx::setPlatformData(platform_data);
 
             bgfx::init(_bgfx_init_settings);
 
             // Register Event Callbacks.
-            CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &RenderModuleContext::OnWindowResizeEvent>(this);
+            CoreService::GetAppEventHandler()->RegisterCallback<WindowResizeEvent, &RenderModuleContext::OnWindowResizeEvent>(this);
         }
 
         void RenderModuleContext::TerminateRenderModuleContext()
         {
             // Unregister Event Callbacks.
-            CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderModuleContext::OnWindowResizeEvent>(this);
+            CoreService::GetAppEventHandler()->UnregisterCallback<WindowResizeEvent, &RenderModuleContext::OnWindowResizeEvent>(this);
 
             bgfx::shutdown();
         }
@@ -97,7 +97,7 @@ namespace DFW
 
             InitRenderModuleContext();
 
-            CoreService::GetMainEventHandler()->InstantBroadcast<RendererAPIChanged>();
+            CoreService::GetAppEventHandler()->InstantBroadcast<RendererAPIChanged>();
         }
 
         void RenderModuleContext::ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags)
@@ -114,16 +114,15 @@ namespace DFW
             static bool show_debug_info     = false;
             static auto bgfx_debug_config   = BGFX_DEBUG_TEXT;
 
-            static auto input_system_ptr    = CoreService::GetInputSystem();
-            static auto window_system_ptr   = CoreService::GetWindowSystem();
-            static auto main_window_ptr     = window_system_ptr->GetMainWindow();
+            static auto input_management_ptr    = CoreService::GetInputManagement();
+            static auto main_window_ptr     = CoreService::GetWindowManagement()->GetMainWindow();
 
-            bool const key_f1_pressed = input_system_ptr->IsKeyReleased(DInput::DKey::F1);
+            bool const key_f1_pressed = input_management_ptr->IsKeyReleased(DInput::DKey::F1);
             if (key_f1_pressed)
             {
                 bool const key_shift_pressed = 
-                        input_system_ptr->IsKeyDown(DInput::DKey::LEFT_SHIFT) 
-                    ||  input_system_ptr->IsKeyDown(DInput::DKey::RIGHT_SHIFT);
+                        input_management_ptr->IsKeyDown(DInput::DKey::LEFT_SHIFT) 
+                    ||  input_management_ptr->IsKeyDown(DInput::DKey::RIGHT_SHIFT);
 
                 if (show_debug_info && key_shift_pressed)
                 {

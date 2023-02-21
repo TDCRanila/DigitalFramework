@@ -24,7 +24,7 @@ namespace DFW
 {
     void RenderSystem::Init()
     {
-		DRender::RenderModule* render_module(CoreService::GetRenderModule());
+		SharedPtr<DRender::RenderModule> render_module = CoreService::GetRenderModule();
 
 		// View Target
 		_view_target = render_module->view_director.AllocateViewTarget("rendersystem", DRender::ViewTargetInsertion::Front);
@@ -36,7 +36,7 @@ namespace DFW
 		_texture_sampler_uniform = render_module->uniform_library.CreateUniform("s_texture", DRender::UniformTypes::Sampler);
 
 		// Register Callbacks.
-		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		CoreService::GetAppEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
 		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
     }
 
@@ -46,7 +46,7 @@ namespace DFW
 		CoreService::GetRenderModule()->uniform_library.DestroyUniform(*_texture_sampler_uniform.get());
 
 		// Unregister Callbacks.
-		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		CoreService::GetAppEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
 		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
     

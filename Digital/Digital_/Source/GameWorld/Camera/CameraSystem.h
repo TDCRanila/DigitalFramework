@@ -75,7 +75,7 @@ namespace DFW
 		void Debug_ToggleCameraMode();
 
 	private:
-		DFW::DInput::InputManagementSystem* _input_system;
+		SharedPtr<DFW::DInput::InputManagementSystem> _input_management;
 
         std::unordered_map<CameraIdentifier, DFW::RefWrap<CameraComponent>, CameraIdentifier::HashFunc> registered_cameras;
 

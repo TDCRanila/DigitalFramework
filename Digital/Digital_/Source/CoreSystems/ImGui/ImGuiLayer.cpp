@@ -29,8 +29,9 @@ namespace DFW
 		// Enable Multi-Viewport Feature
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		SharedPtr<DWindow::WindowInstance> main_window_ptr	= CoreService::GetWindowSystem()->GetMainWindow();
-		GLFWwindow* glfw_window_ptr							= reinterpret_cast<GLFWwindow*>(CoreService::GetWindowSystem()->GetMainWindowNWH());
+		// Provide ImGui with the main window handles.
+		SharedPtr<DWindow::WindowInstance> main_window_ptr	= CoreService::GetWindowManagement()->GetMainWindow();
+		GLFWwindow* glfw_window_ptr = reinterpret_cast<GLFWwindow*>(CoreService::GetWindowManagement()->GetMainWindowNWH());
 		DFW_ASSERT(main_window_ptr, "Pointer to the main window is invalid, window management might not have been initialised.");
 
 		io.DisplaySize	= ImVec2(

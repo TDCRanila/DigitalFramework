@@ -199,8 +199,8 @@ namespace DFW
 
     void CameraSystem::Init()
     {
-        _input_system = DFW::CoreService::GetInputSystem();
-        DFW_ASSERT(_input_system);
+        _input_management = DFW::CoreService::GetInputManagement();
+        DFW_ASSERT(_input_management);
     }
 
     void CameraSystem::Update(DECS::Universe& a_universe)
@@ -224,8 +224,8 @@ namespace DFW
         float32 const mouse_sensitivity(0.2f);
         float32 const mouse_scroll_sensitivity(5.0f);
 
-        glm::vec2 const mouse_delta(_input_system->GetMousePosDelta() * mouse_sensitivity);
-        glm::vec2 const mouse_scroll_delta(_input_system->GetMouseScrollDelta() * mouse_scroll_sensitivity);
+        glm::vec2 const mouse_delta(_input_management->GetMousePosDelta() * mouse_sensitivity);
+        glm::vec2 const mouse_scroll_delta(_input_management->GetMouseScrollDelta() * mouse_scroll_sensitivity);
 
         if (a_camera.has_enabled_six_degrees_rotation)
         {
@@ -260,7 +260,7 @@ namespace DFW
         a_camera.orientation = glm::normalize(a_camera.orientation);
 
         // Camera Speed
-        float32 const scroll_offset = DFW::CoreService().GetInputSystem()->GetMouseScrollDelta().y;
+        float32 const scroll_offset = _input_management->GetMouseScrollDelta().y;
         float32 const scroll_multiplier(25.0f);
         a_camera.fly_speed += scroll_offset * scroll_multiplier;
         
@@ -274,13 +274,13 @@ namespace DFW
 
         // Positional.
         glm::vec3 dir(0.0f);
-        if (DFW::CoreService().GetInputSystem()->IsKeyDown(DFW::DInput::DKey::LEFT))
+        if (_input_management->IsKeyDown(DFW::DInput::DKey::LEFT))
             dir.x += -1.0f;
-        if (DFW::CoreService().GetInputSystem()->IsKeyDown(DFW::DInput::DKey::RIGHT))
+        if (_input_management->IsKeyDown(DFW::DInput::DKey::RIGHT))
             dir.x += 1.0f;
-        if (DFW::CoreService().GetInputSystem()->IsKeyDown(DFW::DInput::DKey::UP))
+        if (_input_management->IsKeyDown(DFW::DInput::DKey::UP))
             dir.z += 1.0f;
-        if (DFW::CoreService().GetInputSystem()->IsKeyDown(DFW::DInput::DKey::DOWN))
+        if (_input_management->IsKeyDown(DFW::DInput::DKey::DOWN))
             dir.z += -1.0f;
 
         TimeUnit const dt = DFW::CoreService().GetGameClock()->GetLastFrameDeltaTime();
@@ -299,7 +299,7 @@ namespace DFW
 
     void CameraSystem::Debug_ToggleCameraMode()
     {
-        if (_input_system->IsKeyPressed(DInput::DKey::F3))
+        if (_input_management->IsKeyPressed(DInput::DKey::F3))
         {
             DFW_ASSERT(_active_camera);
             static bool camera_mode_toggle(false);

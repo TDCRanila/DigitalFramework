@@ -22,11 +22,14 @@ namespace DFW
 	{
 		class InputManagementSystem
 		{
-		private:
-			friend ApplicationInstance;
-
 		public:
+			InputManagementSystem();
 			~InputManagementSystem() = default;
+
+			void InitInputManagement();
+			void TerminateInputManagement();
+
+			void ProcessInputEvents();
 
 			void EnableInput();
 			void DisableInput();
@@ -69,15 +72,9 @@ namespace DFW
 			void SendScrollEvent(DWindow::WindowID a_id, float32 a_scroll_x_offset, float32 a_scroll_y_offset);
 
 		private:
-			InputManagementSystem();
-
-			void InitInputManagement();
-			void TerminateInputManagement();
-
 			void OnWindowFocusEvent(WindowFocusEvent const& a_event);
 			void OnMouseCursorReleasedEvent(InputMouseCursorReleasedEvent const& a_event);
 
-			void ProcessInputEvents();
 			bool IsKeyPressedInternal(int16 a_key) const;
 			bool IsKeyRepeatedInternal(int16 a_key) const;
 			bool IsKeyDownInternal(int16 a_key) const;
