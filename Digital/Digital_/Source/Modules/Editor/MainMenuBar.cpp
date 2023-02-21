@@ -14,11 +14,11 @@ namespace DFW
 
 		//MainMenuBar::~MainMenuBar()= default;
 
-		void MainMenuBar::Update()
+		void MainMenuBar::OnUpdate()
 		{
 		}
 
-		void MainMenuBar::RenderImGui()
+		void MainMenuBar::OnRenderImGui()
 		{
 			if (ImGui::BeginMainMenuBar())
 			{

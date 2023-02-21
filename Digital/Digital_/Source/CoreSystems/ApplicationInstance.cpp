@@ -140,27 +140,16 @@ namespace DFW
             else
             {               
                 { // Regular Application Update
+                    _stage_controller->UpdateStages();
+
                     _render_module->BeginFrame();
-
-                    // Update Stages.
-                    for (StageBase* stage : (*_stage_controller))
-                    {
-                        if (!stage->IsDisabled())
-                            stage->Update();
-                    }
-
+                    _stage_controller->RenderStages();
                     _render_module->EndFrame();
                 }
 
                 { // ImGui Related Update.
                     _imgui->BeginFrame(_game_clock->GetLastFrameDeltaTime());
-
-                    for (StageBase* stage : (*_stage_controller))
-                    {
-                        if (!stage->IsDisabled())
-                            stage->RenderImGui();
-                    }
-
+                    _stage_controller->RenderImGuiStages();
                     _imgui->EndFrame();
                 }
 

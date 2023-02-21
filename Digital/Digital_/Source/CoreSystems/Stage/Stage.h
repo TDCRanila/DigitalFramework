@@ -5,34 +5,36 @@
 namespace DFW
 {
 	// FW Declare.
-	class ApplicationInstance;
 	class StageStackController;
-	class StageStackCommunicator;
 
 	class StageBase
 	{
+		friend StageStackController;
+
 	public:
 		StageBase(std::string const& a_stage_name, bool a_start_disabled);
 		virtual ~StageBase() = default;
 		
+		bool operator==(StageBase const& a_other);
+
 		void Enable();
 		void Disable();
-
-		virtual void Update() = 0;
-		virtual void RenderImGui();
-
-		virtual void OnAttached();
-		virtual void OnRemoved();
-				
 		bool IsDisabled() const;
-		virtual void OnEnable();
-		virtual void OnDisable();
- 
+
 		StageID GetID() const;
 		std::string GetName() const;
 
-		bool operator==(StageBase const& a_other);
-		
+	protected:
+		virtual void OnUpdate() = 0;
+		virtual void OnRender();
+		virtual void OnRenderImGui();
+
+		virtual void OnAttached();
+		virtual void OnRemoved();
+
+		virtual void OnEnable();
+		virtual void OnDisable();
+
 	private:
 		StageID _id;
 		std::string _name;

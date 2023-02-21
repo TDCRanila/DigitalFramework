@@ -18,11 +18,11 @@ namespace DFW
         {
         }
 
-        void EditorDocker::Update()
+        void EditorDocker::OnUpdate()
         {
         }
 
-        void EditorDocker::RenderImGui()
+        void EditorDocker::OnRenderImGui()
         {
             DFW_ASSERT(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable);
 

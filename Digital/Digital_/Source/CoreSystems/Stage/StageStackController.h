@@ -17,8 +17,12 @@ namespace DFW
 		StageStackController();
 		~StageStackController();
 
-		// TODO Provide argument documentation for user. (Basically the constructor arguments of the BaseStage class)
+		void UpdateStages();
+		void RenderStages();
+		void RenderImGuiStages();
 
+	public:
+		// TODO Provide argument documentation for user. (Basically the constructor arguments of the BaseStage class)
 		template <class TStage, class... Args>
 		requires (not IsDerivedFrom<TStage, StageBase>)
 		StageID AttachStage(Args&&... a_args);
@@ -50,10 +54,9 @@ namespace DFW
 		std::vector<StageBase*>::const_reverse_iterator rend() const { return _stages.rend(); }
 
 	private:
+		std::vector<StageBase*> _stages;
 		int64 _stage_insert_index;
 		
-		std::vector<StageBase*> _stages;
-
 	};
 
 } // End of namespace DFW.
@@ -62,7 +65,6 @@ namespace DFW
 
 namespace DFW
 {
-
 	template <class TStage, class... Args>
 	requires (not IsDerivedFrom<TStage, StageBase>)
 	StageID StageStackController::AttachStage(Args&&... a_args)

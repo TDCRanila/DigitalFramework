@@ -11,6 +11,11 @@ namespace DFW
 	{
 	}
 
+	bool StageBase::operator==(StageBase const& a_other)
+	{
+		return this->_id == a_other._id;
+	}
+
 	void StageBase::Enable()
 	{
 		if (_is_disabled)
@@ -39,7 +44,11 @@ namespace DFW
 		}
 	}
 
-	void StageBase::RenderImGui()
+	void StageBase::OnRender()
+	{
+	}
+
+	void StageBase::OnRenderImGui()
 	{
 	}
 
@@ -72,11 +81,6 @@ namespace DFW
 	std::string StageBase::GetName() const
 	{
 		return _name;
-	}
-
-	bool StageBase::operator==(StageBase const& a_other) 
-	{ 
-		return this->_id == a_other._id; 
 	}
 
 } // End of namespace ~ DFW.

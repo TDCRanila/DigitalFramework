@@ -5,12 +5,40 @@ namespace DFW
 	StageStackController::StageStackController()
 		:  _stage_insert_index(0)
 	{
+		// TODO If neccesarry might want to heap allocate the stages all at once.
 		_stages.reserve(MAX_SUPPORTED_STAGES);
 	}
 
 	StageStackController::~StageStackController()
 	{
 		RemoveAllAttachedStages();
+	}
+
+	void StageStackController::UpdateStages()
+	{
+		for (StageBase* stage : _stages)
+		{
+			if (!stage->IsDisabled())
+				stage->OnUpdate();
+		}
+	}
+
+	void StageStackController::RenderStages()
+	{
+		for (StageBase* stage : _stages)
+		{
+			if (!stage->IsDisabled())
+				stage->OnRender();
+		}
+	}
+
+	void StageStackController::RenderImGuiStages()
+	{
+		for (StageBase* stage : _stages)
+		{
+			if (!stage->IsDisabled())
+				stage->OnRenderImGui();
+		}
 	}
 
 	void StageStackController::RemoveAllAttachedStages()
@@ -33,8 +61,7 @@ namespace DFW
 		{
 			DFW_INFOLOG("Removing attached Stage with ID: {}", a_id);
 			StageBase* stage_ptr = (*it);
-			stage_ptr->OnRemoved();
-			
+			stage_ptr->OnRemoved();			
 			delete stage_ptr;
 
 			_stages.erase(it);
@@ -56,7 +83,6 @@ namespace DFW
 			DFW_INFOLOG("Removing attached Stage with ID: {}", a_id);
 			StageBase* stage_ptr = (*it);
 			stage_ptr->OnRemoved();
-
 			delete stage_ptr;
 
 			_stages.erase(it);
