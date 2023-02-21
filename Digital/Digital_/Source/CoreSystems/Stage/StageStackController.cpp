@@ -34,8 +34,6 @@ namespace DFW
 			DFW_INFOLOG("Removing attached Stage with ID: {}", a_id);
 			StageBase* stage_ptr = (*it);
 			stage_ptr->OnRemoved();
-
-			StageRemovedEvent event(stage_ptr->GetID(), stage_ptr->GetName(), stage_ptr->IsDisabled());
 			
 			delete stage_ptr;
 
@@ -58,8 +56,6 @@ namespace DFW
 			DFW_INFOLOG("Removing attached Stage with ID: {}", a_id);
 			StageBase* stage_ptr = (*it);
 			stage_ptr->OnRemoved();
-
-			StageRemovedEvent event(stage_ptr->GetID(), stage_ptr->GetName(), stage_ptr->IsDisabled());
 
 			delete stage_ptr;
 

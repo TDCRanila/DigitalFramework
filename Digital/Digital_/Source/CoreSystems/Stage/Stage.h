@@ -1,7 +1,5 @@
 #pragma once
 
-#include <CoreSystems/ApplicationEvents.h>
-#include <CoreSystems/Stage/StageEvents.h>
 #include <CoreSystems/Stage/StageID.h>
 
 namespace DFW
@@ -17,6 +15,9 @@ namespace DFW
 		StageBase(std::string const& a_stage_name, bool a_start_disabled);
 		virtual ~StageBase() = default;
 		
+		void Enable();
+		void Disable();
+
 		virtual void Update() = 0;
 		virtual void RenderImGui();
 
@@ -26,34 +27,15 @@ namespace DFW
 		bool IsDisabled() const;
 		virtual void OnEnable();
 		virtual void OnDisable();
-
-		virtual void OnApplicationEvent(ApplicationEvent const& a_event);
-		virtual void OnStageEvent(StageEvent const& a_event);
  
 		StageID GetID() const;
 		std::string GetName() const;
 
 		bool operator==(StageBase const& a_other);
-	
-	protected:
-		void RequestEventBroadcast(StageEvent& a_event);
-		SharedPtr<StageStackCommunicator> GetStageStackCommunicator() const;
-	
-	protected:
-		friend StageStackController;
-
-		void SetStageStackCommunicator(SharedPtr<StageStackCommunicator> const& a_communicator);
-		void BindStageEventFunc(StageEventCallbackFunc const& a_event_callback_func);
-
-		void Enable();
-		void Disable();
-
+		
 	private:
 		StageID _id;
-		std::string _name; // TODO DEBUG IFElse
-
-		SharedPtr<StageStackCommunicator> _stage_stack_communicator;
-		StageEventCallbackFunc _stage_event_callback_func;
+		std::string _name;
 
 		bool _is_disabled;
 		
