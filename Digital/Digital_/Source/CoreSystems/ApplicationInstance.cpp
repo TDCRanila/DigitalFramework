@@ -14,6 +14,7 @@ namespace DFW
 {    
     ApplicationInstance::ApplicationInstance()
         : _application_name("")
+        , _should_application_run(true)
     {
         // Event Library
         DFW::EventLibrary::ProcessEventCollection<DFW::StageEvent>();
@@ -114,8 +115,7 @@ namespace DFW
 
     void ApplicationInstance::UpdateApplication()
     {         
-        bool should_run(true);
-        while (should_run)
+        while (_should_application_run)
         {
             _game_clock->BeginGameFrame();
             
@@ -127,7 +127,7 @@ namespace DFW
             // Update Game Instance(s)
             if (_window_management->HaveAllWindowsBeenClosed() || Debug_CheckForEmergencyApplicationExit())
             {
-                should_run = false;
+                _should_application_run = false;
             }
             else
             {               
