@@ -87,17 +87,17 @@ namespace DFW
         PreApplicationInit();
 
         // Initialize Core Services.
-        _window_management->InitWindowManagement();
+        _window_management->Init();
         _window_management->ChangeWindowParameters(
                 _window_management->GetMainWindowID()
             ,   DWindow::WindowParameters { _application_name, DWindow::DFW_DEFAULT_WINDOW_WIDTH, DWindow::DFW_DEFAULT_WINDOW_HEIGHT }
         );
 
-        _input_management->InitInputManagement();
-        _render_module->InitRenderModule();
+        _input_management->Init();
+        _render_module->Init();
 
         // Initialize ImGui Layer.
-        _imgui->InitImGuiLayer();
+        _imgui->Init();
 
         // OS focusses on the main window. Make sure listeners know about this.
         _application_event_handler->InstantBroadcast<WindowFocusEvent>(_window_management->GetMainWindowID(), true);
@@ -108,11 +108,11 @@ namespace DFW
 
     void ApplicationInstance::TerminateApplication()
     {
-        _imgui->TerminateImGuiLayer();
+        _imgui->Terminate();
 
-        _render_module->TerminateRenderModule();
-        _input_management->TerminateInputManagement();
-        _window_management->TerminateWindowManagement();
+        _render_module->Terminate();
+        _input_management->Terminate();
+        _window_management->Terminate();
 
         // Gracefully remove attached stages.
         _stage_controller->RemoveAllAttachedStages();

@@ -45,9 +45,6 @@ namespace DFW
 		void SetStageStackCommunicator(SharedPtr<StageStackCommunicator> const& a_communicator);
 		void BindStageEventFunc(StageEventCallbackFunc const& a_event_callback_func);
 
-	protected:
-		friend ApplicationInstance;
-
 		void Enable();
 		void Disable();
 

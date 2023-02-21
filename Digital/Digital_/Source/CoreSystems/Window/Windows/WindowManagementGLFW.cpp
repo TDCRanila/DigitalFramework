@@ -192,7 +192,7 @@ namespace DFW
 
         } // End of namespace ~ GLFWWindowCallBacks.
 
-        void WindowManagementGLFW::InitWindowManagement()
+        void WindowManagementGLFW::Init()
         {
             glfwSetErrorCallback(GLFWWindowCallBacks::glfw_error_callback);
 
@@ -214,7 +214,7 @@ namespace DFW
             RegisterCommonEventCallbacks();
         }
 
-        void WindowManagementGLFW::TerminateWindowManagement()
+        void WindowManagementGLFW::Terminate()
         {
             // Unregister Event Callbacks.
             UnregisterCommonEventCallbacks();

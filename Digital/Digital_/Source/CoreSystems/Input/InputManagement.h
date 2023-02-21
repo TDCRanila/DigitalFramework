@@ -15,9 +15,6 @@
 
 namespace DFW
 {
-	// FW Declare
-	class ApplicationInstance;
-
 	namespace DInput
 	{
 		class InputManagementSystem
@@ -26,14 +23,15 @@ namespace DFW
 			InputManagementSystem();
 			~InputManagementSystem() = default;
 
-			void InitInputManagement();
-			void TerminateInputManagement();
+			void Init();
+			void Terminate();
 
 			void ProcessInputEvents();
 
 			void EnableInput();
 			void DisableInput();
 
+		public:
 			bool IsKeyPressed(DKey a_key) const;
 			bool IsKeyRepeated(DKey a_key) const;
 			bool IsKeyDown(DKey a_key) const;

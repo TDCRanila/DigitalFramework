@@ -11,7 +11,7 @@
 
 namespace DFW
 {
-	void ImGuiLayer::InitImGuiLayer()
+	void ImGuiLayer::Init()
 	{
 		// Context
 		IMGUI_CHECKVERSION();
@@ -58,7 +58,7 @@ namespace DFW
 		// Clipboard
 	}
 
-	void ImGuiLayer::TerminateImGuiLayer()
+	void ImGuiLayer::Terminate()
 	{
 		// Render & Platform Shutdown
 		DImGui::ImGui_ImplBGFX_ShutdownGraphics();

@@ -9,9 +9,6 @@ struct GLFWwindow;
 
 namespace DFW
 {
-    // FW Declare.
-    class ApplicationInstance;
-
     namespace DWindow
     {
         constexpr const char*   DFW_DEFAULT_WINDOW_NAME     = "DIGITAL";
@@ -22,10 +19,17 @@ namespace DFW
 
         class WindowManagement
         {
-            friend ApplicationInstance;
         public:
+            WindowManagement() = default;
             virtual ~WindowManagement() = default;
 
+            static SharedPtr<WindowManagement> Construct();
+
+            virtual void Init() = 0;
+            virtual void Terminate() = 0;
+            virtual void PollWindowEvents() = 0;
+
+        public:
             virtual SharedPtr<WindowInstance> ConstructWindow(WindowParameters const& a_window_parameters) = 0;
             virtual void RequestWindowClose(WindowID const a_window_id) = 0;
             virtual void DestroyWindowsRequestedForClosure() = 0;
@@ -55,14 +59,10 @@ namespace DFW
             WindowParameters default_window_parameters;
 
         protected:
-            WindowManagement() = default;
-
             SharedPtr<WindowInstance>& GetWindowInternal(WindowID const a_window_id);
 
             void RegisterCommonEventCallbacks();
             void UnregisterCommonEventCallbacks();
-
-            void OnWindowFocusEvent(WindowFocusEvent const& a_event);
 
             WindowContainer _window_instances;
             std::vector<WindowID> _windows_requested_destruction;
@@ -70,11 +70,7 @@ namespace DFW
             WindowID _focussed_window_id;
         
         private:
-            static SharedPtr<WindowManagement> Construct();
-
-            virtual void InitWindowManagement() = 0;
-            virtual void TerminateWindowManagement() = 0;
-            virtual void PollWindowEvents() = 0;
+            void OnWindowFocusEvent(WindowFocusEvent const& a_event);
 
         };
 

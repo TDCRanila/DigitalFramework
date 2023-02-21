@@ -8,18 +8,14 @@ namespace DFW
 	class ImGuiLayer final
 	{
 	public:
+		ImGuiLayer() = default;
 		~ImGuiLayer() = default;
 
-		void InitImGuiLayer();
-		void TerminateImGuiLayer();
+		void Init();
+		void Terminate();
 
 		void BeginFrame(float32 const a_delta_time);
 		void EndFrame();
-
-	protected:
-		friend ApplicationInstance;
-
-		ImGuiLayer() = default;
 	
 	private:
 		void SetupStyle();

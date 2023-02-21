@@ -19,13 +19,14 @@ namespace DFW
             RenderModule();
             ~RenderModule();
 
-            void InitRenderModule();
-            void TerminateRenderModule();
+            void Init();
+            void Terminate();
 
             void BeginFrame();
             void EndFrame();
             void RenderFrame();
 
+        public:
             void SubmitMesh();
             void SubmitSprite();
 

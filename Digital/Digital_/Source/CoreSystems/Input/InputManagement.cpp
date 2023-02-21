@@ -17,14 +17,14 @@ namespace DFW
 			_dir_event_buffer.reserve(16);
 		}
 
-		void InputManagementSystem::InitInputManagement()
+		void InputManagementSystem::Init()
 		{
 			// Register Event Callbacks.
 			CoreService::GetAppEventHandler()->RegisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);
 			CoreService::GetAppEventHandler()->RegisterCallback<InputMouseCursorReleasedEvent, &InputManagementSystem::OnMouseCursorReleasedEvent>(this);
 		}
 
-		void InputManagementSystem::TerminateInputManagement()
+		void InputManagementSystem::Terminate()
 		{
 			// Unregister Event Callbacks.
 			CoreService::GetAppEventHandler()->UnregisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);

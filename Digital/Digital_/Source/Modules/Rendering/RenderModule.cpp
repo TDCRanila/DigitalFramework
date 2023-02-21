@@ -13,7 +13,7 @@ namespace DFW
         RenderModule::RenderModule() = default;
         RenderModule::~RenderModule() = default;
 
-        void RenderModule::InitRenderModule()
+        void RenderModule::Init()
         {
             _render_module_context = MakeUnique<RenderModuleContext>();
             _render_module_context->InitRenderModuleContext();
@@ -24,7 +24,7 @@ namespace DFW
             CoreService::GetAppEventHandler()->InstantBroadcast<RendererInitializedEvent>();
         }
 
-        void RenderModule::TerminateRenderModule()
+        void RenderModule::Terminate()
         {
             shader_library.FreeLibraryResources();
             render_target_director.FreeAllRenderTargets();
