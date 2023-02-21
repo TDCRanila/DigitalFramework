@@ -24,8 +24,8 @@ namespace DFW
         void RunApplication(std::string const& a_name);
 
     protected:
-        virtual void PreApplicationInit();
-        virtual void PostApplicationInit();
+        virtual void PreApplicationInit() = 0;
+        virtual void PostApplicationInit() = 0;
 
     private:
         void InitApplication();

@@ -55,14 +55,6 @@ namespace DFW
         DFW_INFOLOG("{} - Terminating Application Complete - Elapsed Time: {}", _application_name, elapsed_termination_time);
     }
 
-    void ApplicationInstance::PreApplicationInit()
-    {   
-    }
-
-    void ApplicationInstance::PostApplicationInit()
-    {
-    }
-
     void ApplicationInstance::InitApplication()
     {
         // Allocate Services.
