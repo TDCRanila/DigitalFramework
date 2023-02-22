@@ -6,6 +6,10 @@
 
 #include <Modules/ECS/Objects/ECSUniverse.h>
 #include <Modules/Rendering/RenderModule.h>
+#include <Modules/Rendering/ShaderLibrary.h>
+#include <Modules/Rendering/UniformLibrary.h>
+#include <Modules/Rendering/ViewTargetDirector.h>
+
 #include <Modules/Rendering/RenderTarget.h>
 #include <Modules/Rendering/ViewTarget.h>
 #include <Modules/Rendering/ShaderProgram.h>
@@ -136,13 +140,13 @@ namespace DFW
 		SharedPtr<DRender::RenderModule> render_module = CoreService::GetRenderModule();
 
 		// View Target
-		_view_target = render_module->view_director.AllocateViewTarget("spritesystem", DRender::ViewTargetInsertion::Front);
+		_view_target = render_module->GetViewDirector().AllocateViewTarget("spritesystem", DRender::ViewTargetInsertion::Front);
 
 		// Shaders
-		_program_ptr = render_module->shader_library.ConstructProgram("vs_sprites", "fs_sprites");
+		_program_ptr = render_module->GetShaderLibrary().ConstructProgram("vs_sprites", "fs_sprites");
 
 		// Uniforms
-		_texture_sampler_uniform = render_module->uniform_library.CreateUniform("s_texture", DRender::UniformTypes::Sampler);
+		_texture_sampler_uniform = render_module->GetUniformLibrary().CreateUniform("s_texture", DRender::UniformTypes::Sampler);
 
 		// Register Callbacks.
 		CoreService::GetAppEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
@@ -152,7 +156,7 @@ namespace DFW
 	void SpriteSystem::Terminate()
 	{
 		// Unload Shaders.
-		CoreService::GetRenderModule()->shader_library.DestroyProgram(_program_ptr);
+		CoreService::GetRenderModule()->GetShaderLibrary().DestroyProgram(_program_ptr);
 
 		// Unregister Callbacks.
 		CoreService::GetAppEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);

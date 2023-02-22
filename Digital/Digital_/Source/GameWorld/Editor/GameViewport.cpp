@@ -21,8 +21,8 @@ namespace DFW
             texture_handle[1] = bgfx::createTexture2D(bgfx::BackbufferRatio::Equal, false, 1, bgfx::TextureFormat::D0S8, BGFX_TEXTURE_RT | BGFX_TEXTURE_RT_WRITE_ONLY);
             bgfx::FrameBufferHandle const viewport_fbh = bgfx::createFrameBuffer(2, texture_handle, true);
             
-            DRender::RenderTargetDirector& rtd = CoreService::GetRenderModule()->render_target_director;
-            _viewport_render_target = rtd.RegisterRenderTarget(viewport_fbh, "viewport_render_target");
+            DRender::RenderTargetDirector& director = CoreService::GetRenderModule()->GetRenderTargetDirector();
+            _viewport_render_target = director.RegisterRenderTarget(viewport_fbh, "viewport_render_target");
 
             CoreService::GetECS()->SystemManager().GetSystem<RenderSystem>()->RenderToRenderTarget(_viewport_render_target);
         }
@@ -31,8 +31,8 @@ namespace DFW
         {
             CoreService::GetECS()->SystemManager().GetSystem<RenderSystem>()->RenderToDefault();
 
-            DRender::RenderTargetDirector& rtd = CoreService::GetRenderModule()->render_target_director;
-            rtd.FreeRenderTarget(*_viewport_render_target);
+            DRender::RenderTargetDirector& director = CoreService::GetRenderModule()->GetRenderTargetDirector();
+            director.FreeRenderTarget(*_viewport_render_target);
         }
 
         void GameViewport::Display()

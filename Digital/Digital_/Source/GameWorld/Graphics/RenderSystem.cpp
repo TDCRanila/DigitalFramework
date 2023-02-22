@@ -7,6 +7,10 @@
 #include <Modules/ECS/Objects/ECSUniverse.h>
 
 #include <Modules/Rendering/RenderModule.h>
+#include <Modules/Rendering/ShaderLibrary.h>
+#include <Modules/Rendering/UniformLibrary.h>
+#include <Modules/Rendering/ViewTargetDirector.h>
+
 #include <Modules/Rendering/ShaderProgram.h>
 #include <Modules/Rendering/ModelData.h>
 #include <Modules/Rendering/RenderTarget.h>
@@ -27,13 +31,13 @@ namespace DFW
 		SharedPtr<DRender::RenderModule> render_module = CoreService::GetRenderModule();
 
 		// View Target
-		_view_target = render_module->view_director.AllocateViewTarget("rendersystem", DRender::ViewTargetInsertion::Front);
+		_view_target = render_module->GetViewDirector().AllocateViewTarget("rendersystem", DRender::ViewTargetInsertion::Front);
 
 		// Shaders		
-		_program_ptr = render_module->shader_library.ConstructProgram("vs_basic", "fs_basic");
+		_program_ptr = render_module->GetShaderLibrary().ConstructProgram("vs_basic", "fs_basic");
 
 		// Uniforms
-		_texture_sampler_uniform = render_module->uniform_library.CreateUniform("s_texture", DRender::UniformTypes::Sampler);
+		_texture_sampler_uniform = render_module->GetUniformLibrary().CreateUniform("s_texture", DRender::UniformTypes::Sampler);
 
 		// Register Callbacks.
 		CoreService::GetAppEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
@@ -43,7 +47,7 @@ namespace DFW
 	void RenderSystem::Terminate()
 	{
 		// Uniforms
-		CoreService::GetRenderModule()->uniform_library.DestroyUniform(*_texture_sampler_uniform.get());
+		CoreService::GetRenderModule()->GetUniformLibrary().DestroyUniform(*_texture_sampler_uniform.get());
 
 		// Unregister Callbacks.
 		CoreService::GetAppEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
