@@ -118,9 +118,12 @@ namespace DFW
         while (_should_application_run)
         {
             _game_clock->BeginGameFrame();
+
+            _application_event_handler->ProcessPendingEvents();
             
             _window_management->PollWindowEvents();
             _window_management->DestroyWindowsRequestedForClosure();
+
             _input_management->ProcessInputEvents();
             Debug_ToggleMouseCursorCapture();
 
