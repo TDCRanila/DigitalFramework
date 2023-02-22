@@ -46,6 +46,8 @@ namespace DFW
         bool _should_application_run;
 
     private:
+        void OnApplicationCloseEvent(ApplicationCloseEvent& a_event);
+
         bool Debug_CheckForEmergencyApplicationExit() const;
         void Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval) const;
         void Debug_ToggleMouseCursorCapture() const;

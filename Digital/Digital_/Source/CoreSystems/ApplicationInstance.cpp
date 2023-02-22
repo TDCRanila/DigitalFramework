@@ -92,6 +92,9 @@ namespace DFW
         // Initialize ImGui Layer.
         _imgui->Init();
 
+        // Register Event Callbacks.
+        _application_event_handler->RegisterCallback<ApplicationCloseEvent, &ApplicationInstance::OnApplicationCloseEvent>(this);
+
         // OS focusses on the main window. Make sure listeners know about this.
         _application_event_handler->InstantBroadcast<WindowFocusEvent>(_window_management->GetMainWindowID(), true);
 
@@ -109,6 +112,9 @@ namespace DFW
 
         // Gracefully remove attached stages.
         _stage_controller->RemoveAllAttachedStages();
+
+        // Unregister Event Callbacks.
+        _application_event_handler->UnregisterCallback<ApplicationCloseEvent, &ApplicationInstance::OnApplicationCloseEvent>(this);
 
         CoreService::ReleaseServices();
     }
@@ -157,6 +163,11 @@ namespace DFW
 
             Debug_ReportGameClockInfo(DFW::TimeUnit(10.f));
         }
+    }
+
+    void ApplicationInstance::OnApplicationCloseEvent(ApplicationCloseEvent& a_event)
+    {
+        _should_application_run = false;
     }
 
     bool ApplicationInstance::Debug_CheckForEmergencyApplicationExit() const

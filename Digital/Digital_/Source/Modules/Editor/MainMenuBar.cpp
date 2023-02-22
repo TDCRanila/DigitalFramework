@@ -1,5 +1,9 @@
 #include <Modules/Editor/MainMenuBar.h>
 
+#include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Events/EventDispatcher.h>
+#include <CoreSystems/ApplicationEvents.h>
+
 #include <imgui/imgui.h>
 
 namespace DFW
@@ -24,7 +28,8 @@ namespace DFW
 			{
 				if (ImGui::BeginMenu("Explore"))
 				{
-					ImGui::MenuItem("Exit", nullptr);
+					if (ImGui::MenuItem("Exit", nullptr))
+						DFW::CoreService::GetAppEventHandler()->Broadcast<ApplicationCloseEvent>();
 
 					ImGui::EndMenu();
 				}
