@@ -7,11 +7,6 @@ namespace DFW
     class EventDispatcher;
     class StageStackController;
 
-    namespace DECS
-    {
-        class ECSModule;
-    } // End of namespace ~ DECS.
-
     namespace DInput
     {
         class InputManagementSystem;
@@ -40,8 +35,6 @@ namespace DFW
         static SharedPtr<DInput::InputManagementSystem> GetInputManagement();
         static SharedPtr<DRender::RenderModule> GetRenderModule();
 
-        static DECS::ECSModule* GetECS();
-
     private:
         friend class ApplicationInstance;
 
@@ -53,19 +46,14 @@ namespace DFW
         static void ProvideInputManagementService(SharedPtr<DInput::InputManagementSystem> const& a_provided_service);
         static void ProvideRenderModule(SharedPtr<DRender::RenderModule> const& a_provided_service);
         
-        static void ProvideECS(DECS::ECSModule* a_provided_service);
-
         static WeakPtr<GameClock> _gameclock_service;      
         static WeakPtr<EventDispatcher> _app_eventhandler_service;
-        static WeakPtr<StageStackController> _app_stagecontroller_service
-            ;
+        static WeakPtr<StageStackController> _app_stagecontroller_service;
 
         static WeakPtr<DWindow::WindowManagement> _window_management_service;
         static WeakPtr<DInput::InputManagementSystem> _input_management_service;
         static WeakPtr<DRender::RenderModule> _render_module_service;
         
-        static DECS::ECSModule* _ecs_service;
-
     };
 
 } // End of namespace ~ DFW.

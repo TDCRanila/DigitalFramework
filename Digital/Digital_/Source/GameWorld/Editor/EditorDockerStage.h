@@ -1,26 +1,38 @@
 #pragma once
 
+#include <Modules/Editor/EditorElementContainer.h>
+
 #include <CoreSystems/Stage/Stage.h>
 
 namespace DFW
 {
+	// FW Declare.
+	class GameWorld;
+
 	namespace DEditor
 	{
-		class EditorDocker final : public DFW::StageBase
+		class EditorStage : public DFW::StageBase
 		{
 		public:
-			EditorDocker(std::string const& a_stage_name, bool a_start_disabled);
-			~EditorDocker() = default;
+			EditorStage(std::string const& a_stage_name, bool a_start_disabled);
+			~EditorStage() = default;
 
-		private:
+		protected:
 			virtual void OnUpdate() override;
 			virtual void OnRenderImGui() override;
 
 			virtual void OnAttached() override;
 			virtual void OnRemoved() override;
+		
+			inline SharedPtr<DFW::GameWorld> GameWorld() const { return _game_world; }
 
+		private:
 			void SetupEditorMenubar();
 			void SetupDockingSpace();
+
+		private:
+			EditorElementContainer _element_container;
+			SharedPtr<DFW::GameWorld> _game_world;
 
 			bool _has_dockspace_been_created;
 

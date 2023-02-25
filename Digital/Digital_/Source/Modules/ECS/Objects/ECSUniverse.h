@@ -33,7 +33,7 @@ namespace DFW
             friend Entity;
 
         public:
-            Universe(DFW::DUID const a_universe_id, std::string const& a_universe_name);
+            Universe(std::string const& a_universe_name);
             ~Universe();
 
             std::strong_ordering operator<=>(Universe const& a_other) const = default;

@@ -27,7 +27,7 @@ namespace DFW
 			friend ECSModule;
 
 		public:
-			SystemManager();
+			SystemManager(ECSModule const* a_ecs);
 			~SystemManager();
 
 			template <typename SystemType, typename ...TArgs>
@@ -74,6 +74,8 @@ namespace DFW
 			std::unordered_map<std::type_index, SharedPtr<System>> _systems;
 			using SystemMapIterator = std::unordered_map<std::type_index, SharedPtr<System>>::iterator;
 
+			ECSModule const* _ecs;
+
 		};
 
 #pragma region Template Function Implementation
@@ -94,8 +96,8 @@ namespace DFW
 			system_ptr->_name			= type.name();
 			system_ptr->_id				= DFW::GenerateDUID();
 			system_ptr->_system_manager	= this;
-			system_ptr->_entity_manager	= &CoreService::GetECS()->EntityManager();
-			system_ptr->_event_handler	= &CoreService::GetECS()->EventHandler();
+			system_ptr->_entity_manager	= &_ecs->EntityManager();
+			system_ptr->_event_handler	= &_ecs->EventHandler();
 
 			DFW_ASSERT(system_ptr->_entity_manager);
 			DFW_ASSERT(system_ptr->_event_handler);

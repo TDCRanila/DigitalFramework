@@ -23,7 +23,7 @@ namespace DFW
 
 		ECSModule::~ECSModule() = default;
 
-		void ECSModule::InitECS()
+		void ECSModule::Init()
 		{
 			DFW_ASSERT(!_initialized && "ECSModule already initialized");
 
@@ -31,20 +31,20 @@ namespace DFW
 
 			// Allocate.
 			_entity_manager = MakeUnique<DECS::EntityManager>();
-			_system_manager = MakeUnique<DECS::SystemManager>();
 			_event_handler	= MakeUnique<EventDispatcher>();
+			_system_manager = MakeUnique<DECS::SystemManager>(this);
+			_current_universe = MakeUnique<Universe>("main");
 
 			_initialized = true;
 		}
 
-		void ECSModule::TerminateECS()
+		void ECSModule::Terminate()
 		{
 			DFW_ASSERT(_initialized && "ECSModule not initialized. No need for termination.");
 
 			DFW_INFOLOG("Terminating DECS Module.");
 
 			_current_universe.reset();
-			_universes.clear();
 
 			_system_manager->Terminate();
 
@@ -56,25 +56,17 @@ namespace DFW
 			DFW_ASSERT(_initialized && "ECSModule not yet initialized");
 
 			// Update systems and events.
-			for (auto const& [universe_name, universe_ptr] : _universes)
-			{
-				_current_universe = universe_ptr;
+			_event_handler->ProcessPendingEvents();
+			_system_manager->UpdateSystems(*_current_universe);
+			_event_handler->ProcessPendingEvents();
 
-				_event_handler->ProcessPendingEvents();
-				_system_manager->UpdateSystems(*_current_universe);
-				_event_handler->ProcessPendingEvents();
-
-				_entity_manager->ManageDeletedEntities(*_current_universe);
-			}
+			_entity_manager->ManageDeletedEntities(*_current_universe);
 		}
 
 		void ECSModule::UpdateECSImGui()
 		{
-			// Update systems and events.
-			for (auto const& [universe_name, universe_ptr] : _universes)
-			{
-				_system_manager->UpdateSystemsImGui(*universe_ptr);
-			}
+
+			_system_manager->UpdateSystemsImGui(*_current_universe);
 		}
 
 		SystemManager& ECSModule::SystemManager() const
@@ -92,26 +84,10 @@ namespace DFW
 			return *_event_handler;
 		}
 
-		Universe* ECSModule::RegisterUniverse(std::string const& a_universe_name)
-		{
-			if (!_universes.contains(a_universe_name))
-				_universes.emplace(a_universe_name, MakeShared<Universe>(DFW::GenerateDUID(), a_universe_name));
-
-			return _universes.at(a_universe_name).get();
-		}
-
-		Universe* ECSModule::GetUniverse(std::string const& a_universe_name) const
-		{
-			if (_universes.contains(a_universe_name))
-				return _universes.at(a_universe_name).get();
-
-			return nullptr;
-		}
-
-		Universe* ECSModule::CurrentUniverse() const
+		Universe& ECSModule::GetUniverse() const
 		{
 			DFW_ASSERT(_current_universe);
-			return _current_universe.get();
+			return *_current_universe;
 		}
 
 	} // End of namespace ~ DECS

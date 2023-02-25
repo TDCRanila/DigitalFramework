@@ -7,12 +7,12 @@
 namespace DFW
 {
     // FW Declare.
-    class GameSystem;
+    class GameWorld;
 
     class GameObject : public DECS::Entity::Registrar<GameObject>
     {
     private:
-        friend GameSystem;
+        friend GameWorld;
     public:
         GameObject() = default;
         virtual ~GameObject() = default;

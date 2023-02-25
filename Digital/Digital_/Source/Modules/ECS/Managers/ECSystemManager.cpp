@@ -10,9 +10,10 @@ namespace DFW
 {
 	namespace DECS
 	{
-		SystemManager::SystemManager()
+		SystemManager::SystemManager(ECSModule const* a_ecs)
 		{
 			_systems.reserve(DFW_SYSTEM_RESERVE_AMOUNT);
+			_ecs = a_ecs;
 		}
 
 		SystemManager::~SystemManager() = default;

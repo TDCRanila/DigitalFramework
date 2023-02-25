@@ -14,8 +14,6 @@ namespace DFW
     WeakPtr<DInput::InputManagementSystem> CoreService::_input_management_service;
     WeakPtr<DRender::RenderModule> CoreService::_render_module_service;
 
-    DECS::ECSModule* CoreService::_ecs_service = nullptr;
-
     namespace Detail
     {
         char const* invalid_provided_service_message("No or invalid Service provided.");
@@ -32,8 +30,6 @@ namespace DFW
         _window_management_service.reset();
         _input_management_service.reset();
         _render_module_service.reset();
-
-        _ecs_service = nullptr;
 
         DFW_INFOLOG("All services provided have been released.");
     }
@@ -108,18 +104,6 @@ namespace DFW
     {
         _render_module_service = a_provided_service;
         DFW_INFOLOG((Detail::provided_service_message + "Render Module"));
-    }
-
-    DECS::ECSModule* CoreService::GetECS()
-    {
-        DFW_ASSERT(_ecs_service && Detail::invalid_provided_service_message);
-        return _ecs_service;
-    }
-
-    void CoreService::ProvideECS(DECS::ECSModule* a_provided_service)
-    {
-        _ecs_service = a_provided_service;
-        DFW_INFOLOG((Detail::provided_service_message + "ECS"));
     }
 
 } // End of namespace ~ DFW.

@@ -24,6 +24,9 @@ namespace DFW
             virtual void Terminate() override;
             virtual void Display() override;
 
+        public:
+            SharedPtr<DRender::RenderTarget const> GetViewportRenderTarget() const;
+
         private:
             SharedPtr<DRender::RenderTarget const> _viewport_render_target;
             ImVec2 _viewport_size;

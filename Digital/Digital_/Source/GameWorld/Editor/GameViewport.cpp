@@ -23,16 +23,11 @@ namespace DFW
             
             DRender::RenderTargetDirector& director = CoreService::GetRenderModule()->GetRenderTargetDirector();
             _viewport_render_target = director.RegisterRenderTarget(viewport_fbh, "viewport_render_target");
-
-            CoreService::GetECS()->SystemManager().GetSystem<RenderSystem>()->RenderToRenderTarget(_viewport_render_target);
         }
 
         void GameViewport::Terminate()
         {
-            CoreService::GetECS()->SystemManager().GetSystem<RenderSystem>()->RenderToDefault();
-
-            DRender::RenderTargetDirector& director = CoreService::GetRenderModule()->GetRenderTargetDirector();
-            director.FreeRenderTarget(*_viewport_render_target);
+            CoreService::GetRenderModule()->GetRenderTargetDirector().FreeRenderTarget(*_viewport_render_target);
         }
 
         void GameViewport::Display()
@@ -45,6 +40,11 @@ namespace DFW
             ImGui::Image(reinterpret_cast<void*>(viewport_texture.idx), _viewport_size);
 
             ImGui::End();
+        }
+
+        SharedPtr<DRender::RenderTarget const> GameViewport::GetViewportRenderTarget() const
+        {
+            return _viewport_render_target;
         }
 
     } // End of namespace ~ DEditor.
