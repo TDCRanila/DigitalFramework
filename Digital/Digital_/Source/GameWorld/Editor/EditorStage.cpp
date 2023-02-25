@@ -1,4 +1,4 @@
-#include <GameWorld/Editor/EditorDockerStage.h>
+#include <GameWorld/Editor/EditorStage.h>
 
 #include <GameWorld/Editor/GameViewport.h>
 #include <GameWorld/GameWorld.h>
