@@ -61,7 +61,7 @@ namespace DFW
 		template <typename... TArgs>
 		ComponentBitList KeyLockSystem::ConstructComponentBitList() const
 		{
-			if constexpr ((not IsValidComponentType2<TArgs> || ...))
+			if constexpr ((not IsValidComponentType<TArgs> || ...))
 			{
 				static_assert(always_false<TArgs...>::value, __FUNCTION__ " - Trying to construct bitlist with a Component of type T that isn't derived from DECS::Component.");
 				return ComponentBitList();
