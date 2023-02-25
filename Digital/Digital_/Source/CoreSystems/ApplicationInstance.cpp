@@ -104,14 +104,14 @@ namespace DFW
 
     void ApplicationInstance::TerminateApplication()
     {
+        // Gracefully remove attached stages.
+        _stage_controller->RemoveAllAttachedStages();
+        
         _imgui->Terminate();
 
         _render_module->Terminate();
         _input_management->Terminate();
         _window_management->Terminate();
-
-        // Gracefully remove attached stages.
-        _stage_controller->RemoveAllAttachedStages();
 
         // Unregister Event Callbacks.
         _application_event_handler->UnregisterCallback<ApplicationCloseEvent, &ApplicationInstance::OnApplicationCloseEvent>(this);
