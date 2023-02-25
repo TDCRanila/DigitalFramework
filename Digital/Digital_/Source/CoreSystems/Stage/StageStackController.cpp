@@ -19,16 +19,10 @@ namespace DFW
 		for (StageBase* stage : _stages)
 		{
 			if (!stage->IsDisabled())
+			{
 				stage->OnUpdate();
-		}
-	}
-
-	void StageStackController::RenderStages()
-	{
-		for (StageBase* stage : _stages)
-		{
-			if (!stage->IsDisabled())
 				stage->OnRender();
+			}
 		}
 	}
 

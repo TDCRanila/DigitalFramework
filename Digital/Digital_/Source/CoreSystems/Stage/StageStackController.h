@@ -18,7 +18,6 @@ namespace DFW
 		~StageStackController();
 
 		void UpdateStages();
-		void RenderStages();
 		void RenderImGuiStages();
 
 	public:

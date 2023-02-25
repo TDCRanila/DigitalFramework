@@ -141,10 +141,8 @@ namespace DFW
             else
             {               
                 { // Regular Application Update
-                    _stage_controller->UpdateStages();
-
                     _render_module->BeginFrame();
-                    _stage_controller->RenderStages();
+                    _stage_controller->UpdateStages();
                     _render_module->EndFrame();
                 }
 
