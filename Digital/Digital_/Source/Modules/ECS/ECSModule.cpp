@@ -2,7 +2,7 @@
 		 
 #include <Modules/ECS/Managers/ECSEntityManager.h>
 #include <Modules/ECS/Managers/ECSystemManager.h>
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Objects/ECSEntityRegistry.h>
 
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Logging/Logger.h>
@@ -16,7 +16,7 @@ namespace DFW
 			: _system_manager(nullptr)
 			, _entity_manager(nullptr)
 			, _event_handler(nullptr)
-			, _current_universe(nullptr)
+			, _registry(nullptr)
 			, _initialized(false)
 		{
 		}
@@ -33,7 +33,7 @@ namespace DFW
 			_entity_manager = MakeUnique<DECS::EntityManager>();
 			_event_handler	= MakeUnique<EventDispatcher>();
 			_system_manager = MakeUnique<DECS::SystemManager>(this);
-			_current_universe = MakeUnique<Universe>("main");
+			_registry = MakeUnique<EntityRegistry>("main");
 
 			_initialized = true;
 		}
@@ -44,7 +44,7 @@ namespace DFW
 
 			DFW_INFOLOG("Terminating DECS Module.");
 
-			_current_universe.reset();
+			_registry.reset();
 
 			_system_manager->Terminate();
 
@@ -57,16 +57,16 @@ namespace DFW
 
 			// Update systems and events.
 			_event_handler->ProcessPendingEvents();
-			_system_manager->UpdateSystems(*_current_universe);
+			_system_manager->UpdateSystems(*_registry);
 			_event_handler->ProcessPendingEvents();
 
-			_entity_manager->ManageDeletedEntities(*_current_universe);
+			_entity_manager->ManageDeletedEntities(*_registry);
 		}
 
 		void ECSModule::UpdateECSImGui()
 		{
 
-			_system_manager->UpdateSystemsImGui(*_current_universe);
+			_system_manager->UpdateSystemsImGui(*_registry);
 		}
 
 		SystemManager& ECSModule::SystemManager() const
@@ -84,10 +84,10 @@ namespace DFW
 			return *_event_handler;
 		}
 
-		Universe& ECSModule::GetUniverse() const
+		EntityRegistry& ECSModule::GetRegistry() const
 		{
-			DFW_ASSERT(_current_universe);
-			return *_current_universe;
+			DFW_ASSERT(_registry);
+			return *_registry;
 		}
 
 	} // End of namespace ~ DECS

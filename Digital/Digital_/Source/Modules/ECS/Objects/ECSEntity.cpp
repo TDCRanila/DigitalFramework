@@ -12,16 +12,16 @@ namespace DFW
 		Entity::Entity()
 			: _handle(DFW_NULL_ENTITY_HANDLE)
 			, _id(DFW::DFW_INVALID_DUID)
-			, _universe(nullptr)
+			, _registry(nullptr)
 		{
 		}
 
-		Entity::Entity(EntityHandle a_entity_handle, Universe& a_universe)
+		Entity::Entity(EntityHandle a_entity_handle, EntityRegistry& a_registry)
 			: _handle(a_entity_handle)
-			, _universe(&a_universe)
+			, _registry(&a_registry)
 		{
-			DFW_ASSERT(a_universe.IsValid());
-			EntityDataComponent const& comp = a_universe._entity_handle_registration.at(_handle);
+			DFW_ASSERT(a_registry.IsValid());
+			EntityDataComponent const& comp = a_registry._entity_handle_registration.at(_handle);
 			_id = comp.id;
 		}
 
@@ -30,7 +30,7 @@ namespace DFW
 			if (auto comparison = this->_handle <=> a_other._handle; comparison != 0)
 				return comparison;
 
-			if (auto comparison = (this->_universe <=> a_other._universe); comparison != 0)
+			if (auto comparison = (this->_registry <=> a_other._registry); comparison != 0)
 					return comparison;
 
 			return std::strong_ordering();
@@ -56,10 +56,10 @@ namespace DFW
 			return _handle;
 		}
 
-		Universe& Entity::GetUniverse() const
+		EntityRegistry& Entity::GetRegistry() const
 		{
-			DFW_ASSERT(_universe);
-			return (*_universe);
+			DFW_ASSERT(_registry);
+			return (*_registry);
 		}
 
 		bool Entity::IsEntityValid() const
@@ -67,10 +67,10 @@ namespace DFW
 			if (_handle == DFW_NULL_ENTITY_HANDLE)
 				return false;
 
-			if (!_universe)
+			if (!_registry)
 				return false;
 
-			if (!_universe->registry.valid(_handle))
+			if (!_registry->registry.valid(_handle))
 				return false;
 
 			return true;
@@ -78,8 +78,8 @@ namespace DFW
 
 		bool Entity::IsPendingDeletion() const
 		{
-			DFW_ASSERT(_universe);
-			return _universe->_pending_deletion_entities.end() != _universe->_pending_deletion_entities.find(_handle);
+			DFW_ASSERT(_registry);
+			return _registry->_pending_deletion_entities.end() != _registry->_pending_deletion_entities.find(_handle);
 		}
 
 	} // End of namespace ~ DECS.

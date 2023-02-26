@@ -4,7 +4,7 @@
 #include <GameWorld/Camera/CameraComponent.h>
 #include <GameWorld/Graphics/SpriteComponent.h>
 
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Objects/ECSEntityRegistry.h>
 #include <Modules/Rendering/RenderModule.h>
 #include <Modules/Rendering/ShaderLibrary.h>
 #include <Modules/Rendering/UniformLibrary.h>
@@ -163,13 +163,13 @@ namespace DFW
 		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
 
-	void SpriteSystem::Update(DECS::Universe& a_universe)
+	void SpriteSystem::Update(DECS::EntityRegistry& a_registry)
 	{
 		// Clear Target.
 		DRender::ViewTarget const& view_target = *_view_target;
 		bgfx::touch(view_target);
 
-		uint32 const num_sprites(static_cast<uint32>(a_universe.registry.view<SpriteComponent>().size()));
+		uint32 const num_sprites(static_cast<uint32>(a_registry.registry.view<SpriteComponent>().size()));
 		if (num_sprites <= 0)
 			return;
 
@@ -197,7 +197,7 @@ namespace DFW
 		// TODO Possibly sort SpriteComponents based on texture handle. 
 		// low to high to pack more sprites together in a sprite batch.
 		// Should reduce amount of batches which outherwise would be limited by texture handles.
-		// a_universe.registry.sort<SpriteComponent>();
+		// a_registry.registry.sort<SpriteComponent>();
 		
 		// Prepare Instance Buffers.
 		size_t const instance_stride(Detail::SpriteInstanceDataLayout::GetLayoutStride());
@@ -221,7 +221,7 @@ namespace DFW
 			data_ptr_shifter = idb.data;
 		};
 
-		for (auto&& [entity, sprite, transform] : a_universe.registry.group<SpriteComponent>(entt::get<TransformComponent>).each())
+		for (auto&& [entity, sprite, transform] : a_registry.registry.group<SpriteComponent>(entt::get<TransformComponent>).each())
 		{
 			if (!sprite.is_visible)
 				continue;

@@ -20,12 +20,12 @@ namespace DFW
         class ComponentManager;
         class Entity;
 
-        const int64 DFW_UNIVERSE_ENTITY_RESERVATION_SIZE = 256;
+        const int64 DFW_REGISTRY_ENTITY_RESERVATION_SIZE = 256;
 
         using EntityHandleRegistrationMap   = std::unordered_map<EntityHandle, DFW::RefWrap<EntityDataComponent>>;
         using EntityDUIDRegistrationMap     = std::unordered_map<DFW::DUID, EntityHandle>;
 
-        class Universe final
+        class EntityRegistry final
         {
         private:
             friend EntityManager;
@@ -33,10 +33,10 @@ namespace DFW
             friend Entity;
 
         public:
-            Universe(std::string const& a_universe_name);
-            ~Universe();
+            EntityRegistry(std::string const& a_registry_name);
+            ~EntityRegistry();
 
-            std::strong_ordering operator<=>(Universe const& a_other) const = default;
+            std::strong_ordering operator<=>(EntityRegistry const& a_other) const = default;
             
             std::vector<Entity> GetEntities();
 

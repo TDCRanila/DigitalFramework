@@ -33,26 +33,26 @@ namespace DFW
 
         bool IsNull(CameraIdentifier const& a_camera_identifier)
         {
-            return (a_camera_identifier.universe_name.empty() || a_camera_identifier.camera_name.empty());
+            return (a_camera_identifier.registry_name.empty() || a_camera_identifier.camera_name.empty());
         }
 
     } // End of namespace ~ Detail.
 
-    CameraIdentifier::CameraIdentifier(std::string const& a_universe_name, std::string const& a_camera_name)
-        : universe_name(a_universe_name)
+    CameraIdentifier::CameraIdentifier(std::string const& a_registry_name, std::string const& a_camera_name)
+        : registry_name(a_registry_name)
         , camera_name(a_camera_name)
     {
     }
 
     bool CameraIdentifier::operator==(CameraIdentifier const& a_other) const
     {
-        return (universe_name == a_other.universe_name) && (camera_name == a_other.camera_name);
+        return (registry_name == a_other.registry_name) && (camera_name == a_other.camera_name);
     }
 
     std::size_t CameraIdentifier::HashFunc::operator()(DFW::CameraIdentifier const& a_struct) const
     {
         std::size_t hash(0);
-        boost::hash_combine(hash, boost::hash_value(a_struct.universe_name));
+        boost::hash_combine(hash, boost::hash_value(a_struct.registry_name));
         boost::hash_combine(hash, boost::hash_value(a_struct.camera_name));
         return hash;
     }
@@ -77,7 +77,7 @@ namespace DFW
             DFW_ASSERT(false);
         }
 
-        CameraIdentifier const registration(a_entity.GetUniverse().name, a_camera_name);
+        CameraIdentifier const registration(a_entity.GetRegistry().name, a_camera_name);
         if (auto const& it = registered_cameras.find(registration);
             it != registered_cameras.end())
         {
@@ -151,7 +151,7 @@ namespace DFW
 
         // Communicate.
         Entity const& owner = a_camera_component.GetOwner();
-        ECSEventHandler().Broadcast<CameraNewActiveEvent>(CameraIdentifier(owner.GetUniverse().name, a_camera_component.name), owner.GetID());
+        ECSEventHandler().Broadcast<CameraNewActiveEvent>(CameraIdentifier(owner.GetRegistry().name, a_camera_component.name), owner.GetID());
     }
 
     void CameraSystem::ChangeCameraProjPerspective(CameraComponent& a_camera_component, float32 a_fov, float32 a_viewport_aspect, ClipSpace a_clip)
@@ -203,15 +203,15 @@ namespace DFW
         DFW_ASSERT(_input_management);
     }
 
-    void CameraSystem::Update(DECS::Universe& a_universe)
+    void CameraSystem::Update(DECS::EntityRegistry& a_registry)
     {
         if (_has_enabled_camera_controls && _active_camera)
         {
             Debug_ToggleCameraMode();
-            ControlCamera(*_active_camera, a_universe.registry.get<TransformComponent>(_active_camera->GetOwner()));
+            ControlCamera(*_active_camera, a_registry.registry.get<TransformComponent>(_active_camera->GetOwner()));
         }
 
-        for (auto&& [entity, camera_comp, transform_comp] : a_universe.registry.view<CameraComponent, TransformComponent>().each())
+        for (auto&& [entity, camera_comp, transform_comp] : a_registry.registry.view<CameraComponent, TransformComponent>().each())
             UpdateCameraMatrices(camera_comp, transform_comp);
     }
 

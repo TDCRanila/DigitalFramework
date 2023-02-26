@@ -31,7 +31,7 @@ namespace DFW
 	struct CameraIdentifier
 	{
 		CameraIdentifier() = default;
-		CameraIdentifier(std::string const& a_universe_name, std::string const& a_camera_name);
+		CameraIdentifier(std::string const& a_registry_name, std::string const& a_camera_name);
 
 		bool operator==(CameraIdentifier const& a_other) const;
 
@@ -40,7 +40,7 @@ namespace DFW
 			std::size_t operator()(DFW::CameraIdentifier const& a_struct) const;
 		};
 
-		std::string universe_name;
+		std::string registry_name;
 		std::string camera_name;
 	};
 
@@ -67,7 +67,7 @@ namespace DFW
 
     private:
 		virtual void Init() override;
-		virtual void Update(DECS::Universe& a_universe) override;
+		virtual void Update(DECS::EntityRegistry& a_registry) override;
 
 		void ControlCamera(CameraComponent& a_camera, Transform& a_transform);
 		void UpdateCameraMatrices(CameraComponent& a_camera, Transform& a_transform);

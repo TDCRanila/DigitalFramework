@@ -52,7 +52,7 @@ namespace DFW
     {
         DECS::EntityManager& entity_manager = _ecs->EntityManager();
 
-        GameObject game_object(entity_manager.CreateEntity<GameObjectType>(_ecs->GetUniverse(), std::forward<TArgs>(a_args)...));
+        GameObject game_object(entity_manager.CreateEntity<GameObjectType>(_ecs->GetRegistry(), std::forward<TArgs>(a_args)...));
 
         entity_manager.SetEntityName(game_object, a_spawn_info.name);
         entity_manager.AddComponent<GameObjectTagComponent>(game_object);

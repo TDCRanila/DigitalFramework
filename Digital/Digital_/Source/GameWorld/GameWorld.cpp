@@ -34,7 +34,7 @@ namespace DFW
 
     GameObject GameWorld::GetGameObject(DUID const a_game_object_id) const
     {
-        Entity entity(_ecs->EntityManager().GetEntity(a_game_object_id, _ecs->GetUniverse()));
+        Entity entity(_ecs->EntityManager().GetEntity(a_game_object_id, _ecs->GetRegistry()));
         if (IsGameObject(entity))
             return GameObject(entity);
         else

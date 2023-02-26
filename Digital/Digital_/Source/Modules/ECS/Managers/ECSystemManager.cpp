@@ -1,6 +1,6 @@
 #include <Modules/ECS/Managers/ECSystemManager.h>
 
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Objects/ECSEntityRegistry.h>
 
 #include <Utility/AutoFactory/AutoFactory.h>
 
@@ -27,9 +27,9 @@ namespace DFW
 			}
 		}
 
-		void SystemManager::UpdateSystems(Universe& a_universe)
+		void SystemManager::UpdateSystems(EntityRegistry& a_registry)
 		{
-			DFW_ASSERT(a_universe.IsValid() && "Updating DECS Systems, but universe is invalid.");
+			DFW_ASSERT(a_registry.IsValid() && "Updating DECS Systems, but registry is invalid.");
 
 			if (_systems.empty())
 			{
@@ -40,25 +40,25 @@ namespace DFW
 			for (auto const& [system_type, system_ptr] : _systems)
 			{
 				if (!system_ptr->IsSystemPaused())
-					system_ptr->InternalPreUpdate(a_universe);
+					system_ptr->InternalPreUpdate(a_registry);
 			}
 
 			// Calling Init of systems.
 			for (auto const& [system_type, system_ptr] : _systems)
 			{
 				if (!system_ptr->IsSystemPaused())
-					system_ptr->InternalUpdate(a_universe);
+					system_ptr->InternalUpdate(a_registry);
 			}
 			
 			// Calling Init of systems.
 			for (auto const& [system_type, system_ptr] : _systems)
 			{
 				if (!system_ptr->IsSystemPaused())
-					system_ptr->InternalPostUpdate(a_universe);
+					system_ptr->InternalPostUpdate(a_registry);
 			}
 		}
 
-		void SystemManager::UpdateSystemsImGui(Universe& a_universe)
+		void SystemManager::UpdateSystemsImGui(EntityRegistry& a_registry)
 		{
 			if (_systems.empty())
 			{
@@ -67,7 +67,7 @@ namespace DFW
 
 			for (auto const& [system_type, system_ptr] : _systems)
 			{
-				system_ptr->UpdateSystemImGui(a_universe);
+				system_ptr->UpdateSystemImGui(a_registry);
 			}
 		}
 

@@ -1,4 +1,4 @@
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Objects/ECSEntityRegistry.h>
 
 #include <ranges>
 
@@ -6,20 +6,20 @@ namespace DFW
 {
     namespace DECS
     {
-        Universe::Universe(std::string const& a_universe_name)
+        EntityRegistry::EntityRegistry(std::string const& a_registry_name)
             : id(DFW::GenerateDUID())
-            , name(a_universe_name)
+            , name(a_registry_name)
         {
-            registry.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
+            registry.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
-            _entities.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
-            _pending_deletion_entities.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
+            _entities.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
+            _pending_deletion_entities.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
             
-            _entity_handle_registration.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
-            _entity_duid_registration.reserve(DFW_UNIVERSE_ENTITY_RESERVATION_SIZE);
+            _entity_handle_registration.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
+            _entity_duid_registration.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
         }
 
-        Universe::~Universe()
+        EntityRegistry::~EntityRegistry()
         {
             registry.clear();
             
@@ -30,7 +30,7 @@ namespace DFW
             _entity_duid_registration.clear();
         }
 
-        std::vector<Entity> Universe::GetEntities()
+        std::vector<Entity> EntityRegistry::GetEntities()
         {
             //// TODO Not using ranges/view as of right now due to C20.
             //auto range = _entities | std::ranges::views::transform([this](EntityHandle const& a_handle) { return Entity(a_handle, this); });
@@ -48,12 +48,12 @@ namespace DFW
             return entities;
         }
 
-        bool Universe::IsValid() const
+        bool EntityRegistry::IsValid() const
         {
             return id != DFW_INVALID_DUID;
         }
 
-        void Universe::RegisterEntity(Entity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp)
+        void EntityRegistry::RegisterEntity(Entity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp)
         {
             DFW_ASSERT(a_entity.IsEntityValid());
             EntityHandle const handle = a_entity.GetHandle();
@@ -62,7 +62,7 @@ namespace DFW
             _entity_duid_registration.emplace(a_entity.GetID(), handle);
         }
 
-        void Universe::UnregisterEntity(Entity const& a_entity)
+        void EntityRegistry::UnregisterEntity(Entity const& a_entity)
         {
             DFW_ASSERT(a_entity.IsEntityValid());
             EntityHandle const handle = a_entity.GetHandle();

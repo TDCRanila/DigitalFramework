@@ -3,7 +3,7 @@
 #include <Modules/ECS/Utility/ECSKeyLockSystem.h>
 #include <Modules/ECS/Objects/ECSEntity.h>
 #include <Modules/ECS/Objects/ECSComponent.h>
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Objects/ECSEntityRegistry.h>
 
 #include <Utility/TemplateUtility.h>
 #include <CoreSystems/DUID.h>
@@ -57,7 +57,7 @@ namespace DFW
 			{
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component of an invalid entity.");
 				DFW_ASSERT(HasComponents<ComponentType>(a_entity) && "Trying to get a component that the entity doesn't own.");
-				return a_entity._universe->registry.get<ComponentType>(a_entity);
+				return a_entity._registry->registry.get<ComponentType>(a_entity);
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace DFW
 			else if constexpr (IsValidComponentType<ComponentType>)
 			{
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to get a component of an invalid entity.");
-				return a_entity._universe->registry.try_get<ComponentType>(a_entity);
+				return a_entity._registry->registry.try_get<ComponentType>(a_entity);
 			}
 		}
 
@@ -92,7 +92,7 @@ namespace DFW
 			else
 			{
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to read component data from an invalid entity.");
-				return a_entity._universe->registry.all_of<TArgs...>(a_entity);
+				return a_entity._registry->registry.all_of<TArgs...>(a_entity);
 			}
 		}
 
@@ -113,8 +113,8 @@ namespace DFW
 				else
 				{
 					// Construct and emplace the Component.
-					Universe& universe(*a_entity._universe);
-					ComponentType& component	= universe.registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
+					EntityRegistry& registry(*a_entity._registry);
+					ComponentType& component	= registry.registry.emplace<ComponentType>(a_entity, std::forward<TArgs>(a_args)...);
 					component._owner			= a_entity;
 					component._id				= DFW::GenerateDUID();
 
@@ -123,7 +123,7 @@ namespace DFW
 					if constexpr (AreSameTypes<EntityDataComponent, ComponentType>)
 						reg_comp = &component;
 					else
-						reg_comp = &universe._entity_handle_registration.at(a_entity).get();
+						reg_comp = &registry._entity_handle_registration.at(a_entity).get();
 
 					_keylock_system.SetComponentBits<ComponentType>(reg_comp->comp_list);
 
@@ -145,10 +145,10 @@ namespace DFW
 				DFW_ASSERT(a_entity.IsEntityValid() && "Trying to remove a component from an invalid entity.");
 				if (HasComponents<ComponentType>(a_entity))
 				{
-					Universe& universe(*a_entity._universe);
-					universe.registry.remove<ComponentType>(a_entity);
+					EntityRegistry& registry(*a_entity._registry);
+					registry.registry.remove<ComponentType>(a_entity);
 
-					EntityDataComponent& reg_comp = universe._entity_handle_registration.at(a_entity).get();
+					EntityDataComponent& reg_comp = registry._entity_handle_registration.at(a_entity).get();
 					_keylock_system.ResetComponentBits<ComponentType>(reg_comp.comp_list);
 
 					return true;

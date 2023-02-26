@@ -4,7 +4,7 @@
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Graphics/ModelComponent.h>
 
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Objects/ECSEntityRegistry.h>
 
 #include <Modules/Rendering/RenderModule.h>
 #include <Modules/Rendering/ShaderLibrary.h>
@@ -54,7 +54,7 @@ namespace DFW
 		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
     
-    void RenderSystem::Update(DECS::Universe& a_universe)
+    void RenderSystem::Update(DECS::EntityRegistry& a_registry)
     {
 		if (!_program_ptr)
 			return;
@@ -103,7 +103,7 @@ namespace DFW
 		}
 
 		// Submit Primitives
-		for (auto&& [entity, model, transform] : a_universe.registry.view<ModelComponent, TransformComponent>().each())
+		for (auto&& [entity, model, transform] : a_registry.registry.view<ModelComponent, TransformComponent>().each())
 		{
 			if (!model.is_visible)
 				continue;

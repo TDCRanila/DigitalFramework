@@ -5,7 +5,7 @@
 #include <Modules/ECS/Managers/ECSComponentManager.h>
 #include <Modules/ECS/Objects/ECSEntity.h>
 #include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Objects/ECSEntityRegistry.h>
 #include <Modules/ECS/Utility/ECSEntityType.h>
 
 #include <Utility/FamiltyTypeID.h>
@@ -34,10 +34,10 @@ namespace DFW
 
 			template <typename EntityType = Entity, typename... TArgs>
 			requires IsValidEntityType<EntityType>
-			Entity CreateEntity(Universe& a_universe, TArgs&&... a_args) const;
+			Entity CreateEntity(EntityRegistry& a_registry, TArgs&&... a_args) const;
 			
 			void DestroyEntity(Entity const& a_entity) const;
-			Entity GetEntity(DFW::DUID const a_entity_id, Universe& a_universe) const;
+			Entity GetEntity(DFW::DUID const a_entity_id, EntityRegistry& a_registry) const;
 			
 			Entity AttachEntity(Entity const& a_child, Entity const& a_parent) const;
 			
@@ -67,7 +67,7 @@ namespace DFW
 			bool DeleteComponent(Entity const& a_entity) const;
 
 		private:
-			void ManageDeletedEntities(Universe& a_universe);
+			void ManageDeletedEntities(EntityRegistry& a_registry);
 
 			ComponentManager _component_manager;
 
@@ -77,28 +77,28 @@ namespace DFW
 
 		template <typename EntityType, typename... TArgs>
 		requires IsValidEntityType<EntityType>
-		Entity EntityManager::CreateEntity(Universe& a_universe, TArgs&&... a_args) const
+		Entity EntityManager::CreateEntity(EntityRegistry& a_registry, TArgs&&... a_args) const
 		{
-			if (!a_universe.IsValid())
+			if (!a_registry.IsValid())
 			{
-				DFW_ERRORLOG("Attempting to create a new entitiy, but the universe is invalid.");
-				DFW_ASSERT(a_universe.IsValid() && "Attempting to create a new entitiy, but the universe is invalid.");
+				DFW_ERRORLOG("Attempting to create a new entitiy, but the registry is invalid.");
+				DFW_ASSERT(a_registry.IsValid() && "Attempting to create a new entitiy, but the registry is invalid.");
 				return EntityType();
 			}
 
 			// Construct an Entity from template.
 			EntityType entity(std::forward<TArgs>(a_args)...);
-			entity._handle		= a_universe.registry.create();
-			entity._universe	= &a_universe;
+			entity._handle		= a_registry.registry.create();
+			entity._registry	= &a_registry;
 			entity._id			= DFW::GenerateDUID();
 
-			// Register Additional Entity Data in Universe registries.
+			// Register Additional Entity Data in EntityRegistry registries.
 			EntityDataComponent& reg_comp = AddComponent<EntityDataComponent>(entity);
 			reg_comp.id		= entity._id;
 			reg_comp.type	= DUtility::FamilyType<Entity>::GetTypeID<EntityType>();
 			reg_comp.name	= DFW_DEFAULT_ENTITY_NAME;
 
-			a_universe.RegisterEntity(entity, reg_comp);
+			a_registry.RegisterEntity(entity, reg_comp);
 			
 			return entity;
 		}

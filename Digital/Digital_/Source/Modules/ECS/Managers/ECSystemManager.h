@@ -17,7 +17,7 @@ namespace DFW
 	{
 		// FW Declare
 		class ECSModule;
-		class Universe;
+		class EntityRegistry;
 
 		constexpr int64 DFW_SYSTEM_RESERVE_AMOUNT = 16;
 
@@ -63,8 +63,8 @@ namespace DFW
 		private:
 			void Terminate();
 
-			void UpdateSystems(Universe& a_universe);
-			void UpdateSystemsImGui(Universe& a_universe);
+			void UpdateSystems(EntityRegistry& a_registry);
+			void UpdateSystemsImGui(EntityRegistry& a_registry);
 
 			template <typename SystemType>
 			requires IsValidSystemType<SystemType>

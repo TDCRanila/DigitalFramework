@@ -14,7 +14,7 @@ namespace DFW
 	
 	namespace DECS
 	{
-		class Universe;
+		class EntityRegistry;
 		class SystemManager;
 		class EntityManager;
 
@@ -36,11 +36,11 @@ namespace DFW
 			virtual void Init();
 			virtual void Terminate();
 
-			virtual void PreUpdate(Universe& a_universe);
-			virtual void Update(Universe& a_universe);
-			virtual void PostUpdate(Universe& a_universe);
+			virtual void PreUpdate(EntityRegistry& a_registry);
+			virtual void Update(EntityRegistry& a_registry);
+			virtual void PostUpdate(EntityRegistry& a_registry);
 
-			virtual void UpdateSystemImGui(Universe& a_universe);
+			virtual void UpdateSystemImGui(EntityRegistry& a_registry);
 
 			inline DFW::DECS::SystemManager& SystemManager() const { return *_system_manager; }
 			inline DFW::DECS::EntityManager& EntityManager() const { return *_entity_manager; }
@@ -51,9 +51,9 @@ namespace DFW
 			void InternalInit();
 			void InternalTerminate();
 
-			void InternalPreUpdate(Universe& a_universe);
-			void InternalUpdate(Universe& a_universe);
-			void InternalPostUpdate(Universe& a_universe);
+			void InternalPreUpdate(EntityRegistry& a_registry);
+			void InternalUpdate(EntityRegistry& a_registry);
+			void InternalPostUpdate(EntityRegistry& a_registry);
 
 			void InternalPauseSystem(bool a_pause_on_true);
 

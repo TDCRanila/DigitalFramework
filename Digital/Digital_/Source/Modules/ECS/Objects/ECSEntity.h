@@ -11,7 +11,7 @@ namespace DFW
 	namespace DECS
 	{
 		// FW Declare.
-		class Universe;
+		class EntityRegistry;
 		class EntityManager;
 		class ComponentManager;
 
@@ -26,7 +26,7 @@ namespace DFW
 
 		public:
 			Entity();
-			Entity(EntityHandle a_entity_handle, Universe& a_universe);
+			Entity(EntityHandle a_entity_handle, EntityRegistry& a_registry);
 			virtual ~Entity() = default;
 
 			std::strong_ordering operator<=>(Entity const& a_other) const;
@@ -36,7 +36,7 @@ namespace DFW
 
 			DFW::DUID GetID() const;
 			EntityHandle GetHandle() const;
-			Universe& GetUniverse() const;
+			EntityRegistry& GetRegistry() const;
 
 			bool IsEntityValid() const;
 			bool IsPendingDeletion() const;
@@ -44,7 +44,7 @@ namespace DFW
 		protected:
 			DUID			_id;
 			EntityHandle	_handle;
-			Universe*		_universe;
+			EntityRegistry*	_registry;
 
 		};
 
