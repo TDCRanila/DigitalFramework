@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Utility/AutoFactory/AutoFactory.h>
+#include <Modules/ECS/Objects/ECSEntityHandle.h>
 
 #include <CoreSystems/DUID.h>
 
-#include <entt/entity/handle.hpp>
+#include <Utility/AutoFactory/AutoFactory.h>
 
 namespace DFW
 {
@@ -14,9 +14,6 @@ namespace DFW
 		class EntityRegistry;
 		class EntityManager;
 		class ComponentManager;
-
-		using EntityHandle = entt::entity;
-		constexpr entt::null_t DFW_NULL_ENTITY_HANDLE = entt::null;
 
 		class Entity : public DFactory::AutoFactory<Entity>
 		{
@@ -51,6 +48,5 @@ namespace DFW
 	} // End of namespace ~ DECS.
 
 	using Entity = DECS::Entity;
-	using EntityHandle = DECS::EntityHandle;
 
 } // End of namespace ~ DFW.
