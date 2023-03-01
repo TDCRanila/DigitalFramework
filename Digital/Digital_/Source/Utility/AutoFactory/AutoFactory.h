@@ -61,11 +61,12 @@ namespace DFW
 
 			template <typename RegistrarType, typename DerivedClassOverride = BaseType>
 			requires (IsDerivedFrom<DerivedClassOverride, BaseType> || AreSameTypes<DerivedClassOverride, BaseType>)
-				class Registrar : public DerivedClassOverride
+			class Registrar : public DerivedClassOverride
 			{
-			public:
+			private:
 				friend RegistrarType;
 
+			private:
 				static bool RegisterType()
 				{
 					// Create Factory Construction Lambda for Type RegistrarType.
@@ -86,19 +87,20 @@ namespace DFW
 					return true;
 				}
 
-				static bool registered;
-
-			private:
 				Registrar() { (void)registered; }
+			
+			private:
+				static bool registered;
 
 			}; // Registrar.
 
 			template <typename RegistrarType>
 			class StrictRegistrar : public BaseType
 			{
-			public:
+			private:
 				friend RegistrarType;
 
+			private:
 				static bool RegisterType()
 				{
 					// Create Factory Construction Lambda for Type RegistrarType.
@@ -119,10 +121,10 @@ namespace DFW
 					return true;
 				}
 
-				static bool registered;
+				StrictRegistrar() : BaseType(Key{}) { (void)registered; }
 
 			private:
-				StrictRegistrar() : BaseType(Key{}) { (void)registered; }
+				static bool registered;
 
 			}; // StrictRegistrar.
 
