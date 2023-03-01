@@ -1,13 +1,11 @@
 #pragma once
 
-#include <Defines/Defines.h>
-
-#include <Utility/TemplateUtility.h>
-
-#include <CoreSystems/Logging/Logger.h>
-#include <Modules/ECS/Objects/ECSComponent.h>
 #include <Modules/ECS/Utility/ECSConcepts.h>
 #include <Modules/ECS/Utility/ECSCompBitList.h>
+
+#include <CoreSystems/Logging/Logger.h>
+
+#include <Defines/Defines.h>
 
 #include <unordered_map>
 #include <typeindex>
@@ -16,8 +14,8 @@ namespace DFW
 {
 	namespace DECS
 	{
-		const int64 DFW_UNASSIGNED_COMPONENT_BIT = -1;
-		const int8	DFW_MAX_REGISTERED_COMPONENTS = 64;
+		constexpr int64 DFW_UNASSIGNED_COMPONENT_BIT = -1;
+		constexpr int8	DFW_MAX_REGISTERED_COMPONENTS = 64;
 
 		class KeyLockSystem final
 		{
@@ -28,27 +26,27 @@ namespace DFW
 			static void GenerateComponentKeys();
 
 			template <typename... TArgs>
-			ComponentBitList ConstructComponentBitList() const;
+			static ComponentBitList ConstructComponentBitList();
 
 			template <typename TComponent>
 			requires IsValidComponentType<TComponent>
-				bool IsComponentBitTrue(ComponentBitList const& a_bit_var) const;
+			static bool IsComponentBitTrue(ComponentBitList const& a_bit_var);
 
 			template <typename TComponent>
 			requires IsValidComponentType<TComponent>
-				void SetComponentBits(ComponentBitList& a_bit_var) const;
+			static void SetComponentBits(ComponentBitList& a_bit_var);
 
 			template <typename TComponent>
 			requires IsValidComponentType<TComponent>
-				void ResetComponentBits(ComponentBitList& a_bit_var) const;
+			static void ResetComponentBits(ComponentBitList& a_bit_var);
 
 			template <typename TComponent>
 			requires IsValidComponentType<TComponent>
-				int8 GetComponentBitPlacement() const;
+			static int8 GetComponentBitPlacement();
 
 			template <typename TComponent>
 			requires IsValidComponentType<TComponent>
-				void GetComponentBitPlacement(int8& a_component_bit_list) const;
+			static void GetComponentBitPlacement(int8& a_component_bit_list);
 
 		private:
 			static std::unordered_map<std::type_index, int8> _component_bit_placement;
@@ -59,7 +57,7 @@ namespace DFW
 #pragma region Template Function Implementation
 
 		template <typename... TArgs>
-		ComponentBitList KeyLockSystem::ConstructComponentBitList() const
+		static ComponentBitList KeyLockSystem::ConstructComponentBitList()
 		{
 			if constexpr ((not IsValidComponentType<TArgs> || ...))
 			{
@@ -76,7 +74,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-			bool KeyLockSystem::IsComponentBitTrue(ComponentBitList const& a_bit_var) const
+		static bool KeyLockSystem::IsComponentBitTrue(ComponentBitList const& a_bit_var)
 		{
 			int8 component_bit_placement(0);
 			GetComponentBitPlacement<TComponent>(component_bit_placement);
@@ -94,7 +92,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-			void KeyLockSystem::SetComponentBits(ComponentBitList& a_bit_var) const
+		static void KeyLockSystem::SetComponentBits(ComponentBitList& a_bit_var)
 		{
 			int64 temp(1);
 			int8 component_bit_placement(0);
@@ -105,7 +103,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-			void KeyLockSystem::ResetComponentBits(ComponentBitList& a_bit_var) const
+		static void KeyLockSystem::ResetComponentBits(ComponentBitList& a_bit_var)
 		{
 			int64 temp(1);
 			int8 component_bit_placement(0);
@@ -116,7 +114,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-			int8 KeyLockSystem::GetComponentBitPlacement() const
+		static int8 KeyLockSystem::GetComponentBitPlacement()
 		{
 			int8 temp_bit_list(0);
 			GetComponentBitPlacement<TComponent>(temp_bit_list);
@@ -125,7 +123,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-			void KeyLockSystem::GetComponentBitPlacement(int8& a_component_bit_list) const
+		static void KeyLockSystem::GetComponentBitPlacement(int8& a_component_bit_list)
 		{
 			const type_info& type = typeid(TComponent);
 			auto it = _component_bit_placement.find(type);
