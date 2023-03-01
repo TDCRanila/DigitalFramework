@@ -69,20 +69,9 @@ namespace DFW
 				}
 				else
 				{
-					// Construct and emplace the Component.
 					ComponentType& component = _registry->registry.emplace<ComponentType>(_handle, std::forward<TArgs>(a_args)...);
 					component._id = DFW::GenerateDUID();
 					component._owner = *this;
-
-					//// Update ComponentBitList of the entity
-					//EntityDataComponent* reg_comp;
-					//if constexpr (AreSameTypes<EntityDataComponent, ComponentType>)
-					//	reg_comp = &component;
-					//else
-					//	reg_comp = &a_registry._entity_handle_registration.at(a_entity_handle).get();
-
-					//_keylock_system.SetComponentBits<ComponentType>(reg_comp->comp_list);
-
 					return component;
 				}
 			}
@@ -101,10 +90,6 @@ namespace DFW
 				if (HasComponents<ComponentType>())
 				{
 					_registry->registry.remove<ComponentType>(_handle);
-
-					/*EntityDataComponent& reg_comp = _registry._entity_handle_registration.at(_handle).get();
-					_keylock_system.ResetComponentBits<ComponentType>(reg_comp.comp_list);*/
-
 					return true;
 				}
 				else
