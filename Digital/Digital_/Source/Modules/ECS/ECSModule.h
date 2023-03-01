@@ -8,7 +8,6 @@
 namespace DFW
 {
 	// FW Declare.
-	class ApplicationInstance;
 	class EventDispatcher;
 
 	namespace DECS
@@ -16,39 +15,32 @@ namespace DFW
 		// FW Declares.
 		class SystemManager;
 		class EntityManager;
-		class Universe;
+		class EntityRegistry;
 
 		class ECSModule final
 		{
-		private:
-			friend DFW::ApplicationInstance;
-
 		public:
 			ECSModule();
 			~ECSModule();
 
-			SystemManager& SystemManager() const;
-			EntityManager& EntityManager() const;
-			EventDispatcher& EventHandler() const;
-
-			Universe* RegisterUniverse(std::string const& a_universe_name);
-			Universe* GetUniverse(std::string const& a_universe_name) const;
-			Universe* CurrentUniverse() const;
-
-		private:
-			void InitECS();
-			void TerminateECS();
+			void Init();
+			void Terminate();
 			void UpdateECS();
 			void UpdateECSImGui();
 
-		private:
-			std::unordered_map<std::string, SharedPtr<Universe>> _universes;
+		public:
+			inline SystemManager& SystemManager() const { return *_system_manager; }
+			inline EntityManager& EntityManager() const { return *_entity_manager; }
+			inline EventDispatcher& EventHandler() const { return *_event_handler; }
 
+			inline EntityRegistry& GetRegistry() const { return *_registry; }
+
+		private:
 			UniquePtr<DFW::DECS::SystemManager>	_system_manager;
 			UniquePtr<DFW::DECS::EntityManager>	_entity_manager;
 			UniquePtr<EventDispatcher>			_event_handler;
-			SharedPtr<Universe>					_current_universe;
 
+			UniquePtr<EntityRegistry> _registry;
 			bool _initialized;
 
 		};

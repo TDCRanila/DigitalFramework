@@ -9,9 +9,6 @@ struct GLFWwindow;
 
 namespace DFW
 {
-    // FW Declare.
-    class ApplicationInstance;
-
     namespace DWindow
     {
         struct WindowInstanceGLFW : public WindowInstance
@@ -21,11 +18,15 @@ namespace DFW
 
         class WindowManagementGLFW final : public WindowManagement
         {
-            friend ApplicationInstance;
         public:
             WindowManagementGLFW() = default;
             virtual ~WindowManagementGLFW() = default;
 
+            virtual void Init() override;
+            virtual void Terminate() override;
+            virtual void PollWindowEvents() override;
+
+        public:
             virtual SharedPtr<WindowInstance> ConstructWindow(WindowParameters const& a_window_parameters) override;
             virtual void RequestWindowClose(WindowID const a_window_id) override;
             virtual void DestroyWindowsRequestedForClosure() override;
@@ -39,11 +40,6 @@ namespace DFW
 
             virtual void RequestMouseCursorCapture() override;
             virtual void RequestMouseCursorRelease() override;
-
-        private:
-            virtual void InitWindowManagement() override;
-            virtual void TerminateWindowManagement() override;
-            virtual void PollWindowEvents() override;
 
         };
 

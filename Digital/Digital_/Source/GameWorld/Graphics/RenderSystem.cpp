@@ -4,9 +4,13 @@
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Graphics/ModelComponent.h>
 
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Objects/ECSEntityRegistry.h>
 
 #include <Modules/Rendering/RenderModule.h>
+#include <Modules/Rendering/ShaderLibrary.h>
+#include <Modules/Rendering/UniformLibrary.h>
+#include <Modules/Rendering/ViewTargetDirector.h>
+
 #include <Modules/Rendering/ShaderProgram.h>
 #include <Modules/Rendering/ModelData.h>
 #include <Modules/Rendering/RenderTarget.h>
@@ -24,33 +28,33 @@ namespace DFW
 {
     void RenderSystem::Init()
     {
-		DRender::RenderModule* render_module(CoreService::GetRenderModule());
+		SharedPtr<DRender::RenderModule> render_module = CoreService::GetRenderModule();
 
 		// View Target
-		_view_target = render_module->view_director.AllocateViewTarget("rendersystem", DRender::ViewTargetInsertion::Front);
+		_view_target = render_module->GetViewDirector().AllocateViewTarget("rendersystem", DRender::ViewTargetInsertion::Front);
 
 		// Shaders		
-		_program_ptr = render_module->shader_library.ConstructProgram("vs_basic", "fs_basic");
+		_program_ptr = render_module->GetShaderLibrary().ConstructProgram("vs_basic", "fs_basic");
 
 		// Uniforms
-		_texture_sampler_uniform = render_module->uniform_library.CreateUniform("s_texture", DRender::UniformTypes::Sampler);
+		_texture_sampler_uniform = render_module->GetUniformLibrary().CreateUniform("s_texture", DRender::UniformTypes::Sampler);
 
 		// Register Callbacks.
-		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		CoreService::GetAppEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
 		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
     }
 
 	void RenderSystem::Terminate()
 	{
 		// Uniforms
-		CoreService::GetRenderModule()->uniform_library.DestroyUniform(*_texture_sampler_uniform.get());
+		CoreService::GetRenderModule()->GetUniformLibrary().DestroyUniform(*_texture_sampler_uniform.get());
 
 		// Unregister Callbacks.
-		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		CoreService::GetAppEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
 		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
     
-    void RenderSystem::Update(DECS::Universe& a_universe)
+    void RenderSystem::Update(DECS::EntityRegistry& a_registry)
     {
 		if (!_program_ptr)
 			return;
@@ -99,7 +103,7 @@ namespace DFW
 		}
 
 		// Submit Primitives
-		for (auto&& [entity, model, transform] : a_universe.registry.view<ModelComponent, TransformComponent>().each())
+		for (auto&& [entity, model, transform] : a_registry.registry.view<ModelComponent, TransformComponent>().each())
 		{
 			if (!model.is_visible)
 				continue;

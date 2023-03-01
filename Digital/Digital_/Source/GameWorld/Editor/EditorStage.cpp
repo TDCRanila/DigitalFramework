@@ -1,10 +1,15 @@
-#include <GameWorld/Editor/EditorDockerStage.h>
+#include <GameWorld/Editor/EditorStage.h>
 
-#include <GameWorld/Editor/EditorSystem.h>
+#include <GameWorld/Editor/GameViewport.h>
+#include <GameWorld/GameWorld.h>
+#include <GameWorld/Camera/CameraSystem.h>
+#include <GameWorld/Graphics/RenderSystem.h>
+#include <GameWorld/Graphics/SpriteSystem.h>
+
+#include <Modules/Editor/EditorElementFiller.h>
+#include <Modules/ECS/Managers/ECSystemManager.h>
 
 #include <CoreSystems/CoreServices.h>
-#include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/ECSystemManager.h>
 
 #include <imgui/imgui_internal.h>
 
@@ -12,17 +17,20 @@ namespace DFW
 {
     namespace DEditor
     {
-        EditorDocker::EditorDocker(std::string const& a_stage_name, bool a_start_disabled)
+        EditorStage::EditorStage(std::string const& a_stage_name, bool a_start_disabled)
             : DFW::StageBase(a_stage_name, a_start_disabled)
             , _has_dockspace_been_created(false)
         {
         }
 
-        void EditorDocker::Update()
+        void EditorStage::OnUpdate()
         {
+            _game_world->Update();
+
+            _element_container.UpdateElements();
         }
 
-        void EditorDocker::RenderImGui()
+        void EditorStage::OnRenderImGui()
         {
             DFW_ASSERT(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable);
 
@@ -54,19 +62,45 @@ namespace DFW
 
                 ImGui::End();
             }
+
+            // Sub Elements
+            _element_container.DisplayElements();
+
+            _game_world->RenderImGui();
         }
 
-        void EditorDocker::OnAttached()
+        void EditorStage::OnAttached()
         {
-            CoreService::GetECS()->SystemManager().AddSystem<EditorSystem>();
+            // Allocate Systems.
+            _game_world = MakeUnique<DFW::GameWorld>();
+
+            // Add Editor Elements.
+            GameViewport& game_viewport = _element_container.AddEditorElement<GameViewport>("Viewport");
+            _element_container.AddEditorElement<EditorElementFiller>("Toolbar");
+            _element_container.AddEditorElement<EditorElementFiller>("Viewer");
+
+            // GameWorld and ECS.
+            _game_world->Init();
+            
+            DECS::ECSModule& ecs = _game_world->GetECS();
+            ecs.SystemManager().AddSystem<DFW::RenderSystem>();
+            ecs.SystemManager().AddSystem<DFW::SpriteSystem>();
+            ecs.SystemManager().AddSystem<DFW::CameraSystem>();
+
+            // Set Render Targets of render systems.
+            SharedPtr<DRender::RenderTarget const> viewport_render_target = game_viewport.GetViewportRenderTarget();
+            ecs.SystemManager().GetSystem<DFW::RenderSystem>()->RenderToRenderTarget(viewport_render_target);
+            ecs.SystemManager().GetSystem<DFW::SpriteSystem>()->RenderToRenderTarget(viewport_render_target);
         }
 
-        void EditorDocker::OnRemoved()
+        void EditorStage::OnRemoved()
         {
-            CoreService::GetECS()->SystemManager().RemoveSystem<EditorSystem>();
+            _game_world->Terminate();
+
+            _element_container.ReleaseEditorElements();
         }
 
-        void EditorDocker::SetupEditorMenubar()
+        void EditorStage::SetupEditorMenubar()
         {
             // Editor Menubar
             if (ImGui::BeginMainMenuBar())
@@ -77,7 +111,7 @@ namespace DFW
             }
         }
 
-        void EditorDocker::SetupDockingSpace()
+        void EditorStage::SetupDockingSpace()
         {
             // DockSpace
             ImGuiID dockspace_id = ImGui::GetID("Main-DockSpace");

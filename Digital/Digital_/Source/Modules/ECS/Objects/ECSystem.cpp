@@ -34,19 +34,19 @@ namespace DFW
 		{
 		}
 
-		void System::PreUpdate(Universe& /*a_universe*/)
+		void System::PreUpdate(EntityRegistry& /*a_registry*/)
 		{
 		}
 
-		void System::Update(Universe& /*a_universe*/)
+		void System::Update(EntityRegistry& /*a_registry*/)
 		{
 		}
 
-		void System::PostUpdate(Universe& /*a_universe*/)
+		void System::PostUpdate(EntityRegistry& /*a_registry*/)
 		{
 		}
 
-		void System::UpdateSystemImGui(Universe& /*a_universe*/)
+		void System::UpdateSystemImGui(EntityRegistry& /*a_registry*/)
 		{
 		}
 
@@ -69,25 +69,25 @@ namespace DFW
 			this->Terminate();
 		}
 
-		void System::InternalPreUpdate(Universe& a_universe)
+		void System::InternalPreUpdate(EntityRegistry& a_registry)
 		{
 			DFW_LOG("PreUpdate System: {} - {}", _id, _name);
 
-			this->PreUpdate(a_universe);
+			this->PreUpdate(a_registry);
 		}
 
-		void System::InternalUpdate(Universe& a_universe)
+		void System::InternalUpdate(EntityRegistry& a_registry)
 		{
 			DFW_LOG("Update System: {} - {}", _id, _name);
 
-			this->Update(a_universe);
+			this->Update(a_registry);
 		}
 
-		void System::InternalPostUpdate(Universe& a_universe)
+		void System::InternalPostUpdate(EntityRegistry& a_registry)
 		{
 			DFW_LOG("PostUpdate System: {} - {}", _id, _name);
 
-			this->PostUpdate(a_universe);
+			this->PostUpdate(a_registry);
 		}
 
 		void System::InternalPauseSystem(bool a_pause_on_true)

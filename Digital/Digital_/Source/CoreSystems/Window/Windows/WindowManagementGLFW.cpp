@@ -192,7 +192,7 @@ namespace DFW
 
         } // End of namespace ~ GLFWWindowCallBacks.
 
-        void WindowManagementGLFW::InitWindowManagement()
+        void WindowManagementGLFW::Init()
         {
             glfwSetErrorCallback(GLFWWindowCallBacks::glfw_error_callback);
 
@@ -200,10 +200,10 @@ namespace DFW
 
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-            // Saving Core Services.
-            GLFWWindowCallBacks::application_event_dispatcher   = CoreService::GetMainEventHandler();
-            GLFWWindowCallBacks::input_system                   = CoreService::GetInputSystem();
-            GLFWWindowCallBacks::window_management              = static_cast<WindowManagementGLFW*>(CoreService::GetWindowSystem());
+            // Set core services for glfw callbacks.
+            GLFWWindowCallBacks::application_event_dispatcher   = CoreService::GetAppEventHandler().get();
+            GLFWWindowCallBacks::input_system                   = CoreService::GetInputManagement().get();
+            GLFWWindowCallBacks::window_management              = static_cast<WindowManagementGLFW*>(CoreService::GetWindowManagement().get());
             
             // Construct the main window.
             SharedPtr<WindowInstance> const new_window = ConstructWindow(default_window_parameters);
@@ -214,10 +214,14 @@ namespace DFW
             RegisterCommonEventCallbacks();
         }
 
-        void WindowManagementGLFW::TerminateWindowManagement()
+        void WindowManagementGLFW::Terminate()
         {
             // Unregister Event Callbacks.
             UnregisterCommonEventCallbacks();
+
+            GLFWWindowCallBacks::application_event_dispatcher = nullptr;
+            GLFWWindowCallBacks::input_system = nullptr;
+            GLFWWindowCallBacks::window_management = nullptr;
 
             glfwTerminate();
         }
@@ -241,7 +245,7 @@ namespace DFW
                     glfwDestroyWindow(window_ptr->_glfw_window);
                     _window_instances.erase(window_ptr->_id);
 
-                    CoreService::GetMainEventHandler()->InstantBroadcast<WindowDestroyedEvent>(window_ptr->_id);
+                    CoreService::GetAppEventHandler()->InstantBroadcast<WindowDestroyedEvent>(window_ptr->_id);
                 }
             }
 
@@ -281,7 +285,7 @@ namespace DFW
 
             glfwSetWindowUserPointer(new_window_ptr->_glfw_window, new_window_ptr.get());
 
-            CoreService::GetMainEventHandler()->InstantBroadcast<WindowCreatedEvent>(new_window_ptr->_id);
+            CoreService::GetAppEventHandler()->InstantBroadcast<WindowCreatedEvent>(new_window_ptr->_id);
 
             _window_instances.emplace(new_window_ptr->_id, new_window_ptr);
             return new_window_ptr;
@@ -330,7 +334,7 @@ namespace DFW
             SharedPtr<WindowInstanceGLFW> const& window_ptr = std::static_pointer_cast<WindowInstanceGLFW>(GetWindowInternal(_main_window_id));
             glfwSetInputMode(window_ptr->_glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-            CoreService::GetMainEventHandler()->InstantBroadcast<InputMouseCursorCapturedEvent>(window_ptr->_id);
+            CoreService::GetAppEventHandler()->InstantBroadcast<InputMouseCursorCapturedEvent>(window_ptr->_id);
         }
 
         void WindowManagementGLFW::RequestMouseCursorRelease()
@@ -342,7 +346,7 @@ namespace DFW
             float32 const window_half_height   = window_ptr->_window_dimension._current_height * 0.5f;
             glfwSetCursorPos(window_ptr->_glfw_window, window_half_width, window_half_height);
 
-            CoreService::GetMainEventHandler()->InstantBroadcast<InputMouseCursorReleasedEvent>(window_ptr->_id, window_half_width, window_half_height);
+            CoreService::GetAppEventHandler()->InstantBroadcast<InputMouseCursorReleasedEvent>(window_ptr->_id, window_half_width, window_half_height);
         }
 
     } // End of namespace ~ DWindow.

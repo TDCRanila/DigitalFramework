@@ -1,33 +1,22 @@
 #pragma once
 
-#include <Utility/AutoFactory/AutoFactory.h>
-
-#include <CoreSystems/DUID.h>
-
 #include <Modules/ECS/Objects/ECSEntity.h>
+#include <Modules/ECS/Objects/InternalEntity.h>
+#include <Modules/ECS/Objects/InternalComponent.h>
+
+#include <Utility/AutoFactory/AutoFactory.h>
 
 namespace DFW
 {
 	namespace DECS
 	{
-		// FW Declare
-		class ComponentManager;
-
-		class Component : public DFactory::AutoFactory<Component>
+		class Component : public InternalComponent, public DFactory::AutoFactory<Component>
 		{
-		private:
-			friend ComponentManager;
-
 		public:
 			Component(Key);
 			virtual ~Component() = default;
 
-			Entity const& GetOwner() const;
-			DFW::DUID GetID() const;
-
-		private:
-			DFW::DUID	_id;
-			Entity		_owner;
+			Entity GetOwner() const { return Entity(_owner.GetHandle(), _owner.GetRegistry()); }
 
 		};
 

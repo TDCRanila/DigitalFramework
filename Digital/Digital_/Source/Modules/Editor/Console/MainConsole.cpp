@@ -27,7 +27,7 @@ namespace DFW
             DFW::Logger::RemoveSubscriber(this->GetID());
         }
 
-        void MainConsole::Update()
+        void MainConsole::OnUpdate()
         {
             if (_have_filters_changed)
             {
@@ -35,7 +35,7 @@ namespace DFW
             }
         }
 
-        void MainConsole::RenderImGui()
+        void MainConsole::OnRenderImGui()
         {
             ImGui::SetNextWindowSize(ImVec2(800, 400), ImGuiCond_FirstUseEver);
             ImGui::Begin(GetName().c_str());

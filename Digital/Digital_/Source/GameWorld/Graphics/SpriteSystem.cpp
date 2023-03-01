@@ -4,8 +4,12 @@
 #include <GameWorld/Camera/CameraComponent.h>
 #include <GameWorld/Graphics/SpriteComponent.h>
 
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Objects/ECSEntityRegistry.h>
 #include <Modules/Rendering/RenderModule.h>
+#include <Modules/Rendering/ShaderLibrary.h>
+#include <Modules/Rendering/UniformLibrary.h>
+#include <Modules/Rendering/ViewTargetDirector.h>
+
 #include <Modules/Rendering/RenderTarget.h>
 #include <Modules/Rendering/ViewTarget.h>
 #include <Modules/Rendering/ShaderProgram.h>
@@ -133,38 +137,39 @@ namespace DFW
 		bgfx::Memory const* data = bgfx::copy(pixel_texture.data(), static_cast<uint32>(pixel_texture.size() * sizeof(uint8)));
 		Detail::basic_texture_handle = bgfx::createTexture2D(1, 1, false, 1, texture_format, 0, data);
 
-		DRender::RenderModule* render_module(CoreService::GetRenderModule());
+		SharedPtr<DRender::RenderModule> render_module = CoreService::GetRenderModule();
+
 		// View Target
-		_view_target = render_module->view_director.AllocateViewTarget("spritesystem", DRender::ViewTargetInsertion::Front);
+		_view_target = render_module->GetViewDirector().AllocateViewTarget("spritesystem", DRender::ViewTargetInsertion::Front);
 
 		// Shaders
-		_program_ptr = render_module->shader_library.ConstructProgram("vs_sprites", "fs_sprites");
+		_program_ptr = render_module->GetShaderLibrary().ConstructProgram("vs_sprites", "fs_sprites");
 
 		// Uniforms
-		_texture_sampler_uniform = render_module->uniform_library.CreateUniform("s_texture", DRender::UniformTypes::Sampler);
+		_texture_sampler_uniform = render_module->GetUniformLibrary().CreateUniform("s_texture", DRender::UniformTypes::Sampler);
 
 		// Register Callbacks.
-		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		CoreService::GetAppEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
 		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
 
 	void SpriteSystem::Terminate()
 	{
 		// Unload Shaders.
-		CoreService::GetRenderModule()->shader_library.DestroyProgram(_program_ptr);
+		CoreService::GetRenderModule()->GetShaderLibrary().DestroyProgram(_program_ptr);
 
 		// Unregister Callbacks.
-		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		CoreService::GetAppEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
 		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
 
-	void SpriteSystem::Update(DECS::Universe& a_universe)
+	void SpriteSystem::Update(DECS::EntityRegistry& a_registry)
 	{
 		// Clear Target.
 		DRender::ViewTarget const& view_target = *_view_target;
 		bgfx::touch(view_target);
 
-		uint32 const num_sprites(static_cast<uint32>(a_universe.registry.view<SpriteComponent>().size()));
+		uint32 const num_sprites(static_cast<uint32>(a_registry.registry.view<SpriteComponent>().size()));
 		if (num_sprites <= 0)
 			return;
 
@@ -192,7 +197,7 @@ namespace DFW
 		// TODO Possibly sort SpriteComponents based on texture handle. 
 		// low to high to pack more sprites together in a sprite batch.
 		// Should reduce amount of batches which outherwise would be limited by texture handles.
-		// a_universe.registry.sort<SpriteComponent>();
+		// a_registry.registry.sort<SpriteComponent>();
 		
 		// Prepare Instance Buffers.
 		size_t const instance_stride(Detail::SpriteInstanceDataLayout::GetLayoutStride());
@@ -216,7 +221,7 @@ namespace DFW
 			data_ptr_shifter = idb.data;
 		};
 
-		for (auto&& [entity, sprite, transform] : a_universe.registry.group<SpriteComponent>(entt::get<TransformComponent>).each())
+		for (auto&& [entity, sprite, transform] : a_registry.registry.group<SpriteComponent>(entt::get<TransformComponent>).each())
 		{
 			if (!sprite.is_visible)
 				continue;

@@ -33,26 +33,26 @@ namespace DFW
 
         bool IsNull(CameraIdentifier const& a_camera_identifier)
         {
-            return (a_camera_identifier.universe_name.empty() || a_camera_identifier.camera_name.empty());
+            return (a_camera_identifier.registry_name.empty() || a_camera_identifier.camera_name.empty());
         }
 
     } // End of namespace ~ Detail.
 
-    CameraIdentifier::CameraIdentifier(std::string const& a_universe_name, std::string const& a_camera_name)
-        : universe_name(a_universe_name)
+    CameraIdentifier::CameraIdentifier(std::string const& a_registry_name, std::string const& a_camera_name)
+        : registry_name(a_registry_name)
         , camera_name(a_camera_name)
     {
     }
 
     bool CameraIdentifier::operator==(CameraIdentifier const& a_other) const
     {
-        return (universe_name == a_other.universe_name) && (camera_name == a_other.camera_name);
+        return (registry_name == a_other.registry_name) && (camera_name == a_other.camera_name);
     }
 
     std::size_t CameraIdentifier::HashFunc::operator()(DFW::CameraIdentifier const& a_struct) const
     {
         std::size_t hash(0);
-        boost::hash_combine(hash, boost::hash_value(a_struct.universe_name));
+        boost::hash_combine(hash, boost::hash_value(a_struct.registry_name));
         boost::hash_combine(hash, boost::hash_value(a_struct.camera_name));
         return hash;
     }
@@ -77,15 +77,15 @@ namespace DFW
             DFW_ASSERT(false);
         }
 
-        CameraIdentifier const registration(a_entity.GetUniverse().name, a_camera_name);
+        CameraIdentifier const registration(a_entity.GetRegistry().name, a_camera_name);
         if (auto const& it = registered_cameras.find(registration);
             it != registered_cameras.end())
         {
-            return EntityManager().GetComponent<CameraComponent>(a_entity);;
+            return a_entity.GetComponent<CameraComponent>();
         }
 
         // Create
-        CameraComponent& camera = EntityManager().AddComponent<CameraComponent>(a_entity);
+        CameraComponent& camera = a_entity.AddComponent<CameraComponent>();
         camera.name = a_camera_name;
 
         // Register
@@ -112,7 +112,7 @@ namespace DFW
             // Destroy camera component.
             CameraComponent const& found_camera = it->second.get();
             DECS::Entity const& camera_owner = found_camera.GetOwner();
-            EntityManager().DeleteComponent<CameraComponent>(camera_owner);
+            camera_owner.DeleteComponent<CameraComponent>();
 
             // Communicate.
             DUID const camera_id        = found_camera.GetID();
@@ -142,7 +142,7 @@ namespace DFW
     void CameraSystem::SetActiveCamera(DECS::Entity const& a_entity)
     {
         DFW_ASSERT(a_entity.IsEntityValid());
-        SetActiveCamera(EntityManager().GetComponent<CameraComponent>(a_entity));
+        SetActiveCamera(a_entity.GetComponent<CameraComponent>());
     }
 
     void CameraSystem::SetActiveCamera(CameraComponent& a_camera_component)
@@ -151,7 +151,7 @@ namespace DFW
 
         // Communicate.
         Entity const& owner = a_camera_component.GetOwner();
-        ECSEventHandler().Broadcast<CameraNewActiveEvent>(CameraIdentifier(owner.GetUniverse().name, a_camera_component.name), owner.GetID());
+        ECSEventHandler().Broadcast<CameraNewActiveEvent>(CameraIdentifier(owner.GetRegistry().name, a_camera_component.name), owner.GetID());
     }
 
     void CameraSystem::ChangeCameraProjPerspective(CameraComponent& a_camera_component, float32 a_fov, float32 a_viewport_aspect, ClipSpace a_clip)
@@ -199,19 +199,19 @@ namespace DFW
 
     void CameraSystem::Init()
     {
-        _input_system = DFW::CoreService::GetInputSystem();
-        DFW_ASSERT(_input_system);
+        _input_management = DFW::CoreService::GetInputManagement();
+        DFW_ASSERT(_input_management);
     }
 
-    void CameraSystem::Update(DECS::Universe& a_universe)
+    void CameraSystem::Update(DECS::EntityRegistry& a_registry)
     {
         if (_has_enabled_camera_controls && _active_camera)
         {
             Debug_ToggleCameraMode();
-            ControlCamera(*_active_camera, a_universe.registry.get<TransformComponent>(_active_camera->GetOwner()));
+            ControlCamera(*_active_camera, a_registry.registry.get<TransformComponent>(_active_camera->GetOwner().GetHandle()));
         }
 
-        for (auto&& [entity, camera_comp, transform_comp] : a_universe.registry.view<CameraComponent, TransformComponent>().each())
+        for (auto&& [entity, camera_comp, transform_comp] : a_registry.registry.view<CameraComponent, TransformComponent>().each())
             UpdateCameraMatrices(camera_comp, transform_comp);
     }
 
@@ -224,8 +224,8 @@ namespace DFW
         float32 const mouse_sensitivity(0.2f);
         float32 const mouse_scroll_sensitivity(5.0f);
 
-        glm::vec2 const mouse_delta(_input_system->GetMousePosDelta() * mouse_sensitivity);
-        glm::vec2 const mouse_scroll_delta(_input_system->GetMouseScrollDelta() * mouse_scroll_sensitivity);
+        glm::vec2 const mouse_delta(_input_management->GetMousePosDelta() * mouse_sensitivity);
+        glm::vec2 const mouse_scroll_delta(_input_management->GetMouseScrollDelta() * mouse_scroll_sensitivity);
 
         if (a_camera.has_enabled_six_degrees_rotation)
         {
@@ -260,7 +260,7 @@ namespace DFW
         a_camera.orientation = glm::normalize(a_camera.orientation);
 
         // Camera Speed
-        float32 const scroll_offset = DFW::CoreService().GetInputSystem()->GetMouseScrollDelta().y;
+        float32 const scroll_offset = _input_management->GetMouseScrollDelta().y;
         float32 const scroll_multiplier(25.0f);
         a_camera.fly_speed += scroll_offset * scroll_multiplier;
         
@@ -274,13 +274,13 @@ namespace DFW
 
         // Positional.
         glm::vec3 dir(0.0f);
-        if (DFW::CoreService().GetInputSystem()->IsKeyDown(DFW::DInput::DKey::LEFT))
+        if (_input_management->IsKeyDown(DFW::DInput::DKey::LEFT))
             dir.x += -1.0f;
-        if (DFW::CoreService().GetInputSystem()->IsKeyDown(DFW::DInput::DKey::RIGHT))
+        if (_input_management->IsKeyDown(DFW::DInput::DKey::RIGHT))
             dir.x += 1.0f;
-        if (DFW::CoreService().GetInputSystem()->IsKeyDown(DFW::DInput::DKey::UP))
+        if (_input_management->IsKeyDown(DFW::DInput::DKey::UP))
             dir.z += 1.0f;
-        if (DFW::CoreService().GetInputSystem()->IsKeyDown(DFW::DInput::DKey::DOWN))
+        if (_input_management->IsKeyDown(DFW::DInput::DKey::DOWN))
             dir.z += -1.0f;
 
         TimeUnit const dt = DFW::CoreService().GetGameClock()->GetLastFrameDeltaTime();
@@ -299,7 +299,7 @@ namespace DFW
 
     void CameraSystem::Debug_ToggleCameraMode()
     {
-        if (_input_system->IsKeyPressed(DInput::DKey::F3))
+        if (_input_management->IsKeyPressed(DInput::DKey::F3))
         {
             DFW_ASSERT(_active_camera);
             static bool camera_mode_toggle(false);
