@@ -8,9 +8,8 @@ namespace DFW
 {
     GameObject::GameObject(Entity const& a_entity)
     {
-        this->_id = a_entity.GetID();
-        this->_registry = &a_entity.GetRegistry();
         this->_handle = a_entity.GetHandle();
+        this->_registry = &a_entity.GetRegistry();
     }
 
     void GameObject::OnCreate()

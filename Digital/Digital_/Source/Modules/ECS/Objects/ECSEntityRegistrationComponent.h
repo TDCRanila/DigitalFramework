@@ -1,10 +1,10 @@
 #pragma once
 
-#include <CoreSystems/DUID.h>
 
 #include <Modules/ECS/Objects/ECSComponent.h>
-#include <Modules/ECS/Utility/ECSCompBitList.h>
 #include <Modules/ECS/Utility/ECSEntityType.h>
+
+#include <CoreSystems/DUID.h>
 
 #include <string>
 
@@ -21,7 +21,6 @@ namespace DFW
             ~EntityDataComponent() = default;
 
             DFW::DUID id;
-            ComponentBitList comp_list;
             EntityTypeID type;
             std::string name;
         };

@@ -29,11 +29,11 @@ namespace DFW
 			void UpdateECSImGui();
 
 		public:
-			SystemManager& SystemManager() const;
-			EntityManager& EntityManager() const;
-			EventDispatcher& EventHandler() const;
+			inline SystemManager& SystemManager() const { return *_system_manager; }
+			inline EntityManager& EntityManager() const { return *_entity_manager; }
+			inline EventDispatcher& EventHandler() const { return *_event_handler; }
 
-			EntityRegistry& GetRegistry() const;
+			inline EntityRegistry& GetRegistry() const { return *_registry; }
 
 		private:
 			UniquePtr<DFW::DECS::SystemManager>	_system_manager;

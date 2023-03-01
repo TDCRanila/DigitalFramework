@@ -1,9 +1,9 @@
 #pragma once
 
-#include <CoreSystems/DUID.h>
+#include <Modules/ECS/Objects/ECSEntityHandle.h>
+#include <Modules/ECS/Objects/InternalEntity.h>
 
-#include <Modules/ECS/Objects/ECSEntity.h>
-#include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
+#include <CoreSystems/DUID.h>
 
 #include <entt/entity/registry.hpp>
 
@@ -17,8 +17,8 @@ namespace DFW
     {
         // FW Declare
         class EntityManager;
-        class ComponentManager;
         class Entity;
+        struct EntityDataComponent;
 
         const int64 DFW_REGISTRY_ENTITY_RESERVATION_SIZE = 256;
 
@@ -29,7 +29,6 @@ namespace DFW
         {
         private:
             friend EntityManager;
-            friend ComponentManager;
             friend Entity;
 
         public:
@@ -47,8 +46,8 @@ namespace DFW
             std::string const name;
 
         private:
-            void RegisterEntity(Entity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp);
-            void UnregisterEntity(Entity const& a_entity);
+            void RegisterEntity(InternalEntity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp);
+            void UnregisterEntity(InternalEntity const& a_entity);
 
             EntityHandleRegistrationMap         _entity_handle_registration;
             EntityDUIDRegistrationMap           _entity_duid_registration;
