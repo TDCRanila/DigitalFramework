@@ -15,7 +15,9 @@
 #include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
 
 #include <CoreSystems/CoreServices.h>
+
 #include <Modules/Rendering/RenderModule.h>
+#include <Modules/Rendering/ViewTargetDirector.h>
 
 namespace DFW
 {
@@ -74,7 +76,7 @@ namespace DFW
             }
 
             // Free ImGui ViewID.
-            CoreService::GetRenderModule()->view_director.FreeViewTarget(DImGui::main_view_id);
+            CoreService::GetRenderModule()->GetViewDirector().FreeViewTarget(DImGui::main_view_id);
         }
 
         void ImGui_ImplBGFX_NewFrameWindow()
@@ -111,7 +113,8 @@ namespace DFW
 #endif
 
             // Set ViewID for ImGui rendering.
-            DImGui::main_view_id = CoreService::GetRenderModule()->view_director.AllocateViewTarget("main-imgui-window", DRender::ViewTargetInsertion::Back)->view_target_id;
+            DRender::ViewTargetDirector& director = CoreService::GetRenderModule()->GetViewDirector();
+            DImGui::main_view_id = director.AllocateViewTarget("main-imgui-window", DRender::ViewTargetInsertion::Back)->view_target_id;
 
             // Register main window handle (which is owned by the main application, not by the imgui layer implementation.)
             // This is mostly for simplicity and consistency, so that the code (e.g. mouse handling etc.) can use the same logic for main and secondary viewports.
@@ -149,7 +152,8 @@ namespace DFW
         void ImGui_ImplBGFX_CreateViewportWindow(ImGuiViewport* a_viewport)
         {
             ImGuiViewportDataBGFX* viewport_data = DImGui::imgui_rendering_context._viewports.emplace_back(IM_NEW(ImGuiViewportDataBGFX)());
-            viewport_data->_view_id = CoreService::GetRenderModule()->view_director.AllocateViewTarget(DRender::ViewTargetInsertion::Back)->view_target_id;
+            DRender::ViewTargetDirector& director = CoreService::GetRenderModule()->GetViewDirector();
+            viewport_data->_view_id = director.AllocateViewTarget(DRender::ViewTargetInsertion::Back)->view_target_id;
 
             // GLFW 3.2 unfortunately always set focus on glfwCreateWindow() if GLFW_VISIBLE is set, regardless of GLFW_FOCUSED
             // With GLFW 3.3, the hint GLFW_FOCUS_ON_SHOW fixes this problem
@@ -218,7 +222,7 @@ namespace DFW
                 if (bgfx::isValid(viewport_data->_framebuffer_handle))
                     bgfx::destroy(viewport_data->_framebuffer_handle);
 
-                CoreService::GetRenderModule()->view_director.FreeViewTarget(viewport_data->_view_id);
+                CoreService::GetRenderModule()->GetViewDirector().FreeViewTarget(viewport_data->_view_id);
 
                 if (viewport_data->_window_owned)
                 {

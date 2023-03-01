@@ -1,9 +1,9 @@
 #pragma once
 
-#include <CoreSystems/DUID.h>
+#include <Modules/ECS/Objects/ECSEntityHandle.h>
+#include <Modules/ECS/Objects/InternalEntity.h>
 
-#include <Modules/ECS/Objects/ECSEntity.h>
-#include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
+#include <CoreSystems/DUID.h>
 
 #include <entt/entity/registry.hpp>
 
@@ -17,26 +17,25 @@ namespace DFW
     {
         // FW Declare
         class EntityManager;
-        class ComponentManager;
         class Entity;
+        struct EntityDataComponent;
 
-        const int64 DFW_UNIVERSE_ENTITY_RESERVATION_SIZE = 256;
+        const int64 DFW_REGISTRY_ENTITY_RESERVATION_SIZE = 256;
 
         using EntityHandleRegistrationMap   = std::unordered_map<EntityHandle, DFW::RefWrap<EntityDataComponent>>;
         using EntityDUIDRegistrationMap     = std::unordered_map<DFW::DUID, EntityHandle>;
 
-        class Universe final
+        class EntityRegistry final
         {
         private:
             friend EntityManager;
-            friend ComponentManager;
             friend Entity;
 
         public:
-            Universe(DFW::DUID const a_universe_id, std::string const& a_universe_name);
-            ~Universe();
+            EntityRegistry(std::string const& a_registry_name);
+            ~EntityRegistry();
 
-            std::strong_ordering operator<=>(Universe const& a_other) const = default;
+            std::strong_ordering operator<=>(EntityRegistry const& a_other) const = default;
             
             std::vector<Entity> GetEntities();
 
@@ -47,8 +46,8 @@ namespace DFW
             std::string const name;
 
         private:
-            void RegisterEntity(Entity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp);
-            void UnregisterEntity(Entity const& a_entity);
+            void RegisterEntity(InternalEntity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp);
+            void UnregisterEntity(InternalEntity const& a_entity);
 
             EntityHandleRegistrationMap         _entity_handle_registration;
             EntityDUIDRegistrationMap           _entity_duid_registration;

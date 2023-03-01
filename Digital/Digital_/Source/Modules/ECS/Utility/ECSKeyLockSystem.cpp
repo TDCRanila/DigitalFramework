@@ -1,10 +1,10 @@
 #include <Modules/ECS/Utility/ECSKeyLockSystem.h>
 
-#include <Utility/AutoFactory/AutoFactory.h>
+#include <Modules/ECS/Objects/ECSComponent.h>
 
 #include <CoreSystems/Logging/Logger.h>
 
-#include <Modules/ECS/Objects/ECSComponent.h>
+#include <Utility/AutoFactory/AutoFactory.h>
 
 namespace DFW
 {

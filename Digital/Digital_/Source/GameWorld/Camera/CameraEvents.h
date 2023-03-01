@@ -86,9 +86,9 @@ namespace DFW
 			debug_string << "Camera: ";
 			debug_string << camera_identifier.camera_name;
 			debug_string << " - ";
-			debug_string << "Universe";
+			debug_string << "EntityRegistry";
 			debug_string << "[";
-			debug_string << camera_identifier.universe_name;
+			debug_string << camera_identifier.registry_name;
 			debug_string << "]";
 
 			return debug_string.str();

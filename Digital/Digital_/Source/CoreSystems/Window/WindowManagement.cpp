@@ -89,12 +89,12 @@ namespace DFW
 
         void WindowManagement::RegisterCommonEventCallbacks()
         {
-            CoreService::GetMainEventHandler()->RegisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
+            CoreService::GetAppEventHandler()->RegisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
         }
 
         void WindowManagement::UnregisterCommonEventCallbacks()
         {
-            CoreService::GetMainEventHandler()->UnregisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
+            CoreService::GetAppEventHandler()->UnregisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
         }
 
         void WindowManagement::OnWindowFocusEvent(WindowFocusEvent const& a_event)

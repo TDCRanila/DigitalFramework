@@ -1,28 +1,14 @@
 #include <Modules/ECS/Objects/ECSEntity.h>
 
-#include <CoreSystems/CoreServices.h>
-
-#include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/ECSEntityManager.h>
+#include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
 
 namespace DFW
 {
 	namespace DECS
 	{
-		Entity::Entity()
-			: _handle(DFW_NULL_ENTITY_HANDLE)
-			, _id(DFW::DFW_INVALID_DUID)
-			, _universe(nullptr)
+		Entity::Entity(EntityHandle a_entity_handle, EntityRegistry& a_registry)
+			: InternalEntity(a_entity_handle, &a_registry)
 		{
-		}
-
-		Entity::Entity(EntityHandle a_entity_handle, Universe& a_universe)
-			: _handle(a_entity_handle)
-			, _universe(&a_universe)
-		{
-			DFW_ASSERT(a_universe.IsValid());
-			EntityDataComponent const& comp = a_universe._entity_handle_registration.at(_handle);
-			_id = comp.id;
 		}
 
 		std::strong_ordering Entity::operator<=>(Entity const& a_other) const
@@ -30,56 +16,36 @@ namespace DFW
 			if (auto comparison = this->_handle <=> a_other._handle; comparison != 0)
 				return comparison;
 
-			if (auto comparison = (this->_universe <=> a_other._universe); comparison != 0)
+			if (auto comparison = (this->_registry <=> a_other._registry); comparison != 0)
 					return comparison;
 
 			return std::strong_ordering();
 		}
 
-		Entity::operator EntityHandle()
-		{
-			return _handle;
-		}
-
-		Entity::operator EntityHandle() const
-		{
-			return _handle;
-		}
-
 		DFW::DUID Entity::GetID() const
 		{
-			return _id;
+			return _registry->registry.get<EntityDataComponent>(_handle).id;
 		}
 
-		EntityHandle Entity::GetHandle() const
+		EntityTypeID Entity::GetTypeID() const
 		{
-			return _handle;
+			return _registry->registry.get<EntityDataComponent>(_handle).type;
 		}
 
-		Universe& Entity::GetUniverse() const
+		std::string Entity::GetName() const
 		{
-			DFW_ASSERT(_universe);
-			return (*_universe);
+			return _registry->registry.get<EntityDataComponent>(_handle).name;
 		}
 
-		bool Entity::IsEntityValid() const
+		void Entity::SetName(std::string const& a_new_name)
 		{
-			if (_handle == DFW_NULL_ENTITY_HANDLE)
-				return false;
-
-			if (!_universe)
-				return false;
-
-			if (!_universe->registry.valid(_handle))
-				return false;
-
-			return true;
+			_registry->registry.get<EntityDataComponent>(_handle).name = a_new_name;
 		}
 
 		bool Entity::IsPendingDeletion() const
 		{
-			DFW_ASSERT(_universe);
-			return _universe->_pending_deletion_entities.end() != _universe->_pending_deletion_entities.find(_handle);
+			DFW_ASSERT(_registry);
+			return _registry->_pending_deletion_entities.end() != _registry->_pending_deletion_entities.find(_handle);
 		}
 
 	} // End of namespace ~ DECS.

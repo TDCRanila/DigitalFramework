@@ -1,5 +1,9 @@
 #include <Modules/Editor/MainMenuBar.h>
 
+#include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Events/EventDispatcher.h>
+#include <CoreSystems/ApplicationEvents.h>
+
 #include <imgui/imgui.h>
 
 namespace DFW
@@ -14,17 +18,18 @@ namespace DFW
 
 		//MainMenuBar::~MainMenuBar()= default;
 
-		void MainMenuBar::Update()
+		void MainMenuBar::OnUpdate()
 		{
 		}
 
-		void MainMenuBar::RenderImGui()
+		void MainMenuBar::OnRenderImGui()
 		{
 			if (ImGui::BeginMainMenuBar())
 			{
 				if (ImGui::BeginMenu("Explore"))
 				{
-					ImGui::MenuItem("Exit", nullptr);
+					if (ImGui::MenuItem("Exit", nullptr))
+						DFW::CoreService::GetAppEventHandler()->Broadcast<ApplicationCloseEvent>();
 
 					ImGui::EndMenu();
 				}

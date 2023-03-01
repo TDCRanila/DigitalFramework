@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Utility/TemplateUtility.h>
+
 namespace DFW
 {
     namespace DECS

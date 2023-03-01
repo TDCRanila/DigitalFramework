@@ -19,8 +19,8 @@ namespace DFW
 			void LogMessageCallback(std::string a_log_message);
 
 		private:
-			virtual void Update() override;
-			virtual void RenderImGui() override;
+			virtual void OnUpdate() override;
+			virtual void OnRenderImGui() override;
 
 			struct ConsoleLogFilter
 			{

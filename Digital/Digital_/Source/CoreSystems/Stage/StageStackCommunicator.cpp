@@ -17,8 +17,8 @@ namespace DFW
         for (auto stage_it = _stage_stack_controller->rbegin(); stage_it != _stage_stack_controller->rend(); ++stage_it)
         {
             StageBase* stage_ptr = (*stage_it);
-            if (!stage_ptr->IsDisabled())
-                stage_ptr->OnStageEvent(a_event);
+            //if (!stage_ptr->IsDisabled())
+            //    stage_ptr->OnStageEvent(a_event);
         }
     }
 

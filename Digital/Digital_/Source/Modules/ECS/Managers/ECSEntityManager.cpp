@@ -14,59 +14,41 @@ namespace DFW
 				return;
 			}
 
-			auto const& [it, result] = a_entity._universe->_pending_deletion_entities.emplace(a_entity);
+			auto const& [it, result] = a_entity._registry->_pending_deletion_entities.emplace(a_entity.GetHandle());
 			if (!result)
 				DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
 		}
 
-		Entity EntityManager::GetEntity(DFW::DUID const a_entity_id, Universe& a_universe) const
+		Entity EntityManager::GetEntity(DFW::DUID const a_entity_id, EntityRegistry& a_registry) const
 		{
-			if (!a_universe.IsValid())
+			if (!a_registry.IsValid())
 			{
-				DFW_ERRORLOG("Attempting to find an entitiy, but the universe is invalid.");
-				DFW_ASSERT(a_universe.IsValid() && "Attempting to find an entity in an invalid universe.");
+				DFW_ERRORLOG("Attempting to find an entitiy, but the registry is invalid.");
+				DFW_ASSERT(a_registry.IsValid() && "Attempting to find an entity in an invalid registry.");
 				return Entity();
 			}
 
-			EntityDUIDRegistrationMap const& umap = a_universe._entity_duid_registration;
+			EntityDUIDRegistrationMap const& umap = a_registry._entity_duid_registration;
 			if (auto const& it = umap.find(a_entity_id); it == umap.end())
 				return Entity();
 			else
-				return Entity(it->second, a_universe);
+				return Entity(it->second, a_registry);
 		}
 
-		EntityTypeID EntityManager::GetEntityTypeID(Entity const& a_entity) const
+		void EntityManager::ManageDeletedEntities(EntityRegistry& a_registry)
 		{
-			DFW_ASSERT(a_entity.IsEntityValid());
-			return GetComponent<EntityDataComponent>(a_entity).type;
-		}
+			DFW_ASSERT(a_registry.IsValid() && "Attempting to manage entities, but the registry is invalid.");
 
-		void EntityManager::SetEntityName(Entity const& a_entity, std::string const& a_new_entity_name)
-		{
-			DFW_ASSERT(a_entity.IsEntityValid());
-			GetComponent<EntityDataComponent>(a_entity).name = a_new_entity_name;
-		}
-		
-		std::string EntityManager::GetEntityName(Entity const& a_entity) const
-		{
-			DFW_ASSERT(a_entity.IsEntityValid());
-			return GetComponent<EntityDataComponent>(a_entity).name;			
-		}
-
-		void EntityManager::ManageDeletedEntities(Universe& a_universe)
-		{
-			DFW_ASSERT(a_universe.IsValid() && "Attempting to manage entities, but the universe is invalid.");
-
-			if (a_universe._pending_deletion_entities.empty())
+			if (a_registry._pending_deletion_entities.empty())
 				return;
 
-			for (EntityHandle const handle : a_universe._pending_deletion_entities)
+			for (EntityHandle const handle : a_registry._pending_deletion_entities)
 			{
-				a_universe.UnregisterEntity(Entity(handle, a_universe));
-				a_universe.registry.destroy(handle);
+				a_registry.UnregisterEntity(Entity(handle, a_registry));
+				a_registry.registry.destroy(handle);
 			}
 
-			a_universe._pending_deletion_entities.clear();
+			a_registry._pending_deletion_entities.clear();
 		}
 
 	} // End of namespace ~ DECS.

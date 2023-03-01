@@ -17,7 +17,7 @@ namespace DFW
 	{
 		// FW Declare
 		class ECSModule;
-		class Universe;
+		class EntityRegistry;
 
 		constexpr int64 DFW_SYSTEM_RESERVE_AMOUNT = 16;
 
@@ -27,7 +27,7 @@ namespace DFW
 			friend ECSModule;
 
 		public:
-			SystemManager();
+			SystemManager(ECSModule const* a_ecs);
 			~SystemManager();
 
 			template <typename SystemType, typename ...TArgs>
@@ -63,8 +63,8 @@ namespace DFW
 		private:
 			void Terminate();
 
-			void UpdateSystems(Universe& a_universe);
-			void UpdateSystemsImGui(Universe& a_universe);
+			void UpdateSystems(EntityRegistry& a_registry);
+			void UpdateSystemsImGui(EntityRegistry& a_registry);
 
 			template <typename SystemType>
 			requires IsValidSystemType<SystemType>
@@ -73,6 +73,8 @@ namespace DFW
 		private:
 			std::unordered_map<std::type_index, SharedPtr<System>> _systems;
 			using SystemMapIterator = std::unordered_map<std::type_index, SharedPtr<System>>::iterator;
+
+			ECSModule const* _ecs;
 
 		};
 
@@ -94,8 +96,8 @@ namespace DFW
 			system_ptr->_name			= type.name();
 			system_ptr->_id				= DFW::GenerateDUID();
 			system_ptr->_system_manager	= this;
-			system_ptr->_entity_manager	= &CoreService::GetECS()->EntityManager();
-			system_ptr->_event_handler	= &CoreService::GetECS()->EventHandler();
+			system_ptr->_entity_manager	= &_ecs->EntityManager();
+			system_ptr->_event_handler	= &_ecs->EventHandler();
 
 			DFW_ASSERT(system_ptr->_entity_manager);
 			DFW_ASSERT(system_ptr->_event_handler);
