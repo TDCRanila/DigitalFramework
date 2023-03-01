@@ -4,11 +4,14 @@
 #include <Modules/ECS/Objects/InternalComponent.h>
 #include <Modules/ECS/Objects/InternalEntity.h>
 #include <Modules/ECS/Utility/ECSConcepts.h>
+#include <Modules/ECS/Utility/ECSEntityType.h>
 
 #include <CoreSystems/DUID.h>
 
 #include <Utility/AutoFactory/AutoFactory.h>
 #include <Utility/TemplateUtility.h>
+
+#include <string>
 
 namespace DFW
 {
@@ -28,6 +31,10 @@ namespace DFW
 
 		public:
 			DFW::DUID GetID() const;
+			EntityTypeID GetTypeID() const;
+
+			std::string GetName() const;
+			void SetName(std::string const& a_new_name);
 
 			bool IsPendingDeletion() const;
 

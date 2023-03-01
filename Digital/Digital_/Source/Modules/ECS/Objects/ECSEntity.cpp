@@ -27,12 +27,27 @@ namespace DFW
 			return _registry->registry.get<EntityDataComponent>(_handle).id;
 		}
 
+		EntityTypeID Entity::GetTypeID() const
+		{
+			return _registry->registry.get<EntityDataComponent>(_handle).type;
+		}
+
+		std::string Entity::GetName() const
+		{
+			return _registry->registry.get<EntityDataComponent>(_handle).name;
+		}
+
+		void Entity::SetName(std::string const& a_new_name)
+		{
+			_registry->registry.get<EntityDataComponent>(_handle).name = a_new_name;
+		}
+
 		bool Entity::IsPendingDeletion() const
 		{
 			DFW_ASSERT(_registry);
 			return _registry->_pending_deletion_entities.end() != _registry->_pending_deletion_entities.find(_handle);
 		}
-		
+
 	} // End of namespace ~ DECS.
 
 } // End of namespace ~ DFW.

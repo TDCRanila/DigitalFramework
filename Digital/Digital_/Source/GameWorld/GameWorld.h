@@ -54,7 +54,7 @@ namespace DFW
 
         GameObject game_object(entity_manager.CreateEntity<GameObjectType>(_ecs->GetRegistry(), std::forward<TArgs>(a_args)...));
 
-        entity_manager.SetEntityName(game_object, a_spawn_info.name);
+        game_object.SetName(a_spawn_info.name);
         game_object.AddComponent<GameObjectTagComponent>();
         game_object.AddComponent<TransformComponent>(a_spawn_info.transform);
 

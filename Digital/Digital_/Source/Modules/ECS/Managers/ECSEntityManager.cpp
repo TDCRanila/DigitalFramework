@@ -35,24 +35,6 @@ namespace DFW
 				return Entity(it->second, a_registry);
 		}
 
-		EntityTypeID EntityManager::GetEntityTypeID(Entity const& a_entity) const
-		{
-			DFW_ASSERT(a_entity.IsEntityValid());
-			return a_entity.GetComponent<EntityDataComponent>().type;
-		}
-
-		void EntityManager::SetEntityName(Entity const& a_entity, std::string const& a_new_entity_name)
-		{
-			DFW_ASSERT(a_entity.IsEntityValid());
-			a_entity.GetComponent<EntityDataComponent>().name = a_new_entity_name;
-		}
-		
-		std::string EntityManager::GetEntityName(Entity const& a_entity) const
-		{
-			DFW_ASSERT(a_entity.IsEntityValid());
-			return a_entity.GetComponent<EntityDataComponent>().name;
-		}
-
 		void EntityManager::ManageDeletedEntities(EntityRegistry& a_registry)
 		{
 			DFW_ASSERT(a_registry.IsValid() && "Attempting to manage entities, but the registry is invalid.");
