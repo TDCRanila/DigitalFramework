@@ -1,12 +1,13 @@
 #pragma once
 
-#include <CoreSystems/DUID.h>
 
-#include <Modules/ECS/Managers/ECSComponentManager.h>
 #include <Modules/ECS/Objects/ECSEntity.h>
 #include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
 #include <Modules/ECS/Objects/ECSEntityRegistry.h>
 #include <Modules/ECS/Utility/ECSEntityType.h>
+
+#include <CoreSystems/DUID.h>
+#include <CoreSystems/Logging/Logger.h>
 
 #include <Utility/FamiltyTypeID.h>
 #include <Utility/TemplateUtility.h>
@@ -49,27 +50,8 @@ namespace DFW
 			EntityTypeID GetEntityTypeID() const;
 			EntityTypeID GetEntityTypeID(Entity const& a_entity) const;
 
-		public:
-			// Forwarded Component Mangement Functions.
-			template <typename ComponentType, typename... TArgs>
-			ComponentType& AddComponent(Entity const& a_entity, TArgs&&...a_args) const;
-
-			template <typename ComponentType>
-			ComponentType& GetComponent(Entity const& a_entity) const;
-
-			template <typename ComponentType>
-			ComponentType* const TryGetComponent(Entity const& a_entity) const;
-
-			template <typename... TArgs>
-			bool HasComponents(Entity const& a_entity) const;
-
-			template <typename ComponentType>
-			bool DeleteComponent(Entity const& a_entity) const;
-
 		private:
 			void ManageDeletedEntities(EntityRegistry& a_registry);
-
-			ComponentManager _component_manager;
 
 		};
 
@@ -90,11 +72,10 @@ namespace DFW
 			EntityType entity(std::forward<TArgs>(a_args)...);
 			entity._handle		= a_registry.registry.create();
 			entity._registry	= &a_registry;
-			entity._id			= DFW::GenerateDUID();
 
 			// Register Additional Entity Data in EntityRegistry registries.
-			EntityDataComponent& reg_comp = AddComponent<EntityDataComponent>(entity);
-			reg_comp.id		= entity._id;
+			EntityDataComponent& reg_comp = entity.AddComponent<EntityDataComponent>();
+			reg_comp.id		= DFW::GenerateDUID();
 			reg_comp.type	= DUtility::FamilyType<Entity>::GetTypeID<EntityType>();
 			reg_comp.name	= DFW_DEFAULT_ENTITY_NAME;
 
@@ -109,38 +90,6 @@ namespace DFW
 		{
 			return DUtility::FamilyType<Entity>::GetTypeID<EntityType>();
 		}
-
-		template <typename ComponentType, typename... TArgs>
-		ComponentType& EntityManager::AddComponent(Entity const& a_entity, TArgs&&...a_args) const
-		{
-			return _component_manager.AddComponent<ComponentType>(a_entity, std::forward<TArgs&&>(a_args)...);
-		}
-
-		template <typename ComponentType>
-		ComponentType& EntityManager::GetComponent(Entity const& a_entity) const
-		{
-			return _component_manager.GetComponent<ComponentType>(a_entity);
-		}
-
-		template <typename ComponentType>
-		ComponentType* const EntityManager::TryGetComponent(Entity const& a_entity) const
-		{
-			return _component_manager.TryGetComponent<ComponentType>(a_entity);
-		}
-
-		template <typename... TArgs>
-		bool EntityManager::HasComponents(Entity const& a_entity) const
-		{
-			return _component_manager.HasComponents<TArgs...>(a_entity);
-		}
-
-		template <typename ComponentType>
-		bool EntityManager::DeleteComponent(Entity const& a_entity) const
-		{
-			return _component_manager.DeleteComponent<ComponentType>(a_entity);
-		}
-
-#pragma endregion
 
 	} // End of namespace ~ DECS.
 

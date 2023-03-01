@@ -1,6 +1,7 @@
 #include <Modules/ECS/Objects/ECSEntityRegistry.h>
 
-#include <ranges>
+#include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
+#include <Modules/ECS/Objects/ECSEntity.h>
 
 namespace DFW
 {
@@ -41,9 +42,9 @@ namespace DFW
             // return v;
             
             std::vector<Entity> entities;
-            for (auto const& entity_handle : entities)
+            for (auto const& entity_handle : _entities)
             {
-                entities.emplace_back(entity_handle);
+                entities.emplace_back(entity_handle, *this);
             }
             return entities;
         }
@@ -53,22 +54,22 @@ namespace DFW
             return id != DFW_INVALID_DUID;
         }
 
-        void EntityRegistry::RegisterEntity(Entity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp)
+        void EntityRegistry::RegisterEntity(InternalEntity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp)
         {
-            DFW_ASSERT(a_entity.IsEntityValid());
-            EntityHandle const handle = a_entity.GetHandle();
-            _entities.emplace(handle);
-            _entity_handle_registration.emplace(handle, a_registration_comp);
-            _entity_duid_registration.emplace(a_entity.GetID(), handle);
+            /*DFW_ASSERT(a_entity.IsEntityValid());*/
+            EntityHandle const entity_handle = a_entity.GetHandle();
+            _entities.emplace(entity_handle);
+            _entity_handle_registration.emplace(entity_handle, a_registration_comp);
+            _entity_duid_registration.emplace(registry.get<EntityDataComponent>(entity_handle).id, entity_handle);
         }
 
-        void EntityRegistry::UnregisterEntity(Entity const& a_entity)
+        void EntityRegistry::UnregisterEntity(InternalEntity const& a_entity)
         {
-            DFW_ASSERT(a_entity.IsEntityValid());
-            EntityHandle const handle = a_entity.GetHandle();
-            _entities.erase(handle);
-            _entity_handle_registration.erase(handle);
-            _entity_duid_registration.erase(a_entity.GetID());
+            /*DFW_ASSERT(a_entity.IsEntityValid());*/
+            EntityHandle const entity_handle = a_entity.GetHandle();
+            _entities.erase(entity_handle);
+            _entity_handle_registration.erase(entity_handle);
+            _entity_duid_registration.erase(registry.get<EntityDataComponent>(entity_handle).id);
         }
 
     } // End of namespace ~ DECS.

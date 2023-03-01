@@ -81,11 +81,11 @@ namespace DFW
         if (auto const& it = registered_cameras.find(registration);
             it != registered_cameras.end())
         {
-            return EntityManager().GetComponent<CameraComponent>(a_entity);;
+            return a_entity.GetComponent<CameraComponent>();
         }
 
         // Create
-        CameraComponent& camera = EntityManager().AddComponent<CameraComponent>(a_entity);
+        CameraComponent& camera = a_entity.AddComponent<CameraComponent>();
         camera.name = a_camera_name;
 
         // Register
@@ -112,7 +112,7 @@ namespace DFW
             // Destroy camera component.
             CameraComponent const& found_camera = it->second.get();
             DECS::Entity const& camera_owner = found_camera.GetOwner();
-            EntityManager().DeleteComponent<CameraComponent>(camera_owner);
+            camera_owner.DeleteComponent<CameraComponent>();
 
             // Communicate.
             DUID const camera_id        = found_camera.GetID();
@@ -142,7 +142,7 @@ namespace DFW
     void CameraSystem::SetActiveCamera(DECS::Entity const& a_entity)
     {
         DFW_ASSERT(a_entity.IsEntityValid());
-        SetActiveCamera(EntityManager().GetComponent<CameraComponent>(a_entity));
+        SetActiveCamera(a_entity.GetComponent<CameraComponent>());
     }
 
     void CameraSystem::SetActiveCamera(CameraComponent& a_camera_component)
@@ -208,7 +208,7 @@ namespace DFW
         if (_has_enabled_camera_controls && _active_camera)
         {
             Debug_ToggleCameraMode();
-            ControlCamera(*_active_camera, a_registry.registry.get<TransformComponent>(_active_camera->GetOwner()));
+            ControlCamera(*_active_camera, a_registry.registry.get<TransformComponent>(_active_camera->GetOwner().GetHandle()));
         }
 
         for (auto&& [entity, camera_comp, transform_comp] : a_registry.registry.view<CameraComponent, TransformComponent>().each())

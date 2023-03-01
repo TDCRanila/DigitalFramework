@@ -43,7 +43,7 @@ namespace DFW
 
     bool GameWorld::IsGameObject(Entity const& a_entity) const
     {
-        return _ecs->EntityManager().TryGetComponent<GameObjectTagComponent>(a_entity) ? true : false;
+        return a_entity.TryGetComponent<GameObjectTagComponent>() ? true : false;
     }
 
 } // End of namespace ~ DFW. 

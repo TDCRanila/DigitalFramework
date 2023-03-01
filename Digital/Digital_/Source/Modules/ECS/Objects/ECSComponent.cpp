@@ -5,19 +5,7 @@ namespace DFW
 	namespace DECS
 	{
 		Component::Component(Key)
-			: _owner()
-			, _id(DFW::DFW_INVALID_DUID)
 		{
-		}
-
-		Entity const& Component::GetOwner() const
-		{
-			return _owner;
-		}
-
-		DFW::DUID Component::GetID() const
-		{
-			return _id;
 		}
 
 	} // End of namespace ~ DECS.

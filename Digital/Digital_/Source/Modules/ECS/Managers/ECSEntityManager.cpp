@@ -14,7 +14,7 @@ namespace DFW
 				return;
 			}
 
-			auto const& [it, result] = a_entity._registry->_pending_deletion_entities.emplace(a_entity);
+			auto const& [it, result] = a_entity._registry->_pending_deletion_entities.emplace(a_entity.GetHandle());
 			if (!result)
 				DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
 		}
@@ -38,19 +38,19 @@ namespace DFW
 		EntityTypeID EntityManager::GetEntityTypeID(Entity const& a_entity) const
 		{
 			DFW_ASSERT(a_entity.IsEntityValid());
-			return GetComponent<EntityDataComponent>(a_entity).type;
+			return a_entity.GetComponent<EntityDataComponent>().type;
 		}
 
 		void EntityManager::SetEntityName(Entity const& a_entity, std::string const& a_new_entity_name)
 		{
 			DFW_ASSERT(a_entity.IsEntityValid());
-			GetComponent<EntityDataComponent>(a_entity).name = a_new_entity_name;
+			a_entity.GetComponent<EntityDataComponent>().name = a_new_entity_name;
 		}
 		
 		std::string EntityManager::GetEntityName(Entity const& a_entity) const
 		{
 			DFW_ASSERT(a_entity.IsEntityValid());
-			return GetComponent<EntityDataComponent>(a_entity).name;			
+			return a_entity.GetComponent<EntityDataComponent>().name;
 		}
 
 		void EntityManager::ManageDeletedEntities(EntityRegistry& a_registry)
