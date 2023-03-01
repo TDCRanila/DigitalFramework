@@ -69,27 +69,6 @@ namespace DFW
 			_system_manager->UpdateSystemsImGui(*_registry);
 		}
 
-		SystemManager& ECSModule::SystemManager() const
-		{
-			return *_system_manager;
-		}
-
-		EntityManager& ECSModule::EntityManager() const
-		{
-			return *_entity_manager;
-		}
-
-		EventDispatcher& ECSModule::EventHandler() const
-		{
-			return *_event_handler;
-		}
-
-		EntityRegistry& ECSModule::GetRegistry() const
-		{
-			DFW_ASSERT(_registry);
-			return *_registry;
-		}
-
 	} // End of namespace ~ DECS
 
 } // End of namespace ~ DFW.
