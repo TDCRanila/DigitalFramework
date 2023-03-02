@@ -1,4 +1,4 @@
-#include <Modules/ECS/Managers/ECSEntityManager.h>
+#include <Modules/ECS/Managers/EntityManager.h>
 
 #include <CoreSystems/Logging/Logger.h>
 

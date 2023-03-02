@@ -1,15 +1,14 @@
 #pragma once
 
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
-#include <Modules/ECS/Objects/InternalComponent.h>
-#include <Modules/ECS/Objects/InternalEntity.h>
-#include <Modules/ECS/Utility/ECSConcepts.h>
-#include <Modules/ECS/Utility/ECSEntityType.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
+#include <Modules/ECS/Internal/InternalComponent.h>
+#include <Modules/ECS/Internal/InternalEntity.h>
+#include <Modules/ECS/Utility/ECSTemplateUtility.h>
+#include <Modules/ECS/Utility/EntityTypeID.h>
 
 #include <CoreSystems/DUID.h>
 
 #include <Utility/AutoFactory/AutoFactory.h>
-#include <Utility/TemplateUtility.h>
 
 #include <string>
 

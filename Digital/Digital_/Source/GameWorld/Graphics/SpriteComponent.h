@@ -3,7 +3,7 @@
 #include <GameWorld/Graphics/Renderable.h>
 
 #include <Modules/Rendering/TextureData.h>
-#include <Modules/ECS/Objects/ECSComponent.h>
+#include <Modules/ECS/Component.h>
 
 #include <CoreSystems/Memory.h>
 

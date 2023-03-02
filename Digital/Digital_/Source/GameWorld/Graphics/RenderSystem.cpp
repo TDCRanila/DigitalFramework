@@ -4,7 +4,7 @@
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Graphics/ModelComponent.h>
 
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
 
 #include <Modules/Rendering/RenderModule.h>
 #include <Modules/Rendering/ShaderLibrary.h>

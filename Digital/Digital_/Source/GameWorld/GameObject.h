@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Modules/ECS/Objects/ECSEntity.h>
+#include <Modules/ECS/Entity.h>
 
 #include <Utility/AutoFactory/AutoFactory.h>
 

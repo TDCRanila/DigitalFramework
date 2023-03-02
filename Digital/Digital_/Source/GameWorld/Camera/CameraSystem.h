@@ -2,8 +2,8 @@
 
 #include <GameWorld/Camera/ClipSpace.h>
 
-#include <Modules/ECS/Objects/ECSystem.h>
-#include <Modules/ECS/Objects/ECSEntity.h>
+#include <Modules/ECS/System.h>
+#include <Modules/ECS/Entity.h>
 
 #include <CoreSystems/Memory.h>
 #include <CoreSystems/DUID.h>

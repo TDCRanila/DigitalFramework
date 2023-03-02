@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Modules/ECS/Objects/ECSEntityHandle.h>
+#include <Modules/ECS/EntityHandle.h>
 
 #include <CoreSystems/DUID.h>
 

@@ -7,7 +7,7 @@
 #include <GameWorld/TransformComponent.h>
 
 #include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/ECSEntityManager.h>
+#include <Modules/ECS/Managers/EntityManager.h>
 
 #include <CoreSystems/Events/EventDispatcher.h>
 

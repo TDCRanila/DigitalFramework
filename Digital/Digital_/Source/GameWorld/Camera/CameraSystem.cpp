@@ -13,8 +13,8 @@
 #include <GameWorld/Transform.h>
 
 #include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/ECSEntityManager.h>
-#include <Modules/ECS/Objects/ECSEntity.h>
+#include <Modules/ECS/Entity.h>
+#include <Modules/ECS/Managers/EntityManager.h>
 
 #include <Defines/MathDefines.h>
 

@@ -1,6 +1,6 @@
-#include <Modules/ECS/Objects/InternalEntity.h>
+#include <Modules/ECS/Internal/InternalEntity.h>
 
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
 
 namespace DFW
 {

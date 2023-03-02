@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include <Modules/ECS/Objects/ECSEntity.h>
-#include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
-#include <Modules/ECS/Utility/ECSEntityType.h>
+#include <Modules/ECS/Entity.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
+#include <Modules/ECS/Internal/EntityDataComponent.h>
+#include <Modules/ECS/Utility/EntityTypeID.h>
 
 #include <CoreSystems/DUID.h>
 #include <CoreSystems/Logging/Logger.h>

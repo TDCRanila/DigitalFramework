@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Modules/ECS/Objects/ECSEntityHandle.h>
-#include <Modules/ECS/Objects/InternalEntity.h>
+#include <Modules/ECS/EntityHandle.h>
+#include <Modules/ECS/Internal/InternalEntity.h>
 
 #include <CoreSystems/DUID.h>
 

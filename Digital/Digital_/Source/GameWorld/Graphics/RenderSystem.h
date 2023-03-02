@@ -2,7 +2,7 @@
 
 #include <GameWorld/Graphics/BaseRenderSystem.h>
 
-#include <Modules/ECS/Objects/ECSystem.h>
+#include <Modules/ECS/System.h>
 
 #include <CoreSystems/Memory.h>
 

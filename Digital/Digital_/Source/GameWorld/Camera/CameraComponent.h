@@ -2,7 +2,7 @@
 
 #include <GameWorld/Camera/ClipSpace.h>
 
-#include <Modules/ECS/Objects/ECSComponent.h>
+#include <Modules/ECS/Component.h>
 #include <Modules/Math/EulerAngles.h>
 
 #include <CoreSystems/DUID.h>

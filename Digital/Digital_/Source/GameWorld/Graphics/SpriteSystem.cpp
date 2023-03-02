@@ -4,7 +4,8 @@
 #include <GameWorld/Camera/CameraComponent.h>
 #include <GameWorld/Graphics/SpriteComponent.h>
 
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
+
 #include <Modules/Rendering/RenderModule.h>
 #include <Modules/Rendering/ShaderLibrary.h>
 #include <Modules/Rendering/UniformLibrary.h>

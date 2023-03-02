@@ -1,6 +1,6 @@
-#include <Modules/ECS/Managers/ECSystemManager.h>
+#include <Modules/ECS/Managers/SystemManager.h>
 
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
 
 #include <Utility/AutoFactory/AutoFactory.h>
 

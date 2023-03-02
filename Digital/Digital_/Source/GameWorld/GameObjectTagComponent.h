@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Modules/ECS/Objects/ECSComponent.h>
-#include <Modules/ECS/Utility/ECSEntityType.h>
+#include <Modules/ECS/Component.h>
+#include <Modules/ECS/Utility/EntityTypeID.h>
 
 namespace DFW
 {
