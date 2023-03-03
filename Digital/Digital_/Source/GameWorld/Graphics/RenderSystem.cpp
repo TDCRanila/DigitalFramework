@@ -103,7 +103,7 @@ namespace DFW
 		}
 
 		// Submit Primitives
-		for (auto&& [entity, model, transform] : a_registry.registry.view<ModelComponent, TransformComponent>().each())
+		for (auto&& [entity, model, transform] : a_registry.ENTT().view<ModelComponent, TransformComponent>().each())
 		{
 			if (!model.is_visible)
 				continue;

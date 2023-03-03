@@ -1,75 +1,99 @@
 #include <Modules/ECS/Managers/EntityRegistry.h>
 
-#include <Modules/ECS/Internal/EntityDataComponent.h>
 #include <Modules/ECS/Entity.h>
+#include <Modules/ECS/Internal/EntityDataComponent.h>
 
 namespace DFW
 {
     namespace DECS
     {
         EntityRegistry::EntityRegistry(std::string const& a_registry_name)
-            : id(DFW::GenerateDUID())
-            , name(a_registry_name)
+            : _id(DFW::GenerateDUID())
+            , _name(a_registry_name)
         {
-            registry.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
+            _entt_registry.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
-            _entities.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
-            _pending_deletion_entities.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
-            
-            _entity_handle_registration.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
-            _entity_duid_registration.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
+            _entity_duid_register.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
+            _entity_name_register.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
+
+            _registered_entities.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
+            _marked_entities_for_destruction.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
         }
 
         EntityRegistry::~EntityRegistry()
         {
-            registry.clear();
+            _entt_registry.clear();
             
-            _entities.clear();
-            _pending_deletion_entities.clear();
+            _registered_entities.clear();
+            _marked_entities_for_destruction.clear();
 
-            _entity_handle_registration.clear();
-            _entity_duid_registration.clear();
+            _entity_duid_register.clear();
+            _entity_name_register.clear();
+        }
+
+        Entity EntityRegistry::GetEntity(DFW::DUID const a_entity_id)
+        {
+            EntityDUIDRegisterMap const& registery = _entity_duid_register;
+            if (auto const& it = registery.find(a_entity_id); it != registery.end())
+                return Entity(it->second, *this);
+
+            return Entity();
+        }
+
+        Entity EntityRegistry::GetEntity(std::string const& a_entity_name)
+        {
+            EntityNameRegisterMap const& registery = _entity_name_register;
+            if (auto const& it = registery.find(a_entity_name); it != registery.end())
+                return Entity(it->second, *this);
+
+            return Entity();
         }
 
         std::vector<Entity> EntityRegistry::GetEntities()
-        {
-            //// TODO Not using ranges/view as of right now due to C20.
-            //auto range = _entities | std::ranges::views::transform([this](EntityHandle const& a_handle) { return Entity(a_handle, this); });
-            //// TODO: std::ranges::to_vector is not part of C20, so using a custom implementation instead.
-            //std::vector<std::ranges::range_value_t<decltype(range)>> v;
-            //v.reserve(_entities.size());
-            //std::ranges::copy(range, std::back_inserter(v));
-            // return v;
-            
+        {           
             std::vector<Entity> entities;
-            for (auto const& entity_handle : _entities)
+            entities.resize(_registered_entities.size());
+            
+            // Create Entities from Entity Handles.
+            for (auto const& entity_handle : _registered_entities)
             {
                 entities.emplace_back(entity_handle, *this);
             }
+
             return entities;
         }
 
         bool EntityRegistry::IsValid() const
         {
-            return id != DFW_INVALID_DUID;
+            return _id != DFW_INVALID_DUID;
         }
 
-        void EntityRegistry::RegisterEntity(InternalEntity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp)
+        void EntityRegistry::RegisterEntity(InternalEntity const& a_entity)
         {
-            /*DFW_ASSERT(a_entity.IsEntityValid());*/
+            DFW_ASSERT(a_entity.IsEntityValid());
+
+            // Store Entity Handle.
             EntityHandle const entity_handle = a_entity.GetHandle();
-            _entities.emplace(entity_handle);
-            _entity_handle_registration.emplace(entity_handle, a_registration_comp);
-            _entity_duid_registration.emplace(registry.get<EntityDataComponent>(entity_handle).id, entity_handle);
+            _registered_entities.emplace(entity_handle);
+
+            // Store EntityData in quick-access containers.
+            EntityDataComponent const& data_component = _entt_registry.get<EntityDataComponent>(entity_handle);
+            _entity_duid_register.emplace(data_component.id, entity_handle);
+            _entity_name_register.emplace(data_component.name, entity_handle);
         }
 
         void EntityRegistry::UnregisterEntity(InternalEntity const& a_entity)
         {
-            /*DFW_ASSERT(a_entity.IsEntityValid());*/
+            DFW_ASSERT(a_entity.IsEntityValid());
+
+            // Remove Entity Handle.
             EntityHandle const entity_handle = a_entity.GetHandle();
-            _entities.erase(entity_handle);
-            _entity_handle_registration.erase(entity_handle);
-            _entity_duid_registration.erase(registry.get<EntityDataComponent>(entity_handle).id);
+            _registered_entities.erase(entity_handle);
+
+            // Remove EntityData in quick-access containers.
+            EntityDataComponent const& data_component = _entt_registry.get<EntityDataComponent>(entity_handle);
+            _entity_duid_register.erase(data_component.id);
+            _entity_name_register.erase(data_component.name);
         }
 
     } // End of namespace ~ DECS.

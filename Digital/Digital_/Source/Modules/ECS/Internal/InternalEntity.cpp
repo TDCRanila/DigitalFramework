@@ -28,7 +28,7 @@ namespace DFW
             if (!_registry)
                 return false;
 
-            if (!_registry->registry.valid(_handle))
+            if (!_registry->ENTT().valid(_handle))
                 return false;
 
             return true;

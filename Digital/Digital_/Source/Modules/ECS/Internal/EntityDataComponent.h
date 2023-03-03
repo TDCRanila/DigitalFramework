@@ -12,7 +12,7 @@ namespace DFW
 {
     namespace DECS
     {
-        constexpr const char* DFW_DEFAULT_ENTITY_NAME = "Default Entity Name";
+        constexpr const char* DFW_DEFAULT_ENTITY_NAME = "DefaultEntityName";
 
         struct EntityDataComponent final : public DECS::Component::StrictRegistrar<EntityDataComponent>
         {

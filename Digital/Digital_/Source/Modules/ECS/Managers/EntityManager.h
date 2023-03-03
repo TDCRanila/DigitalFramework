@@ -38,8 +38,6 @@ namespace DFW
 			Entity CreateEntity(EntityRegistry& a_registry, TArgs&&... a_args) const;
 			
 			void DestroyEntity(Entity const& a_entity) const;
-
-			Entity GetEntity(DFW::DUID const a_entity_id, EntityRegistry& a_registry) const;
 			
 			Entity AttachEntity(Entity const& a_child, Entity const& a_parent) const;
 			
@@ -67,16 +65,17 @@ namespace DFW
 
 			// Construct an Entity from template.
 			EntityType entity(std::forward<TArgs>(a_args)...);
-			entity._handle		= a_registry.registry.create();
+			entity._handle		= a_registry.ENTT().create();
 			entity._registry	= &a_registry;
 
-			// Register Additional Entity Data in EntityRegistry registries.
+			// Setup additional Entity data.
 			EntityDataComponent& reg_comp = entity.AddComponent<EntityDataComponent>();
 			reg_comp.id		= DFW::GenerateDUID();
 			reg_comp.type	= DUtility::FamilyType<Entity>::GetTypeID<EntityType>();
-			reg_comp.name	= DFW_DEFAULT_ENTITY_NAME;
+			reg_comp.name	= DFW_DEFAULT_ENTITY_NAME + std::to_string(static_cast<uint32>(entity._handle));
 
-			a_registry.RegisterEntity(entity, reg_comp);
+			// Register Entity in EntityRegistry registers.
+			a_registry.RegisterEntity(entity);
 			
 			return entity;
 		}

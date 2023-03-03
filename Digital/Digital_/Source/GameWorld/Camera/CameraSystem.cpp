@@ -77,7 +77,7 @@ namespace DFW
             DFW_ASSERT(false);
         }
 
-        CameraIdentifier const registration(a_entity.GetRegistry().name, a_camera_name);
+        CameraIdentifier const registration(a_entity.GetRegistry().GetName(), a_camera_name);
         if (auto const& it = registered_cameras.find(registration);
             it != registered_cameras.end())
         {
@@ -151,7 +151,7 @@ namespace DFW
 
         // Communicate.
         Entity const& owner = a_camera_component.GetOwner();
-        ECSEventHandler().Broadcast<CameraNewActiveEvent>(CameraIdentifier(owner.GetRegistry().name, a_camera_component.name), owner.GetID());
+        ECSEventHandler().Broadcast<CameraNewActiveEvent>(CameraIdentifier(owner.GetRegistry().GetName(), a_camera_component.name), owner.GetID());
     }
 
     void CameraSystem::ChangeCameraProjPerspective(CameraComponent& a_camera_component, float32 a_fov, float32 a_viewport_aspect, ClipSpace a_clip)
@@ -208,10 +208,10 @@ namespace DFW
         if (_has_enabled_camera_controls && _active_camera)
         {
             Debug_ToggleCameraMode();
-            ControlCamera(*_active_camera, a_registry.registry.get<TransformComponent>(_active_camera->GetOwner().GetHandle()));
+            ControlCamera(*_active_camera, a_registry.ENTT().get<TransformComponent>(_active_camera->GetOwner().GetHandle()));
         }
 
-        for (auto&& [entity, camera_comp, transform_comp] : a_registry.registry.view<CameraComponent, TransformComponent>().each())
+        for (auto&& [entity, camera_comp, transform_comp] : a_registry.ENTT().view<CameraComponent, TransformComponent>().each())
             UpdateCameraMatrices(camera_comp, transform_comp);
     }
 

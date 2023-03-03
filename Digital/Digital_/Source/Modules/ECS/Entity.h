@@ -75,7 +75,7 @@ namespace DFW
 				}
 				else
 				{
-					ComponentType& component = _registry->registry.emplace<ComponentType>(_handle, std::forward<TArgs>(a_args)...);
+					ComponentType& component = _registry->ENTT().emplace<ComponentType>(_handle, std::forward<TArgs>(a_args)...);
 					component._id = DFW::GenerateDUID();
 					component._owner = *this;
 					return component;
@@ -95,7 +95,7 @@ namespace DFW
 				DFW_ASSERT(IsEntityValid() && "Trying to remove a component from an invalid entity.");
 				if (HasComponents<ComponentType>())
 				{
-					_registry->registry.remove<ComponentType>(_handle);
+					_registry->ENTT().remove<ComponentType>(_handle);
 					return true;
 				}
 				else
@@ -116,7 +116,7 @@ namespace DFW
 			{
 				DFW_ASSERT(IsEntityValid() && "Trying to get a component from an invalid entity.");
 				DFW_ASSERT(HasComponents<ComponentType>() && "Trying to get a component that the entity doesn't own.");
-				return _registry->registry.get<ComponentType>(_handle);
+				return _registry->ENTT().get<ComponentType>(_handle);
 			}
 		}
 
@@ -130,7 +130,7 @@ namespace DFW
 			else if constexpr (IsValidComponentType<ComponentType>)
 			{
 				DFW_ASSERT(IsEntityValid() && "Trying to get a component from an invalid entity.");
-				return _registry->registry.try_get<ComponentType>(_handle);
+				return _registry->ENTT().try_get<ComponentType>(_handle);
 			}
 		}
 
@@ -148,7 +148,7 @@ namespace DFW
 			else
 			{
 				DFW_ASSERT(IsEntityValid() && "Trying to fetch component information from an invalid entity.");
-				return _registry->registry.all_of<TArgs...>(_handle);
+				return _registry->ENTT().all_of<TArgs...>(_handle);
 			}
 		}
 

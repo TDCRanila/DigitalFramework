@@ -18,18 +18,18 @@ namespace DFW
         // FW Declare
         class EntityManager;
         class Entity;
-        struct EntityDataComponent;
 
-        const int64 DFW_REGISTRY_ENTITY_RESERVATION_SIZE = 256;
+        constexpr int64 DFW_REGISTRY_ENTITY_RESERVATION_SIZE = 256;
 
-        using EntityHandleRegistrationMap   = std::unordered_map<EntityHandle, DFW::RefWrap<EntityDataComponent>>;
-        using EntityDUIDRegistrationMap     = std::unordered_map<DFW::DUID, EntityHandle>;
+        using EntityDUIDRegisterMap = std::unordered_map<DFW::DUID, EntityHandle>;
+        using EntityNameRegisterMap = std::unordered_map<std::string, EntityHandle>;
 
         class EntityRegistry final
         {
         private:
             friend EntityManager;
             friend Entity;
+            friend InternalEntity;
 
         public:
             EntityRegistry(std::string const& a_registry_name);
@@ -37,22 +37,30 @@ namespace DFW
 
             std::strong_ordering operator<=>(EntityRegistry const& a_other) const = default;
             
+        public:
+            entt::registry& ENTT() { return _entt_registry; }
+
+            Entity GetEntity(DFW::DUID const a_entity_id);
+            Entity GetEntity(std::string const& a_entity_name);
             std::vector<Entity> GetEntities();
 
             bool IsValid() const;
-
-            entt::registry  registry;
-            DFW::DUID const id;
-            std::string const name;
+            DFW::DUID GetID() const { return _id; }
+            std::string GetName() const { return _name; };
 
         private:
-            void RegisterEntity(InternalEntity const& a_entity, DFW::RefWrap<EntityDataComponent> a_registration_comp);
+            void RegisterEntity(InternalEntity const& a_entity);
             void UnregisterEntity(InternalEntity const& a_entity);
 
-            EntityHandleRegistrationMap         _entity_handle_registration;
-            EntityDUIDRegistrationMap           _entity_duid_registration;
-            std::unordered_set<EntityHandle>    _entities;
-            std::unordered_set<EntityHandle>    _pending_deletion_entities;
+        private:
+            entt::registry _entt_registry;
+            DFW::DUID _id;
+            std::string _name;
+
+            EntityDUIDRegisterMap _entity_duid_register;
+            EntityNameRegisterMap _entity_name_register;
+            std::unordered_set<EntityHandle> _registered_entities;
+            std::unordered_set<EntityHandle> _marked_entities_for_destruction;
 
         };
 

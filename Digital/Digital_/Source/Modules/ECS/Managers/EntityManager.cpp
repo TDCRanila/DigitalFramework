@@ -10,45 +10,33 @@ namespace DFW
 		{
 			if (!a_entity.IsEntityValid())
 			{
-				DFW_WARNLOG("Attempting to delete an entity that is not valid.");
+				DFW_WARNLOG("Attempting to delete an entity that is invalid.");
 				return;
 			}
 
-			auto const& [it, result] = a_entity._registry->_pending_deletion_entities.emplace(a_entity.GetHandle());
-			if (!result)
+			// Mark the Entity to be destroyed whenever the clean-up is performed.
+			std::unordered_set<EntityHandle>& marked_entities = a_entity._registry->_marked_entities_for_destruction;
+			auto const& [it, insertion_result] = marked_entities.emplace(a_entity.GetHandle());
+			if (!insertion_result)
 				DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
-		}
-
-		Entity EntityManager::GetEntity(DFW::DUID const a_entity_id, EntityRegistry& a_registry) const
-		{
-			if (!a_registry.IsValid())
-			{
-				DFW_ERRORLOG("Attempting to find an entitiy, but the registry is invalid.");
-				DFW_ASSERT(a_registry.IsValid() && "Attempting to find an entity in an invalid registry.");
-				return Entity();
-			}
-
-			EntityDUIDRegistrationMap const& umap = a_registry._entity_duid_registration;
-			if (auto const& it = umap.find(a_entity_id); it == umap.end())
-				return Entity();
-			else
-				return Entity(it->second, a_registry);
 		}
 
 		void EntityManager::ManageDeletedEntities(EntityRegistry& a_registry)
 		{
 			DFW_ASSERT(a_registry.IsValid() && "Attempting to manage entities, but the registry is invalid.");
 
-			if (a_registry._pending_deletion_entities.empty())
+			std::unordered_set<EntityHandle>& marked_entities = a_registry._marked_entities_for_destruction;
+
+			if (marked_entities.empty())
 				return;
 
-			for (EntityHandle const handle : a_registry._pending_deletion_entities)
+			for (EntityHandle const handle : marked_entities)
 			{
-				a_registry.UnregisterEntity(Entity(handle, a_registry));
-				a_registry.registry.destroy(handle);
+				a_registry.UnregisterEntity(InternalEntity(handle, &a_registry));
+				a_registry.ENTT().destroy(handle);
 			}
 
-			a_registry._pending_deletion_entities.clear();
+			marked_entities.clear();
 		}
 
 	} // End of namespace ~ DECS.

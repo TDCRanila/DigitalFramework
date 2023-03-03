@@ -170,7 +170,7 @@ namespace DFW
 		DRender::ViewTarget const& view_target = *_view_target;
 		bgfx::touch(view_target);
 
-		uint32 const num_sprites(static_cast<uint32>(a_registry.registry.view<SpriteComponent>().size()));
+		uint32 const num_sprites(static_cast<uint32>(a_registry.ENTT().view<SpriteComponent>().size()));
 		if (num_sprites <= 0)
 			return;
 
@@ -222,7 +222,7 @@ namespace DFW
 			data_ptr_shifter = idb.data;
 		};
 
-		for (auto&& [entity, sprite, transform] : a_registry.registry.group<SpriteComponent>(entt::get<TransformComponent>).each())
+		for (auto&& [entity, sprite, transform] : a_registry.ENTT().group<SpriteComponent>(entt::get<TransformComponent>).each())
 		{
 			if (!sprite.is_visible)
 				continue;
