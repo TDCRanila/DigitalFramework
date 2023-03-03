@@ -21,7 +21,7 @@ namespace DFW
 				DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
 		}
 
-		void EntityManager::ManageDeletedEntities(EntityRegistry& a_registry)
+		void EntityManager::CleanDestructionMarkedEntities(EntityRegistry& a_registry)
 		{
 			DFW_ASSERT(a_registry.IsValid() && "Attempting to manage entities, but the registry is invalid.");
 

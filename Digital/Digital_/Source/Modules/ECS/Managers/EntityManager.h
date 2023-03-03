@@ -46,7 +46,7 @@ namespace DFW
 			EntityTypeID GetEntityTypeID() const;
 
 		private:
-			void ManageDeletedEntities(EntityRegistry& a_registry);
+			void CleanDestructionMarkedEntities(EntityRegistry& a_registry);
 
 		};
 

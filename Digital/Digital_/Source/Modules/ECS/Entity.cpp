@@ -49,12 +49,6 @@ namespace DFW
 			
 		}
 
-		bool Entity::IsPendingDeletion() const
-		{
-			DFW_ASSERT(_registry);
-			return _registry->_marked_entities_for_destruction.end() != _registry->_marked_entities_for_destruction.find(_handle);
-		}
-
 	} // End of namespace ~ DECS.
 
 } // End of namespace ~ DFW.

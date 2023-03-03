@@ -35,8 +35,6 @@ namespace DFW
 			std::string GetName() const;
 			void SetName(std::string const& a_new_name);
 
-			bool IsPendingDeletion() const;
-
 		public:
 			// Entity Component Management
 			template <typename ComponentType, typename... TArgs>

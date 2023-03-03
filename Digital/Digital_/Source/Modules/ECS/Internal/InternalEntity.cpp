@@ -34,6 +34,15 @@ namespace DFW
             return true;
         }
 
+        bool InternalEntity::IsMarkedForDestruction() const
+        {
+            std::unordered_set<EntityHandle> const& marked_entities = _registry->_marked_entities_for_destruction;
+            if (auto const& it = marked_entities.find(_handle); it != marked_entities.end())
+                return true;
+            else
+                return false;
+        }
+
     } // End of namespace ~ DECS.
 
 } // End of namespace ~ DFW.

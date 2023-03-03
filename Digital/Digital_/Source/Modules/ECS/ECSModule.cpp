@@ -60,7 +60,7 @@ namespace DFW
 			_system_manager->UpdateSystems(*_registry);
 			_event_handler->ProcessPendingEvents();
 
-			_entity_manager->ManageDeletedEntities(*_registry);
+			_entity_manager->CleanDestructionMarkedEntities(*_registry);
 		}
 
 		void ECSModule::UpdateECSImGui()

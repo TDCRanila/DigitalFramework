@@ -27,6 +27,7 @@ namespace DFW
 			EntityRegistry& GetRegistry() const { DFW_ASSERT(_registry); return *_registry; }
 
 			bool IsEntityValid() const;
+			bool IsMarkedForDestruction() const;
 
 		protected:
 			EntityHandle	_handle;
