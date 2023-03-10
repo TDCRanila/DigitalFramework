@@ -6,6 +6,11 @@ namespace DFW
 {
 	namespace DECS
 	{
+		Entity EntityManager::CreateEntity(EntityRegistry& a_registry) const
+		{
+			return CreateEntity<DFW_BASE_ENTITY_FAMILY_TYPE_NAME>(a_registry);
+		}
+
 		void EntityManager::DestroyEntity(Entity const& a_entity) const
 		{
 			if (!a_entity.IsEntityValid())

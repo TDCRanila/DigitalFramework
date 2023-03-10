@@ -23,6 +23,7 @@ namespace DFW
 
 		template <typename EntityType>
 		concept IsValidEntityType = IsBasedOf<EntityType, Entity>;
+		constexpr StringLiteral DFW_BASE_ENTITY_FAMILY_TYPE_NAME = "Entity";
 
 		class EntityManager final
 		{
@@ -33,16 +34,15 @@ namespace DFW
 			EntityManager() = default;
 			~EntityManager() = default;
 
-			template <typename EntityType = Entity, typename... TArgs>
-			requires IsValidEntityType<EntityType>
-			Entity CreateEntity(EntityRegistry& a_registry, TArgs&&... a_args) const;
-			
+			template <StringLiteral entity_type_name>
+			Entity CreateEntity(EntityRegistry& a_registry) const;
+			Entity CreateEntity(EntityRegistry& a_registry) const;
+
 			void DestroyEntity(Entity const& a_entity) const;
 			
 			Entity AttachEntity(Entity const& a_child, Entity const& a_parent) const;
 			
-			template <typename EntityType>
-			requires IsValidEntityType<EntityType>
+			template <StringLiteral entity_type_name>
 			EntityTypeID GetEntityTypeID() const;
 
 		private:
@@ -52,39 +52,35 @@ namespace DFW
 
 #pragma region Template Function Implementation
 
-		template <typename EntityType, typename... TArgs>
-		requires IsValidEntityType<EntityType>
-		Entity EntityManager::CreateEntity(EntityRegistry& a_registry, TArgs&&... a_args) const
+		template <StringLiteral entity_type_name>
+		Entity EntityManager::CreateEntity(EntityRegistry& a_registry) const
 		{
 			if (!a_registry.IsValid())
 			{
 				DFW_ERRORLOG("Attempting to create a new entitiy, but the registry is invalid.");
 				DFW_ASSERT(a_registry.IsValid() && "Attempting to create a new entitiy, but the registry is invalid.");
-				return EntityType();
+				return Entity();
 			}
 
-			// Construct an Entity from template.
-			EntityType entity(std::forward<TArgs>(a_args)...);
-			entity._handle		= a_registry.ENTT().create();
-			entity._registry	= &a_registry;
+			// Construct a new Entity.
+			Entity entity(a_registry.ENTT().create(), a_registry);
 
 			// Setup additional Entity data.
-			EntityDataComponent& reg_comp = entity.AddComponent<EntityDataComponent>();
-			reg_comp.id		= DFW::GenerateDUID();
-			reg_comp.type	= DUtility::FamilyType<Entity>::GetTypeID<EntityType>();
-			reg_comp.name	= DFW_DEFAULT_ENTITY_NAME + std::to_string(static_cast<uint32>(entity._handle));
+			EntityDataComponent& data_component = entity.AddComponent<EntityDataComponent>();
+			data_component.id = DFW::GenerateDUID();
+			data_component.type = GetEntityTypeID<entity_type_name>();
+			data_component.name = DFW_DEFAULT_ENTITY_NAME + std::to_string(static_cast<uint32>(entity._handle));
 
 			// Register Entity in EntityRegistry registers.
 			a_registry.RegisterEntity(entity);
-			
+
 			return entity;
 		}
 
-		template <typename EntityType>
-		requires IsValidEntityType<EntityType>
+		template <StringLiteral entity_type_name>
 		EntityTypeID EntityManager::GetEntityTypeID() const
 		{
-			return DUtility::FamilyType<Entity>::GetTypeID<EntityType>();
+			return DUtility::FamilyNameType<DFW_BASE_ENTITY_FAMILY_TYPE_NAME>::GetTypeID<entity_type_name>();
 		}
 
 	} // End of namespace ~ DECS.
