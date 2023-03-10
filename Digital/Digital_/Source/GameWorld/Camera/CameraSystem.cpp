@@ -63,7 +63,7 @@ namespace DFW
     {
     }
 
-    CameraComponent& CameraSystem::CreateCamera(DECS::Entity const& a_entity, std::string const& a_camera_name)
+    CameraComponent& CameraSystem::CreateCamera(DECS::Entity& a_entity, std::string const& a_camera_name)
     {
         if (!a_entity.IsEntityValid())
         {
@@ -110,8 +110,8 @@ namespace DFW
             registered_cameras.erase(it);
 
             // Destroy camera component.
-            CameraComponent const& found_camera = it->second.get();
-            DECS::Entity const& camera_owner = found_camera.GetOwner();
+            CameraComponent& found_camera = it->second.get();
+            DECS::Entity camera_owner = found_camera.GetOwner();
             camera_owner.DeleteComponent<CameraComponent>();
 
             // Communicate.
@@ -139,7 +139,7 @@ namespace DFW
         return _active_camera;
     }
 
-    void CameraSystem::SetActiveCamera(DECS::Entity const& a_entity)
+    void CameraSystem::SetActiveCamera(DECS::Entity& a_entity)
     {
         DFW_ASSERT(a_entity.IsEntityValid());
         SetActiveCamera(a_entity.GetComponent<CameraComponent>());
