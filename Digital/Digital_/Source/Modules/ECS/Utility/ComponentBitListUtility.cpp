@@ -1,6 +1,6 @@
-#include <Modules/ECS/Utility/ECSKeyLockSystem.h>
+#include <Modules/ECS/Utility/ComponentBitListUtility.h>
 
-#include <Modules/ECS/Objects/ECSComponent.h>
+#include <Modules/ECS/Component.h>
 
 #include <CoreSystems/Logging/Logger.h>
 
@@ -10,14 +10,14 @@ namespace DFW
 {
 	namespace DECS
 	{
-		bool KeyLockSystem::_has_generated_component_keys = false;
-		std::unordered_map<std::type_index, int8> KeyLockSystem::_component_bit_placement;
+		bool ComponentBitListUtility::_has_generated_component_keys = false;
+		std::unordered_map<std::type_index, int8> ComponentBitListUtility::_component_bit_placement;
 
-		void KeyLockSystem::GenerateComponentKeys()
+		void ComponentBitListUtility::GenerateComponentKeys()
 		{
 			if (_has_generated_component_keys)
 			{
-				DFW_INFOLOG("KeyLockSystem has already generated the component keys.");
+				DFW_INFOLOG("ComponentBitListUtility has already generated the ComponentBitLists.");
 				return;
 			}
 
@@ -29,7 +29,7 @@ namespace DFW
 
 				if (key_index > DFW_MAX_REGISTERED_COMPONENTS)
 				{
-					DFW_ERRORLOG("Over {} Components have been registered for ComponentBitPlacement.", DFW_MAX_REGISTERED_COMPONENTS);
+					DFW_ERRORLOG("Over {} Components have been registered in ComponentBitListUtility.", DFW_MAX_REGISTERED_COMPONENTS);
 				}
 			}
 

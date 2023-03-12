@@ -1,15 +1,14 @@
 #pragma once
 
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
-#include <Modules/ECS/Objects/InternalComponent.h>
-#include <Modules/ECS/Objects/InternalEntity.h>
-#include <Modules/ECS/Utility/ECSConcepts.h>
-#include <Modules/ECS/Utility/ECSEntityType.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
+#include <Modules/ECS/Internal/InternalComponent.h>
+#include <Modules/ECS/Internal/InternalEntity.h>
+#include <Modules/ECS/Utility/ECSTemplateUtility.h>
+#include <Modules/ECS/Utility/EntityTypeID.h>
 
 #include <CoreSystems/DUID.h>
 
 #include <Utility/AutoFactory/AutoFactory.h>
-#include <Utility/TemplateUtility.h>
 
 #include <string>
 
@@ -36,21 +35,25 @@ namespace DFW
 			std::string GetName() const;
 			void SetName(std::string const& a_new_name);
 
-			bool IsPendingDeletion() const;
-
 		public:
-			// Entity Component Management
+			// Entity Component Management.
 			template <typename ComponentType, typename... TArgs>
-			ComponentType& AddComponent(TArgs&&...a_args) const;
+			ComponentType& AddComponent(TArgs&&...a_args);
 
 			template <typename ComponentType>
-			bool DeleteComponent() const;
+			bool DeleteComponent();
 
 			template <typename ComponentType>
-			ComponentType& GetComponent() const;
+			ComponentType& GetComponent();
 
 			template <typename ComponentType>
-			ComponentType* const TryGetComponent() const;
+			ComponentType const& GetComponent() const;
+
+			template <typename ComponentType>
+			ComponentType* const TryGetComponent();
+
+			template <typename ComponentType>
+			ComponentType const* const TryGetComponent() const;
 
 			template <typename... TArgs>
 			bool HasComponents() const;
@@ -60,7 +63,7 @@ namespace DFW
 #pragma region Template Function Implementation
 
 		template <typename ComponentType, typename... TArgs>
-		ComponentType& Entity::AddComponent(TArgs&&...a_args) const
+		ComponentType& Entity::AddComponent(TArgs&&...a_args)
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
@@ -76,7 +79,7 @@ namespace DFW
 				}
 				else
 				{
-					ComponentType& component = _registry->registry.emplace<ComponentType>(_handle, std::forward<TArgs>(a_args)...);
+					ComponentType& component = _registry->ENTT().emplace<ComponentType>(_handle, std::forward<TArgs>(a_args)...);
 					component._id = DFW::GenerateDUID();
 					component._owner = *this;
 					return component;
@@ -85,7 +88,7 @@ namespace DFW
 		}
 
 		template <typename ComponentType>
-		bool Entity::DeleteComponent() const
+		bool Entity::DeleteComponent()
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
@@ -96,7 +99,7 @@ namespace DFW
 				DFW_ASSERT(IsEntityValid() && "Trying to remove a component from an invalid entity.");
 				if (HasComponents<ComponentType>())
 				{
-					_registry->registry.remove<ComponentType>(_handle);
+					_registry->ENTT().remove<ComponentType>(_handle);
 					return true;
 				}
 				else
@@ -107,7 +110,7 @@ namespace DFW
 		}
 
 		template <typename ComponentType>
-		ComponentType& Entity::GetComponent() const
+		ComponentType& Entity::GetComponent()
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
@@ -117,12 +120,18 @@ namespace DFW
 			{
 				DFW_ASSERT(IsEntityValid() && "Trying to get a component from an invalid entity.");
 				DFW_ASSERT(HasComponents<ComponentType>() && "Trying to get a component that the entity doesn't own.");
-				return _registry->registry.get<ComponentType>(_handle);
+				return _registry->ENTT().get<ComponentType>(_handle);
 			}
 		}
 
 		template <typename ComponentType>
-		ComponentType* const Entity::TryGetComponent() const
+		ComponentType const& Entity::GetComponent() const
+		{
+			return const_cast<Entity*>(this)->GetComponent<ComponentType>();
+		}
+
+		template <typename ComponentType>
+		ComponentType* const Entity::TryGetComponent()
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
@@ -131,8 +140,14 @@ namespace DFW
 			else if constexpr (IsValidComponentType<ComponentType>)
 			{
 				DFW_ASSERT(IsEntityValid() && "Trying to get a component from an invalid entity.");
-				return _registry->registry.try_get<ComponentType>(_handle);
+				return _registry->ENTT().try_get<ComponentType>(_handle);
 			}
+		}
+
+		template <typename ComponentType>
+		ComponentType const* const Entity::TryGetComponent() const
+		{
+			return const_cast<Entity*>(this)->TryGetComponent<ComponentType>();
 		}
 
 		template <typename... TArgs>
@@ -149,7 +164,7 @@ namespace DFW
 			else
 			{
 				DFW_ASSERT(IsEntityValid() && "Trying to fetch component information from an invalid entity.");
-				return _registry->registry.all_of<TArgs...>(_handle);
+				return _registry->ENTT().all_of<TArgs...>(_handle);
 			}
 		}
 

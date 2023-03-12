@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Modules/ECS/Utility/ECSConcepts.h>
-#include <Modules/ECS/Utility/ECSCompBitList.h>
+#include <Modules/ECS/Utility/ECSTemplateUtility.h>
+#include <Modules/ECS/Utility/ComponentBitList.h>
 
 #include <CoreSystems/Logging/Logger.h>
 
@@ -17,11 +17,11 @@ namespace DFW
 		constexpr int64 DFW_UNASSIGNED_COMPONENT_BIT = -1;
 		constexpr int8	DFW_MAX_REGISTERED_COMPONENTS = 64;
 
-		class KeyLockSystem final
+		class ComponentBitListUtility final
 		{
 		public:
-			KeyLockSystem() = default;
-			~KeyLockSystem() = default;
+			ComponentBitListUtility() = default;
+			~ComponentBitListUtility() = default;
 
 			static void GenerateComponentKeys();
 
@@ -57,7 +57,7 @@ namespace DFW
 #pragma region Template Function Implementation
 
 		template <typename... TArgs>
-		static ComponentBitList KeyLockSystem::ConstructComponentBitList()
+		static ComponentBitList ComponentBitListUtility::ConstructComponentBitList()
 		{
 			if constexpr ((not IsValidComponentType<TArgs> || ...))
 			{
@@ -74,7 +74,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static bool KeyLockSystem::IsComponentBitTrue(ComponentBitList const& a_bit_var)
+		static bool ComponentBitListUtility::IsComponentBitTrue(ComponentBitList const& a_bit_var)
 		{
 			int8 component_bit_placement(0);
 			GetComponentBitPlacement<TComponent>(component_bit_placement);
@@ -92,7 +92,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static void KeyLockSystem::SetComponentBits(ComponentBitList& a_bit_var)
+		static void ComponentBitListUtility::SetComponentBits(ComponentBitList& a_bit_var)
 		{
 			int64 temp(1);
 			int8 component_bit_placement(0);
@@ -103,7 +103,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static void KeyLockSystem::ResetComponentBits(ComponentBitList& a_bit_var)
+		static void ComponentBitListUtility::ResetComponentBits(ComponentBitList& a_bit_var)
 		{
 			int64 temp(1);
 			int8 component_bit_placement(0);
@@ -114,7 +114,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static int8 KeyLockSystem::GetComponentBitPlacement()
+		static int8 ComponentBitListUtility::GetComponentBitPlacement()
 		{
 			int8 temp_bit_list(0);
 			GetComponentBitPlacement<TComponent>(temp_bit_list);
@@ -123,7 +123,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static void KeyLockSystem::GetComponentBitPlacement(int8& a_component_bit_list)
+		static void ComponentBitListUtility::GetComponentBitPlacement(int8& a_component_bit_list)
 		{
 			const type_info& type = typeid(TComponent);
 			auto it = _component_bit_placement.find(type);

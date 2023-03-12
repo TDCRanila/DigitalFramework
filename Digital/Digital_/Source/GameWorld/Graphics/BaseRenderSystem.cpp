@@ -2,7 +2,7 @@
 
 #include <GameWorld/Camera/CameraSystem.h>
 
-#include <Modules/ECS/Managers/ECSystemManager.h>
+#include <Modules/ECS/Managers/SystemManager.h>
 #include <Modules/Rendering/RenderModule.h>
 #include <Modules/Rendering/RenderTargetDirector.h>
 

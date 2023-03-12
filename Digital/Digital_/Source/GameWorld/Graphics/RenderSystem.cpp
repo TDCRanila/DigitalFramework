@@ -4,7 +4,7 @@
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Graphics/ModelComponent.h>
 
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
 
 #include <Modules/Rendering/RenderModule.h>
 #include <Modules/Rendering/ShaderLibrary.h>
@@ -103,7 +103,7 @@ namespace DFW
 		}
 
 		// Submit Primitives
-		for (auto&& [entity, model, transform] : a_registry.registry.view<ModelComponent, TransformComponent>().each())
+		for (auto&& [entity, model, transform] : a_registry.ENTT().view<ModelComponent, TransformComponent>().each())
 		{
 			if (!model.is_visible)
 				continue;
