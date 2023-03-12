@@ -1,6 +1,6 @@
-#include <Modules/ECS/Objects/ECSEntity.h>
+#include <Modules/ECS/Entity.h>
 
-#include <Modules/ECS/Objects/ECSEntityRegistrationComponent.h>
+#include <Modules/ECS/Internal/EntityDataComponent.h>
 
 namespace DFW
 {
@@ -24,28 +24,29 @@ namespace DFW
 
 		DFW::DUID Entity::GetID() const
 		{
-			return _registry->registry.get<EntityDataComponent>(_handle).id;
+			return _registry->ENTT().get<EntityDataComponent>(_handle).id;
 		}
 
 		EntityTypeID Entity::GetTypeID() const
 		{
-			return _registry->registry.get<EntityDataComponent>(_handle).type;
+			return _registry->ENTT().get<EntityDataComponent>(_handle).type;
 		}
 
 		std::string Entity::GetName() const
 		{
-			return _registry->registry.get<EntityDataComponent>(_handle).name;
+			return _registry->ENTT().get<EntityDataComponent>(_handle).name;
 		}
 
 		void Entity::SetName(std::string const& a_new_name)
 		{
-			_registry->registry.get<EntityDataComponent>(_handle).name = a_new_name;
-		}
+			std::string& name = _registry->ENTT().get<EntityDataComponent>(_handle).name;
 
-		bool Entity::IsPendingDeletion() const
-		{
-			DFW_ASSERT(_registry);
-			return _registry->_pending_deletion_entities.end() != _registry->_pending_deletion_entities.find(_handle);
+			_registry->_entity_name_register.erase(name);
+
+			name = a_new_name;
+
+			_registry->_entity_name_register.emplace(name, _handle);
+			
 		}
 
 	} // End of namespace ~ DECS.

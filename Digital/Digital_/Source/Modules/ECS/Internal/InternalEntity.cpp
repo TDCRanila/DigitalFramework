@@ -1,6 +1,6 @@
-#include <Modules/ECS/Objects/InternalEntity.h>
+#include <Modules/ECS/Internal/InternalEntity.h>
 
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
 
 namespace DFW
 {
@@ -28,10 +28,19 @@ namespace DFW
             if (!_registry)
                 return false;
 
-            if (!_registry->registry.valid(_handle))
+            if (!_registry->ENTT().valid(_handle))
                 return false;
 
             return true;
+        }
+
+        bool InternalEntity::IsMarkedForDestruction() const
+        {
+            std::unordered_set<EntityHandle> const& marked_entities = _registry->_marked_entities_for_destruction;
+            if (auto const& it = marked_entities.find(_handle); it != marked_entities.end())
+                return true;
+            else
+                return false;
         }
 
     } // End of namespace ~ DECS.

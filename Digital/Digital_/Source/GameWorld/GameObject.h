@@ -1,28 +1,9 @@
 #pragma once
 
-#include <Modules/ECS/Objects/ECSEntity.h>
-
-#include <Utility/AutoFactory/AutoFactory.h>
+#include <Modules/ECS/Entity.h>
 
 namespace DFW
 {
-    // FW Declare.
-    class GameWorld;
-
-    class GameObject : public DECS::Entity::Registrar<GameObject>
-    {
-    private:
-        friend GameWorld;
-    public:
-        GameObject() = default;
-        virtual ~GameObject() = default;
-
-        virtual void OnCreate();
-        virtual void OnDestroy();
-    
-    private:
-        GameObject(Entity const& a_entity);
-
-    };
+    using GameObject = DECS::Entity;
 
 } // End of namespace DFW.
