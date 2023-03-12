@@ -1,4 +1,4 @@
-#include <Modules/ECS/Objects/ECSystem.h>
+#include <Modules/ECS/System.h>
 
 #include <CoreSystems/Logging/Logger.h>
 

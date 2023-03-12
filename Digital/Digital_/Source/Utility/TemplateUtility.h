@@ -39,3 +39,14 @@ concept IsDerivedFrom = is_derived_from<Derived, Base>::value;
 
 template <typename Derived, typename Base>
 concept IsBasedOf = std::is_base_of_v<Base, Derived>;
+
+template<size_t num>
+struct StringLiteral
+{
+    constexpr StringLiteral(const char(&a_string)[num])
+    {
+        std::copy_n(a_string, num, value);
+    }
+
+    char value[num];
+};

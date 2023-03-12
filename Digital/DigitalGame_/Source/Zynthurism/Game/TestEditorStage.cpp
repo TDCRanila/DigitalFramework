@@ -6,7 +6,7 @@
 #include <GameWorld/Graphics/ModelComponent.h>
 #include <GameWorld/Graphics/SpriteComponent.h>
 
-#include <Modules/ECS/Managers/ECSystemManager.h>
+#include <Modules/ECS/Managers/SystemManager.h>
 #include <Modules/Resource/Mesh/MeshLoader.h>
 
 #include <CoreSystems/CoreServices.h>

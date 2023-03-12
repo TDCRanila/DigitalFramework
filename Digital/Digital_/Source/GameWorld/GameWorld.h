@@ -7,15 +7,12 @@
 #include <GameWorld/TransformComponent.h>
 
 #include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/ECSEntityManager.h>
+#include <Modules/ECS/Managers/EntityManager.h>
 
 #include <CoreSystems/Events/EventDispatcher.h>
 
 namespace DFW
 {
-    template <typename GameObjectType>
-    concept IsValidGameObjectType = IsBasedOf<GameObjectType, GameObject>;
-
     class GameWorld
     {
     public:
@@ -28,16 +25,18 @@ namespace DFW
         void RenderImGui();
 
     public:
-        // TODO in .cpp or inline
-        DECS::ECSModule& GetECS() { return *_ecs; }
+        inline DECS::ECSModule& GetECS() { return *_ecs; }
 
-        template <typename GameObjectType = GameObject, typename... TArgs> 
-        requires IsValidGameObjectType<GameObjectType>
-        GameObject SpawnGameObject(SpawnInfo const& a_spawn_info, TArgs&&... a_args);
+        template <StringLiteral game_object_type_name>
+        GameObject SpawnGameObject(SpawnInfo const& a_spawn_info);
+        GameObject SpawnGameObject(SpawnInfo const& a_spawn_info);
 
-        void DestroyGameObject(GameObject const& a_entity);
+        void DestroyGameObject(Entity const& a_game_object);
+
         GameObject GetGameObject(DUID const a_game_object_id) const;
-        bool IsGameObject(Entity const& a_entity) const;
+        GameObject GetGameObject(std::string const& a_game_object_name) const;
+
+        bool IsEntityAGameObject(GameObject const& a_game_object) const;
 
     private:
         UniquePtr<DECS::ECSModule> _ecs;
@@ -46,19 +45,17 @@ namespace DFW
 
 #pragma region Template Function Implementation
 
-    template <typename GameObjectType, typename... TArgs>
-        requires IsValidGameObjectType<GameObjectType>
-    GameObject GameWorld::SpawnGameObject(SpawnInfo const& a_spawn_info, TArgs&&... a_args)
+    template <StringLiteral game_object_type_name>
+    GameObject GameWorld::SpawnGameObject(SpawnInfo const& a_spawn_info)
     {
-        DECS::EntityManager& entity_manager = _ecs->EntityManager();
+        GameObject game_object(_ecs->EntityManager().CreateEntity<game_object_type_name>(_ecs->GetRegistry()));
 
-        GameObject game_object(entity_manager.CreateEntity<GameObjectType>(_ecs->GetRegistry(), std::forward<TArgs>(a_args)...));
-
+        // Setup additional Entity data.
         game_object.SetName(a_spawn_info.name);
-        game_object.AddComponent<GameObjectTagComponent>();
         game_object.AddComponent<TransformComponent>(a_spawn_info.transform);
 
-        game_object.OnCreate();
+        // GameObject Related setup.
+        game_object.AddComponent<GameObjectTagComponent>();
 
         _ecs->EventHandler().Broadcast<GameObjectCreatedEvent>(game_object);
 

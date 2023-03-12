@@ -13,8 +13,8 @@
 #include <GameWorld/Transform.h>
 
 #include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/ECSEntityManager.h>
-#include <Modules/ECS/Objects/ECSEntity.h>
+#include <Modules/ECS/Entity.h>
+#include <Modules/ECS/Managers/EntityManager.h>
 
 #include <Defines/MathDefines.h>
 
@@ -63,7 +63,7 @@ namespace DFW
     {
     }
 
-    CameraComponent& CameraSystem::CreateCamera(DECS::Entity const& a_entity, std::string const& a_camera_name)
+    CameraComponent& CameraSystem::CreateCamera(DECS::Entity& a_entity, std::string const& a_camera_name)
     {
         if (!a_entity.IsEntityValid())
         {
@@ -77,7 +77,7 @@ namespace DFW
             DFW_ASSERT(false);
         }
 
-        CameraIdentifier const registration(a_entity.GetRegistry().name, a_camera_name);
+        CameraIdentifier const registration(a_entity.GetRegistry().GetName(), a_camera_name);
         if (auto const& it = registered_cameras.find(registration);
             it != registered_cameras.end())
         {
@@ -110,8 +110,8 @@ namespace DFW
             registered_cameras.erase(it);
 
             // Destroy camera component.
-            CameraComponent const& found_camera = it->second.get();
-            DECS::Entity const& camera_owner = found_camera.GetOwner();
+            CameraComponent& found_camera = it->second.get();
+            DECS::Entity camera_owner = found_camera.GetOwner();
             camera_owner.DeleteComponent<CameraComponent>();
 
             // Communicate.
@@ -139,7 +139,7 @@ namespace DFW
         return _active_camera;
     }
 
-    void CameraSystem::SetActiveCamera(DECS::Entity const& a_entity)
+    void CameraSystem::SetActiveCamera(DECS::Entity& a_entity)
     {
         DFW_ASSERT(a_entity.IsEntityValid());
         SetActiveCamera(a_entity.GetComponent<CameraComponent>());
@@ -151,7 +151,7 @@ namespace DFW
 
         // Communicate.
         Entity const& owner = a_camera_component.GetOwner();
-        ECSEventHandler().Broadcast<CameraNewActiveEvent>(CameraIdentifier(owner.GetRegistry().name, a_camera_component.name), owner.GetID());
+        ECSEventHandler().Broadcast<CameraNewActiveEvent>(CameraIdentifier(owner.GetRegistry().GetName(), a_camera_component.name), owner.GetID());
     }
 
     void CameraSystem::ChangeCameraProjPerspective(CameraComponent& a_camera_component, float32 a_fov, float32 a_viewport_aspect, ClipSpace a_clip)
@@ -208,10 +208,10 @@ namespace DFW
         if (_has_enabled_camera_controls && _active_camera)
         {
             Debug_ToggleCameraMode();
-            ControlCamera(*_active_camera, a_registry.registry.get<TransformComponent>(_active_camera->GetOwner().GetHandle()));
+            ControlCamera(*_active_camera, a_registry.ENTT().get<TransformComponent>(_active_camera->GetOwner().GetHandle()));
         }
 
-        for (auto&& [entity, camera_comp, transform_comp] : a_registry.registry.view<CameraComponent, TransformComponent>().each())
+        for (auto&& [entity, camera_comp, transform_comp] : a_registry.ENTT().view<CameraComponent, TransformComponent>().each())
             UpdateCameraMatrices(camera_comp, transform_comp);
     }
 

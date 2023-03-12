@@ -4,8 +4,8 @@
 #include <CoreSystems/Logging/Logger.h>
 
 #include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Objects/ECSystem.h>
-#include <Modules/ECS/Utility/ECSConcepts.h>
+#include <Modules/ECS/System.h>
+#include <Modules/ECS/Utility/ECSTemplateUtility.h>
 
 #include <memory>
 #include <unordered_map>

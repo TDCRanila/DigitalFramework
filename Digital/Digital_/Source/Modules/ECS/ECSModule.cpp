@@ -1,8 +1,8 @@
 #include <Modules/ECS/ECSModule.h>
 		 
-#include <Modules/ECS/Managers/ECSEntityManager.h>
-#include <Modules/ECS/Managers/ECSystemManager.h>
-#include <Modules/ECS/Objects/ECSEntityRegistry.h>
+#include <Modules/ECS/Managers/EntityManager.h>
+#include <Modules/ECS/Managers/SystemManager.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
 
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Logging/Logger.h>
@@ -60,7 +60,7 @@ namespace DFW
 			_system_manager->UpdateSystems(*_registry);
 			_event_handler->ProcessPendingEvents();
 
-			_entity_manager->ManageDeletedEntities(*_registry);
+			_entity_manager->CleanDestructionMarkedEntities(*_registry);
 		}
 
 		void ECSModule::UpdateECSImGui()

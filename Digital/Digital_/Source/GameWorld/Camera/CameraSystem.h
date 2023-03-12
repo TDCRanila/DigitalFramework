@@ -2,8 +2,8 @@
 
 #include <GameWorld/Camera/ClipSpace.h>
 
-#include <Modules/ECS/Objects/ECSystem.h>
-#include <Modules/ECS/Objects/ECSEntity.h>
+#include <Modules/ECS/System.h>
+#include <Modules/ECS/Entity.h>
 
 #include <CoreSystems/Memory.h>
 #include <CoreSystems/DUID.h>
@@ -50,12 +50,12 @@ namespace DFW
         CameraSystem();
         ~CameraSystem() = default;
 
-		CameraComponent& CreateCamera(DECS::Entity const& a_entity, std::string const& a_camera_name);
+		CameraComponent& CreateCamera(DECS::Entity& a_entity, std::string const& a_camera_name);
 		void DestroyCamera(CameraIdentifier const& a_camera_identifier);
 
 		CameraComponent* GetCamera(CameraIdentifier const& a_camera_identifier) const;
 		CameraComponent* GetActiveCamera() const;
-		void SetActiveCamera(DECS::Entity const& a_entity);
+		void SetActiveCamera(DECS::Entity& a_entity);
 		void SetActiveCamera(CameraComponent& a_camera_component);
 
 		// Camera Utility.

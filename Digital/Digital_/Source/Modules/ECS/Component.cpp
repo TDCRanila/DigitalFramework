@@ -1,4 +1,4 @@
-#include <Modules/ECS/Objects/ECSComponent.h>
+#include <Modules/ECS/Component.h>
 
 namespace DFW
 {

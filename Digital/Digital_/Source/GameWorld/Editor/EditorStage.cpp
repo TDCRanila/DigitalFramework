@@ -7,7 +7,7 @@
 #include <GameWorld/Graphics/SpriteSystem.h>
 
 #include <Modules/Editor/EditorElementFiller.h>
-#include <Modules/ECS/Managers/ECSystemManager.h>
+#include <Modules/ECS/Managers/SystemManager.h>
 
 #include <CoreSystems/CoreServices.h>
 

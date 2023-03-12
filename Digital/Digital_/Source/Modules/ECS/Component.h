@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Modules/ECS/Objects/ECSEntity.h>
-#include <Modules/ECS/Objects/InternalEntity.h>
-#include <Modules/ECS/Objects/InternalComponent.h>
+#include <Modules/ECS/Entity.h>
+#include <Modules/ECS/Internal/InternalEntity.h>
+#include <Modules/ECS/Internal/InternalComponent.h>
 
 #include <Utility/AutoFactory/AutoFactory.h>
 

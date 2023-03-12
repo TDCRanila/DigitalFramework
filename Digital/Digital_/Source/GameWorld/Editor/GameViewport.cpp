@@ -3,7 +3,7 @@
 #include <GameWorld/Graphics/RenderSystem.h>
 
 #include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/ECSystemManager.h>
+#include <Modules/ECS/Managers/SystemManager.h>
 
 #include <Modules/Rendering/RenderModule.h>
 #include <Modules/Rendering/RenderTargetDirector.h>

@@ -3,7 +3,7 @@
 #include <GameWorld/GameEvents.h>
 #include <GameWorld/Camera/CameraEvents.h>
 
-#include <Modules/ECS/Objects/ECSystem.h>
+#include <Modules/ECS/System.h>
 
 #include <CoreSystems/ApplicationEvents.h>
 
