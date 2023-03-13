@@ -6,14 +6,7 @@
 #include <Modules/ECS/Entity.h>
 
 #include <CoreSystems/Memory.h>
-#include <CoreSystems/DUID.h>
 
-#include <boost/container_hash/hash.hpp>
-#include <boost/functional/hash.hpp>
-
-#include <glm/glm.hpp>
-
-#include <functional>
 #include <unordered_map>
 #include <string>
 
@@ -28,59 +21,42 @@ namespace DFW
 		class InputManagementSystem;
 	}
 
-	struct CameraIdentifier
-	{
-		CameraIdentifier() = default;
-		CameraIdentifier(std::string const& a_registry_name, std::string const& a_camera_name);
-
-		bool operator==(CameraIdentifier const& a_other) const;
-
-		struct HashFunc
-		{
-			std::size_t operator()(DFW::CameraIdentifier const& a_struct) const;
-		};
-
-		std::string registry_name;
-		std::string camera_name;
-	};
-
-	class CameraSystem : public DECS::System::Registrar<CameraSystem>
+	class CameraSystem final : public DECS::System::Registrar<CameraSystem>
     {
     public:
         CameraSystem();
         ~CameraSystem() = default;
 
-		CameraComponent& CreateCamera(DECS::Entity& a_entity, std::string const& a_camera_name);
-		void DestroyCamera(CameraIdentifier const& a_camera_identifier);
+		void RegisterCamera(CameraComponent& a_camera_component, std::string const& a_camera_name);
+		void UnregisterCamera(std::string const& a_camera_name);
 
-		CameraComponent* GetCamera(CameraIdentifier const& a_camera_identifier) const;
+		CameraComponent* GetCamera(std::string const& a_camera_name) const;
 		CameraComponent* GetActiveCamera() const;
-		void SetActiveCamera(DECS::Entity& a_entity);
-		void SetActiveCamera(CameraComponent& a_camera_component);
+		void SetActiveCamera(std::string const& a_camera_name);
 
 		// Camera Utility.
 		void ChangeCameraProjPerspective(CameraComponent& a_camera_component, float32 a_fov, float32 a_viewport_aspect, ClipSpace a_clip);
 		void ChangeCameraProjOrthographic(CameraComponent& a_camera_component, float32 a_view_width, float32 a_view_height, ClipSpace a_clip, bool a_center_ortho);
 
-		void EnableSimpleCamera(CameraComponent& a_camera_component);
-		void EnableAdvancedCamera(CameraComponent& a_camera_component);
+		void EnableCameraControl(CameraComponent& a_camera_component);
+		void DisableCameraControl(CameraComponent& a_camera_component);
+
+		void EnableSimpleCameraControlMode(CameraComponent& a_camera_component);
+		void EnableAdvancedCameraControlMode(CameraComponent& a_camera_component);
 
     private:
 		virtual void Init() override;
 		virtual void Update(DECS::EntityRegistry& a_registry) override;
 
-		void ControlCamera(CameraComponent& a_camera, Transform& a_transform);
-		void UpdateCameraMatrices(CameraComponent& a_camera, Transform& a_transform);
+		void ControlCamera(CameraComponent& a_camera);
 
 		void Debug_ToggleCameraMode();
 
 	private:
 		SharedPtr<DFW::DInput::InputManagementSystem> _input_management;
 
-        std::unordered_map<CameraIdentifier, DFW::RefWrap<CameraComponent>, CameraIdentifier::HashFunc> registered_cameras;
-
+        std::unordered_map<std::string, CameraComponent*> registered_cameras;
 		CameraComponent* _active_camera;
-		bool _has_enabled_camera_controls;
 
     };
 

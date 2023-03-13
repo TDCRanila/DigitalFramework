@@ -9,7 +9,7 @@ namespace DFW
     enum class GameEvents
     {
         GameObjectCreatedEvent, GameObjectDestroyedEvent,
-        CameraCreatedEvent, CameraDestroyedEvent, CameraNewActiveEvent
+        CameraRegisteredEvent, CameraUnregisteredEvent, CameraNewActiveEvent
     };
 
 #pragma region GameObjectEvents

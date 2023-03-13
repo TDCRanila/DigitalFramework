@@ -47,7 +47,7 @@ namespace DFW
 
 	void BaseRenderSystem::OnCameraNewActiveEvent(CameraNewActiveEvent const& a_camera_event)
 	{
-		_rendering_camera = SystemManager().GetSystem<CameraSystem>()->GetCamera(a_camera_event.camera_identifier);
+		_rendering_camera = SystemManager().GetSystem<CameraSystem>()->GetCamera(a_camera_event.camera_name);
 	}
 
 } // End of namespace ~ DFW.

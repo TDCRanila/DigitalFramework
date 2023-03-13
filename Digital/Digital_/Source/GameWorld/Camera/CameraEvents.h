@@ -8,16 +8,16 @@
 
 namespace DFW
 {
-	class CameraCreatedEvent : public Event
+	class CameraRegisteredEvent : public Event
 	{
 	public:
-		CameraCreatedEvent(std::string const& a_camera_name, DUID a_camera_id, DUID a_camera_owner)
+		CameraRegisteredEvent(std::string const& a_camera_name, DUID a_camera_id, DUID a_camera_owner)
 			: camera_name(a_camera_name)
 			, camera_id(a_camera_id)
 			, camera_owner(a_camera_owner)
 		{}
 
-		DFW_CONSTRUCT_EVENT(GameEvents, CameraCreatedEvent);
+		DFW_CONSTRUCT_EVENT(GameEvents, CameraRegisteredEvent);
 
 		std::string GetDebugString() const override
 		{
@@ -38,16 +38,16 @@ namespace DFW
 		DUID camera_owner;
 	};
 
-	class CameraDestroyedEvent : public Event
+	class CameraUnregisteredEvent : public Event
 	{
 	public:
-		CameraDestroyedEvent(std::string const& a_camera_name, DUID a_camera_id, DUID a_camera_owner)
+		CameraUnregisteredEvent(std::string const& a_camera_name, DUID a_camera_id, DUID a_camera_owner)
 			: camera_name(a_camera_name)
 			, camera_id(a_camera_id)
 			, camera_owner(a_camera_owner)
 		{}
 
-		DFW_CONSTRUCT_EVENT(GameEvents, CameraDestroyedEvent);
+		DFW_CONSTRUCT_EVENT(GameEvents, CameraUnregisteredEvent);
 
 		std::string GetDebugString() const override
 		{
@@ -71,8 +71,9 @@ namespace DFW
 	class CameraNewActiveEvent : public Event
 	{
 	public:
-		CameraNewActiveEvent(CameraIdentifier const& a_camera_identifier, DUID a_camera_owner)
-			: camera_identifier(a_camera_identifier)
+		CameraNewActiveEvent(std::string const& a_camera_name, DUID a_camera_id, DUID a_camera_owner)
+			: camera_name(a_camera_name)
+			, camera_id(a_camera_id)
 			, camera_owner(a_camera_owner)
 		{}
 
@@ -84,17 +85,16 @@ namespace DFW
 			debug_string << GetName();
 			debug_string << " - ";
 			debug_string << "Camera: ";
-			debug_string << camera_identifier.camera_name;
-			debug_string << " - ";
-			debug_string << "EntityRegistry";
+			debug_string << camera_name;
 			debug_string << "[";
-			debug_string << camera_identifier.registry_name;
+			debug_string << camera_id;
 			debug_string << "]";
 
 			return debug_string.str();
 		}
 
-		CameraIdentifier camera_identifier;
+		std::string camera_name;
+		DUID camera_id;
 		DUID camera_owner;
 	};
 

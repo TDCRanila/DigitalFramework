@@ -68,10 +68,19 @@ namespace DGame
         // Create Main Camera.
         {
             DFW::SpawnInfo camera_spawn_info;
-            camera_spawn_info.name = "camera";
+            camera_spawn_info.name = "camera-main";
             camera_spawn_info.transform = DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f));
 
-            camera_entity = game_world->SpawnGameObject(camera_spawn_info);
+            camera_entity = game_world->SpawnGameObject<"Camera">(camera_spawn_info);
+            DFW::CameraComponent& camera_component = camera_entity.AddComponent<DFW::CameraComponent>();
+            
+            DFW::CameraSystem* camera_system = game_world->GetECS().SystemManager().GetSystem<DFW::CameraSystem>();
+            camera_system->ChangeCameraProjPerspective(camera_component, 60.f, (16.f / 9.f), DFW::ClipSpace(0.1f, 5000.f));
+            camera_system->RegisterCamera(camera_component, "camera-main");
+            camera_system->SetActiveCamera("camera-main");
+            camera_system->EnableCameraControl(camera_component);
+        }
+
 
             DFW::CameraSystem* camera_system = game_world->GetECS().SystemManager().GetSystem<DFW::CameraSystem>();
             DFW::CameraComponent& camera = camera_system->CreateCamera(camera_entity, "camera-one");
