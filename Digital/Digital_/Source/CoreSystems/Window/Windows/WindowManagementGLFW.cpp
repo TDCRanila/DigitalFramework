@@ -324,9 +324,8 @@ namespace DFW
             window_ptr->_name = a_window_parameters.name;
 
             // Window Resize
-            // Lend the glfw window callback
-            GLFWwindow* const glfw_window = window_ptr->_glfw_window;
-            GLFWWindowCallBacks::glfw_window_resize_callback(glfw_window, a_window_parameters.width, a_window_parameters.height);
+            GLFWwindow* const glfw_window = window_ptr->_glfw_window;            
+            glfwSetWindowSize(glfw_window, a_window_parameters.width, a_window_parameters.height);
         }
 
         void WindowManagementGLFW::RequestMouseCursorCapture()
