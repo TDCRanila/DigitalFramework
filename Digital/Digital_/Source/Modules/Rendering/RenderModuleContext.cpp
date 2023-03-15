@@ -165,7 +165,7 @@ namespace DFW
 
         void RenderModuleContext::OnWindowResizeEvent(WindowResizeEvent const& a_window_event)
         {
-            bgfx::reset(a_window_event.new_width, a_window_event.new_height);
+            bgfx::reset(a_window_event.new_width, a_window_event.new_height, _bgfx_init_settings.resolution.reset);
             bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
         }
 
