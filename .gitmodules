@@ -19,3 +19,6 @@
 [submodule "Digital/Dependency/External/assimp"]
 	path = Digital/Dependency/External/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "Digital/Dependency/External/JoltPhysics"]
+	path = Digital/Dependency/External/JoltPhysics
+	url = https://github.com/jrouwe/JoltPhysics
