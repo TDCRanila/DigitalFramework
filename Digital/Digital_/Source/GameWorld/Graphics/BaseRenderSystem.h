@@ -30,6 +30,9 @@ namespace DFW
         void RenderToDefault();
 
     protected:
+        void PrepareViewTarget();
+        void PrepareRenderTarget();
+
         void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
         void OnCameraNewActiveEvent(CameraNewActiveEvent const& a_camera_event);
 

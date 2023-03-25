@@ -22,7 +22,7 @@ namespace DFW
 
         virtual void Update(DECS::EntityRegistry& a_registry) override;
 
-        void FlushSpriteBatch(SpriteBatch const& a_sprite_batch, DRender::ViewTarget const& a_view_target);
+        void FlushSpriteBatch(SpriteBatch const& a_sprite_batch);
         
     };
 
