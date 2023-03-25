@@ -204,45 +204,48 @@ namespace DFW
 
     void CameraSystem::ControlCamera(CameraComponent& a_camera)
     {
-        // TODO: Input: Implement sensitivity into input/mouse system.
-        float32 const mouse_sensitivity(0.2f);
-        float32 const mouse_scroll_sensitivity(5.0f);
-
-        glm::vec2 const mouse_delta(_input_management->GetMousePosDelta() * mouse_sensitivity);
-        glm::vec2 const mouse_scroll_delta(_input_management->GetMouseScrollDelta() * mouse_scroll_sensitivity);
-
-        // Camera Orientation.
-        if (a_camera.has_enabled_six_degrees_rotation)
+        if (_input_management->IsKeyDown(DFW::DInput::DMouse::BUTTON_RIGHT))
         {
-            DMath::EulerAngles const angle_delta(mouse_delta.y, mouse_delta.x, mouse_scroll_delta.y);
-            a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.pitch()) , Detail::world_right);
-            a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.yaw()) , Detail::world_up);
-            a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.roll()) , Detail::world_front);
-            a_camera.angles       = glm::degrees(glm::eulerAngles(a_camera.orientation));
-        }
-        else
-        {
-            a_camera.angles.pitch()  += mouse_delta.y;
-            a_camera.angles.yaw()    += mouse_delta.x;
+            // TODO: Input: Implement sensitivity into input/mouse system.
+            float32 const mouse_sensitivity(0.2f);
+            float32 const mouse_scroll_sensitivity(5.0f);
 
-            // Prevent Gimbal Lock.
-            if (a_camera.angles.pitch() > 90.f)
-                a_camera.angles.pitch() = 90.f;
-            if (a_camera.angles.pitch() < -90.f)
-                a_camera.angles.pitch() = -90.f;
-            
-            // Wrap Yaw Angle.
-            if (a_camera.angles.yaw() > 180.f)
-                a_camera.angles.yaw() = -180.f;
-            if (a_camera.angles.yaw() < -180.f)
-                a_camera.angles.yaw() = 180.f;
+            glm::vec2 const mouse_delta(_input_management->GetMousePosDelta() * mouse_sensitivity);
+            glm::vec2 const mouse_scroll_delta(_input_management->GetMouseScrollDelta() * mouse_scroll_sensitivity);
 
-            glm::vec3 const pitch_yaw_angles(a_camera.angles.pitch(), a_camera.angles.yaw(), 0.0f);
-            glm::quat const orientation_offset(glm::radians(pitch_yaw_angles));
-            a_camera.orientation = orientation_offset;
+            // Camera Orientation.
+            if (a_camera.has_enabled_six_degrees_rotation)
+            {
+                DMath::EulerAngles const angle_delta(mouse_delta.y, mouse_delta.x, mouse_scroll_delta.y);
+                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.pitch()), Detail::world_right);
+                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.yaw()), Detail::world_up);
+                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.roll()), Detail::world_front);
+                a_camera.angles = glm::degrees(glm::eulerAngles(a_camera.orientation));
+            }
+            else
+            {
+                a_camera.angles.pitch() += mouse_delta.y;
+                a_camera.angles.yaw() += mouse_delta.x;
+
+                // Prevent Gimbal Lock.
+                if (a_camera.angles.pitch() > 90.f)
+                    a_camera.angles.pitch() = 90.f;
+                if (a_camera.angles.pitch() < -90.f)
+                    a_camera.angles.pitch() = -90.f;
+
+                // Wrap Yaw Angle.
+                if (a_camera.angles.yaw() > 180.f)
+                    a_camera.angles.yaw() = -180.f;
+                if (a_camera.angles.yaw() < -180.f)
+                    a_camera.angles.yaw() = 180.f;
+
+                glm::vec3 const pitch_yaw_angles(a_camera.angles.pitch(), a_camera.angles.yaw(), 0.0f);
+                glm::quat const orientation_offset(glm::radians(pitch_yaw_angles));
+                a_camera.orientation = orientation_offset;
+            }
+
+            a_camera.orientation = glm::normalize(a_camera.orientation);
         }
-        
-        a_camera.orientation = glm::normalize(a_camera.orientation);
 
         // Camera Speed.
         float32 const scroll_offset = _input_management->GetMouseScrollDelta().y;
