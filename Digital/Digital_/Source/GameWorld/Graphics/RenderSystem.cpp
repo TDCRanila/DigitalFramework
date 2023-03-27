@@ -59,6 +59,9 @@ namespace DFW
 		if (!_program_ptr)
 			return;
 
+		PrepareRenderTarget();
+		PrepareViewTarget();
+
 		uint64_t state = 0
 			| BGFX_STATE_WRITE_R
 			| BGFX_STATE_WRITE_G
@@ -70,38 +73,8 @@ namespace DFW
 			| BGFX_STATE_MSAA
 			;
 
-		// Clear Target.
-		DRender::ViewTarget const& view_target = *_view_target;
-		bgfx::setViewClear(view_target, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
-		bgfx::touch(view_target);
+		bgfx::setState(state);
 		
-		// If nullptr, RenderSystem will be drawing to the default framebuffer.
-		if (_render_target)
-		{
-			bgfx::setViewFrameBuffer(view_target, _render_target->fbh);
-		}
-
-		// Camera Setup.
-		if (_rendering_camera)
-		{
-			bgfx::setViewTransform(view_target, glm::value_ptr(_rendering_camera->view), glm::value_ptr(_rendering_camera->projection));
-			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
-		}
-		else
-		{
-			// No camera present, create a "camera" at world origin.
-			float32 view[16];
-			bx::Vec3 const at	= { 0.0f, 0.0f, 1.0f };
-			bx::Vec3 const eye	= { 0.0f, 0.0f, 0.0f };
-			bx::mtxLookAt(view, eye, at);
-
-			float32 proj[16];
-			bx::mtxProj(proj, DFW_DEFAULT_CAMERA_FOV, float32(window_width) / float32(window_height), 0.1f, 1000.0f, bgfx::getCaps()->homogeneousDepth);
-
-			bgfx::setViewTransform(view_target, view, proj);
-			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
-		}
-
 		// Submit Primitives
 		for (auto&& [entity, model, transform] : a_registry.ENTT().view<ModelComponent, TransformComponent>().each())
 		{
@@ -120,8 +93,7 @@ namespace DFW
 					bgfx::setTexture(texture->stage, _texture_sampler_uniform->handle, texture->handle, texture->flags | BGFX_SAMPLER_POINT);
 				}
 
-				bgfx::setState(state);
-				bgfx::submit(view_target, _program_ptr->shader_program_handle);
+				bgfx::submit(_view_target->view_target_id, _program_ptr->shader_program_handle);
 			}
 		}
     }

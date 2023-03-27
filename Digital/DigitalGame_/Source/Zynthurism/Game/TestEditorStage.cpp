@@ -81,13 +81,6 @@ namespace DGame
             camera_system->EnableCameraControl(camera_component);
         }
 
-
-            DFW::CameraSystem* camera_system = game_world->GetECS().SystemManager().GetSystem<DFW::CameraSystem>();
-            DFW::CameraComponent& camera = camera_system->CreateCamera(camera_entity, "camera-one");
-            camera_system->ChangeCameraProjPerspective(camera, 90.f, (16.f / 9.f), DFW::ClipSpace(0.1f, 5000.f));
-            camera_system->SetActiveCamera(camera_entity);
-        }
-
         std::string work_dir;
         DFW::DUtility::GetWorkDirectory(work_dir);
         std::string const model_dir(work_dir + DIR_SLASH + "models");

@@ -166,34 +166,9 @@ namespace DFW
 
 	void SpriteSystem::Update(DECS::EntityRegistry& a_registry)
 	{
-		// Clear Target.
-		DRender::ViewTarget const& view_target = *_view_target;
-		bgfx::touch(view_target);
-
 		uint32 const num_sprites(static_cast<uint32>(a_registry.ENTT().view<SpriteComponent>().size()));
 		if (num_sprites <= 0)
 			return;
-
-		// Camera Setup.
-		if (_rendering_camera)
-		{
-			bgfx::setViewTransform(view_target, glm::value_ptr(_rendering_camera->view), glm::value_ptr(_rendering_camera->projection));
-			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
-		}
-		else
-		{
-			// No camera present, create a "camera" at world origin.
-			float32 view[16];
-			bx::Vec3 const at = { 0.0f, 0.0f, 1.0f };
-			bx::Vec3 const eye = { 0.0f, 0.0f, 0.0f };
-			bx::mtxLookAt(view, eye, at);
-
-			float32 proj[16];
-			bx::mtxProj(proj, DFW_DEFAULT_CAMERA_FOV, float32(window_width) / float32(window_height), 0.1f, 1000.0f, bgfx::getCaps()->homogeneousDepth);
-
-			bgfx::setViewTransform(view_target, view, proj);
-			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
-		}
 
 		// TODO Possibly sort SpriteComponents based on texture handle. 
 		// low to high to pack more sprites together in a sprite batch.
@@ -241,7 +216,7 @@ namespace DFW
 				// Prevent Texture Overflow.
 				if (batch.unique_texture_handles.size() > Detail::max_texture_samplers_per_batch)
 				{
-					FlushSpriteBatch(batch, view_target);
+					FlushSpriteBatch(batch);
 					NewSpriteBatch();
 				}
 				
@@ -252,7 +227,7 @@ namespace DFW
 			// Prevent Buffer Overflow.
 			if (batch.num_sprites_to_draw >= max_num_drawable_sprites)
 			{
-				FlushSpriteBatch(batch, view_target);
+				FlushSpriteBatch(batch);
 				NewSpriteBatch();
 			}
 
@@ -279,23 +254,16 @@ namespace DFW
 		}
 
 		// Flush Last Batch.
-		FlushSpriteBatch(batch, view_target);
+		FlushSpriteBatch(batch);
 
 	}
 
-	void SpriteSystem::FlushSpriteBatch(SpriteBatch const& a_sprite_batch, DRender::ViewTarget const& a_view_target)
+	void SpriteSystem::FlushSpriteBatch(SpriteBatch const& a_sprite_batch)
 	{
 		DFW_ASSERT(a_sprite_batch.num_sprites_to_draw > 0 && "Should not be flushing the batch when no sprites are there to be drawn.");
 
-		bgfx::setVertexBuffer(0, Detail::quad_vbh);
-		bgfx::setIndexBuffer(Detail::quad_ibh);
-		bgfx::setInstanceDataBuffer(&a_sprite_batch.data_buffer, 0, a_sprite_batch.num_sprites_to_draw);
-
-		for (uint8 texture_index_counter(0); uint16 texture_handle : a_sprite_batch.unique_texture_handles)
-		{
-			bgfx::setTexture(texture_index_counter, _texture_sampler_uniform->handle, bgfx::TextureHandle(texture_handle), BGFX_SAMPLER_POINT);
-			++texture_index_counter;
-		}
+		PrepareRenderTarget();
+		PrepareViewTarget();
 
 		uint64_t constexpr state = 0
 			| BGFX_STATE_WRITE_R
@@ -309,7 +277,17 @@ namespace DFW
 
 		bgfx::setState(state);
 
-		bgfx::submit(a_view_target, _program_ptr->shader_program_handle);
+		bgfx::setVertexBuffer(0, Detail::quad_vbh);
+		bgfx::setIndexBuffer(Detail::quad_ibh);
+		bgfx::setInstanceDataBuffer(&a_sprite_batch.data_buffer, 0, a_sprite_batch.num_sprites_to_draw);
+
+		for (uint8 texture_index_counter(0); uint16 texture_handle : a_sprite_batch.unique_texture_handles)
+		{
+			bgfx::setTexture(texture_index_counter, _texture_sampler_uniform->handle, bgfx::TextureHandle(texture_handle), BGFX_SAMPLER_POINT);
+			++texture_index_counter;
+		}
+
+		bgfx::submit(_view_target->view_target_id, _program_ptr->shader_program_handle);
 	}
 
 } // End of namespace ~ DFW.

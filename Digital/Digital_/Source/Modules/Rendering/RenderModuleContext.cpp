@@ -51,7 +51,7 @@ namespace DFW
         void RenderModuleContext::BeginFrame(ViewTarget const& a_main_viewtarget)
         {
             bgfx::setViewRect(a_main_viewtarget, 0, 0, bgfx::BackbufferRatio::Equal);
-            bgfx::setViewClear(a_main_viewtarget, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
+            bgfx::setViewClear(a_main_viewtarget, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000ff, 1.0f, 0);
             bgfx::touch(a_main_viewtarget);
         }
 
