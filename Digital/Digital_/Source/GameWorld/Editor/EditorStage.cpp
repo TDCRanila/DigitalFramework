@@ -5,6 +5,7 @@
 #include <GameWorld/Camera/CameraSystem.h>
 #include <GameWorld/Graphics/RenderSystem.h>
 #include <GameWorld/Graphics/SpriteSystem.h>
+#include <GameWorld/Graphics/DebugRenderSystem.h>
 
 #include <Modules/Editor/EditorElementFiller.h>
 #include <Modules/ECS/Managers/SystemManager.h>
@@ -85,12 +86,14 @@ namespace DFW
             DECS::ECSModule& ecs = _game_world->GetECS();
             ecs.SystemManager().AddSystem<DFW::RenderSystem>();
             ecs.SystemManager().AddSystem<DFW::SpriteSystem>();
+            ecs.SystemManager().AddSystem<DFW::DebugRenderSystem>();
             ecs.SystemManager().AddSystem<DFW::CameraSystem>();
 
             // Set Render Targets of render systems.
             SharedPtr<DRender::RenderTarget const> viewport_render_target = game_viewport.GetViewportRenderTarget();
             ecs.SystemManager().GetSystem<DFW::RenderSystem>()->RenderToRenderTarget(viewport_render_target);
             ecs.SystemManager().GetSystem<DFW::SpriteSystem>()->RenderToRenderTarget(viewport_render_target);
+            ecs.SystemManager().GetSystem<DFW::DebugRenderSystem>()->RenderToRenderTarget(viewport_render_target);
         }
 
         void EditorStage::OnRemoved()
