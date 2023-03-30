@@ -214,6 +214,30 @@ target_include_directories(${LIB_NAME} PUBLIC ${ASSIMP_INCLUDE_DIR} ${ASSIMP_INC
 
 message("\n")
 
+include(CMake/JoltPhysicsSettings.cmake)
+
+message("Adding Submdoule: JoltPhysics")
+
+set(JOLT_LIB_NAME Jolt)
+set(JOLT_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/JoltPhysics)
+set(JOLT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/JoltPhysics)
+set(JOLT_INCLUDE_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
+find_path(JOLT_FOUND NAMES "Jolt.h" PATHS "${JOLT_INCLUDE_DIR}/Jolt")
+if((NOT JOLT_FOUND) OR (NOT EXISTS ${JOLT_INCLUDE_DIR}))
+message("Unable to find Submodule: ${JOLT_LIB_NAME} or file Jolt.h")
+execute_process(COMMAND git submodule update --init -- ${JOLT_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+message("Found Submodule: ${JOLT_LIB_NAME}")
+endif()
+
+add_subdirectory(${JOLT_DIR}/Build ${JOLT_LIB_NAME})
+target_link_libraries(${LIB_NAME} ${JOLT_LIB_NAME})
+set_target_properties(${JOLT_LIB_NAME}  PROPERTIES FOLDER ${JOLT_LIB_NAME})
+target_include_directories(${LIB_NAME} PUBLIC ${JOLT_INCLUDE_DIR} ${JOLT_INCLUDE_GEN_DIR})
+
+message("\n")
+
 ## Boost - 
 message("Adding File(s): boost")
 set(BOOST_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/boost)
