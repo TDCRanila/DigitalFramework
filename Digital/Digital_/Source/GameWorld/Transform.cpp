@@ -16,6 +16,13 @@ namespace DFW
     {
     }
 
+    Transform::Transform(glm::vec3 const& a_translation, glm::vec3 const& a_rotation)
+        : translation(a_translation)
+        , rotation(a_rotation)
+        , scale(1.0f)
+    {
+    }
+
     Transform::Transform(glm::vec3 const& a_translation, glm::vec3 const& a_rotation, glm::vec3 const& a_scale)
         : translation(a_translation)
         , rotation(a_rotation)
