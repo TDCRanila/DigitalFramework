@@ -4,6 +4,13 @@ set(PROJECT_NAME ProjectSolution)
 
 project(${PROJECT_NAME})
 
+### Functions
+function(PrintVar)
+    foreach(var_it ${ARGN})
+        message("${var_it} = ${${var_it}}")
+    endforeach()
+endfunction()
+
 ### Project Properties.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "_PredfinedTargetsFolder")
