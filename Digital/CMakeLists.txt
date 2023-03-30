@@ -1,15 +1,9 @@
 cmake_minimum_required(VERSION 3.17.2)
 
+include(Utility.cmake)
+
 set(PROJECT_NAME ProjectSolution)
-
 project(${PROJECT_NAME})
-
-### Functions
-function(PrintVar)
-    foreach(var_it ${ARGN})
-        message("${var_it} = ${${var_it}}")
-    endforeach()
-endfunction()
 
 ### Project Properties.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
