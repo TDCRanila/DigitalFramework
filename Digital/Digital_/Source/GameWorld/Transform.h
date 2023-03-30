@@ -17,7 +17,7 @@ namespace DFW
         glm::mat4 GetTransformMatrix() const;
 
         glm::vec3 translation;
-        glm::vec3 rotation;
+        glm::vec3 rotation; // Rotation in radians.
         glm::vec3 scale;
 
     };
