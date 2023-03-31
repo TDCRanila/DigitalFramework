@@ -97,7 +97,7 @@ namespace DFW
 
             InitRenderModuleContext();
 
-            CoreService::GetAppEventHandler()->InstantBroadcast<RendererAPIChanged>();
+            CoreService::GetAppEventHandler()->InstantBroadcast(RendererAPIChanged());
         }
 
         void RenderModuleContext::ChangeGraphicsSettings(uint32 const a_bgfx_reset_flags)
