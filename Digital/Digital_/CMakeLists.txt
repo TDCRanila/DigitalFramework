@@ -141,7 +141,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/spdlog spdlog)
 
 target_include_directories(${LIB_NAME} PUBLIC "${SPDLOG_INCLUDE_DIR}")
 
-set_target_properties(${spdlog} PROPERTIES FOLDER "${spdlog}")
+set_target_properties(${SPDLOG_LIB_NAME} PROPERTIES FOLDER "${SPDLOG_LIB_NAME}")
 
 ## assimp
 AnnounceLibraryAddition("assimp")
