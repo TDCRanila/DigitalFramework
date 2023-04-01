@@ -162,9 +162,11 @@ set_target_properties(${ASSIMP_LIB_NAME}  PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
 set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
 set_target_properties(zlibstatic PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
 
-include(CMake/JoltPhysicsSettings.cmake)
+# JoltPhysics
 
-message("Adding Submdoule: JoltPhysics")
+AnnounceLibraryAddition("JoltPhysics")
+
+include(CMake/JoltPhysicsSettings.cmake)
 
 set(JOLT_LIB_NAME Jolt)
 set(JOLT_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/JoltPhysics)
