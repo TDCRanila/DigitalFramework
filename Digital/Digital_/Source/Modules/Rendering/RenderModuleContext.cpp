@@ -30,10 +30,7 @@ namespace DFW
             SharedPtr<DWindow::WindowInstance> main_window_ptr = CoreService::GetWindowManagement()->GetMainWindow();
             DFW_ASSERT(main_window_ptr, "Pointer to the main window is invalid, window mangement might not have been initialised.");
 
-            bgfx::PlatformData platform_data;
-            platform_data.nwh = CoreService::GetWindowManagement()->GetMainWindowPWH();
-            bgfx::setPlatformData(platform_data);
-
+            _bgfx_init_settings.platformData.nwh = CoreService::GetWindowManagement()->GetMainWindowPWH();
             bgfx::init(_bgfx_init_settings);
 
             // Register Event Callbacks.
