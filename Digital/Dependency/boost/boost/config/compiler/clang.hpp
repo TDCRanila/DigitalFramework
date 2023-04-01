@@ -57,6 +57,14 @@
 #  define BOOST_HAS_STDINT_H
 #endif
 
+#if (defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)) && !defined(_CRAYC)
+#if (__clang_major__ >= 4) && defined(__has_include)
+#if __has_include(<quadmath.h>)
+#  define BOOST_HAS_FLOAT128
+#endif
+#endif
+#endif
+
 
 #define BOOST_HAS_NRVO
 
@@ -104,9 +112,9 @@
 #  define BOOST_SYMBOL_IMPORT __attribute__((__dllimport__))
 #else
 #  define BOOST_SYMBOL_EXPORT __attribute__((__visibility__("default")))
+#  define BOOST_SYMBOL_VISIBLE __attribute__((__visibility__("default")))
 #  define BOOST_SYMBOL_IMPORT
 #endif
-#define BOOST_SYMBOL_VISIBLE __attribute__((__visibility__("default")))
 
 //
 // The BOOST_FALLTHROUGH macro can be used to annotate implicit fall-through
@@ -242,6 +250,11 @@
 
 #if !__has_feature(cxx_override_control)
 #  define BOOST_NO_CXX11_FINAL
+#  define BOOST_NO_CXX11_OVERRIDE
+#endif
+
+#if !__has_feature(cxx_unrestricted_unions)
+#  define BOOST_NO_CXX11_UNRESTRICTED_UNION
 #endif
 
 #if !(__has_feature(__cxx_binary_literals__) || __has_extension(__cxx_binary_literals__))
@@ -312,10 +325,17 @@
 // All versions with __cplusplus above this value seem to support this:
 #  define BOOST_NO_CXX14_DIGIT_SEPARATORS
 #endif
-//
-// __builtin_unreachable:
-#if defined(__has_builtin) && __has_builtin(__builtin_unreachable)
+
+// Unreachable code markup
+#if defined(__has_builtin)
+#if __has_builtin(__builtin_unreachable)
 #define BOOST_UNREACHABLE_RETURN(x) __builtin_unreachable();
+#endif
+#endif
+
+// Deprecated symbol markup
+#if __has_attribute(deprecated)
+#define BOOST_DEPRECATED(msg) __attribute__((deprecated(msg)))
 #endif
 
 #if (__clang_major__ == 3) && (__clang_minor__ == 0)
@@ -338,3 +358,5 @@
 // Macro used to identify the Clang compiler.
 #define BOOST_CLANG 1
 
+// BOOST_CLANG_VERSION
+#include <boost/config/compiler/clang_version.hpp>
