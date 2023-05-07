@@ -84,12 +84,12 @@ namespace DFW
     JPH::BodyID PhysicsSystem::CreateBoxRigidBody(Transform const& a_transform, glm::vec3 const& a_extend, JPH::EMotionType const a_rigid_body_type)
     {
         // Create the RigidBody.
-        JPH::Vec3 const box_half_extend(a_extend.x * 0.5f, a_extend.y * 0.5f, a_extend.z * 0.5f);
+        JPH::Vec3 const box_extend(a_extend.x, a_extend.y, a_extend.z);
         JPH::RVec3 const initial_rigidbody_translation(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z);
         JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.rotation.x, a_transform.rotation.y, a_transform.rotation.z }));
         JPH::BodyCreationSettings box_settings(
             // BoxShape gets deleted by JPH itself.
-            new JPH::BoxShape(box_half_extend)
+            new JPH::BoxShape(box_extend)
             , initial_rigidbody_translation
             , intial_rigidbody_quat
             , a_rigid_body_type
