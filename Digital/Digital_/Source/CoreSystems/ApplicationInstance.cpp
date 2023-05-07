@@ -96,7 +96,7 @@ namespace DFW
         _application_event_handler->RegisterCallback<ApplicationCloseEvent, &ApplicationInstance::OnApplicationCloseEvent>(this);
 
         // OS focusses on the main window. Make sure listeners know about this.
-        _application_event_handler->InstantBroadcast<WindowFocusEvent>(_window_management->GetMainWindowID(), true);
+        _application_event_handler->InstantBroadcast(WindowFocusEvent(_window_management->GetMainWindowID(), true));
 
         // User-Implemented Post-Initialisation.
         PostApplicationInit();

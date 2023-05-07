@@ -18,9 +18,6 @@ namespace DFW
         EventDispatcher() = default;
         ~EventDispatcher() = default;
 
-        template <typename EventType, typename... TArgs>
-        void InstantBroadcast(TArgs&&... a_args);
-
         template <typename EventType>
         void InstantBroadcast(EventType&& a_event);
 
@@ -57,12 +54,6 @@ namespace DFW
     };
 
 #pragma region Template Function Implementation
-
-    template <typename EventType, typename... TArgs>
-    void EventDispatcher::InstantBroadcast(TArgs&&... a_args)
-    {
-        _dispatcher.trigger<EventType>(std::forward<TArgs&&>(a_args)...);
-    }
 
     template <typename EventType>
     void EventDispatcher::InstantBroadcast(EventType&& a_event)
