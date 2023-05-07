@@ -382,7 +382,7 @@ namespace DFW
                             );
 
                             // Store Texture.
-                            material_textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, BGFX_TEXTURE_NONE, uint8(0)));
+                            material_textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, image->width, image->height, BGFX_TEXTURE_NONE, uint8(0)));
                         }
 
                         return material_textures;
