@@ -60,6 +60,27 @@ namespace DFW
         return _context->jph_physics_system->GetBodyInterface(); 
     }
        
+    JPH::BodyID PhysicsSystem::CreateMeshRigidBody(Transform const& a_transform, JPH::ShapeSettings const& a_mesh_shape_settings, JPH::EMotionType const a_rigid_body_type)
+    {
+        JPH::RVec3 const initial_rigidbody_translation(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z);
+        JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.rotation.x, a_transform.rotation.y, a_transform.rotation.z }));
+        JPH::BodyCreationSettings mesh_settings(
+            &a_mesh_shape_settings
+            , initial_rigidbody_translation
+            , intial_rigidbody_quat
+            , a_rigid_body_type
+            , Detail::GetPhysicsLayerIDFromMotionType(a_rigid_body_type)
+        );
+
+        JPH::Body* const body = JoltBodyInterface().CreateBody(mesh_settings);
+        DFW_ASSERT(body, "Failed to create rigid body.");
+        JPH::BodyID const& body_id = body->GetID();
+
+        _rigid_bodies_pending_spawn.emplace_back(body_id);
+
+        return body_id;
+    }
+
     JPH::BodyID PhysicsSystem::CreateBoxRigidBody(Transform const& a_transform, glm::vec3 const& a_extend, JPH::EMotionType const a_rigid_body_type)
     {
         // Create the RigidBody.

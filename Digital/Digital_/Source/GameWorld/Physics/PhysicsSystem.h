@@ -52,6 +52,8 @@ namespace DFW
         JPH::BodyInterface& JoltBodyInterface();
 
     public:
+        JPH::BodyID CreateMeshRigidBody(Transform const& a_transform, JPH::ShapeSettings const& a_mesh_shape_settings, JPH::EMotionType const a_rigid_body_type);
+
         JPH::BodyID CreateBoxRigidBody(Transform const& a_transform, glm::vec3 const& a_extend, JPH::EMotionType const a_rigid_body_type);
         JPH::BodyID CreateBoxRigidBody(glm::vec3 const& a_extend, JPH::EMotionType const a_rigid_body_type);
 
