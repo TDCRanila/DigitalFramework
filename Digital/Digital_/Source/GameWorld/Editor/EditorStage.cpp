@@ -5,6 +5,7 @@
 #include <GameWorld/Camera/CameraSystem.h>
 #include <GameWorld/Graphics/RenderSystem.h>
 #include <GameWorld/Graphics/SpriteSystem.h>
+#include <GameWorld/Physics/PhysicsSystem.h>
 #include <GameWorld/Graphics/DebugRenderSystem.h>
 
 #include <Modules/Editor/EditorElementFiller.h>
@@ -88,6 +89,7 @@ namespace DFW
             ecs.SystemManager().AddSystem<DFW::SpriteSystem>();
             ecs.SystemManager().AddSystem<DFW::DebugRenderSystem>();
             ecs.SystemManager().AddSystem<DFW::CameraSystem>();
+            ecs.SystemManager().AddSystem<DFW::PhysicsSystem>();
 
             // Set Render Targets of render systems.
             SharedPtr<DRender::RenderTarget const> viewport_render_target = game_viewport.GetViewportRenderTarget();
