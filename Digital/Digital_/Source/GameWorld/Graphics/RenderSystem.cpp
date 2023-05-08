@@ -62,7 +62,7 @@ namespace DFW
 		PrepareRenderTarget();
 		PrepareViewTarget();
 
-		uint64_t state = 0
+		constexpr uint64_t state = 0
 			| BGFX_STATE_WRITE_R
 			| BGFX_STATE_WRITE_G
 			| BGFX_STATE_WRITE_B
@@ -72,8 +72,6 @@ namespace DFW
 			| BGFX_STATE_CULL_CW
 			| BGFX_STATE_MSAA
 			;
-
-		bgfx::setState(state);
 		
 		// Submit Primitives
 		for (auto&& [entity, model, transform] : a_registry.ENTT().view<ModelComponent, TransformComponent>().each())
@@ -93,6 +91,7 @@ namespace DFW
 					bgfx::setTexture(texture->stage, _texture_sampler_uniform->handle, texture->handle, texture->flags | BGFX_SAMPLER_POINT);
 				}
 
+				bgfx::setState(state);
 				bgfx::submit(_view_target->view_target_id, _program_ptr->shader_program_handle);
 			}
 		}
