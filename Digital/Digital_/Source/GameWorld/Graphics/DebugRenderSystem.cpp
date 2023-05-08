@@ -17,17 +17,6 @@ namespace DFW
 {
     DebugDrawEncoder* DebugRenderSystem::_dde = nullptr;
 
-    namespace Detail
-    {
-        uint32 RGBAToHexABGR(glm::u8vec4 a_rgba)
-        {
-            return ((static_cast<uint32>(a_rgba.a) & 0xff) << 24)
-                 + ((static_cast<uint32>(a_rgba.b) & 0xff) << 16)
-                 + ((static_cast<uint32>(a_rgba.g) & 0xff) << 8)
-                 + ((static_cast<uint32>(a_rgba.r) & 0xff));
-        }
-    }
-
     DebugDrawSettings::DebugDrawSettings()
         : colour({255, 255, 255 ,255})
         , shape_complexity_lod(2)
@@ -36,7 +25,7 @@ namespace DFW
     {
     }
 
-    DebugDrawSettings::DebugDrawSettings(glm::u8vec4 a_colour, bool a_enable_wireframe)
+    DebugDrawSettings::DebugDrawSettings(ColourRGBA a_colour, bool a_enable_wireframe)
         : colour(a_colour)
         , shape_complexity_lod(2)
         , enable_wireframe(a_enable_wireframe)
@@ -44,7 +33,7 @@ namespace DFW
     {
     }
 
-    DebugDrawSettings::DebugDrawSettings(glm::u8vec4 a_colour, bool a_enable_wireframe, bool a_enable_depthtest, uint8 a_shape_complexity)
+    DebugDrawSettings::DebugDrawSettings(ColourRGBA a_colour, bool a_enable_wireframe, bool a_enable_depthtest, uint8 a_shape_complexity)
         : colour(a_colour)
         , enable_wireframe(a_enable_wireframe)
         , enable_depthtest(a_enable_depthtest)
@@ -93,7 +82,7 @@ namespace DFW
     {
         a_settings.colour;
 
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->moveTo(a_start_pos.x, a_start_pos.y, a_start_pos.z);
         _dde->lineTo(a_end_pos.x, a_end_pos.y, a_end_pos.z);
     }
@@ -103,13 +92,13 @@ namespace DFW
         if (a_line_thickness <= 0.0f)
             a_line_thickness = 0.5f;
 
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->drawCylinder(bx::Vec3(a_start_pos.x, a_start_pos.y, a_start_pos.z), bx::Vec3(a_end_pos.x, a_end_pos.y, a_end_pos.z), a_line_thickness * 0.01f);
     }
 
     void DebugRenderSystem::DrawCircle(glm::vec3 const& a_center_pos, glm::vec3 const& a_normal, float32 a_circle_radius, DebugDrawSettings const& a_settings)
     {
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->drawCircle(bx::normalize({ a_normal.x, a_normal.y, a_normal.z }), { a_center_pos.x, a_center_pos.y, a_center_pos.z }, a_circle_radius);
@@ -117,7 +106,7 @@ namespace DFW
 
     void DebugRenderSystem::DrawRectangle(glm::vec3 const& a_center_pos, glm::vec3 const& a_normal, float32 a_size, DebugDrawSettings const& a_settings)
     {
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->drawQuad({ a_normal.x, a_normal.y, a_normal.z }, { a_center_pos.x, a_center_pos.y, a_center_pos.z }, a_size);
@@ -134,7 +123,7 @@ namespace DFW
         a_transform.scale *= a_extend;
         bx::memCopy(obb.mtx, &a_transform.GetTransformMatrix()[0][0], sizeof(glm::mat4));
         
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->draw(obb);
@@ -149,7 +138,7 @@ namespace DFW
         
         _dde->setTransform(&a_transform.GetTransformMatrix()[0][0]);
         _dde->setLod(a_settings.shape_complexity_lod);
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->draw(sphere);
@@ -165,7 +154,7 @@ namespace DFW
 
         _dde->setTransform(&a_transform.GetTransformMatrix()[0][0]);
         _dde->setLod(a_settings.shape_complexity_lod);
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->draw(cylinder);
@@ -181,7 +170,7 @@ namespace DFW
 
         _dde->setTransform(&a_transform.GetTransformMatrix()[0][0]);
         _dde->setLod(a_settings.shape_complexity_lod);
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->draw(capsule);
@@ -197,7 +186,7 @@ namespace DFW
 
         _dde->setTransform(&a_transform.GetTransformMatrix()[0][0]);
         _dde->setLod(a_settings.shape_complexity_lod);
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->draw(cone);
@@ -206,7 +195,7 @@ namespace DFW
 
     void DebugRenderSystem::DrawOrb(Transform const& a_transform, float32 a_orb_radius, DebugDrawSettings const& a_settings)
     {
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->drawOrb(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z, a_orb_radius);
@@ -214,7 +203,7 @@ namespace DFW
 
     void DebugRenderSystem::DrawAxis(Transform const& a_transform, float32 a_axis_length, DebugDrawSettings const& a_settings)
     {
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->drawAxis(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z, a_axis_length);
@@ -242,7 +231,7 @@ namespace DFW
 
     void DebugRenderSystem::DrawFrustum(glm::mat4 const& a_view_projection_matrix, DebugDrawSettings const& a_settings)
     {
-        _dde->setColor(Detail::RGBAToHexABGR(a_settings.colour));
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
         _dde->drawFrustum(&a_view_projection_matrix[0][0]);

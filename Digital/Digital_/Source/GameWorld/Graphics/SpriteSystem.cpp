@@ -239,7 +239,7 @@ namespace DFW
 
 				// 16 Bytes - Sprite Colour.
 				glm::vec4* color = (glm::vec4*)&data_ptr_shifter[64];
-				color[0] = sprite.colour;
+				color[0] = sprite.colour.GetRGBAFloat();
 
 				// 4 Bytes - Texture Index.
 				float32* texture_index = (float32*)&data_ptr_shifter[80];

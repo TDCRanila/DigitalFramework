@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/vec4.hpp>
+#include <Utility/ColourUtility.h>
 
 namespace DFW
 {
@@ -9,7 +9,7 @@ namespace DFW
         Renderable();
 
         bool is_visible;
-        glm::vec4 colour;
+        ColourRGBA colour;
     };
 
 } // End of namespace ~ DFW.

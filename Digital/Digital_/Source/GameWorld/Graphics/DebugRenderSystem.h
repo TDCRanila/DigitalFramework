@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GameWorld/Graphics/BaseRenderSystem.h>
+#include <Utility/ColourUtility.h>
 
 #include <glm/glm.hpp>
 
@@ -19,10 +20,10 @@ namespace DFW
     struct DebugDrawSettings
     {
         DebugDrawSettings();
-        DebugDrawSettings(glm::u8vec4 a_colour, bool a_enable_wireframe);
-        DebugDrawSettings(glm::u8vec4 a_colour, bool a_enable_wireframe, bool a_enable_depthtest, uint8 a_shape_complexity);
+        DebugDrawSettings(ColourRGBA a_colour, bool a_enable_wireframe);
+        DebugDrawSettings(ColourRGBA a_colour, bool a_enable_wireframe, bool a_enable_depthtest, uint8 a_shape_complexity);
 
-        glm::u8vec4 colour;
+        ColourRGBA colour;
         uint8 shape_complexity_lod;
         bool enable_wireframe;
         bool enable_depthtest;

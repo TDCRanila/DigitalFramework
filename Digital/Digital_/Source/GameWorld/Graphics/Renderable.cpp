@@ -4,7 +4,7 @@ namespace DFW
 {
     Renderable::Renderable()
         : is_visible(true)
-        , colour(1.0f)
+        , colour({255, 255, 255, 255})
     {
     }
 
