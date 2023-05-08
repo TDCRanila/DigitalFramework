@@ -188,6 +188,17 @@ target_include_directories(${LIB_NAME} PUBLIC ${JOLT_INCLUDE_DIR} ${JOLT_INCLUDE
 
 message("\n")
 
+# libmap
+AnnounceLibraryAddition("libmap")
+set (LIBMAP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/libmap-cpp)
+set(LIBMAP_LIB_NAME libmap)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/libmap-cpp ${LIBMAP_LIB_NAME})
+
+target_link_libraries(${LIB_NAME} ${LIBMAP_LIB_NAME})
+target_include_directories(${LIB_NAME} PUBLIC ${LIBMAP_INCLUDE_DIR})
+set_target_properties(${LIBMAP_LIB_NAME}  PROPERTIES FOLDER ${LIBMAP_LIB_NAME})
+
 ## Boost - 
 AnnounceLibraryAddition("boost")
 set(BOOST_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/boost)

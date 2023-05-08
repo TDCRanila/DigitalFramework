@@ -465,4 +465,7 @@ MigrationBackup/
 !**/boost/boost/preprocessor/debug/
 !**/boost/boost/predef/**
 
+# DigitalFramework
+!Digital/Resources/**/*.map
+
 # End of https://www.gitignore.io/api/c,c++,cmake,visualstudio,visualstudiocode

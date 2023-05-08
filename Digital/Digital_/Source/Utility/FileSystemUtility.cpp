@@ -136,16 +136,12 @@ namespace DFW
 
         std::string GetFileName(std::string const& a_file_path)
         {
-            std::stringstream buffer;
-            buffer << fs::path(a_file_path).filename();
-            return (buffer.str());
+            return fs::path(a_file_path).filename().string();
         }
 
         std::string GetFileStem(std::string const& a_file_path)
         {
-            std::stringstream buffer;
-            buffer << fs::path(a_file_path).stem();
-            return (buffer.str());
+            return fs::path(a_file_path).stem().string();
         }
 
         std::string GetFileExtension(std::string const& a_string)
