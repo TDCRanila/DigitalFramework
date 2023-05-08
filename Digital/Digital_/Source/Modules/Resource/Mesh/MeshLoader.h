@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Modules/Rendering/ModelData.h>
+#include <Modules/Rendering/MeshData.h>
 
 #include <CoreSystems/Memory.h>
 

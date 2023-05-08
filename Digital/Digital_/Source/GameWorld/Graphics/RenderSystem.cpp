@@ -12,7 +12,7 @@
 #include <Modules/Rendering/ViewTargetDirector.h>
 
 #include <Modules/Rendering/ShaderProgram.h>
-#include <Modules/Rendering/ModelData.h>
+#include <Modules/Rendering/MeshData.h>
 #include <Modules/Rendering/RenderTarget.h>
 #include <Modules/Rendering/Uniform.h>
 

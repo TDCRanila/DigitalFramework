@@ -1,6 +1,6 @@
 #include <GameWorld/Graphics/ModelComponent.h>
 
-#include <Modules/Rendering/ModelData.h>
+#include <Modules/Rendering/MeshData.h>
 #include <Modules/Rendering/TextureData.h>
 #include <Modules/Rendering/ShaderProgram.h>
 
