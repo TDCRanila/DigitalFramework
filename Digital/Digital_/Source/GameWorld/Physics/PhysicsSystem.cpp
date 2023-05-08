@@ -4,17 +4,12 @@
 #include <GameWorld/Physics/PhysicsLayers.h>
 #include <GameWorld/Physics/PhysicsSystemContext.h>
 #include <GameWorld/Physics/PhysicsComponent.h>
-#include <GameWorld/Graphics/DebugRenderSystem.h>
-
-#include <Modules/ECS/Managers/SystemManager.h>
-
-#include <CoreSystems/CoreServices.h>
+#include <GameWorld/Physics/JoltDebugRenderImpl.h>
 
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
-#include <Jolt/Geometry/AABox.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -44,11 +39,16 @@ namespace DFW
     }
 
     PhysicsSystem::PhysicsSystem()
+        : _should_optimize_broadphase_layer(false)
+        , _should_debug_draw_shapes(false)
     {
         _context = MakeUnique<DPhysics::PhysicsSystemContext>();
+        _jolt_debug_renderer = MakeUnique<JoltDebugRenderer>();
         _rigid_bodies_pending_spawn.reserve(Detail::DFW_PHYSICS_PENDING_BUFFER_RESERVATION);
         _rigid_bodies_pending_despawn.reserve(Detail::DFW_PHYSICS_PENDING_BUFFER_RESERVATION);
     }
+
+    PhysicsSystem::~PhysicsSystem() = default;
 
     JPH::PhysicsSystem& PhysicsSystem::JoltPhysics()
     { 
@@ -60,15 +60,46 @@ namespace DFW
         return _context->jph_physics_system->GetBodyInterface(); 
     }
        
+    void PhysicsSystem::Debug_EnableDebugDraw()
+    {
+        _should_debug_draw_shapes = true;
+    }
+
+    void PhysicsSystem::Debug_DisableDebugDraw()
+    {
+        _should_debug_draw_shapes = false;
+    }
+
+    JPH::BodyID PhysicsSystem::CreateMeshRigidBody(Transform const& a_transform, JPH::ShapeSettings const& a_mesh_shape_settings, JPH::EMotionType const a_rigid_body_type)
+    {
+        JPH::RVec3 const initial_rigidbody_translation(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z);
+        JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.rotation.x, a_transform.rotation.y, a_transform.rotation.z }));
+        JPH::BodyCreationSettings mesh_settings(
+            &a_mesh_shape_settings
+            , initial_rigidbody_translation
+            , intial_rigidbody_quat
+            , a_rigid_body_type
+            , Detail::GetPhysicsLayerIDFromMotionType(a_rigid_body_type)
+        );
+
+        JPH::Body* const body = JoltBodyInterface().CreateBody(mesh_settings);
+        DFW_ASSERT(body, "Failed to create rigid body.");
+        JPH::BodyID const& body_id = body->GetID();
+
+        _rigid_bodies_pending_spawn.emplace_back(body_id);
+
+        return body_id;
+    }
+
     JPH::BodyID PhysicsSystem::CreateBoxRigidBody(Transform const& a_transform, glm::vec3 const& a_extend, JPH::EMotionType const a_rigid_body_type)
     {
         // Create the RigidBody.
-        JPH::Vec3 const box_half_extend(a_extend.x * 0.5f, a_extend.y * 0.5f, a_extend.z * 0.5f);
+        JPH::Vec3 const box_extend(a_extend.x, a_extend.y, a_extend.z);
         JPH::RVec3 const initial_rigidbody_translation(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z);
         JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.rotation.x, a_transform.rotation.y, a_transform.rotation.z }));
         JPH::BodyCreationSettings box_settings(
             // BoxShape gets deleted by JPH itself.
-            new JPH::BoxShape(box_half_extend)
+            new JPH::BoxShape(box_extend)
             , initial_rigidbody_translation
             , intial_rigidbody_quat
             , a_rigid_body_type
@@ -96,7 +127,7 @@ namespace DFW
         JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.rotation.x, a_transform.rotation.y, a_transform.rotation.z }));
         JPH::BodyCreationSettings sphere_settings(
             // SphereShape gets deleted by JPH itself.
-              new JPH::SphereShape(a_sphere_radius)
+            new JPH::SphereShape(a_sphere_radius)
             , initial_rigidbody_translation
             , intial_rigidbody_quat
             , a_rigid_body_type
@@ -127,6 +158,9 @@ namespace DFW
     {
         _context->Init();
         JoltPhysics().SetGravity(DFW_PHYSICS_DEFAULT_GRAVITY_VECTOR);
+
+        // Debug Draw;
+        _jolt_debug_renderer->Init();
     }
 
     void PhysicsSystem::Terminate()
@@ -186,6 +220,14 @@ namespace DFW
             body_transform = body_interface.GetWorldTransform(rigid_body.body_id);
             memcpy(&transform.translation, &body_transform.GetTranslation().mF32[0], sizeof(glm::vec3));
             memcpy(&transform.rotation, &body_transform.GetRotation().GetQuaternion().GetEulerAngles().mF32[0], sizeof(glm::vec3));
+        }
+
+        if (_should_debug_draw_shapes)
+        {
+            static JPH::BodyManager::DrawSettings draw_settings;
+            draw_settings.mDrawShapeWireframe = true;
+            JoltPhysics().DrawBodies(draw_settings, _jolt_debug_renderer.get());
+
         }
     }
 

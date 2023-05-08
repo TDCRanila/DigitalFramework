@@ -22,7 +22,8 @@ namespace JPH
 namespace DFW
 {
     class GameClock;
-    
+    class JoltDebugRenderer;
+
     namespace DPhysics
     {
         class PhysicsSystemContext;
@@ -45,13 +46,18 @@ namespace DFW
     {
     public:
         PhysicsSystem();
-        virtual ~PhysicsSystem() = default;
+        virtual ~PhysicsSystem();
 
     public:
         JPH::PhysicsSystem& JoltPhysics();
         JPH::BodyInterface& JoltBodyInterface();
 
+        void Debug_EnableDebugDraw();
+        void Debug_DisableDebugDraw();
+
     public:
+        JPH::BodyID CreateMeshRigidBody(Transform const& a_transform, JPH::ShapeSettings const& a_mesh_shape_settings, JPH::EMotionType const a_rigid_body_type);
+
         JPH::BodyID CreateBoxRigidBody(Transform const& a_transform, glm::vec3 const& a_extend, JPH::EMotionType const a_rigid_body_type);
         JPH::BodyID CreateBoxRigidBody(glm::vec3 const& a_extend, JPH::EMotionType const a_rigid_body_type);
 
@@ -69,10 +75,13 @@ namespace DFW
 
     private:
         UniquePtr<DPhysics::PhysicsSystemContext> _context;
+        UniquePtr<JoltDebugRenderer> _jolt_debug_renderer;
         
         std::vector<JPH::BodyID> _rigid_bodies_pending_spawn;
         std::unordered_set<JPH::BodyID> _rigid_bodies_pending_despawn;
         bool _should_optimize_broadphase_layer;
+
+        bool _should_debug_draw_shapes;
     };
 
 

@@ -15,6 +15,8 @@
 
 namespace DFW
 {
+    DebugDrawEncoder* DebugRenderSystem::_dde = nullptr;
+
     namespace Detail
     {
         uint32 RGBAToHexABGR(glm::u8vec4 a_rgba)
@@ -47,11 +49,6 @@ namespace DFW
         , enable_wireframe(a_enable_wireframe)
         , enable_depthtest(a_enable_depthtest)
         , shape_complexity_lod(a_shape_complexity)
-    {
-    }
-
-    DebugRenderSystem::DebugRenderSystem()
-        : _dde(nullptr)
     {
     }
 
@@ -252,4 +249,3 @@ namespace DFW
     }
 
 }
-
