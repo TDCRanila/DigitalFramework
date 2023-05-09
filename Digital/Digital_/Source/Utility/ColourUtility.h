@@ -23,6 +23,9 @@ namespace DFW
 		uint32 GetABGRHex() const { return ((static_cast<uint32>(a) & 0xff) << 24) + ((static_cast<uint32>(b) & 0xff) << 16) + ((static_cast<uint32>(g) & 0xff) << 8) + ((static_cast<uint32>(r) & 0xff)); }
 		uint32 GetRGBAHex() const { return ((static_cast<uint32>(r) & 0xff) << 24) + ((static_cast<uint32>(g) & 0xff) << 16) + ((static_cast<uint32>(b) & 0xff) << 8) + ((static_cast<uint32>(a) & 0xff)); }
 
+		void RandomizeRGB();
+		void RandomizeRGBA();
+
 	public:
 		static const ColourRGBA Black;
 		static const ColourRGBA DarkRed;
@@ -42,5 +45,8 @@ namespace DFW
 		static const ColourRGBA White;
 
     };
+
+	ColourRGBA RandomColour();
+	ColourRGBA RandomColourRGBA();
 
 } // End of namespace ~ DFW.
