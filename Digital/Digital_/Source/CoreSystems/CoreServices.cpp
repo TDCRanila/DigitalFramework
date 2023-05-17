@@ -13,6 +13,7 @@ namespace DFW
     WeakPtr<DWindow::WindowManagement> CoreService::_window_management_service;
     WeakPtr<DInput::InputManagementSystem> CoreService::_input_management_service;
     WeakPtr<DRender::RenderModule> CoreService::_render_module_service;
+    WeakPtr<DResource::ResourceManager> CoreService::_resource_manager_service;
 
     namespace Detail
     {
@@ -30,6 +31,7 @@ namespace DFW
         _window_management_service.reset();
         _input_management_service.reset();
         _render_module_service.reset();
+        _resource_manager_service.reset();
 
         DFW_INFOLOG("All services provided have been released.");
     }
@@ -104,6 +106,18 @@ namespace DFW
     {
         _render_module_service = a_provided_service;
         DFW_INFOLOG((Detail::provided_service_message + "Render Module"));
+    }
+
+    SharedPtr<DResource::ResourceManager> CoreService::GetResourceManager()
+    {
+        DFW_ASSERT(!_resource_manager_service.expired() && Detail::invalid_provided_service_message);
+        return _resource_manager_service.lock();
+    }
+
+    void CoreService::ProvideResourceManager(SharedPtr<DResource::ResourceManager> const& a_provided_service)
+    {
+        _resource_manager_service = a_provided_service;
+        DFW_INFOLOG((Detail::provided_service_message + "Resource Manager"));
     }
 
 } // End of namespace ~ DFW.

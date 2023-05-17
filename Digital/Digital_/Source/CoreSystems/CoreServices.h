@@ -22,6 +22,11 @@ namespace DFW
         class RenderModule;
     } // End of namespace ~ DRender.
 
+    namespace DResource
+    {
+        class ResourceManager;
+    } // End of namespace ~ DResource.
+
     class CoreService
     {
     public:
@@ -34,6 +39,7 @@ namespace DFW
         static SharedPtr<DWindow::WindowManagement> GetWindowManagement();
         static SharedPtr<DInput::InputManagementSystem> GetInputManagement();
         static SharedPtr<DRender::RenderModule> GetRenderModule();
+        static SharedPtr<DResource::ResourceManager> GetResourceManager();
 
     private:
         friend class ApplicationInstance;
@@ -45,6 +51,7 @@ namespace DFW
         static void ProvideWindowManagementService(SharedPtr<DWindow::WindowManagement> const& a_provided_service);
         static void ProvideInputManagementService(SharedPtr<DInput::InputManagementSystem> const& a_provided_service);
         static void ProvideRenderModule(SharedPtr<DRender::RenderModule> const& a_provided_service);
+        static void ProvideResourceManager(SharedPtr<DResource::ResourceManager> const& a_provided_service);
         
         static WeakPtr<GameClock> _gameclock_service;      
         static WeakPtr<EventDispatcher> _app_eventhandler_service;
@@ -53,6 +60,7 @@ namespace DFW
         static WeakPtr<DWindow::WindowManagement> _window_management_service;
         static WeakPtr<DInput::InputManagementSystem> _input_management_service;
         static WeakPtr<DRender::RenderModule> _render_module_service;
+        static WeakPtr<DResource::ResourceManager> _resource_manager_service;
         
     };
 

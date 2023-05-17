@@ -1,9 +1,12 @@
 #include <Modules/Resource/Mesh/MeshLoader.h>
 
+#include <Modules/Resource/ResourceManager.h>
+#include <Modules/Rendering/TextureData.h>
 #include <Modules/Resource/Image/ImageData.h>
 #include <Modules/Resource/Image/ImageLoader.h>
 
 #include <CoreSystems/Logging/Logger.h>
+#include <CoreSystems/CoreServices.h>
 #include <Utility/FileSystemUtility.h>
 
 #include <Defines/MathDefines.h>
@@ -315,11 +318,12 @@ namespace DFW
                             DFW_ASSERT(result == aiReturn::aiReturn_SUCCESS);
 
                             // Check if embedded.
-                            auto [texture, index] = a_assimp_scene->GetEmbeddedTextureAndIndex(texture_path.C_Str());
-                            bool const is_texture_embedded(texture);
+                            auto [assimp_texture_data, index] = a_assimp_scene->GetEmbeddedTextureAndIndex(texture_path.C_Str());
+                            bool const is_texture_embedded(assimp_texture_data);
 
                             // Load Image.
-                            DFW::UniquePtr<ImageData> image;
+                            SharedPtr<ResourceManager> const& resource_manager = CoreService::GetResourceManager();
+                            ResourceHandle<DRender::TextureData> texture_data;
                             if (is_texture_embedded)
                             {
                                 auto get_extension = [](char const chars[HINTMAXTEXTURELEN]) -> std::string
@@ -341,59 +345,38 @@ namespace DFW
                                     return extension;
                                 };
 
-                                bool const is_texture_compressed(texture->mHeight == 0);
+                                bool const is_texture_compressed(assimp_texture_data->mHeight == 0);
                                 
                                 size_t texture_size(0);
                                 if (is_texture_compressed)
-                                    texture_size = static_cast<size_t>(texture->mWidth);
+                                    texture_size = static_cast<size_t>(assimp_texture_data->mWidth);
                                 else
-                                    texture_size = static_cast<size_t>(texture->mWidth * texture->mHeight * sizeof(aiTexel));
+                                    texture_size = static_cast<size_t>(assimp_texture_data->mWidth * assimp_texture_data->mHeight * sizeof(aiTexel));
 
-                                image = LoadImageDataFromMemory(reinterpret_cast<uint8 const*>(texture->pcData), texture_size);
-                                DFW_ASSERT(image);
+                                std::string const embedded_file_extension = "." + get_extension(assimp_texture_data->achFormatHint);
+                                std::string const embedded_file_name = DUtility::GetFileStem(assimp_texture_data->mFilename.C_Str());
 
-                                image->file_extension = "." + get_extension(texture->achFormatHint);
-                                image->file_name = DUtility::GetFileStem(texture->mFilename.C_Str());
+                                ResourceHandle<ImageData> const image_data = resource_manager->LoadImageData(embedded_file_name, reinterpret_cast<uint8 const*>(assimp_texture_data->pcData), texture_size);
+                                texture_data = resource_manager->LoadTexture(embedded_file_name, image_data.handle().get());
                             }
                             else
                             {
                                 std::string const image_path(DUtility::GetParentPath(mesh->source_file) + DIR_SLASH + texture_path.C_Str());
-                                image = LoadImageData(image_path);
-                                DFW_ASSERT(image);
+                                texture_data = resource_manager->LoadTexture(image_path);
                             }
 
-                            // Create Texture.
-                            bgfx::TextureFormat::Enum texture_format(bgfx::TextureFormat::Unknown);
-                            if (image->components_per_pixel == 3)
-                                texture_format = bgfx::TextureFormat::RGB8;
-                            else if (image->components_per_pixel == 4)
-                                texture_format = bgfx::TextureFormat::RGBA8;
-                            DFW_ASSERT(texture_format != bgfx::TextureFormat::Unknown);
-
-                            bgfx::Memory const* data = bgfx::copy(image->data, static_cast<uint32>(image->data_size));
-                            bgfx::TextureHandle texture_handle = bgfx::createTexture2D(
-                                  image->width
-                                , image->height
-                                , false
-                                , 1
-                                , texture_format
-                                , 0
-                                , data
-                            );
-
                             // Store Texture.
-                            material_textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, image->width, image->height, BGFX_TEXTURE_NONE, uint8(0)));
+                            DFW_ASSERT(texture_data);
+                            material_textures.emplace_back(texture_data.handle());
                         }
 
                         return material_textures;
                     };
-                    //auto ParseBinaryMaterial;
 
                     // Diffuse.
                     std::vector<SharedPtr<DRender::TextureData>> const& diffuse_textures = ParseMaterial(assimp_material, aiTextureType::aiTextureType_DIFFUSE);
                     if (!diffuse_textures.empty())
                         submesh.textures.insert(submesh.textures.end(), diffuse_textures.begin(), diffuse_textures.end());
-                    //}
                 }
             };
 

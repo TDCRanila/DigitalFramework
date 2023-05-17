@@ -11,6 +11,7 @@ namespace DFW
         class RenderTargetDirector;
         class ShaderLibrary;
         class UniformLibrary;
+        class TextureLibrary;
         struct ViewTarget;
 
         class RenderModule
@@ -31,6 +32,7 @@ namespace DFW
             RenderTargetDirector& GetRenderTargetDirector() const;
             ShaderLibrary& GetShaderLibrary() const;
             UniformLibrary& GetUniformLibrary() const;
+            TextureLibrary& GetTextureLibrary() const;
 
             void SubmitMesh();
             void SubmitSprite();
@@ -46,6 +48,7 @@ namespace DFW
             UniquePtr<RenderTargetDirector> _render_target_director;
             UniquePtr<ShaderLibrary> _shader_library;
             UniquePtr<UniformLibrary> _uniform_library;
+            UniquePtr<TextureLibrary> _texture_library;
 
             SharedPtr<ViewTarget const> _main_view_target;
 

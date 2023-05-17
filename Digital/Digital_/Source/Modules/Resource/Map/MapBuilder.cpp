@@ -2,6 +2,9 @@
 
 #include <Modules/Resource/Image/ImageData.h>
 #include <Modules/Resource/Image/ImageLoader.h>
+#include <Modules/Resource/ResourceManager.h>
+
+#include <CoreSystems/CoreServices.h>
 
 #include <Utility/FileSystemUtility.h>
 
@@ -291,10 +294,11 @@ namespace DFW
         {
             _cached_map_textures.reserve(_loaded_libmap_data->texture_count);
 
+            SharedPtr<ResourceManager> const& resource_manager = CoreService::GetResourceManager();
             for (int32 index(0); index < _loaded_libmap_data->texture_count; ++index)
             {
-                LMTextureData const& texture = _loaded_libmap_data->textures[index];
-                std::string const texture_name(texture.name);
+                LMTextureData const& libmap_texture = _loaded_libmap_data->textures[index];
+                std::string const texture_name(libmap_texture.name);
 
                 bool const is_empty_texture = (texture_name == "") || (texture_name == "__TB_empty");
 
@@ -322,22 +326,8 @@ namespace DFW
                     continue;
                 }
 
-                // Attempt to load texture data.
-                DFW::UniquePtr<ImageData> image = LoadImageData(image_path.string());
-                DFW_ASSERT(image);
-
-                // Create Texture.
-                bgfx::TextureFormat::Enum texture_format(bgfx::TextureFormat::Unknown);
-                if (image->components_per_pixel == 3)
-                    texture_format = bgfx::TextureFormat::RGB8;
-                else if (image->components_per_pixel == 4)
-                    texture_format = bgfx::TextureFormat::RGBA8;
-                DFW_ASSERT(texture_format != bgfx::TextureFormat::Unknown);
-
-                bgfx::Memory const* data = bgfx::copy(image->data, static_cast<uint32>(image->data_size));
-                bgfx::TextureHandle texture_handle = bgfx::createTexture2D(image->width, image->height, false, 1, texture_format, 0, data);
-
-                _cached_map_textures.emplace(texture_name, MakeShared<DRender::TextureData>(texture_handle, image->width, image->height, BGFX_TEXTURE_NONE, uint8(0)));
+                ResourceHandle<DRender::TextureData> const& texture = resource_manager->LoadTexture(image_path.string());
+                _cached_map_textures.emplace(texture_name, texture.handle());
             }
         }
 

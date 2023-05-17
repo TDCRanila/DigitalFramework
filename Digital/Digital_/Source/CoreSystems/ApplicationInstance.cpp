@@ -8,8 +8,6 @@
 #include <CoreSystems/Logging/Logger.h>
 #include <Defines/InputDefines.h>
 
-#include <array>
-
 namespace DFW
 {    
     ApplicationInstance::ApplicationInstance()
@@ -66,6 +64,7 @@ namespace DFW
         _window_management          = DWindow::WindowManagement::Construct();
         _input_management           = MakeShared<DInput::InputManagementSystem>();
         _render_module              = MakeShared<DRender::RenderModule>();
+        _resource_manager           = MakeShared<DResource::ResourceManager>();
 
         // Provide the Core Services.
         CoreService::ProvideGameClock(_game_clock);
@@ -75,6 +74,7 @@ namespace DFW
         CoreService::ProvideInputManagementService(_input_management);
         CoreService::ProvideWindowManagementService(_window_management);
         CoreService::ProvideRenderModule(_render_module);
+        CoreService::ProvideResourceManager(_resource_manager);
 
         // User-Implemented Pre-Initialisation.
         PreApplicationInit();

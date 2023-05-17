@@ -5,6 +5,7 @@
 
 #include <Modules/Rendering/ShaderLibrary.h>
 #include <Modules/Rendering/UniformLibrary.h>
+#include <Modules/Rendering/TextureLibrary.h>
 #include <Modules/Rendering/ViewTargetDirector.h>
 #include <Modules/Rendering/RenderModuleContext.h>
 #include <Modules/Rendering/RenderTargetDirector.h>
@@ -25,6 +26,7 @@ namespace DFW
             _render_target_director = MakeUnique<RenderTargetDirector>();
             _shader_library         = MakeUnique<ShaderLibrary>();
             _uniform_library        = MakeUnique<UniformLibrary>();
+            _texture_library        = MakeUnique<TextureLibrary>();
 
             // Create the main view target.
             _view_director->Init();
@@ -45,6 +47,7 @@ namespace DFW
             _render_target_director.reset();
             _shader_library.reset();
             _uniform_library.reset();
+            _texture_library.reset();
             
             _render_module_context.reset();
 
@@ -84,6 +87,11 @@ namespace DFW
         UniformLibrary& RenderModule::GetUniformLibrary() const
         {
             return *_uniform_library.get();
+        }
+
+        TextureLibrary& RenderModule::GetTextureLibrary() const
+        {
+            return *_texture_library.get();
         }
 
         void RenderModule::SubmitMesh()

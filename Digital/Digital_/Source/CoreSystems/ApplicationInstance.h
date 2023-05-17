@@ -9,8 +9,8 @@
 #include <CoreSystems/Stage/StageStackCommunicator.h>
 #include <CoreSystems/Window/WindowManagement.h>
 
-#include <Modules/ECS/ECSModule.h>
 #include <Modules/Rendering/RenderModule.h>
+#include <Modules/Resource/ResourceManager.h>
 
 namespace DFW
 {
@@ -39,6 +39,7 @@ namespace DFW
         SharedPtr<DWindow::WindowManagement> _window_management;
         SharedPtr<DInput::InputManagementSystem> _input_management;
         SharedPtr<DRender::RenderModule> _render_module;
+        SharedPtr<DResource::ResourceManager> _resource_manager;
  
         UniquePtr<ImGuiLayer> _imgui;
  
