@@ -17,6 +17,8 @@ namespace DFW
         {
             struct ColliderData
             {
+                ColliderData() : center_position(0.0f) {}
+
                 JPH::RefConst<JPH::ShapeSettings> shape_settings;
                 glm::vec3 center_position;
             };

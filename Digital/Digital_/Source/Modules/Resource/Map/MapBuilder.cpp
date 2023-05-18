@@ -47,9 +47,10 @@ namespace DFW
                 if (!texture)
                 {
                     bgfx::TextureHandle texture_handle;
-                    int32 width(1), height(1);
-                    std::array<uint8, 3> pixel_texture = { 255, 255, 255 };
-                    bgfx::TextureFormat::Enum texture_format = bgfx::TextureFormat::RGB8;
+                    uint16 const width(1), height(1);
+                    std::array<uint8, 3> const pixel_texture = { 255, 255, 255 };
+                    bgfx::TextureFormat::Enum const texture_format = bgfx::TextureFormat::RGB8;
+
                     bgfx::Memory const* data = bgfx::copy(pixel_texture.data(), static_cast<uint32>(pixel_texture.size() * sizeof(uint8)));
                     texture_handle = bgfx::createTexture2D(width, height, false, 1, texture_format, 0, data);
 
@@ -136,7 +137,7 @@ namespace DFW
 
         }
 
-        void MapBuilder::BuildEntityVisualMesh(int32 const a_entity_id, LMEntity& a_entity)
+        void MapBuilder::BuildEntityVisualMesh(int32 const a_entity_id, LMEntity& /*a_entity*/)
         {
             // Loop per texture.
             // Gather the surfaces of each brush with that texture.
@@ -262,9 +263,9 @@ namespace DFW
                 index_list.reserve(surface.index_count / indicies_per_face);
                 for (int32 index(0); index < surface.index_count; index += 3)
                 {
-                    uint16 const index1 = surface.indices[index];
-                    uint16 const index2 = surface.indices[index + 1];
-                    uint16 const index3 = surface.indices[index + 2];
+                    uint32 const index1 = surface.indices[index];
+                    uint32 const index2 = surface.indices[index + 1];
+                    uint32 const index3 = surface.indices[index + 2];
 
                     index_list.emplace_back(JPH::IndexedTriangle(index1, index2, index3, 0));
                 }
