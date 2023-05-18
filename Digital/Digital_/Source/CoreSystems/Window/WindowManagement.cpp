@@ -4,13 +4,14 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-#include <CoreSystems/ApplicationInstance.h>
-#include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Window/Windows/WindowManagementGLFW.h>
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Logging/Logger.h>
+#include <CoreSystems/CoreServices.h>
+
 #include <Defines/Defines.h>
 
-#include <CoreSystems/Window/Windows/WindowManagementGLFW.h>
 
 namespace DFW
 {

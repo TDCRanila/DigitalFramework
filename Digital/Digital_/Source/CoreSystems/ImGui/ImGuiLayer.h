@@ -2,9 +2,6 @@
 
 namespace DFW
 {
-	// FW Declare.
-	class ApplicationInstance;
-
 	class ImGuiLayer final
 	{
 	public:

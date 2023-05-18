@@ -1,19 +1,40 @@
 #pragma once
 
+#include <CoreSystems/ApplicationEvents.h>
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/GameClock.h>
 #include <CoreSystems/TimeTracker.h>
-#include <CoreSystems/ImGui/ImGuiLayer.h>
-#include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Stage/StageStackController.h>
 #include <CoreSystems/Stage/StageStackCommunicator.h>
-#include <CoreSystems/Window/WindowManagement.h>
-
-#include <Modules/Rendering/RenderModule.h>
-#include <Modules/Resource/ResourceManager.h>
 
 namespace DFW
 {
+
+#pragma region FW Declares.
+    class ImGuiLayer;
+
+    namespace DInput
+    {
+        class InputManagementSystem;
+    } // End of namespace ~ DInput.
+
+    namespace DWindow
+    {
+        class WindowManagement;
+    } // End of namespace ~ DWindow.
+
+    namespace DRender
+    {
+        class RenderModule;
+    } // End of namespace ~ DRender.
+
+    namespace DResource
+    {
+        class ResourceManager;
+    } // End of namespace ~ DResource.
+
+#pragma endregion
+
     class ApplicationInstance
     {
     public:

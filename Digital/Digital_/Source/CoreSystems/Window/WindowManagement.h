@@ -1,7 +1,7 @@
 #pragma once
 
 #include <CoreSystems/Window/WindowData.h>
-
+#include <CoreSystems/ApplicationEvents.h>
 #include <CoreSystems/Memory.h>
 
 // Forward Declare(s)

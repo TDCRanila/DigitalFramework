@@ -1,11 +1,18 @@
 #include <CoreSystems/ApplicationInstance.h>
 
-#include <CoreSystems/CoreServices.h>
-
 #include <CoreSystems/Events/EventLibrary.h>
 #include <CoreSystems/Events/EventImplementation.h>
 // TODO REMOVE - Replace with some sort of EZ Use for Input
 #include <CoreSystems/Logging/Logger.h>
+
+#include <CoreSystems/CoreServices.h>
+#include <CoreSystems/ImGui/ImGuiLayer.h>
+#include <CoreSystems/Input/InputManagement.h>
+#include <CoreSystems/Window/WindowManagement.h>
+
+#include <Modules/Rendering/RenderModule.h>
+#include <Modules/Resource/ResourceManager.h>
+
 #include <Defines/InputDefines.h>
 
 namespace DFW

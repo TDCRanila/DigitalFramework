@@ -3,7 +3,6 @@
 #include <CoreSystems/Window/WindowManagement.h>
 #include <CoreSystems/Window/WindowData.h>
 
-
 // Forward Declare(s)
 struct GLFWwindow;
 

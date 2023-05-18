@@ -4,15 +4,13 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-#include <CoreSystems/ApplicationEvents.h>
-#include <CoreSystems/ApplicationInstance.h>
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Logging/Logger.h>
-#include <Defines/Defines.h>
-
 #include <CoreSystems/Memory.h>
+
+#include <Defines/Defines.h>
 
 namespace DFW
 {

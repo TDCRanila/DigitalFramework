@@ -1,6 +1,7 @@
 #include <CoreSystems/Input/InputManagement.h>
 
-#include <CoreSystems/ApplicationInstance.h>
+#include <CoreSystems/Events/EventDispatcher.h>
+#include <CoreSystems/Window/WindowManagement.h>
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/Logging/Logger.h>
 
