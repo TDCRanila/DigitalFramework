@@ -1,13 +1,11 @@
 #pragma once
 
-#include <Modules/Rendering/MeshData.h>
+#include <Modules/Resource/Map/MapData.h>
 
 #include <CoreSystems/Memory.h>
 
-#include <Jolt/Jolt.h>
-#include <Jolt/Physics/Collision/Shape/Shape.h>
-
 #include <unordered_map>
+#include <string>
 
 // FW Declare.
 struct LMEntity;
@@ -17,21 +15,6 @@ namespace DFW
 {
     namespace DResource
     {
-        struct MapData
-        {
-            struct ColliderData
-            {
-                JPH::RefConst<JPH::ShapeSettings> shape_settings;
-                glm::vec3 center_position;
-            };
-
-            DFW::DRender::MeshData mesh_data;
-            std::vector<ColliderData> collider_data;
-
-            std::string file_path;
-
-        };
-
         class MapBuilder
         {
         public:
