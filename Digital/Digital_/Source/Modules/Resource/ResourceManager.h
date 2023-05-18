@@ -3,6 +3,8 @@
 #include <Modules/Resource/Resource.h>
 #include <Modules/Resource/ResourceLoaders.h>
 
+#include <Utility/TemplateUtility.h>
+
 #include <entt/resource/cache.hpp>
 
 namespace DFW
@@ -18,16 +20,12 @@ namespace DFW
             ResourceManager() = default;
             ~ResourceManager() = default;
 
-            ResourceHandle<DResource::ImageData> LoadImageData(std::string const& a_filepath);
-            ResourceHandle<DResource::ImageData> LoadImageData(std::string const& a_resource_identifer, uint8 const* a_data, size_t const a_data_size);
+            template <typename ResourceType>
+            ResourceHandle<ResourceType> Load(std::string const& a_filepath_or_identifer);
 
-            ResourceHandle<DRender::TextureData> LoadTexture(std::string const& a_filepath);
-            ResourceHandle<DRender::TextureData> LoadTexture(std::string const& a_resource_identifer, DResource::ImageData const* const a_image);
+            ResourceHandle<DResource::ImageData> Load(std::string const& a_resource_identifer, uint8 const* a_image_data, size_t const a_image_data_size);
+            ResourceHandle<DRender::TextureData> Load(std::string const& a_resource_identifer, DResource::ImageData const* const a_image);
             
-            ResourceHandle<DRender::MeshData> LoadMesh(std::string const& a_filepath);
-
-            ResourceHandle<MapData> LoadMap(std::string const& a_filepath);
-
         private:
             struct ResourceID
             {
@@ -46,6 +44,48 @@ namespace DFW
             ResourceCache<MapData, MapLoader> _map_cache;
 
         };
+
+#pragma region Template Function Implementation
+
+        template <typename ResourceType>
+        ResourceHandle<ResourceType> ResourceManager::Load(std::string const& a_filepath)
+        {
+            static_assert(IsAlwaysFalse<ResourceType>, __FUNCTION__ " - Trying to load of ResourceType which is not supported.");
+            return ResourceHandle<ResourceType>();
+        }
+
+        template <>
+        inline ResourceHandle<ImageData> ResourceManager::Load(std::string const& a_filepath)
+        {
+            auto const&& [it, has_emplaced_resource] = _image_cache.load(ResourceID(a_filepath), DResource::ImageLoader::from_disk_tag{}, a_filepath);
+            return it->second;
+        }
+
+        template <>
+        inline ResourceHandle<DRender::TextureData> ResourceManager::Load(std::string const& a_filepath)
+        {
+            ResourceID const id(a_filepath);
+            auto const&& [image_it, has_emplaced_image] = _image_cache.load(id, DResource::ImageLoader::from_disk_tag{}, a_filepath);
+
+            auto const&& [texture_it, has_emplaced_texture] = _texture_cache.load(id, image_it->second.handle().get());
+            return texture_it->second;
+        }
+
+        template <>
+        inline ResourceHandle<DRender::MeshData> ResourceManager::Load(std::string const& a_filepath)
+        {
+            auto const&& [it, has_emplaced_resource] = _mesh_cache.load(ResourceID(a_filepath), DResource::MeshLoader::from_disk_tag{}, a_filepath);
+            return it->second;
+        }
+
+        template <>
+        inline ResourceHandle<MapData> ResourceManager::Load(std::string const& a_filepath)
+        {
+            auto const&& [it, has_emplaced_resource] = _map_cache.load(ResourceID(a_filepath), MapLoader::from_disk_tag{}, a_filepath);
+            return it->second;
+        }
+
+#pragma endregion
 
     } // End of namespace ~ DResource.
 

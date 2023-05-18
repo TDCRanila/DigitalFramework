@@ -1,23 +1,27 @@
 #pragma once
 
-#include <Modules/Resource/Image/ImageData.h>
 #include <Modules/Resource/Image/ImageLoader.h>
+#include <Modules/Resource/Mesh/MeshLoader.h>
+#include <Modules/Resource/Map/MapBuilder.h>
 
 #include <Modules/Rendering/RenderModule.h>
-#include <Modules/Rendering/TextureData.h>
 #include <Modules/Rendering/TextureLibrary.h>
-
-#include <Modules/Rendering/MeshData.h>
-#include <Modules/Resource/Mesh/MeshLoader.h>
-
-#include <Modules/Resource/Map/MapBuilder.h>
 
 #include <CoreSystems/CoreServices.h>
 
 namespace DFW
 {
+    namespace DRender
+    {
+        struct TextureData;
+        struct MeshData;
+    } // End of namespace ~ DRender.
+
     namespace DResource
     {
+        struct ImageData;
+        struct MapData;
+        
         class ImageLoader
         {
         public:
@@ -33,7 +37,8 @@ namespace DFW
             }
 
             template<typename ... Args>
-            result_type operator()(from_memory_tag, Args&&... args) {
+            result_type operator()(from_memory_tag, Args&&... args) 
+            {
                 return LoadImageDataFromMemory(std::forward<Args>(args)...);
             }
         };

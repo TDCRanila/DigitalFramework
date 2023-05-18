@@ -1,7 +1,5 @@
 #include <Modules/Resource/Map/MapBuilder.h>
 
-#include <Modules/Resource/Image/ImageData.h>
-#include <Modules/Resource/Image/ImageLoader.h>
 #include <Modules/Resource/ResourceManager.h>
 
 #include <CoreSystems/CoreServices.h>
@@ -326,7 +324,7 @@ namespace DFW
                     continue;
                 }
 
-                ResourceHandle<DRender::TextureData> const& texture = resource_manager->LoadTexture(image_path.string());
+                ResourceHandle<DRender::TextureData> const& texture = resource_manager->Load<DRender::TextureData>(image_path.string());
                 _cached_map_textures.emplace(texture_name, texture.handle());
             }
         }

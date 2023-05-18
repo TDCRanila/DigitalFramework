@@ -2,8 +2,6 @@
 
 #include <Modules/Resource/ResourceManager.h>
 #include <Modules/Rendering/TextureData.h>
-#include <Modules/Resource/Image/ImageData.h>
-#include <Modules/Resource/Image/ImageLoader.h>
 
 #include <CoreSystems/Logging/Logger.h>
 #include <CoreSystems/CoreServices.h>
@@ -356,13 +354,13 @@ namespace DFW
                                 std::string const embedded_file_extension = "." + get_extension(assimp_texture_data->achFormatHint);
                                 std::string const embedded_file_name = DUtility::GetFileStem(assimp_texture_data->mFilename.C_Str());
 
-                                ResourceHandle<ImageData> const image_data = resource_manager->LoadImageData(embedded_file_name, reinterpret_cast<uint8 const*>(assimp_texture_data->pcData), texture_size);
-                                texture_data = resource_manager->LoadTexture(embedded_file_name, image_data.handle().get());
+                                ResourceHandle<ImageData> const image_data = resource_manager->Load(embedded_file_name, reinterpret_cast<uint8 const*>(assimp_texture_data->pcData), texture_size);
+                                texture_data = resource_manager->Load(embedded_file_name, image_data.handle().get());
                             }
                             else
                             {
                                 std::string const image_path(DUtility::GetParentPath(mesh->source_file) + DIR_SLASH + texture_path.C_Str());
-                                texture_data = resource_manager->LoadTexture(image_path);
+                                texture_data = resource_manager->Load<DRender::TextureData>(image_path);
                             }
 
                             // Store Texture.
