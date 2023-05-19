@@ -31,15 +31,15 @@ namespace DFW
             struct from_memory_tag {};
 
             template<typename ... Args>
-            result_type operator()(from_disk_tag, Args&&... args)
+            result_type operator()(from_disk_tag, Args&&... a_args)
             {
-                return LoadImageData(std::forward<Args>(args)...);
+                return LoadImageData(std::forward<Args>(a_args)...);
             }
 
             template<typename ... Args>
-            result_type operator()(from_memory_tag, Args&&... args) 
+            result_type operator()(from_memory_tag, Args&&... a_args) 
             {
-                return LoadImageDataFromMemory(std::forward<Args>(args)...);
+                return LoadImageDataFromMemory(std::forward<Args>(a_args)...);
             }
         };
 
@@ -49,9 +49,9 @@ namespace DFW
             using result_type = std::shared_ptr<DRender::TextureData>;
 
             template<typename ... Args>
-            result_type operator()(Args&&... args)
+            result_type operator()(Args&&... a_args)
             {
-                return CoreService::GetRenderModule()->GetTextureLibrary().CreateTexture(std::forward<Args>(args)...);
+                return CoreService::GetRenderModule()->GetTextureLibrary().CreateTexture(std::forward<Args>(a_args)...);
             }
         };
 
@@ -63,9 +63,9 @@ namespace DFW
             struct from_disk_tag {};
 
             template<typename ... Args>
-            result_type operator()(from_disk_tag, Args&&... args)
+            result_type operator()(from_disk_tag, Args&&... a_args)
             {
-                return LoadMesh(std::forward<Args>(args)...);
+                return LoadMesh(std::forward<Args>(a_args)...);
             }
         };
 
@@ -77,10 +77,10 @@ namespace DFW
             struct from_disk_tag {};
 
             template<typename ... Args>
-            result_type operator()(from_disk_tag, Args&&... args)
+            result_type operator()(from_disk_tag, Args&&... a_args)
             {
                 MapBuilder builder;
-                return builder.CreateMap(std::forward<Args>(args)...);
+                return builder.CreateMap(std::forward<Args>(a_args)...);
             }
         };
 
