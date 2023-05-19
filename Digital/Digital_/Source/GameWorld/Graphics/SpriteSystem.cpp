@@ -4,8 +4,13 @@
 #include <GameWorld/Camera/CameraComponent.h>
 #include <GameWorld/Graphics/SpriteComponent.h>
 
-#include <Modules/ECS/Objects/ECSUniverse.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
+
 #include <Modules/Rendering/RenderModule.h>
+#include <Modules/Rendering/ShaderLibrary.h>
+#include <Modules/Rendering/UniformLibrary.h>
+#include <Modules/Rendering/ViewTargetDirector.h>
+
 #include <Modules/Rendering/RenderTarget.h>
 #include <Modules/Rendering/ViewTarget.h>
 #include <Modules/Rendering/ShaderProgram.h>
@@ -133,66 +138,42 @@ namespace DFW
 		bgfx::Memory const* data = bgfx::copy(pixel_texture.data(), static_cast<uint32>(pixel_texture.size() * sizeof(uint8)));
 		Detail::basic_texture_handle = bgfx::createTexture2D(1, 1, false, 1, texture_format, 0, data);
 
-		DRender::RenderModule* render_module(CoreService::GetRenderModule());
+		SharedPtr<DRender::RenderModule> render_module = CoreService::GetRenderModule();
+
 		// View Target
-		_view_target = render_module->view_director.AllocateViewTarget("spritesystem", DRender::ViewTargetInsertion::Front);
+		_view_target = render_module->GetViewDirector().AllocateViewTarget("spritesystem", DRender::ViewTargetInsertion::Front);
 
 		// Shaders
-		_program_ptr = render_module->shader_library.ConstructProgram("vs_sprites", "fs_sprites");
+		_program_ptr = render_module->GetShaderLibrary().ConstructProgram("vs_sprites", "fs_sprites");
 
 		// Uniforms
-		_texture_sampler_uniform = render_module->uniform_library.CreateUniform("s_texture", DRender::UniformTypes::Sampler);
+		_texture_sampler_uniform = render_module->GetUniformLibrary().CreateUniform("s_texture", DRender::UniformTypes::Sampler);
 
 		// Register Callbacks.
-		CoreService::GetMainEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		CoreService::GetAppEventHandler()->RegisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
 		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
 
 	void SpriteSystem::Terminate()
 	{
 		// Unload Shaders.
-		CoreService::GetRenderModule()->shader_library.DestroyProgram(_program_ptr);
+		CoreService::GetRenderModule()->GetShaderLibrary().DestroyProgram(_program_ptr);
 
 		// Unregister Callbacks.
-		CoreService::GetMainEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
+		CoreService::GetAppEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
 		ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
 
-	void SpriteSystem::Update(DECS::Universe& a_universe)
+	void SpriteSystem::Update(DECS::EntityRegistry& a_registry)
 	{
-		// Clear Target.
-		DRender::ViewTarget const& view_target = *_view_target;
-		bgfx::touch(view_target);
-
-		uint32 const num_sprites(static_cast<uint32>(a_universe.registry.view<SpriteComponent>().size()));
+		uint32 const num_sprites(static_cast<uint32>(a_registry.ENTT().view<SpriteComponent>().size()));
 		if (num_sprites <= 0)
 			return;
-
-		// Camera Setup.
-		if (_rendering_camera)
-		{
-			bgfx::setViewTransform(view_target, glm::value_ptr(_rendering_camera->view), glm::value_ptr(_rendering_camera->projection));
-			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
-		}
-		else
-		{
-			// No camera present, create a "camera" at world origin.
-			float32 view[16];
-			bx::Vec3 const at = { 0.0f, 0.0f, 1.0f };
-			bx::Vec3 const eye = { 0.0f, 0.0f, 0.0f };
-			bx::mtxLookAt(view, eye, at);
-
-			float32 proj[16];
-			bx::mtxProj(proj, DFW_DEFAULT_CAMERA_FOV, float32(window_width) / float32(window_height), 0.1f, 1000.0f, bgfx::getCaps()->homogeneousDepth);
-
-			bgfx::setViewTransform(view_target, view, proj);
-			bgfx::setViewRect(view_target, 0, 0, static_cast<uint16>(window_width), static_cast<uint16>(window_height));
-		}
 
 		// TODO Possibly sort SpriteComponents based on texture handle. 
 		// low to high to pack more sprites together in a sprite batch.
 		// Should reduce amount of batches which outherwise would be limited by texture handles.
-		// a_universe.registry.sort<SpriteComponent>();
+		// a_registry.registry.sort<SpriteComponent>();
 		
 		// Prepare Instance Buffers.
 		size_t const instance_stride(Detail::SpriteInstanceDataLayout::GetLayoutStride());
@@ -216,7 +197,7 @@ namespace DFW
 			data_ptr_shifter = idb.data;
 		};
 
-		for (auto&& [entity, sprite, transform] : a_universe.registry.group<SpriteComponent>(entt::get<TransformComponent>).each())
+		for (auto&& [entity, sprite, transform] : a_registry.ENTT().group<SpriteComponent>(entt::get<TransformComponent>).each())
 		{
 			if (!sprite.is_visible)
 				continue;
@@ -235,7 +216,7 @@ namespace DFW
 				// Prevent Texture Overflow.
 				if (batch.unique_texture_handles.size() > Detail::max_texture_samplers_per_batch)
 				{
-					FlushSpriteBatch(batch, view_target);
+					FlushSpriteBatch(batch);
 					NewSpriteBatch();
 				}
 				
@@ -246,7 +227,7 @@ namespace DFW
 			// Prevent Buffer Overflow.
 			if (batch.num_sprites_to_draw >= max_num_drawable_sprites)
 			{
-				FlushSpriteBatch(batch, view_target);
+				FlushSpriteBatch(batch);
 				NewSpriteBatch();
 			}
 
@@ -258,7 +239,7 @@ namespace DFW
 
 				// 16 Bytes - Sprite Colour.
 				glm::vec4* color = (glm::vec4*)&data_ptr_shifter[64];
-				color[0] = sprite.colour;
+				color[0] = sprite.colour.GetRGBAFloat();
 
 				// 4 Bytes - Texture Index.
 				float32* texture_index = (float32*)&data_ptr_shifter[80];
@@ -273,23 +254,16 @@ namespace DFW
 		}
 
 		// Flush Last Batch.
-		FlushSpriteBatch(batch, view_target);
+		FlushSpriteBatch(batch);
 
 	}
 
-	void SpriteSystem::FlushSpriteBatch(SpriteBatch const& a_sprite_batch, DRender::ViewTarget const& a_view_target)
+	void SpriteSystem::FlushSpriteBatch(SpriteBatch const& a_sprite_batch)
 	{
 		DFW_ASSERT(a_sprite_batch.num_sprites_to_draw > 0 && "Should not be flushing the batch when no sprites are there to be drawn.");
 
-		bgfx::setVertexBuffer(0, Detail::quad_vbh);
-		bgfx::setIndexBuffer(Detail::quad_ibh);
-		bgfx::setInstanceDataBuffer(&a_sprite_batch.data_buffer, 0, a_sprite_batch.num_sprites_to_draw);
-
-		for (uint8 texture_index_counter(0); uint16 texture_handle : a_sprite_batch.unique_texture_handles)
-		{
-			bgfx::setTexture(texture_index_counter, _texture_sampler_uniform->handle, bgfx::TextureHandle(texture_handle), BGFX_SAMPLER_POINT);
-			++texture_index_counter;
-		}
+		PrepareRenderTarget();
+		PrepareViewTarget();
 
 		uint64_t constexpr state = 0
 			| BGFX_STATE_WRITE_R
@@ -303,7 +277,17 @@ namespace DFW
 
 		bgfx::setState(state);
 
-		bgfx::submit(a_view_target, _program_ptr->shader_program_handle);
+		bgfx::setVertexBuffer(0, Detail::quad_vbh);
+		bgfx::setIndexBuffer(Detail::quad_ibh);
+		bgfx::setInstanceDataBuffer(&a_sprite_batch.data_buffer, 0, a_sprite_batch.num_sprites_to_draw);
+
+		for (uint8 texture_index_counter(0); uint16 texture_handle : a_sprite_batch.unique_texture_handles)
+		{
+			bgfx::setTexture(texture_index_counter, _texture_sampler_uniform->handle, bgfx::TextureHandle(texture_handle), BGFX_SAMPLER_POINT);
+			++texture_index_counter;
+		}
+
+		bgfx::submit(_view_target->view_target_id, _program_ptr->shader_program_handle);
 	}
 
 } // End of namespace ~ DFW.

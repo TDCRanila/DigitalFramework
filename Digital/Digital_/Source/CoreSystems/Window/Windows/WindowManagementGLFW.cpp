@@ -4,15 +4,13 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-#include <CoreSystems/ApplicationEvents.h>
-#include <CoreSystems/ApplicationInstance.h>
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Logging/Logger.h>
-#include <Defines/Defines.h>
-
 #include <CoreSystems/Memory.h>
+
+#include <Defines/Defines.h>
 
 namespace DFW
 {
@@ -46,7 +44,7 @@ namespace DFW
                 user_data->is_focussed = static_cast<bool>(a_result);
 
                 WindowID focussed_window_id = a_result ? user_data->_id : WindowID();
-                application_event_dispatcher->InstantBroadcast<WindowFocusEvent>(focussed_window_id, user_data->is_focussed);
+                application_event_dispatcher->InstantBroadcast(WindowFocusEvent(focussed_window_id, user_data->is_focussed));
             }
 
             static void glfw_window_minimized_callback(GLFWwindow* a_window, int a_result)
@@ -54,7 +52,7 @@ namespace DFW
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
                 user_data->is_minimized = static_cast<bool>(a_result);
 
-                application_event_dispatcher->InstantBroadcast<WindowMinimizedEvent>(user_data->_id, user_data->is_focussed);
+                application_event_dispatcher->InstantBroadcast(WindowMinimizedEvent(user_data->_id, user_data->is_focussed));
             }
 
             static void glfw_window_position_callback(GLFWwindow* a_window, int a_x_pos, int a_y_pos)
@@ -68,13 +66,7 @@ namespace DFW
                 dim._current_x_pos = static_cast<int32>(a_x_pos);
                 dim._current_y_pos = static_cast<int32>(a_y_pos);
 
-                application_event_dispatcher->InstantBroadcast<WindowMoveEvent>(
-                        user_data->_id
-                    ,   old_x_pos
-                    ,   old_y_pos
-                    ,   dim._current_x_pos
-                    ,   dim._current_y_pos
-                    );
+                application_event_dispatcher->InstantBroadcast(WindowMoveEvent(user_data->_id, old_x_pos, old_y_pos, dim._current_x_pos, dim._current_y_pos));
             }
 
             static void glfw_window_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
@@ -90,13 +82,9 @@ namespace DFW
 
                 glfwGetWindowFrameSize(a_window, &dim._window_frame_left, &dim._window_frame_top, &dim._window_frame_right, &dim._window_frame_bottom);
 
-                application_event_dispatcher->InstantBroadcast<WindowResizeEvent>(
-                        user_data->_id
-                    ,   old_width
-                    ,   old_height
-                    ,   dim._current_width
-                    ,   dim._current_height
-                    );
+                application_event_dispatcher->InstantBroadcast(
+                    WindowResizeEvent(user_data->_id, old_width, old_height, dim._current_width, dim._current_height)
+                );
             }
 
             static void glfw_framebuffer_resize_callback(GLFWwindow* a_window, int a_width, int a_height)
@@ -110,13 +98,9 @@ namespace DFW
                 dim._current_frame_width = static_cast<int32>(a_width);
                 dim._current_frame_height = static_cast<int32>(a_height);
 
-                application_event_dispatcher->InstantBroadcast<WindowFramebufferResizeEvent>(
-                        user_data->_id
-                    ,   old_frame_width
-                    ,   old_frame_height
-                    ,   dim._current_frame_width
-                    ,   dim._current_frame_height
-                    );
+                application_event_dispatcher->InstantBroadcast(
+                    WindowFramebufferResizeEvent(user_data->_id, old_frame_width, old_frame_height, dim._current_frame_width, dim._current_frame_height)
+                );
             }
 
             static void glfw_set_clipboard_string(void* a_user_data, const char* a_text)
@@ -134,7 +118,7 @@ namespace DFW
             {
                 WindowInstance* user_data = reinterpret_cast<WindowInstance*>(glfwGetWindowUserPointer(a_window));
 
-                application_event_dispatcher->InstantBroadcast<InputItemDropEvent>(user_data->_id, a_count, a_paths);
+                application_event_dispatcher->InstantBroadcast(InputItemDropEvent(user_data->_id, a_count, a_paths));
             }
 
             static void glfw_key_callback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods)
@@ -192,7 +176,7 @@ namespace DFW
 
         } // End of namespace ~ GLFWWindowCallBacks.
 
-        void WindowManagementGLFW::InitWindowManagement()
+        void WindowManagementGLFW::Init()
         {
             glfwSetErrorCallback(GLFWWindowCallBacks::glfw_error_callback);
 
@@ -200,10 +184,10 @@ namespace DFW
 
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-            // Saving Core Services.
-            GLFWWindowCallBacks::application_event_dispatcher   = CoreService::GetMainEventHandler();
-            GLFWWindowCallBacks::input_system                   = CoreService::GetInputSystem();
-            GLFWWindowCallBacks::window_management              = static_cast<WindowManagementGLFW*>(CoreService::GetWindowSystem());
+            // Set core services for glfw callbacks.
+            GLFWWindowCallBacks::application_event_dispatcher   = CoreService::GetAppEventHandler().get();
+            GLFWWindowCallBacks::input_system                   = CoreService::GetInputManagement().get();
+            GLFWWindowCallBacks::window_management              = static_cast<WindowManagementGLFW*>(CoreService::GetWindowManagement().get());
             
             // Construct the main window.
             SharedPtr<WindowInstance> const new_window = ConstructWindow(default_window_parameters);
@@ -214,10 +198,14 @@ namespace DFW
             RegisterCommonEventCallbacks();
         }
 
-        void WindowManagementGLFW::TerminateWindowManagement()
+        void WindowManagementGLFW::Terminate()
         {
             // Unregister Event Callbacks.
             UnregisterCommonEventCallbacks();
+
+            GLFWWindowCallBacks::application_event_dispatcher = nullptr;
+            GLFWWindowCallBacks::input_system = nullptr;
+            GLFWWindowCallBacks::window_management = nullptr;
 
             glfwTerminate();
         }
@@ -241,7 +229,7 @@ namespace DFW
                     glfwDestroyWindow(window_ptr->_glfw_window);
                     _window_instances.erase(window_ptr->_id);
 
-                    CoreService::GetMainEventHandler()->InstantBroadcast<WindowDestroyedEvent>(window_ptr->_id);
+                    CoreService::GetAppEventHandler()->InstantBroadcast<WindowDestroyedEvent>(window_ptr->_id);
                 }
             }
 
@@ -281,7 +269,7 @@ namespace DFW
 
             glfwSetWindowUserPointer(new_window_ptr->_glfw_window, new_window_ptr.get());
 
-            CoreService::GetMainEventHandler()->InstantBroadcast<WindowCreatedEvent>(new_window_ptr->_id);
+            CoreService::GetAppEventHandler()->InstantBroadcast<WindowCreatedEvent>(new_window_ptr->_id);
 
             _window_instances.emplace(new_window_ptr->_id, new_window_ptr);
             return new_window_ptr;
@@ -320,9 +308,8 @@ namespace DFW
             window_ptr->_name = a_window_parameters.name;
 
             // Window Resize
-            // Lend the glfw window callback
-            GLFWwindow* const glfw_window = window_ptr->_glfw_window;
-            GLFWWindowCallBacks::glfw_window_resize_callback(glfw_window, a_window_parameters.width, a_window_parameters.height);
+            GLFWwindow* const glfw_window = window_ptr->_glfw_window;            
+            glfwSetWindowSize(glfw_window, a_window_parameters.width, a_window_parameters.height);
         }
 
         void WindowManagementGLFW::RequestMouseCursorCapture()
@@ -330,7 +317,7 @@ namespace DFW
             SharedPtr<WindowInstanceGLFW> const& window_ptr = std::static_pointer_cast<WindowInstanceGLFW>(GetWindowInternal(_main_window_id));
             glfwSetInputMode(window_ptr->_glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-            CoreService::GetMainEventHandler()->InstantBroadcast<InputMouseCursorCapturedEvent>(window_ptr->_id);
+            CoreService::GetAppEventHandler()->InstantBroadcast<InputMouseCursorCapturedEvent>(window_ptr->_id);
         }
 
         void WindowManagementGLFW::RequestMouseCursorRelease()
@@ -342,7 +329,7 @@ namespace DFW
             float32 const window_half_height   = window_ptr->_window_dimension._current_height * 0.5f;
             glfwSetCursorPos(window_ptr->_glfw_window, window_half_width, window_half_height);
 
-            CoreService::GetMainEventHandler()->InstantBroadcast<InputMouseCursorReleasedEvent>(window_ptr->_id, window_half_width, window_half_height);
+            CoreService::GetAppEventHandler()->InstantBroadcast(InputMouseCursorReleasedEvent(window_ptr->_id, window_half_width, window_half_height));
         }
 
     } // End of namespace ~ DWindow.

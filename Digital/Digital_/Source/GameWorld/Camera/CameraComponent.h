@@ -2,7 +2,7 @@
 
 #include <GameWorld/Camera/ClipSpace.h>
 
-#include <Modules/ECS/Objects/ECSComponent.h>
+#include <Modules/ECS/Component.h>
 #include <Modules/Math/EulerAngles.h>
 
 #include <CoreSystems/DUID.h>
@@ -34,7 +34,9 @@ namespace DFW
         ClipSpace   clip;
         float32     fov;
         float32     fly_speed;
-        bool        has_enabled_six_degrees_rotation;
+
+        bool has_enabled_controls;
+        bool has_enabled_six_degrees_rotation;
         
         std::string name;
 

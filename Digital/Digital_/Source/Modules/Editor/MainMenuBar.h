@@ -13,8 +13,8 @@ namespace DFW
 			~MainMenuBar() = default;
 
 		private:
-			virtual void Update() override;
-			virtual void RenderImGui() override;
+			virtual void OnUpdate() override;
+			virtual void OnRenderImGui() override;
 
 			void Debug_ShowImGuiShowcase();
 

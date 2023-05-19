@@ -1,6 +1,7 @@
 #include <CoreSystems/Input/InputManagement.h>
 
-#include <CoreSystems/ApplicationInstance.h>
+#include <CoreSystems/Events/EventDispatcher.h>
+#include <CoreSystems/Window/WindowManagement.h>
 #include <CoreSystems/CoreServices.h>
 #include <CoreSystems/Logging/Logger.h>
 
@@ -17,18 +18,115 @@ namespace DFW
 			_dir_event_buffer.reserve(16);
 		}
 
-		void InputManagementSystem::InitInputManagement()
+		void InputManagementSystem::Init()
 		{
 			// Register Event Callbacks.
-			CoreService::GetMainEventHandler()->RegisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);
-			CoreService::GetMainEventHandler()->RegisterCallback<InputMouseCursorReleasedEvent, &InputManagementSystem::OnMouseCursorReleasedEvent>(this);
+			CoreService::GetAppEventHandler()->RegisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);
+			CoreService::GetAppEventHandler()->RegisterCallback<InputMouseCursorReleasedEvent, &InputManagementSystem::OnMouseCursorReleasedEvent>(this);
 		}
 
-		void InputManagementSystem::TerminateInputManagement()
+		void InputManagementSystem::Terminate()
 		{
 			// Unregister Event Callbacks.
-			CoreService::GetMainEventHandler()->UnregisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);
-			CoreService::GetMainEventHandler()->UnregisterCallback<InputMouseCursorReleasedEvent, &InputManagementSystem::OnMouseCursorReleasedEvent>(this);
+			CoreService::GetAppEventHandler()->UnregisterCallback<WindowFocusEvent, &InputManagementSystem::OnWindowFocusEvent>(this);
+			CoreService::GetAppEventHandler()->UnregisterCallback<InputMouseCursorReleasedEvent, &InputManagementSystem::OnMouseCursorReleasedEvent>(this);
+		}
+
+		void InputManagementSystem::ProcessInputEvents()
+		{
+			_input_data.ClearBuffers();
+
+			if (!_has_input_events_buffered || !_is_input_enabled)
+			{
+				return;
+			}
+
+			InputData& data = _input_data;
+			data.has_buffered_data = true;
+			for (KeyEvent const& key_event : _key_event_buffer)
+			{
+				switch (key_event.event_type)
+				{
+				case (KeyEventType::KEYBOARD):
+				{
+					DKey const defined_key = static_cast<DKey>(key_event.key);
+					DKeyAction const defined_action = static_cast<DKeyAction>(key_event.action);
+
+					data.keys[key_event.key] = defined_action;
+					data.buffered_keys.emplace(to_underlying(defined_key), defined_action);
+
+					data.has_received_key_input_this_frame = true;
+					break;
+				}
+				case (KeyEventType::MOUSE):
+				{
+					DKey const defined_key = static_cast<DKey>(key_event.key);
+					DKeyAction const defined_action = static_cast<DKeyAction>(key_event.action);
+
+					data.keys[key_event.key] = defined_action;
+					data.buffered_keys.emplace(to_underlying(defined_key), defined_action);
+
+					data.has_received_mouse_input_this_frame = true;
+
+					break;
+				}
+				case(KeyEventType::CHARACTER):
+				{
+					data.buffered_characters.emplace_back(key_event.character);
+					data.has_received_key_input_this_frame = true;
+					break;
+				}
+				case (KeyEventType::DEFAULT):
+				default:
+					break;
+				}
+			}
+
+			for (const DirectionalEvent& dir_event : _dir_event_buffer)
+			{
+				switch (dir_event.event_type)
+				{
+				case (DirectionalEventType::CURSOR):
+				{
+					data.cursor_position_old.x = data.cursor_position.x;
+					data.cursor_position_old.y = data.cursor_position.y;
+
+					data.cursor_delta.x = dir_event.cursor_x_position - data.cursor_position.x;
+					data.cursor_delta.y = dir_event.cursor_y_position - data.cursor_position.y;
+
+					data.cursor_position.x = dir_event.cursor_x_position;
+					data.cursor_position.y = dir_event.cursor_y_position;
+
+					data.has_mouse_moved_this_frame = true;
+
+					break;
+				}
+				case (DirectionalEventType::SCROLL):
+				{
+					data.scroll_delta.x = dir_event.scroll_x_offset;
+					data.scroll_delta.y = dir_event.scroll_y_offset;
+
+					data.scroll_offset_old.x = data.scroll_offset.x;
+					data.scroll_offset_old.y = data.scroll_offset.y;
+
+					data.scroll_offset.x += dir_event.scroll_x_offset;
+					data.scroll_offset.y += dir_event.scroll_y_offset;
+
+					data.has_received_scroll_input_this_frame = true;
+
+					break;
+				}
+				case (DirectionalEventType::DEFAULT):
+				default:
+					DFW_WARNLOG("InputManagement has received an event type that it cannot process.");
+					break;
+				}
+			}
+
+			_key_event_buffer.clear();
+			_dir_event_buffer.clear();
+
+			_has_input_events_buffered = false;
 		}
 
 		void InputManagementSystem::EnableInput()
@@ -141,103 +239,6 @@ namespace DFW
 			return _input_data.has_received_scroll_input_this_frame;
 		}
 
-		void InputManagementSystem::ProcessInputEvents()
-		{
-			_input_data.ClearBuffers();
-
-			if (!_has_input_events_buffered || !_is_input_enabled)
-			{
-				return;
-			}
-
-			InputData& data = _input_data;
-			data.has_buffered_data = true;
-			for (KeyEvent const& key_event : _key_event_buffer)
-			{
-				switch (key_event.event_type)
-				{
-				case (KeyEventType::KEYBOARD):
-				{
-					DKey const defined_key = static_cast<DKey>(key_event.key);
-					DKeyAction const defined_action = static_cast<DKeyAction>(key_event.action);
-
-					data.keys[key_event.key] = defined_action;
-					data.buffered_keys.emplace(to_underlying(defined_key), defined_action);
-
-					data.has_received_key_input_this_frame = true;
-					break;
-				}
-				case (KeyEventType::MOUSE):
-				{
-					DKey const defined_key			= static_cast<DKey>(key_event.key);
-					DKeyAction const defined_action = static_cast<DKeyAction>(key_event.action);
-
-					data.keys[key_event.key] = defined_action;
-					data.buffered_keys.emplace(to_underlying(defined_key), defined_action);
-					
-					data.has_received_mouse_input_this_frame = true;
-					
-					break;
-				}
-				case(KeyEventType::CHARACTER):
-				{
-					data.buffered_characters.emplace_back(key_event.character);
-					data.has_received_key_input_this_frame = true;
-					break;
-				}
-				case (KeyEventType::DEFAULT):
-				default:
-					break;
-				}
-			}
-
-			for (const DirectionalEvent& dir_event : _dir_event_buffer)
-			{
-				switch (dir_event.event_type)
-				{
-				case (DirectionalEventType::CURSOR):
-				{
-					data.cursor_position_old.x = data.cursor_position.x;
-					data.cursor_position_old.y = data.cursor_position.y;
-
-					data.cursor_delta.x = dir_event.cursor_x_position - data.cursor_position.x;
-					data.cursor_delta.y = dir_event.cursor_y_position - data.cursor_position.y;
-
-					data.cursor_position.x = dir_event.cursor_x_position;
-					data.cursor_position.y = dir_event.cursor_y_position;
-
-					data.has_mouse_moved_this_frame = true;
-
-					break;
-				}
-				case (DirectionalEventType::SCROLL):
-				{
-					data.scroll_delta.x = dir_event.scroll_x_offset;
-					data.scroll_delta.y = dir_event.scroll_y_offset;
-
-					data.scroll_offset_old.x = data.scroll_offset.x;
-					data.scroll_offset_old.y = data.scroll_offset.y;
-
-					data.scroll_offset.x += dir_event.scroll_x_offset;
-					data.scroll_offset.y += dir_event.scroll_y_offset;
-
-					data.has_received_scroll_input_this_frame = true;
-
-					break;
-				}
-				case (DirectionalEventType::DEFAULT):
-				default:
-					DFW_WARNLOG("InputManagement has received an event type that it cannot process.");
-					break;
-				}
-			}
-
-			_key_event_buffer.clear();
-			_dir_event_buffer.clear();
-
-			_has_input_events_buffered = false;
-		}
-
 		void InputManagementSystem::SendKeyEvent(DWindow::WindowID a_id, int32 a_key, int32 a_scancode, int32 a_action, int32 a_modifier)
 		{
 			if (_is_input_enabled && (a_key >= 0) && (a_key < 1024))
@@ -286,7 +287,7 @@ namespace DFW
 		void InputManagementSystem::OnWindowFocusEvent(WindowFocusEvent const& a_event)
 		{
 			if (a_event.is_focussed)
-				_current_foccused_window_ptr = CoreService::GetWindowSystem()->GetWindow(a_event.window_id);
+				_current_foccused_window_ptr = CoreService::GetWindowManagement()->GetWindow(a_event.window_id);
 		}
 
 		void InputManagementSystem::OnMouseCursorReleasedEvent(InputMouseCursorReleasedEvent const& a_event)

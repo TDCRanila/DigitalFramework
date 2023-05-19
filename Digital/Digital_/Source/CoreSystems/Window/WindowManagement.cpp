@@ -4,13 +4,14 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-#include <CoreSystems/ApplicationInstance.h>
-#include <CoreSystems/CoreServices.h>
+#include <CoreSystems/Window/Windows/WindowManagementGLFW.h>
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Logging/Logger.h>
+#include <CoreSystems/CoreServices.h>
+
 #include <Defines/Defines.h>
 
-#include <CoreSystems/Window/Windows/WindowManagementGLFW.h>
 
 namespace DFW
 {
@@ -89,12 +90,12 @@ namespace DFW
 
         void WindowManagement::RegisterCommonEventCallbacks()
         {
-            CoreService::GetMainEventHandler()->RegisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
+            CoreService::GetAppEventHandler()->RegisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
         }
 
         void WindowManagement::UnregisterCommonEventCallbacks()
         {
-            CoreService::GetMainEventHandler()->UnregisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
+            CoreService::GetAppEventHandler()->UnregisterCallback<WindowFocusEvent, &WindowManagement::OnWindowFocusEvent>(this);
         }
 
         void WindowManagement::OnWindowFocusEvent(WindowFocusEvent const& a_event)

@@ -7,9 +7,7 @@ namespace DFW
     namespace DResource
     {
         ImageData::ImageData()
-            : file_name("")
-            , file_extension("")
-            , width(0)
+            : width(0)
             , height(0)
             , components_per_pixel(0)
             , data_size(0)

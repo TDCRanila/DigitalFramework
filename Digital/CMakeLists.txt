@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 3.17.2)
 
-set(PROJECT_NAME ProjectSolution)
+include(Utility.cmake)
 
+macro(SetCPPVersion Target)
+set_property(TARGET ${Target} PROPERTY CXX_STANDARD 20)
+set_property(TARGET ${Target} PROPERTY CXX_STANDARD_REQUIRED ON)
+endmacro()
+
+### Project.
+set(PROJECT_NAME ProjectSolution)
 project(${PROJECT_NAME})
 
 ### Project Properties.

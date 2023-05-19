@@ -6,16 +6,14 @@
 
 namespace DFW
 {
-    GameClock* CoreService::_gc_service                         = nullptr;
-    EventDispatcher* CoreService::_meh_service                  = nullptr;
-    DECS::ECSModule* CoreService::_ecs_service                  = nullptr;
-    DInput::InputManagementSystem* CoreService::_input_service  = nullptr;
-    DWindow::WindowManagement* CoreService::_window_service     = nullptr;
-    DRender::RenderModule* CoreService::_rm_service             = nullptr;
+    WeakPtr<GameClock> CoreService::_gameclock_service;
+    WeakPtr<EventDispatcher> CoreService::_app_eventhandler_service;
+    WeakPtr<StageStackController> CoreService::_app_stagecontroller_service;
 
-    // TODO: Could provide some game clock null-service instead.
-    // maybe not needed for a gameclock but other services such as audio
-    // could be useful.
+    WeakPtr<DWindow::WindowManagement> CoreService::_window_management_service;
+    WeakPtr<DInput::InputManagementSystem> CoreService::_input_management_service;
+    WeakPtr<DRender::RenderModule> CoreService::_render_module_service;
+    WeakPtr<DResource::ResourceManager> CoreService::_resource_manager_service;
 
     namespace Detail
     {
@@ -26,86 +24,100 @@ namespace DFW
 
     void CoreService::ReleaseServices()
     {
-        _gc_service     = nullptr;
-        _meh_service    = nullptr;
-        _ecs_service    = nullptr;
-        _input_service  = nullptr;
-        _window_service = nullptr;
-        _rm_service     = nullptr;
+        _gameclock_service.reset();
+        _app_eventhandler_service.reset();
+        _app_stagecontroller_service.reset();
+
+        _window_management_service.reset();
+        _input_management_service.reset();
+        _render_module_service.reset();
+        _resource_manager_service.reset();
 
         DFW_INFOLOG("All services provided have been released.");
     }
 
-    GameClock* CoreService::GetGameClock()
+    SharedPtr<GameClock> CoreService::GetGameClock()
     {
-        DFW_ASSERT(_gc_service && Detail::invalid_provided_service_message);
-        return _gc_service;
+        DFW_ASSERT(!_gameclock_service.expired() && Detail::invalid_provided_service_message);
+        return _gameclock_service.lock();
     }
 
-    void CoreService::ProvideGameClock(GameClock* a_provided_service)
+    void CoreService::ProvideGameClock(SharedPtr<GameClock> const& a_provided_service)
     {
-        _gc_service = a_provided_service;
+        _gameclock_service = a_provided_service;
         DFW_INFOLOG((Detail::provided_service_message + "Game Clock"));
     }
 
-    EventDispatcher* CoreService::GetMainEventHandler()
+    SharedPtr<EventDispatcher> CoreService::GetAppEventHandler()
     {
-        DFW_ASSERT(_meh_service && Detail::invalid_provided_service_message);
-        return _meh_service;
+        DFW_ASSERT(!_app_eventhandler_service.expired() && Detail::invalid_provided_service_message);
+        return _app_eventhandler_service.lock();
     }
 
-    void CoreService::ProvideMainEventHandler(EventDispatcher* a_provided_service)
+    void CoreService::ProvideAppEventHandler(SharedPtr<EventDispatcher> const& a_provided_service)
     {
-        _meh_service = a_provided_service;
-        DFW_INFOLOG((Detail::provided_service_message + "Main Event Handler"));
+        _app_eventhandler_service = a_provided_service;
+        DFW_INFOLOG((Detail::provided_service_message + "Application Event Handler"));
     }
 
-    DECS::ECSModule* CoreService::GetECS()
+    SharedPtr<StageStackController> CoreService::GetAppStageController()
     {
-        DFW_ASSERT(_ecs_service && Detail::invalid_provided_service_message);
-        return _ecs_service;
+        DFW_ASSERT(!_app_stagecontroller_service.expired() && Detail::invalid_provided_service_message);
+        return _app_stagecontroller_service.lock();
     }
 
-    void CoreService::ProvideECS(DECS::ECSModule* a_provided_service)
+    void CoreService::ProvideAppStageController(SharedPtr<StageStackController> const& a_provided_service)
     {
-        _ecs_service = a_provided_service;
-        DFW_INFOLOG((Detail::provided_service_message + "ECS"));
+        _app_stagecontroller_service = a_provided_service;
+        DFW_INFOLOG((Detail::provided_service_message + "Application Stack Controller"));
     }
 
-    DInput::InputManagementSystem* CoreService::GetInputSystem()
+    SharedPtr<DWindow::WindowManagement> CoreService::GetWindowManagement()
     {
-        DFW_ASSERT(_input_service && Detail::invalid_provided_service_message);
-        return _input_service;
+        DFW_ASSERT(!_window_management_service.expired() && Detail::invalid_provided_service_message);
+        return _window_management_service.lock();
     }
 
-    void CoreService::ProvideInputSystem(DInput::InputManagementSystem* a_provided_service)
+    void CoreService::ProvideWindowManagementService(SharedPtr<DWindow::WindowManagement> const& a_provided_service)
     {
-        _input_service = a_provided_service;
-        DFW_INFOLOG((Detail::provided_service_message + "Input Management System"));
+        _window_management_service = a_provided_service;
+        DFW_INFOLOG((Detail::provided_service_message + "Window Management"));
     }
 
-    DWindow::WindowManagement* CoreService::GetWindowSystem()
+    SharedPtr<DInput::InputManagementSystem> CoreService::GetInputManagement()
     {
-        DFW_ASSERT(_window_service && Detail::invalid_provided_service_message);
-        return _window_service;
+        DFW_ASSERT(!_input_management_service.expired() && Detail::invalid_provided_service_message);
+        return _input_management_service.lock();
     }
 
-    void CoreService::ProvideWindowSystem(DWindow::WindowManagement* a_provided_service)
+    void CoreService::ProvideInputManagementService(SharedPtr<DInput::InputManagementSystem> const& a_provided_service)
     {
-        _window_service = a_provided_service;
-        DFW_INFOLOG((Detail::provided_service_message + "Window Management System"));
+        _input_management_service = a_provided_service;
+        DFW_INFOLOG((Detail::provided_service_message + "Input Management"));
     }
 
-    DRender::RenderModule* CoreService::GetRenderModule()
+    SharedPtr<DRender::RenderModule> CoreService::GetRenderModule()
     {
-        DFW_ASSERT(_rm_service && Detail::invalid_provided_service_message);
-        return _rm_service;
+        DFW_ASSERT(!_render_module_service.expired() && Detail::invalid_provided_service_message);
+        return _render_module_service.lock();
     }
 
-    void CoreService::ProvideRenderModule(DRender::RenderModule* a_provided_service)
+    void CoreService::ProvideRenderModule(SharedPtr<DRender::RenderModule> const& a_provided_service)
     {
-        _rm_service = a_provided_service;
+        _render_module_service = a_provided_service;
         DFW_INFOLOG((Detail::provided_service_message + "Render Module"));
+    }
+
+    SharedPtr<DResource::ResourceManager> CoreService::GetResourceManager()
+    {
+        DFW_ASSERT(!_resource_manager_service.expired() && Detail::invalid_provided_service_message);
+        return _resource_manager_service.lock();
+    }
+
+    void CoreService::ProvideResourceManager(SharedPtr<DResource::ResourceManager> const& a_provided_service)
+    {
+        _resource_manager_service = a_provided_service;
+        DFW_INFOLOG((Detail::provided_service_message + "Resource Manager"));
     }
 
 } // End of namespace ~ DFW.

@@ -1,16 +1,17 @@
 #pragma once
 
-#include <Modules/Rendering/ShaderLibrary.h>
-#include <Modules/Rendering/UniformLibrary.h>
-#include <Modules/Rendering/ViewTargetDirector.h>
-#include <Modules/Rendering/RenderTargetDirector.h>
-
 namespace DFW
 {
     namespace DRender
     {
         // FW Declare.
         class RenderModuleContext;
+
+        class ViewTargetDirector;
+        class RenderTargetDirector;
+        class ShaderLibrary;
+        class UniformLibrary;
+        class TextureLibrary;
         struct ViewTarget;
 
         class RenderModule
@@ -19,12 +20,19 @@ namespace DFW
             RenderModule();
             ~RenderModule();
 
-            void InitRenderModule();
-            void TerminateRenderModule();
+            void Init();
+            void Terminate();
 
             void BeginFrame();
             void EndFrame();
             void RenderFrame();
+
+        public:
+            ViewTargetDirector& GetViewDirector() const;
+            RenderTargetDirector& GetRenderTargetDirector() const;
+            ShaderLibrary& GetShaderLibrary() const;
+            UniformLibrary& GetUniformLibrary() const;
+            TextureLibrary& GetTextureLibrary() const;
 
             void SubmitMesh();
             void SubmitSprite();
@@ -33,14 +41,14 @@ namespace DFW
 
             void Debug_RendererInfo(/*RenderModuleDebugOptions& const a_debug_option*/);
 
-            ViewTargetDirector view_director;
-            RenderTargetDirector render_target_director;
-
-            ShaderLibrary shader_library;
-            UniformLibrary uniform_library;
-
         private:
             UniquePtr<RenderModuleContext> _render_module_context;
+
+            UniquePtr<ViewTargetDirector> _view_director;
+            UniquePtr<RenderTargetDirector> _render_target_director;
+            UniquePtr<ShaderLibrary> _shader_library;
+            UniquePtr<UniformLibrary> _uniform_library;
+            UniquePtr<TextureLibrary> _texture_library;
 
             SharedPtr<ViewTarget const> _main_view_target;
 

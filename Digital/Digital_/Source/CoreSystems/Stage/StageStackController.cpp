@@ -5,23 +5,33 @@ namespace DFW
 	StageStackController::StageStackController()
 		:  _stage_insert_index(0)
 	{
+		// TODO If neccesarry might want to heap allocate the stages all at once.
 		_stages.reserve(MAX_SUPPORTED_STAGES);
 	}
 
 	StageStackController::~StageStackController()
 	{
 		RemoveAllAttachedStages();
-		DeleteAllAttachedStages();
 	}
 
-	void StageStackController::SetStageStackCommunicator(SharedPtr<StageStackCommunicator> a_communicator)
+	void StageStackController::UpdateStages()
 	{
-		_stage_stack_communicator = a_communicator;
-
-		for (auto stage_it = this->rbegin(); stage_it != this->rend(); ++stage_it)
+		for (StageBase* stage : _stages)
 		{
-			(*stage_it)->SetStageStackCommunicator(a_communicator);
-			(*stage_it)->BindStageEventFunc(DFW_BIND_FUNC(_stage_stack_communicator->OnStageEventReceived));
+			if (!stage->IsDisabled())
+			{
+				stage->OnUpdate();
+				stage->OnRender();
+			}
+		}
+	}
+
+	void StageStackController::RenderImGuiStages()
+	{
+		for (StageBase* stage : _stages)
+		{
+			if (!stage->IsDisabled())
+				stage->OnRenderImGui();
 		}
 	}
 
@@ -34,20 +44,6 @@ namespace DFW
 			if (!has_deleted_stage)
 				++it;
 		}
-	}
-
-	void StageStackController::DeleteAllAttachedStages()
-	{
-		// Cleanup anything that is left-over, however, this shouldn't be the case.
-		for (StageBase*& stage_ptr : _stages)
-		{
-			if (stage_ptr != nullptr)
-			{
-				DFW_LOG("Deleting Stage with ID: {}", stage_ptr->GetID());
-				delete stage_ptr;
-				stage_ptr = nullptr;
-			}
-		}
 
 		_stages.clear();
 	}
@@ -59,11 +55,7 @@ namespace DFW
 		{
 			DFW_INFOLOG("Removing attached Stage with ID: {}", a_id);
 			StageBase* stage_ptr = (*it);
-			stage_ptr->OnRemoved();
-
-			StageRemovedEvent event(stage_ptr->GetID(), stage_ptr->GetName(), stage_ptr->IsDisabled());
-			_stage_stack_communicator->OnStageEventReceived(event);
-			
+			stage_ptr->OnRemoved();			
 			delete stage_ptr;
 
 			_stages.erase(it);
@@ -85,10 +77,6 @@ namespace DFW
 			DFW_INFOLOG("Removing attached Stage with ID: {}", a_id);
 			StageBase* stage_ptr = (*it);
 			stage_ptr->OnRemoved();
-
-			StageRemovedEvent event(stage_ptr->GetID(), stage_ptr->GetName(), stage_ptr->IsDisabled());
-			_stage_stack_communicator->OnStageEventReceived(event);
-
 			delete stage_ptr;
 
 			_stages.erase(it);
@@ -99,11 +87,6 @@ namespace DFW
 			DFW_WARNLOG("Trying to remove unknown stage at back with ID: {}.", a_id);
 			return false;
 		}
-	}
-
-	const std::vector<StageBase*>& StageStackController::GetStages() const
-	{
-		return _stages;
 	}
 
 } // End of namespace ~ DFW.

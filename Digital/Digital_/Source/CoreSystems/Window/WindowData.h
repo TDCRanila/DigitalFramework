@@ -2,8 +2,6 @@
 
 #include <CoreSystems/Window/WindowID.h>
 
-#include <CoreSystems/ApplicationEvents.h>
-
 namespace DFW
 {
     // Forward Declare(s)

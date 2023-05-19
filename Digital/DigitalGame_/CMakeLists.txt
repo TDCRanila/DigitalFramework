@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.17.2)
 
-set(EXE_NAME DigitalGame_)
-project(${EXE_NAME} VERSION 1.0.0)
-
-### Automatically Generate Source File List
+### Generate a list of all Header & Source Files.
 execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_source.txt SOURCE_FILES)
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_header.txt HEADER_FILES)
@@ -18,13 +15,13 @@ function( add_bgfx_shader FILE FOLDER )
 	string( SUBSTRING "${FILENAME}" 0 2 TYPE )
 	if( "${TYPE}" STREQUAL "fs" )
 		set( TYPE "FRAGMENT" )
-		set( D3D_PREFIX "ps" )
+		set( D3D_PREFIX "s" )
 	elseif( "${TYPE}" STREQUAL "vs" )
 		set( TYPE "VERTEX" )
-		set( D3D_PREFIX "vs" )
+		set( D3D_PREFIX "s" )
 	elseif( "${TYPE}" STREQUAL "cs" )
 		set( TYPE "COMPUTE" )
- 		set( D3D_PREFIX "cs" )
+ 		set( D3D_PREFIX "s" )
 	else()
 		set( TYPE "" )
 	endif()
@@ -38,7 +35,7 @@ function( add_bgfx_shader FILE FOLDER )
 			# dx9
 			if( NOT "${TYPE}" STREQUAL "COMPUTE" )
 				set( DX9_OUTPUT ${FOLDER}/dx9/${FILENAME}.bin )
-				shaderc_parse( DX9 ${COMMON} WINDOWS PROFILE ${D3D_PREFIX}_3_0 O 3 OUTPUT ${DX9_OUTPUT} )
+				_bgfx_shaderc_parse ( DX9 ${COMMON} WINDOWS PROFILE ${D3D_PREFIX}_3_0 O 3 OUTPUT ${DX9_OUTPUT} )
 				list( APPEND OUTPUTS "DX9" )
 				set( OUTPUTS_PRETTY "${OUTPUTS_PRETTY}DX9, " )
 			endif()
@@ -46,9 +43,9 @@ function( add_bgfx_shader FILE FOLDER )
 			# dx11
 			set( DX11_OUTPUT ${FOLDER}/dx11/${FILENAME}.bin )
 			if( NOT "${TYPE}" STREQUAL "COMPUTE" )
-				shaderc_parse( DX11 ${COMMON} WINDOWS PROFILE ${D3D_PREFIX}_5_0 O 3 OUTPUT ${DX11_OUTPUT} )
+				_bgfx_shaderc_parse ( DX11 ${COMMON} WINDOWS PROFILE ${D3D_PREFIX}_5_0 O 3 OUTPUT ${DX11_OUTPUT} )
 			else()
-				shaderc_parse( DX11 ${COMMON} WINDOWS PROFILE ${D3D_PREFIX}_5_0 O 1 OUTPUT ${DX11_OUTPUT} )
+				_bgfx_shaderc_parse ( DX11 ${COMMON} WINDOWS PROFILE ${D3D_PREFIX}_5_0 O 1 OUTPUT ${DX11_OUTPUT} )
 			endif()
 			list( APPEND OUTPUTS "DX11" )
 			set( OUTPUTS_PRETTY "${OUTPUTS_PRETTY}DX11, " )
@@ -57,7 +54,7 @@ function( add_bgfx_shader FILE FOLDER )
 		if( APPLE )
 			# metal
 			set( METAL_OUTPUT ${FOLDER}/metal/${FILENAME}.bin )
-			shaderc_parse( METAL ${COMMON} OSX PROFILE metal OUTPUT ${METAL_OUTPUT} )
+			_bgfx_shaderc_parse ( METAL ${COMMON} OSX PROFILE metal OUTPUT ${METAL_OUTPUT} )
 			list( APPEND OUTPUTS "METAL" )
 			set( OUTPUTS_PRETTY "${OUTPUTS_PRETTY}Metal, " )
 		endif()
@@ -65,7 +62,7 @@ function( add_bgfx_shader FILE FOLDER )
 		# essl
 		if( NOT "${TYPE}" STREQUAL "COMPUTE" )
 			set( ESSL_OUTPUT ${FOLDER}/essl/${FILENAME}.bin )
-			shaderc_parse( ESSL ${COMMON} ANDROID OUTPUT ${ESSL_OUTPUT} )
+			_bgfx_shaderc_parse ( ESSL ${COMMON} ANDROID OUTPUT ${ESSL_OUTPUT} )
 			list( APPEND OUTPUTS "ESSL" )
 			set( OUTPUTS_PRETTY "${OUTPUTS_PRETTY}ESSL, " )
 		endif()
@@ -73,9 +70,9 @@ function( add_bgfx_shader FILE FOLDER )
 		# glsl
 		set( GLSL_OUTPUT ${FOLDER}/glsl/${FILENAME}.bin )
 		if( NOT "${TYPE}" STREQUAL "COMPUTE" )
-			shaderc_parse( GLSL ${COMMON} LINUX PROFILE 120 OUTPUT ${GLSL_OUTPUT} )
+			_bgfx_shaderc_parse ( GLSL ${COMMON} LINUX PROFILE 120 OUTPUT ${GLSL_OUTPUT} )
 		else()
-			shaderc_parse( GLSL ${COMMON} LINUX PROFILE 430 OUTPUT ${GLSL_OUTPUT} )
+			_bgfx_shaderc_parse ( GLSL ${COMMON} LINUX PROFILE 430 OUTPUT ${GLSL_OUTPUT} )
 		endif()
 		list( APPEND OUTPUTS "GLSL" )
 		set( OUTPUTS_PRETTY "${OUTPUTS_PRETTY}GLSL, " )
@@ -83,7 +80,7 @@ function( add_bgfx_shader FILE FOLDER )
 		# spirv
 		if( NOT "${TYPE}" STREQUAL "COMPUTE" )
 			set( SPIRV_OUTPUT ${FOLDER}/spirv/${FILENAME}.bin )
-			shaderc_parse( SPIRV ${COMMON} LINUX PROFILE spirv OUTPUT ${SPIRV_OUTPUT} )
+			_bgfx_shaderc_parse ( SPIRV ${COMMON} LINUX PROFILE spirv OUTPUT ${SPIRV_OUTPUT} )
 			list( APPEND OUTPUTS "SPIRV" )
 			set( OUTPUTS_PRETTY "${OUTPUTS_PRETTY}SPIRV" )
 			set( OUTPUT_FILES "" )
@@ -126,6 +123,9 @@ endif()
 source_group("Shader Files" FILES ${SHADER_FILES})
 
 ### Executable Definition
+set(EXE_NAME DigitalGame_)
+project(${EXE_NAME} VERSION 1.0.0)
+
 # Make sure to make {SHADER_FILES} a dependency for the target.
 add_executable(${EXE_NAME} ${SHADER_FILES})
 target_sources(${EXE_NAME}
@@ -145,11 +145,9 @@ target_include_directories(${EXE_NAME}
 )
 
 ### CPP Standard
-set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD 20)
-set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+SetCPPVersion(${EXE_NAME})
 
 ### Set Work Directory
-set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
 set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
 
 ### Forced Includes

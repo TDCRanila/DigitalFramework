@@ -2,7 +2,7 @@
 
 #include <GameWorld/Graphics/BaseRenderSystem.h>
 
-#include <Modules/ECS/Objects/ECSystem.h>
+#include <Modules/ECS/System.h>
 
 #include <CoreSystems/Memory.h>
 
@@ -20,7 +20,7 @@ namespace DFW
         virtual void Init() override;
         virtual void Terminate() override;
 
-        virtual void Update(DECS::Universe& a_universe) override;
+        virtual void Update(DECS::EntityRegistry& a_registry) override;
 
     };
 

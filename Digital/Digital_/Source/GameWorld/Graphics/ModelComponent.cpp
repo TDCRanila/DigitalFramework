@@ -1,6 +1,6 @@
 #include <GameWorld/Graphics/ModelComponent.h>
 
-#include <Modules/Rendering/ModelData.h>
+#include <Modules/Rendering/MeshData.h>
 #include <Modules/Rendering/TextureData.h>
 #include <Modules/Rendering/ShaderProgram.h>
 
@@ -87,11 +87,12 @@ namespace DFW
 
 		// Texture
 		{
+			int32 width(1), height(1);
 			std::array<uint8, 3> pixel_texture = { 255, 255, 255 };
 			bgfx::TextureFormat::Enum texture_format = bgfx::TextureFormat::RGB8;
 			bgfx::Memory const* data = bgfx::copy(pixel_texture.data(), static_cast<uint32>(pixel_texture.size() * sizeof(uint8)));
-			bgfx::TextureHandle texture_handle = bgfx::createTexture2D(1, 1, false, 1, texture_format, 0, data);
-			submodel.textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, BGFX_TEXTURE_NONE, 0));
+			bgfx::TextureHandle texture_handle = bgfx::createTexture2D(width, height, false, 1, texture_format, 0, data);
+			submodel.textures.emplace_back(DFW::MakeShared<DRender::TextureData>(texture_handle, width, height, BGFX_TEXTURE_NONE, 0));
 		}
 
 		return mesh_data;

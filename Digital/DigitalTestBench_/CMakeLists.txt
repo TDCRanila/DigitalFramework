@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.17.2)
 
-set(EXE_NAME DigitalTestBench_)
-project(${EXE_NAME} VERSION 1.0.0)
-
-### Automatically Generate Source File List
+### Generate a list of all Header & Source Files.
 execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_source.txt SOURCE_FILES)
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_header.txt HEADER_FILES)
@@ -13,6 +10,9 @@ string(REPLACE "\\" "/" HEADER_FILES    "${HEADER_FILES}")
 string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
 
 ### Executable Definition
+set(EXE_NAME DigitalTestBench_)
+project(${EXE_NAME} VERSION 1.0.0)
+
 add_executable(${EXE_NAME})
 target_sources(${EXE_NAME}
     PRIVATE 
@@ -31,11 +31,9 @@ target_include_directories(${EXE_NAME}
 )
 
 ### CPP Standard
-set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD 20)
-set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+SetCPPVersion(${EXE_NAME})
 
 ### Set Work Directory
-set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
 set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
 
 ### Forced Includes

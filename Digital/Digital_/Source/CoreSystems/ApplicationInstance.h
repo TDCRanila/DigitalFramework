@@ -1,19 +1,40 @@
 #pragma once
 
+#include <CoreSystems/ApplicationEvents.h>
 #include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/GameClock.h>
 #include <CoreSystems/TimeTracker.h>
-#include <CoreSystems/ImGui/ImGuiLayer.h>
-#include <CoreSystems/Input/InputManagement.h>
 #include <CoreSystems/Stage/StageStackController.h>
 #include <CoreSystems/Stage/StageStackCommunicator.h>
-#include <CoreSystems/Window/WindowManagement.h>
-
-#include <Modules/ECS/ECSModule.h>
-#include <Modules/Rendering/RenderModule.h>
 
 namespace DFW
 {
+
+#pragma region FW Declares.
+    class ImGuiLayer;
+
+    namespace DInput
+    {
+        class InputManagementSystem;
+    } // End of namespace ~ DInput.
+
+    namespace DWindow
+    {
+        class WindowManagement;
+    } // End of namespace ~ DWindow.
+
+    namespace DRender
+    {
+        class RenderModule;
+    } // End of namespace ~ DRender.
+
+    namespace DResource
+    {
+        class ResourceManager;
+    } // End of namespace ~ DResource.
+
+#pragma endregion
+
     class ApplicationInstance
     {
     public:
@@ -23,38 +44,35 @@ namespace DFW
         void RunApplication(char const* a_name);
         void RunApplication(std::string const& a_name);
 
-        EventDispatcher application_event_handler;
-
     protected:
-        void RegisterStageStackCommunicator(SharedPtr<StageStackCommunicator> a_stack_communicator);
-
-        StageStackController& ProvideStageStackController();
-
-        virtual void PreApplicationInit();
-        virtual void PostApplicationInit();
+        virtual void PreApplicationInit() = 0;
+        virtual void PostApplicationInit() = 0;
 
     private:
         void InitApplication();
         void TerminateApplication();
         void UpdateApplication();
 
+        SharedPtr<GameClock> _game_clock;
+        SharedPtr<EventDispatcher> _application_event_handler;
+        SharedPtr<StageStackController> _stage_controller;
+
+        SharedPtr<DWindow::WindowManagement> _window_management;
+        SharedPtr<DInput::InputManagementSystem> _input_management;
+        SharedPtr<DRender::RenderModule> _render_module;
+        SharedPtr<DResource::ResourceManager> _resource_manager;
+ 
+        UniquePtr<ImGuiLayer> _imgui;
+ 
+        std::string _application_name;
+        bool _should_application_run;
+
+    private:
+        void OnApplicationCloseEvent(ApplicationCloseEvent& a_event);
+
         bool Debug_CheckForEmergencyApplicationExit() const;
         void Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval) const;
         void Debug_ToggleMouseCursorCapture() const;
-
-        StageStackController _stage_stack_controller;
-        SharedPtr<StageStackCommunicator> _stage_stack_communicator;
-
-        SharedPtr<DWindow::WindowManagement>   _window_management;
-        DInput::InputManagementSystem          _input_system;
-        DECS::ECSModule                        _ecs_module;
-        DRender::RenderModule                  _render_module;
- 
-        ImGuiLayer _imgui;
-        
-        GameClock _game_clock;
- 
-        std::string _application_name;
     };
 
 } // End of namespace ~ DFW.

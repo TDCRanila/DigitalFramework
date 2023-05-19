@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.17.2)
 
-set(LIB_NAME Digital_)
-project(${LIB_NAME} VERSION 1.0.0)
-
-### Automatically Generate Source File List
+### Generate a list of all Header & Source Files.
 execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_source.txt SOURCE_FILES)
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_header.txt HEADER_FILES)
@@ -13,6 +10,9 @@ string(REPLACE "\\" "/" HEADER_FILES    "${HEADER_FILES}")
 string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
 
 ### Library Definition
+set(LIB_NAME Digital_)
+project(${LIB_NAME} VERSION 1.0.0)
+
 add_library(${LIB_NAME} STATIC)
 add_library(LIB:${LIB_NAME} ALIAS ${LIB_NAME})
 target_sources(${LIB_NAME}
@@ -21,21 +21,18 @@ target_sources(${LIB_NAME}
 )
 
 target_include_directories(${LIB_NAME} 
-PRIVATE
-# Internal Headers
-${CMAKE_CURRENT_SOURCE_DIR}/Source
-PUBLIC 
-# External headers for top-level projects.
-${CMAKE_CURRENT_SOURCE_DIR}/Source
-# External Headers for external projects.
-$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    PRIVATE
+    # Internal Headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source
+    PUBLIC 
+    # External headers for top-level projects.
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source
+    # External Headers for external projects.
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-set(public_headers ${HEADER_FILES})
-
 ### CPP Standard
-set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 20)
-set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+SetCPPVersion(${LIB_NAME})
 
 ### Set Work Directory
 set_property(TARGET ${LIB_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
@@ -68,28 +65,27 @@ endif()
 set_target_properties(${LIB_NAME} PROPERTIES FOLDER _MainTargets)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ALL_FILES})
 
-message("\nConfiguring Subodules & Includes:\n")
 
 ### EXTERNALS/LIBRARIES
+macro(AnnounceLibraryAddition LibraryName)
+    message("\n----------------------")
+    message("Adding Library: ${LibraryName}")
+endmacro()
+
+message("\n----------------------")
+message("Configuring Libraries & Includes:")
 
 ## bgfx.cmake
-message("Adding SubModule: bgfx")
+AnnounceLibraryAddition("bgfx")
 set(BGFX_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake)
 set(BGFX_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake/bgfx/include)
 set(BIMG_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake/bimg/include)
 set(BX_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake/bx/include)
 set(BGFX_LIB_NAME bgfx)
 
-find_path(BGFX_FOUND NAMES "bgfx.h" PATHS "${BGFX_INCLUDE_DIR}/bgfx")
-if((NOT BGFX_FOUND) OR (NOT EXISTS ${BGFX_INCLUDE_DIR}))
-    message("Unable to find Submodule: ${BGFX_LIB_NAME} or file bgfx.h")
-    execute_process(COMMAND git submodule update --init -- ${BGFX_CMAKE_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-else()
-    message("Found Submodule: ${BGFX_LIB_NAME}")
-endif()
-
 add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake bgfx.cmake)
-target_link_libraries(${LIB_NAME} bgfx)
+
+target_link_libraries(${LIB_NAME} ${BGFX_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
 target_include_directories(${LIB_NAME} PUBLIC "${BIMG_INCLUDE_DIR}")
 target_include_directories(${LIB_NAME} PUBLIC "${BX_INCLUDE_DIR}")
@@ -98,134 +94,121 @@ target_compile_definitions(bx PUBLIC
     "$<$<CONFIG:PreProcessorDebug>:BX_CONFIG_DEBUG=1>"
     "$<$<CONFIG:PreRelease>:BX_CONFIG_DEBUG=1>")
 
-message("\n")
-
 ## entt
-message("Adding SubModule: entt")
+AnnounceLibraryAddition("entt")
 set(ENTT_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/entt)
 set(ENTT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/entt/src)
-set(ENTT_LIB_NAME entt)
 
-find_path(ENTT_FOUND NAMES "entt.hpp" PATHS "${ENTT_INCLUDE_DIR}/entt")
-if((NOT ENTT_FOUND) OR (NOT EXISTS ${ENTT_INCLUDE_DIR}))
-    message("Unable to find Submodule: ${ENTT_LIB_NAME} or file entt.hpp")
-    execute_process(COMMAND git submodule update --init -- ${ENTT_CMAKE_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-else()
-    message("Found Submodule: ${ENTT_LIB_NAME}")
-endif()
 target_include_directories(${LIB_NAME} PUBLIC "${ENTT_INCLUDE_DIR}")
 
-message("\n")
-
 ## imgui
-message("Adding SubModule: Dear ImGui")
+AnnounceLibraryAddition("Dear ImGui")
 set(IMGUI_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui)
 set(IMGUI_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui)
 set(IMGUI_LIB_NAME imgui)
 
-find_path(IMGUI_FOUND NAMES "imgui.h" PATHS "${IMGUI_INCLUDE_DIR}/imgui")
-if((NOT IMGUI_FOUND) OR (NOT EXISTS ${IMGUI_INCLUDE_DIR}))
-    message("Unable to find Submodule: ${IMGUI_LIB_NAME} or file imgui.h")
-    execute_process(COMMAND git submodule update --init -- ${IMGUI_CMAKE_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-else()
-    message("Found Submodule: ${IMGUI_LIB_NAME}")
-endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/imgui imgui)
-target_link_libraries(${LIB_NAME} imgui)
+
+target_link_libraries(${LIB_NAME} ${IMGUI_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC "${IMGUI_INCLUDE_DIR}")
 
-message("\n")
-
 ## glfw
-message("Adding Submodule: glfw")
-set(GLFW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glfw/include)
-set(GLFW_LIB_NAME glfw)
+AnnounceLibraryAddition("glfw")
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-find_path(GLFW_FOUND NAMES "glfw3.h" PATHS "${GLFW_INCLUDE_DIR}/GLFW")
-if((NOT GLFW_FOUND) OR (NOT EXISTS ${GLFW_INCLUDE_DIR}))
-    message("Unable to find Submodule: ${GLFW_LIB_NAME} or file glfw3.hpp")
-    execute_process(COMMAND git submodule update --init -- ${GLM_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-else()
-    message("Found Submodule: ${GLFW_LIB_NAME}")
-endif()
+set(GLFW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glfw/include)
+set(GLFW_LIB_NAME glfw)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/glfw glfw)
-target_link_libraries(${LIB_NAME} glfw)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/glfw ${GLFW_LIB_NAME})
+
+target_link_libraries(${LIB_NAME} ${GLFW_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC "${GLFW_INCLUDE_DIR}")
 
-message("\n")
-
 ## GLM - https://github.com/g-truc/glm.git
-message("Adding Submodule: glm")
+AnnounceLibraryAddition("glm")
 set(GLM_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glm)
-set(GLM_LIB_NAME glm)
-find_path(GLM_FOUND NAMES "glm.hpp" PATHS "${GLM_INCLUDE_DIR}/glm")
-if((NOT GLM_FOUND) OR (NOT EXISTS ${GLM_INCLUDE_DIR}))
-    message("Unable to find Submodule: ${GLM_LIB_NAME} or file glm.hpp")
-    execute_process(COMMAND git submodule update --init -- ${GLM_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-else()
-message("Found Submodule: ${GLM_LIB_NAME}")
-endif()
+
 target_include_directories(${LIB_NAME} PUBLIC "${GLM_INCLUDE_DIR}")
 
-message("\n")
-
 ## spdlog
-message("Adding Submodule: spdlog")
-set(SPDLOG_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/spdlog)
+AnnounceLibraryAddition("spdlog")
+set(SPDLOG_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/spdlog/include)
 set(SPDLOG_LIB_NAME spdlog)
-find_path(SPDLOG_FOUND NAMES "spdlog.h" PATHS "${SPDLOG_INCLUDE_DIR}/include/spdlog")
-if((NOT SPDLOG_FOUND) OR (NOT EXISTS ${SPDLOG_INCLUDE_DIR}))
-    message("Unable to find Submodule: ${SPDLOG_LIB_NAME} or file spdlog.h")
-    execute_process(COMMAND git submodule update --init -- ${SPDLOG_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-else()
-message("Found Submodule: ${SPDLOG_LIB_NAME}")
-endif()
-add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/spdlog spdlog)
-set_target_properties(spdlog  PROPERTIES FOLDER spdlog)
-target_include_directories(${LIB_NAME} PUBLIC "${SPDLOG_INCLUDE_DIR}/include")
 
-message("\n")
+add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/spdlog spdlog)
+
+target_include_directories(${LIB_NAME} PUBLIC "${SPDLOG_INCLUDE_DIR}")
+
+set_target_properties(${SPDLOG_LIB_NAME} PROPERTIES FOLDER "${SPDLOG_LIB_NAME}")
 
 ## assimp
+AnnounceLibraryAddition("assimp")
+
 include(CMake/ASSIMPSettings.cmake)
 
-message("Adding Submodule: assimp")
 set(ASSIMP_LIB_NAME assimp)
 set(ASSIMP_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/assimp)
 set(ASSIMP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/assimp/include)
 set(ASSIMP_INCLUDE_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR})
-find_path(ASSIMP_FOUND NAMES "aabb.h" PATHS "${ASSIMP_INCLUDE_DIR}/assimp")
-if((NOT ASSIMP_FOUND) OR (NOT EXISTS ${ASSIMP_INCLUDE_DIR}))
-    message("Unable to find Submodule: ${ASSIMP_LIB_NAME} or file aabb.h")
-    execute_process(COMMAND git submodule update --init -- ${ASSIMP_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-else()
-    message("Found Submodule: ${ASSIMP_LIB_NAME}")
-endif()
+
 add_subdirectory(${ASSIMP_DIR} ${ASSIMP_LIB_NAME})
+
 target_link_libraries(${LIB_NAME} ${ASSIMP_LIB_NAME})
+target_include_directories(${LIB_NAME} PUBLIC ${ASSIMP_INCLUDE_DIR} ${ASSIMP_INCLUDE_GEN_DIR})
+
 set_target_properties(${ASSIMP_LIB_NAME}  PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
 set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
 set_target_properties(zlibstatic PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
-target_include_directories(${LIB_NAME} PUBLIC ${ASSIMP_INCLUDE_DIR} ${ASSIMP_INCLUDE_GEN_DIR})
+
+# JoltPhysics
+
+AnnounceLibraryAddition("JoltPhysics")
+
+include(CMake/JoltPhysicsSettings.cmake)
+
+set(JOLT_LIB_NAME Jolt)
+set(JOLT_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/JoltPhysics)
+set(JOLT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/JoltPhysics)
+set(JOLT_INCLUDE_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
+find_path(JOLT_FOUND NAMES "Jolt.h" PATHS "${JOLT_INCLUDE_DIR}/Jolt")
+if((NOT JOLT_FOUND) OR (NOT EXISTS ${JOLT_INCLUDE_DIR}))
+message("Unable to find Submodule: ${JOLT_LIB_NAME} or file Jolt.h")
+execute_process(COMMAND git submodule update --init -- ${JOLT_INCLUDE_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+message("Found Submodule: ${JOLT_LIB_NAME}")
+endif()
+
+add_subdirectory(${JOLT_DIR}/Build ${JOLT_LIB_NAME})
+target_link_libraries(${LIB_NAME} ${JOLT_LIB_NAME})
+set_target_properties(${JOLT_LIB_NAME}  PROPERTIES FOLDER ${JOLT_LIB_NAME})
+target_include_directories(${LIB_NAME} PUBLIC ${JOLT_INCLUDE_DIR} ${JOLT_INCLUDE_GEN_DIR})
 
 message("\n")
 
+# libmap
+AnnounceLibraryAddition("libmap")
+set (LIBMAP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/libmap-cpp)
+set(LIBMAP_LIB_NAME libmap)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/libmap-cpp ${LIBMAP_LIB_NAME})
+
+target_link_libraries(${LIB_NAME} ${LIBMAP_LIB_NAME})
+target_include_directories(${LIB_NAME} PUBLIC ${LIBMAP_INCLUDE_DIR})
+set_target_properties(${LIBMAP_LIB_NAME}  PROPERTIES FOLDER ${LIBMAP_LIB_NAME})
+
 ## Boost - 
-message("Adding File(s): boost")
+AnnounceLibraryAddition("boost")
 set(BOOST_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/boost)
-set(BOOST_LIB_NAME Boost)
+
 target_include_directories(${LIB_NAME} PUBLIC ${BOOST_INCLUDE_DIR})
 
 message("\n")
 
 # stb
-message("Adding File(s): stb")
+AnnounceLibraryAddition("stb")
 set (STB_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/stb)
-set (STB_LIB_NAME stb)
-target_include_directories(${LIB_NAME} PUBLIC ${STB_INCLUDE_DIR})
 
-message("\n")
+target_include_directories(${LIB_NAME} PUBLIC ${STB_INCLUDE_DIR})
