@@ -12,12 +12,6 @@ namespace DFW
             ibh.idx = bgfx::kInvalidHandle;
         }
 
-        MeshData::MeshData()
-            : file_name("")
-            , source_file("")
-        {
-        }
-
     } // End of namespace ~ DRender.
 
 } // End of namespace ~ DFW.

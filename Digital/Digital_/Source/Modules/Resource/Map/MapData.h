@@ -2,18 +2,18 @@
 
 #include <Modules/Rendering/MeshData.h>
 
+#include <Modules/Resource/Resource.h>
+
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>
 
 #include <glm/vec3.hpp>
 
-#include <string>
-
 namespace DFW
 {
     namespace DResource
     {
-        struct MapData
+        struct MapData : Resource
         {
             struct ColliderData
             {
@@ -25,8 +25,6 @@ namespace DFW
 
             DFW::DRender::MeshData mesh_data;
             std::vector<ColliderData> collider_data;
-
-            std::string file_path;
 
         };
 

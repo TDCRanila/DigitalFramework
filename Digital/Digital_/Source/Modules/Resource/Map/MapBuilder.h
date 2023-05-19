@@ -21,7 +21,7 @@ namespace DFW
             MapBuilder() = default;
             ~MapBuilder() = default;
 
-            UniquePtr<MapData> CreateMap(std::string const& a_filepath);
+            UniquePtr<MapData> CreateMap(FilePath const& a_filepath);
 
         private:
             bool LoadMap();
@@ -40,7 +40,7 @@ namespace DFW
             SharedPtr<LMMapData> _loaded_libmap_data;
 
             UniquePtr<MapData> _map;
-            std::string _map_filepath;
+            FilePath _map_filepath;
 
         };
 

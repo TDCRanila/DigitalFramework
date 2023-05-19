@@ -21,16 +21,16 @@ namespace DFW
             ~ResourceManager() = default;
 
             template <typename ResourceType>
-            ResourceHandle<ResourceType> Load(std::string const& a_filepath_or_identifer);
+            ResourceHandle<ResourceType> Load(FilePath const& a_filepath_or_identifer);
 
-            ResourceHandle<DResource::ImageData> Load(std::string const& a_resource_identifer, uint8 const* a_image_data, size_t const a_image_data_size);
-            ResourceHandle<DRender::TextureData> Load(std::string const& a_resource_identifer, DResource::ImageData const* const a_image);
+            ResourceHandle<DResource::ImageData> Load(std::string_view const a_resource_identifer, uint8 const* a_image_data, size_t const a_image_data_size);
+            ResourceHandle<DRender::TextureData> Load(std::string_view const a_resource_identifer, DResource::ImageData const* const a_image);
             
         private:
             struct ResourceID
             {
                 ResourceID() : _id(DFW_INVALID_RESOUCRE_ID) {}
-                ResourceID(std::string const& a_string_path) : _id(entt::hashed_string::value(a_string_path.c_str())) {}
+                ResourceID(std::string_view const a_string) : _id(entt::hashed_string::value(std::string(a_string).c_str())) {}
 
                 operator entt::id_type() const { return _id; }
 
@@ -48,23 +48,23 @@ namespace DFW
 #pragma region Template Function Implementation
 
         template <typename ResourceType>
-        ResourceHandle<ResourceType> ResourceManager::Load(std::string const& a_filepath)
+        ResourceHandle<ResourceType> ResourceManager::Load(FilePath const& a_filepath)
         {
             static_assert(IsAlwaysFalse<ResourceType>, __FUNCTION__ " - Trying to load of ResourceType which is not supported.");
             return ResourceHandle<ResourceType>();
         }
 
         template <>
-        inline ResourceHandle<ImageData> ResourceManager::Load(std::string const& a_filepath)
+        inline ResourceHandle<ImageData> ResourceManager::Load(FilePath const& a_filepath)
         {
-            auto const&& [it, has_emplaced_resource] = _image_cache.load(ResourceID(a_filepath), DResource::ImageLoader::from_disk_tag{}, a_filepath);
+            auto const&& [it, has_emplaced_resource] = _image_cache.load(ResourceID(a_filepath.string()), DResource::ImageLoader::from_disk_tag{}, a_filepath);
             return it->second;
         }
 
         template <>
-        inline ResourceHandle<DRender::TextureData> ResourceManager::Load(std::string const& a_filepath)
+        inline ResourceHandle<DRender::TextureData> ResourceManager::Load(FilePath const& a_filepath)
         {
-            ResourceID const id(a_filepath);
+            ResourceID const id(a_filepath.string());
             auto const&& [image_it, has_emplaced_image] = _image_cache.load(id, DResource::ImageLoader::from_disk_tag{}, a_filepath);
 
             auto const&& [texture_it, has_emplaced_texture] = _texture_cache.load(id, image_it->second.handle().get());
@@ -72,16 +72,16 @@ namespace DFW
         }
 
         template <>
-        inline ResourceHandle<DRender::MeshData> ResourceManager::Load(std::string const& a_filepath)
+        inline ResourceHandle<DRender::MeshData> ResourceManager::Load(FilePath const& a_filepath)
         {
-            auto const&& [it, has_emplaced_resource] = _mesh_cache.load(ResourceID(a_filepath), DResource::MeshLoader::from_disk_tag{}, a_filepath);
+            auto const&& [it, has_emplaced_resource] = _mesh_cache.load(ResourceID(a_filepath.string()), DResource::MeshLoader::from_disk_tag{}, a_filepath);
             return it->second;
         }
 
         template <>
-        inline ResourceHandle<MapData> ResourceManager::Load(std::string const& a_filepath)
+        inline ResourceHandle<MapData> ResourceManager::Load(FilePath const& a_filepath)
         {
-            auto const&& [it, has_emplaced_resource] = _map_cache.load(ResourceID(a_filepath), MapLoader::from_disk_tag{}, a_filepath);
+            auto const&& [it, has_emplaced_resource] = _map_cache.load(ResourceID(a_filepath.string()), MapLoader::from_disk_tag{}, a_filepath);
             return it->second;
         }
 

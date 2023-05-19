@@ -27,6 +27,8 @@ namespace DFW
 
             void FreeLibraryResources();
             
+            // TODO Should use the FilePath class instead of strings.
+            // Would need to change shader folder structure/usage.
             // Construct ShaderProgram.
             SharedPtr<ShaderProgram> ConstructProgram(std::string const& a_vs_file_name);
             SharedPtr<ShaderProgram> ConstructProgram(std::string const& a_vs_file_name, std::string const& a_fs_file_name);

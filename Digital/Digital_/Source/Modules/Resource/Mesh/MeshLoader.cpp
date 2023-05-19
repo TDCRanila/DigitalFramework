@@ -75,15 +75,12 @@ namespace DFW
 
         } // End of namespace ~ Detail.
 
-        UniquePtr<DRender::MeshData> LoadMesh(std::string const& a_filepath)
+        UniquePtr<DRender::MeshData> LoadMesh(FilePath const& a_filepath)
         {
-            std::string const file_extension = DUtility::GetFileExtension(a_filepath);
-            std::string const file_name = DUtility::GetFileStem(a_filepath);
-
-            DFW_ASSERT(DUtility::DoesFileExist(a_filepath));
+            DFW_ASSERT(a_filepath.IsValidPath());
 
             Assimp::Importer assimp_importer;
-            DFW_ASSERT(assimp_importer.IsExtensionSupported(file_extension));
+            DFW_ASSERT(assimp_importer.IsExtensionSupported(a_filepath.GetFileExtension()));
 
             uint32 const assimp_process_flags(static_cast<uint32>(
                   aiPostProcessSteps::aiProcess_CalcTangentSpace
@@ -99,15 +96,14 @@ namespace DFW
             ));
 
             // Import
-            aiScene const* assimp_scene = assimp_importer.ReadFile(a_filepath, assimp_process_flags);
+            aiScene const* assimp_scene = assimp_importer.ReadFile(a_filepath.string(), assimp_process_flags);
             DFW_ASSERT(assimp_scene);
 
             DFW_ASSERT(assimp_scene->HasMeshes() && "How?");
 
             // Allocate.
             UniquePtr<DRender::MeshData> mesh = MakeUnique<DRender::MeshData>();
-            mesh->source_file = a_filepath;
-            mesh->file_name = DUtility::GetFileName(a_filepath);
+            mesh->filepath = a_filepath;
 
             // Parse all nodes starting from the root.
             auto AssimpMeshParser = [&mesh](Detail::AssimpMesh a_mesh, aiScene const* a_assimp_scene) -> void
@@ -359,7 +355,7 @@ namespace DFW
                             }
                             else
                             {
-                                std::string const image_path(DUtility::GetParentPath(mesh->source_file) + DIR_SLASH + texture_path.C_Str());
+                                FilePath const image_path(DUtility::GetParentPath(mesh->filepath) + DIR_SLASH + texture_path.C_Str());
                                 texture_data = resource_manager->Load<DRender::TextureData>(image_path);
                             }
 

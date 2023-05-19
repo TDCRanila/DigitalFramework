@@ -1,12 +1,14 @@
 #pragma once
 
+#include <Modules/Resource/Resource.h>
+
 #include <bgfx/bgfx.h>
 
 namespace DFW
 {
     namespace DRender
     {
-        struct TextureData
+        struct TextureData : public Resource
         {
             TextureData();
             TextureData(bgfx::TextureHandle a_handle, int32 a_width, int32 a_height, uint64 a_flags, uint8 a_stage);

@@ -1,18 +1,16 @@
 #pragma once
 
-#include <string>
+#include <Modules/Resource/Resource.h>
 
 namespace DFW
 {
     namespace DResource
     {
-        struct ImageData
+        struct ImageData : public Resource
         {
             ImageData();
             ~ImageData();
 
-            std::string file_name;
-            std::string file_extension;
             uint16 width;
             uint16 height;
             uint8 components_per_pixel;

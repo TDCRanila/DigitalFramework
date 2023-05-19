@@ -3,6 +3,8 @@
 #include <Modules/Rendering/TextureData.h>
 #include <Modules/Math/Geometry.h>
 
+#include <Modules/Resource/Resource.h>
+
 #include <bgfx/bgfx.h>
 
 #include <vector>
@@ -43,14 +45,12 @@ namespace DFW
             std::vector<Primitive> primitives;
         };
 
-        struct MeshData
+        struct MeshData : public Resource
         {
-            MeshData();
+            MeshData() = default;
             ~MeshData() = default;
 
             std::vector<SubMeshData> submeshes;
-            std::string file_name;
-            std::string source_file;
 
         };
 

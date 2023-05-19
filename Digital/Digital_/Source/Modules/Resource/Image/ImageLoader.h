@@ -2,7 +2,7 @@
 
 #include <CoreSystems/Memory.h>
 
-#include <string>
+#include <Utility/FilePath.h>
 
 namespace DFW
 {
@@ -11,7 +11,7 @@ namespace DFW
         // FW Declare.
         struct ImageData;
 
-        DFW::UniquePtr<ImageData> LoadImageData(std::string const& a_filepath);
+        DFW::UniquePtr<ImageData> LoadImageData(FilePath const& a_filepath);
         DFW::UniquePtr<ImageData> LoadImageDataFromMemory(uint8 const* a_image_data, size_t const a_image_size);
 
         void UnloadImageData(ImageData* a_image_data);

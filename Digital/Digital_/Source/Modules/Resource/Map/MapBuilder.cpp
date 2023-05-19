@@ -72,9 +72,11 @@ namespace DFW
 
         } // End of namespace ~ Detail.
 
-        UniquePtr<MapData> MapBuilder::CreateMap(std::string const& a_filepath)
+        UniquePtr<MapData> MapBuilder::CreateMap(FilePath const& a_filepath)
         {
             _map_filepath = a_filepath;
+            if (!_map_filepath.IsValidPath())
+                return nullptr;
 
             if (!LoadMap())
                 return nullptr;
@@ -87,16 +89,9 @@ namespace DFW
         bool MapBuilder::LoadMap()
         {
             // Attempt to load the map data.
-            if (!DUtility::DoesFileExist(_map_filepath))
-            {   
-                // Failed to find map data file.
-                return false;
-            }
-
             _loaded_libmap_data = MakeUnique<LMMapData>();
-
             LMMapParser map_parser(_loaded_libmap_data);
-            if (!map_parser.load_from_path(_map_filepath.c_str()))
+            if (!map_parser.load_from_path(_map_filepath.string().c_str()))
             {
                 // Failed to load map data from file.
                 return false;
@@ -114,7 +109,7 @@ namespace DFW
             geometry_generator.run();
 
             _map = MakeUnique<MapData>();
-            _map->file_path = _map_filepath;
+            _map->filepath = _map_filepath;
 
             for (int32 index(0); index < _loaded_libmap_data->entity_count; ++index)
             {
@@ -301,16 +296,16 @@ namespace DFW
 
                 bool const is_empty_texture = (texture_name == "") || (texture_name == "__TB_empty");
 
-                std::filesystem::path image_path;
+                FilePath image_path;
                 if (!is_empty_texture)
                 {
                     for (const char* file_extension : Detail::SupportedTextureExtensionsList)
                     {
                         // TODO: Change resource handling.
                         // For now, the map textures should be next to the .map file in the same folder.
-                        std::string const check_path(DUtility::GetParentPath(_map_filepath) + DIR_SLASH + DUtility::GetFileName(texture_name) + '.' + file_extension);
+                        FilePath const check_path(DUtility::GetParentPath(_map_filepath) + DIR_SLASH + DUtility::GetFileName(texture_name) + '.' + file_extension);
 
-                        if (DUtility::DoesFileExist(check_path))
+                        if (check_path.IsValidPath())
                         {
                             image_path = check_path;
                             break;
@@ -325,7 +320,7 @@ namespace DFW
                     continue;
                 }
 
-                ResourceHandle<DRender::TextureData> const& texture = resource_manager->Load<DRender::TextureData>(image_path.string());
+                ResourceHandle<DRender::TextureData> const& texture = resource_manager->Load<DRender::TextureData>(image_path);
                 _cached_map_textures.emplace(texture_name, texture.handle());
             }
         }
