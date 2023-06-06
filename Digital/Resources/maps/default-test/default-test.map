@@ -1,0 +1,124 @@
+// Game: Generic
+// Format: Standard
+// entity 0
+{
+"classname" "worldspawn"
+"_tb_mod" "textures"
+"_tb_textures" "textures;textures/makkon3;textures/png"
+// brush 0
+{
+( 0 0 0 ) ( 0 -1024 0 ) ( 0 -1024 -32 ) makkon3/techflat2_red1 2 0 0 1 1
+( 0 -1024 0 ) ( 1024 -1024 0 ) ( 1024 -1024 -32 ) makkon3/techflat2_red1 0 0 0 1 1
+( 1024 -1024 -32 ) ( 1024 0 -32 ) ( 0 0 -32 ) makkon3/techflat2_red1 0 -2 0 1 1
+( 0 0 0 ) ( 1024 0 0 ) ( 1024 -1024 0 ) makkon3/techflat2_red1 0 -0.5 0 4 4
+( 1024 0 -32 ) ( 1024 0 0 ) ( 0 0 0 ) makkon3/techflat2_red1 0 0 0 1 1
+( 1024 -1024 0 ) ( 1024 0 0 ) ( 1024 0 -32 ) makkon3/techflat2_red1 2 0 0 1 1
+}
+// brush 1
+{
+( 384 -128 128 ) ( 384 -64 0 ) ( 384 -64 128 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 448 -128 128 ) ( 384 -128 0 ) ( 384 -128 128 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 448 -64 0 ) ( 384 -128 0 ) ( 448 -128 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 448 -64 128 ) ( 384 -128 128 ) ( 384 -64 128 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 448 -64 128 ) ( 384 -64 0 ) ( 448 -64 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 448 -64 128 ) ( 448 -128 0 ) ( 448 -128 128 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 2
+{
+( 384 -384 256 ) ( 384 -448 256 ) ( 384 -448 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 384 -448 256 ) ( 448 -448 256 ) ( 448 -448 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 448 -448 0 ) ( 448 -384 0 ) ( 384 -384 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 384 -384 256 ) ( 448 -384 256 ) ( 448 -448 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 448 -384 0 ) ( 448 -384 256 ) ( 384 -384 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 448 -448 256 ) ( 448 -384 256 ) ( 448 -384 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 3
+{
+( 64 -448 256 ) ( 64 -384 0 ) ( 64 -384 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 128 -448 256 ) ( 64 -448 0 ) ( 64 -448 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 128 -384 0 ) ( 64 -448 0 ) ( 128 -448 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 64 -384 192 ) ( 192 -448 192 ) ( 64 -448 192 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 128 -384 256 ) ( 64 -384 0 ) ( 128 -384 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 128 -384 256 ) ( 128 -448 0 ) ( 128 -448 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 4
+{
+( 64 -384 256 ) ( 64 -704 256 ) ( 64 -704 192 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 64 -640 256 ) ( 128 -640 192 ) ( 64 -640 192 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 128 -704 192 ) ( 128 -384 192 ) ( 64 -384 192 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 64 -384 256 ) ( 128 -384 256 ) ( 128 -704 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 128 -384 192 ) ( 128 -384 256 ) ( 64 -384 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 128 -704 256 ) ( 128 -384 256 ) ( 128 -384 192 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 5
+{
+( 512 -128 128 ) ( 512 -384 128 ) ( 512 -384 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 512 -384 128 ) ( 896 -384 0 ) ( 512 -384 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 896 -384 0 ) ( 896 -128 0 ) ( 512 -128 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 512 -128 0 ) ( 896 -128 0 ) ( 512 -128 128 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 512 -128 128 ) ( 896 -128 0 ) ( 896 -384 0 ) makkon3/techflat2_ylw1 256 -526 0 1 1
+}
+// brush 6
+{
+( 896 -960 64 ) ( 896 -896 0 ) ( 896 -896 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 960 -960 64 ) ( 896 -960 0 ) ( 896 -960 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 960 -896 0 ) ( 896 -960 0 ) ( 960 -960 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 960 -896 64 ) ( 896 -960 64 ) ( 896 -896 64 ) makkon3/techflat2_red1 0 0 0 1 1
+( 960 -896 64 ) ( 896 -896 0 ) ( 960 -896 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 960 -896 64 ) ( 960 -960 0 ) ( 960 -960 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 7
+{
+( 576 -960 64 ) ( 576 -896 0 ) ( 576 -896 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 640 -960 64 ) ( 576 -960 0 ) ( 576 -960 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 640 -896 0 ) ( 576 -960 0 ) ( 640 -960 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 640 -896 64 ) ( 576 -960 64 ) ( 576 -896 64 ) makkon3/techflat2_red1 0 0 0 1 1
+( 640 -896 64 ) ( 576 -896 0 ) ( 640 -896 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 640 -896 64 ) ( 640 -960 0 ) ( 640 -960 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 8
+{
+( 896 -640 64 ) ( 896 -576 0 ) ( 896 -576 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 960 -640 64 ) ( 896 -640 0 ) ( 896 -640 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 960 -576 0 ) ( 896 -640 0 ) ( 960 -640 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 960 -576 64 ) ( 896 -640 64 ) ( 896 -576 64 ) makkon3/techflat2_red1 0 0 0 1 1
+( 960 -576 64 ) ( 896 -576 0 ) ( 960 -576 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 960 -576 64 ) ( 960 -640 0 ) ( 960 -640 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 9
+{
+( 576 -640 64 ) ( 576 -576 0 ) ( 576 -576 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 640 -640 64 ) ( 576 -640 0 ) ( 576 -640 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 640 -576 0 ) ( 576 -640 0 ) ( 640 -640 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 640 -576 64 ) ( 576 -640 64 ) ( 576 -576 64 ) makkon3/techflat2_red1 0 0 0 1 1
+( 640 -576 64 ) ( 576 -576 0 ) ( 640 -576 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 640 -576 64 ) ( 640 -640 0 ) ( 640 -640 64 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 10
+{
+( 0 -640 256 ) ( 0 -704 256 ) ( 0 -704 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 0 -704 256 ) ( 192 -704 256 ) ( 192 -704 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 192 -704 0 ) ( 192 -640 0 ) ( 0 -640 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 0 -704 224 ) ( 192 -576 224 ) ( 192 -704 224 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 192 -640 0 ) ( 192 -640 256 ) ( 0 -640 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 192 -704 256 ) ( 192 -640 256 ) ( 192 -640 0 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 11
+{
+( 0 -640 256 ) ( 0 -1024 256 ) ( 0 -1024 224 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 0 -704 224 ) ( 0 -704 256 ) ( 192 -704 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 192 -1024 224 ) ( 192 -640 224 ) ( 0 -640 224 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 0 -640 256 ) ( 192 -640 256 ) ( 192 -1024 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 192 -640 224 ) ( 192 -640 256 ) ( 0 -640 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 192 -1024 256 ) ( 192 -640 256 ) ( 192 -640 224 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+// brush 12
+{
+( 0 -704 256 ) ( 0 -1024 256 ) ( 0 -1024 248 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 0 -1024 256 ) ( 192 -1024 256 ) ( 192 -1024 248 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 192 -1024 248 ) ( 192 -704 248 ) ( 0 -704 248 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 0 -704 256 ) ( 192 -704 256 ) ( 192 -1024 256 ) makkon3/techflat2_grey1 0 0 270.00006 1 1
+( 192 -704 248 ) ( 192 -704 256 ) ( 0 -704 256 ) makkon3/techflat2_grey1 0 0 0 1 1
+( 192 -1024 256 ) ( 192 -704 256 ) ( 192 -704 248 ) makkon3/techflat2_grey1 0 0 0 1 1
+}
+}
