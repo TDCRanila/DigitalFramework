@@ -1,4 +1,4 @@
-#include <Zynthurism/Game/TestEditorStage.h>
+#include <Zynthurism/Test/TestEditorStage.h>
 
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Camera/CameraComponent.h>
@@ -47,9 +47,7 @@ namespace DGame
         float32 const speed = 10.0f;
 
         DFW::Transform& transform = main_entity.GetComponent<DFW::TransformComponent>();
-        transform.translation.x += dir.x * dt * speed;
-        transform.translation.y += dir.y * dt * speed;
-        transform.translation.z += dir.z * dt * speed;
+        transform.SetTranslation(transform.GetTranslation() + glm::vec3(dir * dt * speed));
 
         EditorStage::OnUpdate();
     }
@@ -94,7 +92,8 @@ namespace DGame
             DFW::Entity xyz = game_world->SpawnGameObject(xyz_spawn_info);
 
             DFW::ModelComponent& xyz_model = xyz.AddComponent<DFW::ModelComponent>();
-            xyz_model.mesh = DFW::DResource::LoadMesh(model_dir + DIR_SLASH + "xyz" + DIR_SLASH + "xyz_10x10m.glb");
+            DFW:: FilePath filepath(model_dir + DIR_SLASH + "xyz" + DIR_SLASH + "xyz_10x10m.glb");
+            xyz_model.mesh = DFW::DResource::LoadMesh(filepath);
         }
 
         {
@@ -106,7 +105,8 @@ namespace DGame
             DFW::Entity sponza = game_world->SpawnGameObject(sponza_spawn_info);
 
             DFW::ModelComponent& sponza_model = sponza.AddComponent<DFW::ModelComponent>();
-            sponza_model.mesh = DFW::DResource::LoadMesh(model_dir + DIR_SLASH + "sponza" + DIR_SLASH + "sponza.gltf");
+            DFW::FilePath filepath(model_dir + DIR_SLASH + "sponza" + DIR_SLASH + "sponza.gltf");
+            sponza_model.mesh = DFW::DResource::LoadMesh(filepath);
         }
 
         {

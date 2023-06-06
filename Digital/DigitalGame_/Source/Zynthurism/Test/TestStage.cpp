@@ -1,4 +1,4 @@
-#include <Zynthurism/Game/TestStage.h>
+#include <Zynthurism/Test/TestStage.h>
 
 namespace DGame
 {
