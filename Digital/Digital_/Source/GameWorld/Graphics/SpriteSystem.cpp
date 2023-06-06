@@ -235,7 +235,7 @@ namespace DFW
 			{
 				// 64 Bytes - Matrix
 				glm::mat4* mtx = (glm::mat4*)data_ptr_shifter;
-				mtx[0] = transform.GetTransformMatrix();
+				mtx[0] = transform.GetWorldTransformMatrix();
 
 				// 16 Bytes - Sprite Colour.
 				glm::vec4* color = (glm::vec4*)&data_ptr_shifter[64];

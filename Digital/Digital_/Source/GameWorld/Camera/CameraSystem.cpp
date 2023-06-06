@@ -36,7 +36,7 @@ namespace DFW
             a_camera.up     = glm::rotate(a_camera.orientation, Detail::world_up);
             a_camera.front  = glm::rotate(a_camera.orientation, Detail::world_front);
 
-            a_camera.view   = glm::inverse(a_transform.GetTransformMatrix() * glm::toMat4(a_camera.orientation));
+            a_camera.view   = glm::inverse(a_transform.GetWorldTransformMatrix() * glm::toMat4(a_camera.orientation));
         }
 
     } // End of namespace ~ Detail.
@@ -273,8 +273,8 @@ namespace DFW
 
         TimeUnit const dt = DFW::CoreService().GetGameClock()->GetLastFrameDeltaTime();
         Transform& transform = a_camera.GetOwner().GetComponent<TransformComponent>();
-        transform.translation += a_camera.right * (dir.x * dt * a_camera.fly_speed);
-        transform.translation += a_camera.front * (dir.z * dt * a_camera.fly_speed);
+        transform.Translate(a_camera.right * (dir.x * dt * a_camera.fly_speed));
+        transform.Translate(a_camera.front * (dir.z * dt * a_camera.fly_speed));
     }
 
     void CameraSystem::Debug_ToggleCameraMode()
