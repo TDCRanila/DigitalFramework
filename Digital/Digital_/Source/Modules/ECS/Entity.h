@@ -26,7 +26,7 @@ namespace DFW
 			Entity(EntityHandle a_entity_handle, EntityRegistry& a_registry);
 			~Entity() = default;
 
-			std::strong_ordering operator<=>(Entity const& a_other) const;
+			bool operator==(Entity const& a_other) const;
 
 		public:
 			DFW::DUID GetID() const;
@@ -34,6 +34,15 @@ namespace DFW
 
 			std::string const& GetName() const;
 			void SetName(std::string const& a_new_name);
+
+		public:
+			void AddChild(Entity a_child_to_add);
+			void RemoveChild(Entity a_child_to_remove);
+			void SetParent(Entity a_parent);
+
+			bool IsParentOfEntity(Entity const& a_child) const;
+			bool IsChildOfEntity(Entity const& a_parent) const;
+			bool IsChildInEntityHierachyOf(Entity const& a_parent) const;
 
 		public:
 			// Entity Component Management.

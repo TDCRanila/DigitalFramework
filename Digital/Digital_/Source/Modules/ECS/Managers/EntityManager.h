@@ -47,6 +47,7 @@ namespace DFW
 
 		private:
 			void CleanDestructionMarkedEntities(EntityRegistry& a_registry);
+			void DestroyEntityAndChilderen(Entity const& a_current_entity) const;
 
 		};
 
