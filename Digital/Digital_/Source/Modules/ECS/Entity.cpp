@@ -24,29 +24,29 @@ namespace DFW
 
 		DFW::DUID Entity::GetID() const
 		{
-			return _registry->ENTT().get<EntityDataComponent>(_handle).id;
+			return GetComponent<EntityDataComponent>().id;
 		}
 
 		EntityTypeID Entity::GetTypeID() const
 		{
-			return _registry->ENTT().get<EntityDataComponent>(_handle).type;
+			return GetComponent<EntityDataComponent>().type;
 		}
 
-		std::string Entity::GetName() const
+		std::string const& Entity::GetName() const
 		{
-			return _registry->ENTT().get<EntityDataComponent>(_handle).name;
+			return GetComponent<EntityDataComponent>().name;
 		}
 
 		void Entity::SetName(std::string const& a_new_name)
 		{
-			std::string& name = _registry->ENTT().get<EntityDataComponent>(_handle).name;
+			EntityDataComponent& data_component = GetComponent<EntityDataComponent>();
+			std::string& entity_name_ref = data_component.name;
 
-			_registry->_entity_name_register.erase(name);
+			_registry->_entity_name_register.erase(entity_name_ref);
 
-			name = a_new_name;
+			entity_name_ref = a_new_name;
 
-			_registry->_entity_name_register.emplace(name, _handle);
-			
+			_registry->_entity_name_register.emplace(entity_name_ref, _handle);
 		}
 
 	} // End of namespace ~ DECS.

@@ -19,7 +19,7 @@ namespace DFW
 		// FW Declare.
 		class EntityManager;
 
-		class Entity : public InternalEntity, public DFactory::AutoFactory<Entity>
+		class Entity : public InternalEntity
 		{
 		public:
 			Entity() = default;
@@ -32,7 +32,7 @@ namespace DFW
 			DFW::DUID GetID() const;
 			EntityTypeID GetTypeID() const;
 
-			std::string GetName() const;
+			std::string const& GetName() const;
 			void SetName(std::string const& a_new_name);
 
 		public:
