@@ -13,6 +13,8 @@
 
 namespace DFW
 {
+    struct WorldRootTagComponent : DECS::Component::StrictRegistrar<WorldRootTagComponent> { };
+
     class GameWorld
     {
     public:
@@ -39,6 +41,7 @@ namespace DFW
         bool IsEntityAGameObject(GameObject const& a_game_object) const;
 
     private:
+        GameObject _world_root;
         UniquePtr<DECS::ECSModule> _ecs;
 
     };
@@ -53,6 +56,7 @@ namespace DFW
         // Setup additional Entity data.
         game_object.SetName(a_spawn_info.name);
         game_object.AddComponent<TransformComponent>(a_spawn_info.transform);
+        game_object.SetParent(_world_root);
 
         // GameObject Related setup.
         game_object.AddComponent<GameObjectTagComponent>();
