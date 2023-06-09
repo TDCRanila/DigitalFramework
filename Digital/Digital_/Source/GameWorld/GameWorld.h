@@ -56,7 +56,7 @@ namespace DFW
         // Setup additional Entity data.
         game_object.SetName(a_spawn_info.name);
         game_object.AddComponent<TransformComponent>(a_spawn_info.transform);
-        game_object.SetParent(_world_root);
+        game_object.SetParent(a_spawn_info.parent.IsEntityValid() ? a_spawn_info.parent : _world_root);
 
         // GameObject Related setup.
         game_object.AddComponent<GameObjectTagComponent>();
