@@ -29,8 +29,6 @@ namespace DFW
 
 		void SystemManager::UpdateSystems(EntityRegistry& a_registry)
 		{
-			DFW_ASSERT(a_registry.IsValid() && "Updating DECS Systems, but registry is invalid.");
-
 			if (_systems.empty())
 			{
 				return;

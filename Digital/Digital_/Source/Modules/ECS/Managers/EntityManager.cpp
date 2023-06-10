@@ -46,25 +46,6 @@ namespace DFW
 			}
 		}
 
-		void EntityManager::CleanDestructionMarkedEntities(EntityRegistry& a_registry)
-		{
-			DFW_ASSERT(a_registry.IsValid() && "Attempting to manage entities, but the registry is invalid.");
-
-			std::unordered_set<EntityHandle>& marked_entities = a_registry._marked_entities_for_destruction;
-
-			if (marked_entities.empty())
-				return;
-
-			for (EntityHandle const handle : marked_entities)
-			{
-				a_registry.UnregisterEntity(InternalEntity(handle, &a_registry));
-			}
-
-			a_registry.ENTT().destroy(marked_entities.begin(), marked_entities.end());
-
-			marked_entities.clear();
-		}
-
 	} // End of namespace ~ DECS.
 
 } // End of namespace ~ DFW.

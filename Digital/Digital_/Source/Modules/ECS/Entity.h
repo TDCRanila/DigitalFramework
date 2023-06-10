@@ -8,8 +8,6 @@
 
 #include <CoreSystems/DUID.h>
 
-#include <Utility/AutoFactory/AutoFactory.h>
-
 #include <string>
 
 namespace DFW

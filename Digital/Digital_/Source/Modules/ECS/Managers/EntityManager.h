@@ -18,18 +18,12 @@ namespace DFW
 {
 	namespace DECS
 	{
-		// FW Declare.
-		class ECSModule;
-
 		template <typename EntityType>
 		concept IsValidEntityType = IsBasedOf<EntityType, Entity>;
 		constexpr StringLiteral DFW_BASE_ENTITY_FAMILY_TYPE_NAME = "Entity";
 
 		class EntityManager final
 		{
-		private:
-			friend ECSModule;
-
 		public:
 			EntityManager() = default;
 			~EntityManager() = default;
@@ -44,7 +38,6 @@ namespace DFW
 			EntityTypeID GetEntityTypeID() const;
 
 		private:
-			void CleanDestructionMarkedEntities(EntityRegistry& a_registry);
 			void DestroyEntityAndChilderen(Entity const& a_current_entity) const;
 
 		};
@@ -54,13 +47,6 @@ namespace DFW
 		template <StringLiteral entity_type_name>
 		Entity EntityManager::CreateEntity(EntityRegistry& a_registry) const
 		{
-			if (!a_registry.IsValid())
-			{
-				DFW_ERRORLOG("Attempting to create a new entitiy, but the registry is invalid.");
-				DFW_ASSERT(a_registry.IsValid() && "Attempting to create a new entitiy, but the registry is invalid.");
-				return Entity();
-			}
-
 			// Construct a new Entity.
 			Entity entity(a_registry.ENTT().create(), a_registry);
 
@@ -71,7 +57,7 @@ namespace DFW
 			data_component.name = DFW_DEFAULT_ENTITY_NAME + std::to_string(static_cast<uint32>(entity._handle));
 
 			// Register Entity in EntityRegistry registers.
-			a_registry.RegisterEntity(entity);
+			a_registry.RegisterEntity(entity.GetHandle());
 
 			return entity;
 		}

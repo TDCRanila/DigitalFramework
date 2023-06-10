@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Modules/ECS/EntityHandle.h>
-#include <Modules/ECS/Internal/InternalEntity.h>
 
 #include <CoreSystems/DUID.h>
 
@@ -16,6 +15,7 @@ namespace DFW
     namespace DECS
     {
         // FW Declare
+        class ECSModule;
         class EntityManager;
         class Entity;
 
@@ -27,39 +27,35 @@ namespace DFW
         class EntityRegistry final
         {
         private:
+            friend ECSModule;
             friend EntityManager;
             friend Entity;
-            friend InternalEntity;
 
         public:
-            EntityRegistry(std::string const& a_registry_name);
+            EntityRegistry();
             ~EntityRegistry();
-
-            std::strong_ordering operator<=>(EntityRegistry const& a_other) const = default;
             
-        public:
+            DFW::DUID GetID() const { return _id; }
             entt::registry& ENTT() { return _entt_registry; }
 
+        public:
             Entity GetEntity(DFW::DUID const a_entity_id);
             Entity GetEntity(std::string const& a_entity_name);
             std::vector<Entity> GetEntities();
 
-            bool IsValid() const;
-            DFW::DUID GetID() const { return _id; }
-            std::string GetName() const { return _name; };
+            bool IsEntityMarkedForDestruction(EntityHandle const a_entity_handle) const;
 
         private:
-            void RegisterEntity(InternalEntity const& a_entity);
-            void UnregisterEntity(InternalEntity const& a_entity);
+            void CleanDestructionMarkedEntities();
+            void RegisterEntity(EntityHandle const a_entity_handle);
+            void UnregisterEntity(EntityHandle const a_entity_handle);
 
         private:
             entt::registry _entt_registry;
             DFW::DUID _id;
-            std::string _name;
 
             EntityDUIDRegisterMap _entity_duid_register;
             EntityNameRegisterMap _entity_name_register;
-            std::unordered_set<EntityHandle> _registered_entities;
             std::unordered_set<EntityHandle> _marked_entities_for_destruction;
 
         };
