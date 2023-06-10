@@ -39,9 +39,7 @@ namespace DFW
 			Entity CreateEntity(EntityRegistry& a_registry) const;
 
 			void DestroyEntity(Entity const& a_entity) const;
-			
-			Entity AttachEntity(Entity const& a_child, Entity const& a_parent) const;
-			
+						
 			template <StringLiteral entity_type_name>
 			EntityTypeID GetEntityTypeID() const;
 
