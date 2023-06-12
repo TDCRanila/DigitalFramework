@@ -17,7 +17,7 @@ namespace DFW
             , _registry(a_registry)
         {
             DFW_ASSERT(IsValidEntityHandle(_handle));
-            DFW_ASSERT(_registry && _registry->IsValid());
+            DFW_ASSERT(_registry);
         }
 
         bool InternalEntity::IsEntityValid() const
@@ -36,11 +36,10 @@ namespace DFW
 
         bool InternalEntity::IsMarkedForDestruction() const
         {
-            std::unordered_set<EntityHandle> const& marked_entities = _registry->_marked_entities_for_destruction;
-            if (auto const& it = marked_entities.find(_handle); it != marked_entities.end())
-                return true;
-            else
-                return false;
+            if (_registry)
+                return _registry->IsEntityMarkedForDestruction(_handle);
+
+            return false;
         }
 
     } // End of namespace ~ DECS.

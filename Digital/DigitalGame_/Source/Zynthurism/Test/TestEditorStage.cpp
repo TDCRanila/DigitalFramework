@@ -1,4 +1,4 @@
-#include <Zynthurism/Game/TestEditorStage.h>
+#include <Zynthurism/Test/TestEditorStage.h>
 
 #include <GameWorld/TransformComponent.h>
 #include <GameWorld/Camera/CameraComponent.h>
@@ -47,9 +47,7 @@ namespace DGame
         float32 const speed = 10.0f;
 
         DFW::Transform& transform = main_entity.GetComponent<DFW::TransformComponent>();
-        transform.translation.x += dir.x * dt * speed;
-        transform.translation.y += dir.y * dt * speed;
-        transform.translation.z += dir.z * dt * speed;
+        transform.SetTranslation(transform.GetTranslation() + glm::vec3(dir * dt * speed));
 
         EditorStage::OnUpdate();
     }

@@ -120,8 +120,8 @@ namespace DFW
     void DebugRenderSystem::DrawBox(Transform a_transform, glm::vec3 const& a_extend, DebugDrawSettings const& a_settings)
     {
         bx::Obb obb;
-        a_transform.scale *= a_extend;
-        bx::memCopy(obb.mtx, &a_transform.GetTransformMatrix()[0][0], sizeof(glm::mat4));
+        a_transform.SetScale(a_transform.GetScale() * a_extend);
+        bx::memCopy(obb.mtx, glm::value_ptr(a_transform.GetWorldTransformMatrix()), sizeof(glm::mat4));
         
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
@@ -136,7 +136,7 @@ namespace DFW
         sphere.center = { 0.0f, 0.0f, 0.0f };
         sphere.radius = a_sphere_radius;
         
-        _dde->setTransform(&a_transform.GetTransformMatrix()[0][0]);
+        _dde->setTransform(glm::value_ptr(a_transform.GetWorldTransformMatrix()));
         _dde->setLod(a_settings.shape_complexity_lod);
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
@@ -152,7 +152,7 @@ namespace DFW
         cylinder.end = bx::Vec3(0.0f,  (a_cylinder_height * 0.5f), 0.0f);
         cylinder.radius = a_cylinder_radius;
 
-        _dde->setTransform(&a_transform.GetTransformMatrix()[0][0]);
+        _dde->setTransform(glm::value_ptr(a_transform.GetWorldTransformMatrix()));
         _dde->setLod(a_settings.shape_complexity_lod);
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
@@ -168,7 +168,7 @@ namespace DFW
         capsule.end = bx::Vec3(0.0f,  (a_capsule_height * 0.5f), 0.0f);
         capsule.radius = a_capsule_radius;
 
-        _dde->setTransform(&a_transform.GetTransformMatrix()[0][0]);
+        _dde->setTransform(glm::value_ptr(a_transform.GetWorldTransformMatrix()));
         _dde->setLod(a_settings.shape_complexity_lod);
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
@@ -184,7 +184,7 @@ namespace DFW
         cone.end = bx::Vec3(0.0f, a_cone_height , 0.0f);
         cone.radius = a_cone_radius;
 
-        _dde->setTransform(&a_transform.GetTransformMatrix()[0][0]);
+        _dde->setTransform(glm::value_ptr(a_transform.GetWorldTransformMatrix()));
         _dde->setLod(a_settings.shape_complexity_lod);
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
@@ -198,7 +198,7 @@ namespace DFW
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
-        _dde->drawOrb(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z, a_orb_radius);
+        _dde->drawOrb(a_transform.GetWorldTranslation().x, a_transform.GetWorldTranslation().y, a_transform.GetWorldTranslation().z, a_orb_radius);
     }
 
     void DebugRenderSystem::DrawAxis(Transform const& a_transform, float32 a_axis_length, DebugDrawSettings const& a_settings)
@@ -206,7 +206,7 @@ namespace DFW
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
-        _dde->drawAxis(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z, a_axis_length);
+        _dde->drawAxis(a_transform.GetWorldTranslation().x, a_transform.GetWorldTranslation().y, a_transform.GetWorldTranslation().z, a_axis_length);
     }
 
     void DebugRenderSystem::DrawGridX(glm::vec3 const& a_center_pos, uint32 a_grid_size, float32 a_grid_step, DebugDrawSettings const& a_settings)
@@ -234,7 +234,7 @@ namespace DFW
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
-        _dde->drawFrustum(&a_view_projection_matrix[0][0]);
+        _dde->drawFrustum(glm::value_ptr(a_view_projection_matrix));
     }
 
-}
+} // End of namespace ~ DFW.

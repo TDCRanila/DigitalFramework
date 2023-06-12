@@ -2,6 +2,7 @@
 
 #include <GameWorld/Editor/GameViewport.h>
 #include <GameWorld/GameWorld.h>
+#include <GameWorld/TransformSystem.h>
 #include <GameWorld/Camera/CameraSystem.h>
 #include <GameWorld/Graphics/RenderSystem.h>
 #include <GameWorld/Graphics/SpriteSystem.h>
@@ -85,6 +86,7 @@ namespace DFW
             _game_world->Init();
             
             DECS::ECSModule& ecs = _game_world->GetECS();
+            ecs.SystemManager().AddSystem<DFW::TransformSystem>();
             ecs.SystemManager().AddSystem<DFW::RenderSystem>();
             ecs.SystemManager().AddSystem<DFW::SpriteSystem>();
             ecs.SystemManager().AddSystem<DFW::DebugRenderSystem>();

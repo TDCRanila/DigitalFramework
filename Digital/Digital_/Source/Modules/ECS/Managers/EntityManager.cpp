@@ -1,5 +1,7 @@
 #include <Modules/ECS/Managers/EntityManager.h>
 
+#include <Modules/ECS/Internal/EntityRelationComponent.h>
+
 #include <CoreSystems/Logging/Logger.h>
 
 namespace DFW
@@ -19,30 +21,29 @@ namespace DFW
 				return;
 			}
 
-			// Mark the Entity to be destroyed whenever the clean-up is performed.
-			std::unordered_set<EntityHandle>& marked_entities = a_entity._registry->_marked_entities_for_destruction;
-			auto const& [it, insertion_result] = marked_entities.emplace(a_entity.GetHandle());
-			if (!insertion_result)
-				DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
+			DestroyEntityAndChilderen(a_entity);
 		}
 
-		void EntityManager::CleanDestructionMarkedEntities(EntityRegistry& a_registry)
+		void EntityManager::DestroyEntityAndChilderen(Entity const& a_current_entity) const
 		{
-			DFW_ASSERT(a_registry.IsValid() && "Attempting to manage entities, but the registry is invalid.");
+			std::unordered_set<EntityHandle>& marked_entities = a_current_entity._registry->_marked_entities_for_destruction;
+			auto const& [it, insertion_result] = marked_entities.emplace(a_current_entity.GetHandle());
+			if (!insertion_result)
+				DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
 
-			std::unordered_set<EntityHandle>& marked_entities = a_registry._marked_entities_for_destruction;
+			DECS::EntityRelationComponent const* relation_component = a_current_entity.TryGetComponent<DECS::EntityRelationComponent>();
+			if (!relation_component)
+				return; // No childeren or siblings.
 
-			if (marked_entities.empty())
-				return;
-
-			for (EntityHandle const handle : marked_entities)
+			// Traverse entity hierachy.
+			Entity current_child = relation_component->first;
+			while (current_child.IsEntityValid())
 			{
-				a_registry.UnregisterEntity(InternalEntity(handle, &a_registry));
+				DestroyEntityAndChilderen(current_child);
+
+				if (DECS::EntityRelationComponent const* child_relation_component = current_child.TryGetComponent<DECS::EntityRelationComponent>())
+					current_child = child_relation_component->next;
 			}
-
-			a_registry.ENTT().destroy(marked_entities.begin(), marked_entities.end());
-
-			marked_entities.clear();
 		}
 
 	} // End of namespace ~ DECS.

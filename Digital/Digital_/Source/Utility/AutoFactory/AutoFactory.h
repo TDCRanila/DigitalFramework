@@ -1,11 +1,12 @@
 #pragma once
 
+#include <CoreSystems/Memory.h>
+
 #include <Utility/StringUtility.h>
 #include <Utility/TemplateUtility.h>
 
 #include <boost/functional/hash.hpp>
 
-#include <memory>
 #include <algorithm>
 #include <functional>
 #include <utility>

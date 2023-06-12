@@ -33,7 +33,7 @@ namespace DFW
 			_entity_manager = MakeUnique<DECS::EntityManager>();
 			_event_handler	= MakeUnique<EventDispatcher>();
 			_system_manager = MakeUnique<DECS::SystemManager>(this);
-			_registry = MakeUnique<EntityRegistry>("main");
+			_registry = MakeUnique<EntityRegistry>();
 
 			_initialized = true;
 		}
@@ -60,7 +60,7 @@ namespace DFW
 			_system_manager->UpdateSystems(*_registry);
 			_event_handler->ProcessPendingEvents();
 
-			_entity_manager->CleanDestructionMarkedEntities(*_registry);
+			_registry->CleanDestructionMarkedEntities();
 		}
 
 		void ECSModule::UpdateECSImGui()

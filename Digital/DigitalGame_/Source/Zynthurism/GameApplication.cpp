@@ -1,10 +1,6 @@
 #include <Zynthurism/GameApplication.h>
 
-#include <Zynthurism/Game/TestEditorStage.h>
-
-#include <GameWorld/Camera/CameraSystem.h>
-#include <GameWorld/Graphics/RenderSystem.h>
-#include <GameWorld/Graphics/SpriteSystem.h>
+#include <Zynthurism/Test/TestEditorStage.h>
 
 #include <Modules/Editor/Console/MainConsole.h>
 #include <Modules/Editor/MainMenuBar.h>

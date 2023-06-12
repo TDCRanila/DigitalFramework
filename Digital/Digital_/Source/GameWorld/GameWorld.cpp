@@ -6,6 +6,9 @@ namespace DFW
     {
         _ecs = MakeUnique<DECS::ECSModule>();
         _ecs->Init();
+
+        _world_root = SpawnGameObject(SpawnInfo());
+        _world_root.AddComponent<WorldRootTagComponent>();
     }
 
     void GameWorld::Terminate()

@@ -7,16 +7,14 @@ namespace DFW
 {
     namespace DECS
     {
-        EntityRegistry::EntityRegistry(std::string const& a_registry_name)
+        EntityRegistry::EntityRegistry()
             : _id(DFW::GenerateDUID())
-            , _name(a_registry_name)
         {
             _entt_registry.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
             _entity_duid_register.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
             _entity_name_register.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
-            _registered_entities.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
             _marked_entities_for_destruction.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
         }
 
@@ -24,7 +22,6 @@ namespace DFW
         {
             _entt_registry.clear();
             
-            _registered_entities.clear();
             _marked_entities_for_destruction.clear();
 
             _entity_duid_register.clear();
@@ -52,48 +49,58 @@ namespace DFW
         std::vector<Entity> EntityRegistry::GetEntities()
         {           
             std::vector<Entity> entities;
-            entities.resize(_registered_entities.size());
-            
-            // Create Entities from Entity Handles.
-            for (auto const& entity_handle : _registered_entities)
-            {
-                entities.emplace_back(entity_handle, *this);
-            }
+            entities.resize(_entt_registry.size());
 
+            EntityHandle const* entity_data = _entt_registry.data();
+            for (uint32 entity_handle_index(0); entity_handle_index < _entt_registry.size(); entity_handle_index++)
+            {
+                entities.emplace_back(entity_data[entity_handle_index], *this);
+            }
             return entities;
         }
 
-        bool EntityRegistry::IsValid() const
+        void EntityRegistry::RegisterEntity(EntityHandle const a_entity_handle)
         {
-            return _id != DFW_INVALID_DUID;
-        }
-
-        void EntityRegistry::RegisterEntity(InternalEntity const& a_entity)
-        {
-            DFW_ASSERT(a_entity.IsEntityValid());
-
-            // Store Entity Handle.
-            EntityHandle const entity_handle = a_entity.GetHandle();
-            _registered_entities.emplace(entity_handle);
+            DFW_ASSERT(_entt_registry.valid(a_entity_handle));
 
             // Store EntityData in quick-access containers.
-            EntityDataComponent const& data_component = _entt_registry.get<EntityDataComponent>(entity_handle);
-            _entity_duid_register.emplace(data_component.id, entity_handle);
-            _entity_name_register.emplace(data_component.name, entity_handle);
+            EntityDataComponent const& data_component = _entt_registry.get<EntityDataComponent>(a_entity_handle);
+            _entity_duid_register.emplace(data_component.id, a_entity_handle);
+            _entity_name_register.emplace(data_component.name, a_entity_handle);
         }
 
-        void EntityRegistry::UnregisterEntity(InternalEntity const& a_entity)
+        void EntityRegistry::UnregisterEntity(EntityHandle const a_entity_handle)
         {
-            DFW_ASSERT(a_entity.IsEntityValid());
-
-            // Remove Entity Handle.
-            EntityHandle const entity_handle = a_entity.GetHandle();
-            _registered_entities.erase(entity_handle);
+            DFW_ASSERT(_entt_registry.valid(a_entity_handle));
 
             // Remove EntityData in quick-access containers.
-            EntityDataComponent const& data_component = _entt_registry.get<EntityDataComponent>(entity_handle);
+            EntityDataComponent const& data_component = _entt_registry.get<EntityDataComponent>(a_entity_handle);
             _entity_duid_register.erase(data_component.id);
             _entity_name_register.erase(data_component.name);
+        }
+
+        bool EntityRegistry::IsEntityMarkedForDestruction(EntityHandle const a_entity_handle) const
+        {
+            if (auto const& it = _marked_entities_for_destruction.find(a_entity_handle); it != _marked_entities_for_destruction.end())
+                return true;
+            else
+                return false;
+        }
+
+        void EntityRegistry::CleanDestructionMarkedEntities()
+        {
+            std::unordered_set<EntityHandle>& marked_entities = _marked_entities_for_destruction;
+            if (marked_entities.empty())
+                return;
+
+            for (EntityHandle const handle : marked_entities)
+            {
+                UnregisterEntity(handle);
+            }
+
+            _entt_registry.destroy(marked_entities.begin(), marked_entities.end());
+
+            marked_entities.clear();
         }
 
     } // End of namespace ~ DECS.

@@ -72,8 +72,8 @@ namespace DFW
 
     JPH::BodyID PhysicsSystem::CreateMeshRigidBody(Transform const& a_transform, JPH::ShapeSettings const& a_mesh_shape_settings, JPH::EMotionType const a_rigid_body_type)
     {
-        JPH::RVec3 const initial_rigidbody_translation(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z);
-        JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.rotation.x, a_transform.rotation.y, a_transform.rotation.z }));
+        JPH::RVec3 const initial_rigidbody_translation(a_transform.GetWorldTranslation().x, a_transform.GetWorldTranslation().y, a_transform.GetWorldTranslation().z);
+        JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.GetWorldRotation().x, a_transform.GetWorldRotation().y, a_transform.GetWorldRotation().z}));
         JPH::BodyCreationSettings mesh_settings(
             &a_mesh_shape_settings
             , initial_rigidbody_translation
@@ -95,8 +95,8 @@ namespace DFW
     {
         // Create the RigidBody.
         JPH::Vec3 const box_extend(a_extend.x, a_extend.y, a_extend.z);
-        JPH::RVec3 const initial_rigidbody_translation(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z);
-        JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.rotation.x, a_transform.rotation.y, a_transform.rotation.z }));
+        JPH::RVec3 const initial_rigidbody_translation(a_transform.GetWorldTranslation().x, a_transform.GetWorldTranslation().y, a_transform.GetWorldTranslation().z);
+        JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.GetWorldRotation().x, a_transform.GetWorldRotation().y, a_transform.GetWorldRotation().z }));
         JPH::BodyCreationSettings box_settings(
             // BoxShape gets deleted by JPH itself.
             new JPH::BoxShape(box_extend)
@@ -123,8 +123,8 @@ namespace DFW
     JPH::BodyID PhysicsSystem::CreateSphereRigidBody(Transform const& a_transform, float32 const a_sphere_radius, JPH::EMotionType const a_rigid_body_type)
     {
         // Create RigidBody.        
-        JPH::RVec3 const initial_rigidbody_translation(a_transform.translation.x, a_transform.translation.y, a_transform.translation.z);
-        JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.rotation.x, a_transform.rotation.y, a_transform.rotation.z }));
+        JPH::RVec3 const initial_rigidbody_translation(a_transform.GetWorldTranslation().x, a_transform.GetWorldTranslation().y, a_transform.GetWorldTranslation().z);
+        JPH::Quat const intial_rigidbody_quat(JPH::Quat::sEulerAngles({ a_transform.GetWorldRotation().x, a_transform.GetWorldRotation().y, a_transform.GetWorldRotation().z }));
         JPH::BodyCreationSettings sphere_settings(
             // SphereShape gets deleted by JPH itself.
             new JPH::SphereShape(a_sphere_radius)
@@ -208,7 +208,8 @@ namespace DFW
 
         // Sync Transform
         JPH::BodyInterface& body_interface = JoltBodyInterface();
-        JPH::RMat44 body_transform;
+        JPH::Quat quat_rotation;
+        JPH::Vec3 translation;
         for (auto&& [entity, transform, rigid_body] : a_registry.ENTT().view<TransformComponent, RigidBodyComponent>().each())
         {
             if (rigid_body.body_id.IsInvalid())
@@ -217,9 +218,17 @@ namespace DFW
             if (!body_interface.IsAdded(rigid_body.body_id))
                 continue;
 
-            body_transform = body_interface.GetWorldTransform(rigid_body.body_id);
-            memcpy(&transform.translation, &body_transform.GetTranslation().mF32[0], sizeof(glm::vec3));
-            memcpy(&transform.rotation, &body_transform.GetRotation().GetQuaternion().GetEulerAngles().mF32[0], sizeof(glm::vec3));
+            glm::quat quat(transform.GetWorldRotation());
+            quat_rotation.mValue.SetX(quat.x);
+            quat_rotation.mValue.SetY(quat.y);
+            quat_rotation.mValue.SetZ(quat.z);
+            quat_rotation.mValue.SetW(quat.w);
+
+            translation.SetX(transform.GetWorldTranslation().x);
+            translation.SetY(transform.GetWorldTranslation().y);
+            translation.SetZ(transform.GetWorldTranslation().z);
+
+            body_interface.SetPositionAndRotationWhenChanged(rigid_body.body_id, translation, quat_rotation, JPH::EActivation::DontActivate);
         }
 
         if (_should_debug_draw_shapes)
