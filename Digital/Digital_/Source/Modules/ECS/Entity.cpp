@@ -77,6 +77,18 @@ namespace DFW
 			_registry->_entity_name_register.emplace(entity_name_ref, _handle);
 		}
 
+		EntityTypeID Entity::GetType() const
+		{
+			EntityDataComponent const& data_component = GetComponent<EntityDataComponent>();
+			return data_component.type;
+		}
+
+		void Entity::SetTypeInternal(EntityTypeID const a_entity_type_id)
+		{
+			EntityDataComponent& data_component = GetComponent<EntityDataComponent>();
+			data_component.type = a_entity_type_id;
+		}
+
 		void Entity::AddChild(Entity a_child_to_add)
 		{
 			if (!a_child_to_add.IsEntityValid())

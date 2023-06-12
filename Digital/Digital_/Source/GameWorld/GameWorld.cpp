@@ -42,7 +42,7 @@ namespace DFW
 
         _ecs->EventHandler().Broadcast<GameObjectDestroyedEvent>(a_game_object);
 
-        _ecs->EntityManager().DestroyEntity(a_game_object);
+        _ecs->GetRegistry().DestroyEntity(a_game_object);
     }
 
     GameObject GameWorld::GetGameObject(DUID const a_game_object_id) const

@@ -96,10 +96,8 @@ namespace DFW
 			system_ptr->_name			= type.name();
 			system_ptr->_id				= DFW::GenerateDUID();
 			system_ptr->_system_manager	= this;
-			system_ptr->_entity_manager	= &_ecs->EntityManager();
 			system_ptr->_event_handler	= &_ecs->EventHandler();
 
-			DFW_ASSERT(system_ptr->_entity_manager);
 			DFW_ASSERT(system_ptr->_event_handler);
 
 			_systems.emplace(type, system_ptr);

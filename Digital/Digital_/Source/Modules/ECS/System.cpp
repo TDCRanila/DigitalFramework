@@ -8,7 +8,6 @@ namespace DFW
 	{
 		System::System()
 			: _system_manager(nullptr)
-			, _entity_manager(nullptr)
 			, _event_handler(nullptr)
 			, _id(DFW::DFW_INVALID_DUID)
 			, _name("Default System Name.")

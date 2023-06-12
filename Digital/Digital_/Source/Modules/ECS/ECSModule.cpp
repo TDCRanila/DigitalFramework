@@ -1,6 +1,5 @@
 #include <Modules/ECS/ECSModule.h>
 		 
-#include <Modules/ECS/Managers/EntityManager.h>
 #include <Modules/ECS/Managers/SystemManager.h>
 #include <Modules/ECS/Managers/EntityRegistry.h>
 
@@ -14,7 +13,6 @@ namespace DFW
 	{
 		ECSModule::ECSModule()
 			: _system_manager(nullptr)
-			, _entity_manager(nullptr)
 			, _event_handler(nullptr)
 			, _registry(nullptr)
 			, _initialized(false)
@@ -30,7 +28,6 @@ namespace DFW
 			DFW_INFOLOG("Initializing DECS Module.");
 
 			// Allocate.
-			_entity_manager = MakeUnique<DECS::EntityManager>();
 			_event_handler	= MakeUnique<EventDispatcher>();
 			_system_manager = MakeUnique<DECS::SystemManager>(this);
 			_registry = MakeUnique<EntityRegistry>();

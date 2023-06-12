@@ -14,7 +14,6 @@ namespace DFW
 	{
 		// FW Declares.
 		class SystemManager;
-		class EntityManager;
 		class EntityRegistry;
 
 		class ECSModule final
@@ -30,17 +29,13 @@ namespace DFW
 
 		public:
 			inline SystemManager& SystemManager() const { return *_system_manager; }
-			inline EntityManager& EntityManager() const { return *_entity_manager; }
 			inline EventDispatcher& EventHandler() const { return *_event_handler; }
-
 			inline EntityRegistry& GetRegistry() const { return *_registry; }
 
 		private:
 			UniquePtr<DFW::DECS::SystemManager>	_system_manager;
-			UniquePtr<DFW::DECS::EntityManager>	_entity_manager;
 			UniquePtr<EventDispatcher>			_event_handler;
-
-			UniquePtr<EntityRegistry> _registry;
+			UniquePtr<EntityRegistry>			_registry;
 			bool _initialized;
 
 		};

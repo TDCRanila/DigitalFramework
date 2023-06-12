@@ -7,7 +7,7 @@
 #include <GameWorld/TransformComponent.h>
 
 #include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/EntityManager.h>
+#include <Modules/ECS/Managers/EntityRegistry.h>
 
 #include <CoreSystems/Events/EventDispatcher.h>
 
@@ -51,10 +51,11 @@ namespace DFW
     template <StringLiteral game_object_type_name>
     GameObject GameWorld::SpawnGameObject(SpawnInfo const& a_spawn_info)
     {
-        GameObject game_object(_ecs->EntityManager().CreateEntity<game_object_type_name>(_ecs->GetRegistry()));
+        GameObject game_object(_ecs->GetRegistry().CreateEntity());
 
         // Setup additional Entity data.
         game_object.SetName(a_spawn_info.name);
+        game_object.SetType<game_object_type_name>();
         game_object.AddComponent<TransformComponent>(a_spawn_info.transform);
         game_object.SetParent(a_spawn_info.parent.IsEntityValid() ? a_spawn_info.parent : _world_root);
 

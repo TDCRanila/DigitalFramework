@@ -16,7 +16,6 @@ namespace DFW
 	{
 		class EntityRegistry;
 		class SystemManager;
-		class EntityManager;
 
 		class System : public DFactory::AutoFactory<System>
 		{
@@ -43,7 +42,6 @@ namespace DFW
 			virtual void UpdateSystemImGui(EntityRegistry& a_registry);
 
 			inline DFW::DECS::SystemManager& SystemManager() const { return *_system_manager; }
-			inline DFW::DECS::EntityManager& EntityManager() const { return *_entity_manager; }
 			inline DFW::EventDispatcher& ECSEventHandler() const { return *_event_handler; }
 
 		private:
@@ -59,7 +57,6 @@ namespace DFW
 
 		private:
 			DFW::DECS::SystemManager* _system_manager;
-			DFW::DECS::EntityManager* _entity_manager;
 			DFW::EventDispatcher* _event_handler;
 
 			DFW::DUID	_id;
