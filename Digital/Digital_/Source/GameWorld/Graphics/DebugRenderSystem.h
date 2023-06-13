@@ -69,8 +69,8 @@ namespace DFW
         void DrawFrustum(glm::mat4 const& a_view_projection_matrix, DebugDrawSettings const& a_settings);
         
     private:
-        virtual void Init() override;
-        virtual void Terminate() override;
+        virtual void Init(DECS::EntityRegistry& a_registry) override;
+        virtual void Terminate(DECS::EntityRegistry& a_registry) override;
 
         virtual void Update(DECS::EntityRegistry& a_registry) override;
 

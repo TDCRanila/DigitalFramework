@@ -25,11 +25,11 @@ namespace DFW
 			return _name;
 		}
 
-		void System::Init()
+		void System::Init(EntityRegistry& /*a_registry*/)
 		{
 		}
 
-		void System::Terminate()
+		void System::Terminate(EntityRegistry& /*a_registry*/)
 		{
 		}
 
@@ -54,18 +54,18 @@ namespace DFW
 			return _paused;
 		}
 
-		void System::InternalInit()
+		void System::InternalInit(EntityRegistry& a_registry)
 		{
 			DFW_INFOLOG("Initialization System: {} - {}", _id, _name);
 
-			this->Init();
+			this->Init(a_registry);
 		}
 
-		void System::InternalTerminate()
+		void System::InternalTerminate(EntityRegistry& a_registry)
 		{
 			DFW_INFOLOG("Terminating System: {} - {}", _id, _name);
 
-			this->Terminate();
+			this->Terminate(a_registry);
 		}
 
 		void System::InternalPreUpdate(EntityRegistry& a_registry)

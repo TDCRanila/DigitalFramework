@@ -32,8 +32,8 @@ namespace DFW
 
 		protected:
 			// Can be overwritten by derived class.
-			virtual void Init();
-			virtual void Terminate();
+			virtual void Init(EntityRegistry& a_registry);
+			virtual void Terminate(EntityRegistry& a_registry);
 
 			virtual void PreUpdate(EntityRegistry& a_registry);
 			virtual void Update(EntityRegistry& a_registry);
@@ -46,8 +46,8 @@ namespace DFW
 
 		private:
 			// Called by ECSystemManager.
-			void InternalInit();
-			void InternalTerminate();
+			void InternalInit(EntityRegistry& a_registry);
+			void InternalTerminate(EntityRegistry& a_registry);
 
 			void InternalPreUpdate(EntityRegistry& a_registry);
 			void InternalUpdate(EntityRegistry& a_registry);

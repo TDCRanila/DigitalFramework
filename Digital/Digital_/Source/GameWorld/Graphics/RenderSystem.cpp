@@ -26,7 +26,7 @@
 
 namespace DFW
 {
-    void RenderSystem::Init()
+    void RenderSystem::Init(DECS::EntityRegistry& /*a_registry*/)
     {
 		SharedPtr<DRender::RenderModule> render_module = CoreService::GetRenderModule();
 
@@ -44,7 +44,7 @@ namespace DFW
 		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
     }
 
-	void RenderSystem::Terminate()
+	void RenderSystem::Terminate(DECS::EntityRegistry& /*a_registry*/)
 	{
 		// Uniforms
 		CoreService::GetRenderModule()->GetUniformLibrary().DestroyUniform(*_texture_sampler_uniform.get());

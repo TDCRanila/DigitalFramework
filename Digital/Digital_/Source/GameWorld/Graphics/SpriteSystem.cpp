@@ -116,7 +116,7 @@ namespace DFW
 		uint32 num_sprites_to_draw;
 	};
 
-	void SpriteSystem::Init()
+	void SpriteSystem::Init(DECS::EntityRegistry& /*a_registry*/)
 	{
 		Detail::max_texture_samplers_per_batch = bgfx::getCaps()->limits.maxTextureSamplers;
 		
@@ -154,7 +154,7 @@ namespace DFW
 		ECSEventHandler().RegisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
 	}
 
-	void SpriteSystem::Terminate()
+	void SpriteSystem::Terminate(DECS::EntityRegistry& /*a_registry*/)
 	{
 		// Unload Shaders.
 		CoreService::GetRenderModule()->GetShaderLibrary().DestroyProgram(_program_ptr);

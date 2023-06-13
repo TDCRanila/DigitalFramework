@@ -30,7 +30,9 @@ namespace DFW
 			// Allocate.
 			_event_handler	= MakeUnique<EventDispatcher>();
 			_system_manager = MakeUnique<DECS::SystemManager>(this);
-			_registry = MakeUnique<EntityRegistry>();
+			_registry		= MakeUnique<EntityRegistry>();
+
+			_system_manager->Init(*_registry);
 
 			_initialized = true;
 		}
@@ -41,9 +43,9 @@ namespace DFW
 
 			DFW_INFOLOG("Terminating DECS Module.");
 
-			_registry.reset();
+			_system_manager->Terminate(*_registry);
 
-			_system_manager->Terminate();
+			_registry.reset();
 
 			_initialized = false;
 		}

@@ -184,7 +184,7 @@ namespace DFW
         a_camera_component.has_enabled_six_degrees_rotation = true;
     }
 
-    void CameraSystem::Init()
+    void CameraSystem::Init(DECS::EntityRegistry& /*a_registry*/)
     {
         _input_management = DFW::CoreService::GetInputManagement();
         DFW_ASSERT(_input_management);

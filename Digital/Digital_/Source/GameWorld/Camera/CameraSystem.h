@@ -45,7 +45,7 @@ namespace DFW
 		void EnableAdvancedCameraControlMode(CameraComponent& a_camera_component);
 
     private:
-		virtual void Init() override;
+		virtual void Init(DECS::EntityRegistry& a_registry) override;
 		virtual void Update(DECS::EntityRegistry& a_registry) override;
 
 		void ControlCamera(CameraComponent& a_camera);

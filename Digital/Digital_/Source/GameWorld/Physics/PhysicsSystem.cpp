@@ -154,7 +154,7 @@ namespace DFW
             _rigid_bodies_pending_despawn.emplace(a_rigid_body_id);
     }
 
-    void PhysicsSystem::Init()
+    void PhysicsSystem::Init(DECS::EntityRegistry& /*a_registry*/)
     {
         _context->Init();
         JoltPhysics().SetGravity(DFW_PHYSICS_DEFAULT_GRAVITY_VECTOR);
@@ -163,7 +163,7 @@ namespace DFW
         _jolt_debug_renderer->Init();
     }
 
-    void PhysicsSystem::Terminate()
+    void PhysicsSystem::Terminate(DECS::EntityRegistry& /*a_registry*/)
     {
         _context->Terminate();
     }
