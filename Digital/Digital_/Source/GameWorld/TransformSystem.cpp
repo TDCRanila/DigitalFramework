@@ -58,11 +58,14 @@ namespace DFW
 
     } // End of namespace ~ Detail
 
-    void TransformSystem::PreUpdate(DECS::EntityRegistry& a_registry)
+    void TransformSystem::Init(DECS::EntityRegistry& a_registry)
     {
-        // TODO: Should be done in Init, need to change System's Init & Terminate to passthrough
-        // the registry as well.
         a_registry.GetHierachyRoot().AddComponent<DFW::TransformComponent>();
+    }
+
+    void TransformSystem::Terminate(DECS::EntityRegistry& a_registry)
+    {
+        a_registry.GetHierachyRoot().DeleteComponent<DFW::TransformComponent>();
     }
 
     void TransformSystem::Update(DECS::EntityRegistry& a_registry)
