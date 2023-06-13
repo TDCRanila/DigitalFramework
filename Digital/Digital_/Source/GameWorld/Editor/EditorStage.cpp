@@ -1,7 +1,6 @@
 #include <GameWorld/Editor/EditorStage.h>
 
 #include <GameWorld/Editor/GameViewport.h>
-#include <GameWorld/GameWorld.h>
 #include <GameWorld/TransformSystem.h>
 #include <GameWorld/Camera/CameraSystem.h>
 #include <GameWorld/Graphics/RenderSystem.h>
@@ -28,7 +27,7 @@ namespace DFW
 
         void EditorStage::OnUpdate()
         {
-            _game_world->Update();
+            _ecs->UpdateECS();
 
             _element_container.UpdateElements();
         }
@@ -69,13 +68,13 @@ namespace DFW
             // Sub Elements
             _element_container.DisplayElements();
 
-            _game_world->RenderImGui();
+            _ecs->UpdateECSImGui();
         }
 
         void EditorStage::OnAttached()
         {
             // Allocate Systems.
-            _game_world = MakeUnique<DFW::GameWorld>();
+            _ecs = MakeUnique<DFW::DECS::ECSModule>();
 
             // Add Editor Elements.
             GameViewport& game_viewport = _element_container.AddEditorElement<GameViewport>("Viewport");
@@ -83,26 +82,25 @@ namespace DFW
             _element_container.AddEditorElement<EditorElementFiller>("Viewer");
 
             // GameWorld and ECS.
-            _game_world->Init();
-            
-            DECS::ECSModule& ecs = _game_world->GetECS();
-            ecs.SystemManager().AddSystem<DFW::TransformSystem>();
-            ecs.SystemManager().AddSystem<DFW::RenderSystem>();
-            ecs.SystemManager().AddSystem<DFW::SpriteSystem>();
-            ecs.SystemManager().AddSystem<DFW::DebugRenderSystem>();
-            ecs.SystemManager().AddSystem<DFW::CameraSystem>();
-            ecs.SystemManager().AddSystem<DFW::PhysicsSystem>();
+            _ecs->Init();
+
+            _ecs->SystemManager().AddSystem<DFW::TransformSystem>();
+            _ecs->SystemManager().AddSystem<DFW::RenderSystem>();
+            _ecs->SystemManager().AddSystem<DFW::SpriteSystem>();
+            _ecs->SystemManager().AddSystem<DFW::DebugRenderSystem>();
+            _ecs->SystemManager().AddSystem<DFW::CameraSystem>();
+            _ecs->SystemManager().AddSystem<DFW::PhysicsSystem>();
 
             // Set Render Targets of render systems.
             SharedPtr<DRender::RenderTarget const> viewport_render_target = game_viewport.GetViewportRenderTarget();
-            ecs.SystemManager().GetSystem<DFW::RenderSystem>()->RenderToRenderTarget(viewport_render_target);
-            ecs.SystemManager().GetSystem<DFW::SpriteSystem>()->RenderToRenderTarget(viewport_render_target);
-            ecs.SystemManager().GetSystem<DFW::DebugRenderSystem>()->RenderToRenderTarget(viewport_render_target);
+            _ecs->SystemManager().GetSystem<DFW::RenderSystem>()->RenderToRenderTarget(viewport_render_target);
+            _ecs->SystemManager().GetSystem<DFW::SpriteSystem>()->RenderToRenderTarget(viewport_render_target);
+            _ecs->SystemManager().GetSystem<DFW::DebugRenderSystem>()->RenderToRenderTarget(viewport_render_target);
         }
 
         void EditorStage::OnRemoved()
         {
-            _game_world->Terminate();
+            _ecs->Terminate();
 
             _element_container.ReleaseEditorElements();
         }

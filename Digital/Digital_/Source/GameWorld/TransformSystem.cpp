@@ -1,9 +1,10 @@
 #include <GameWorld/TransformSystem.h>
 
-#include <GameWorld/GameWorld.h>
 #include <GameWorld/TransformComponent.h>
 
+#include <Modules/ECS/Entity.h>
 #include <Modules/ECS/Internal/EntityRelationComponent.h>
+#include <Modules/ECS/Internal/EntityHierachyRootTagComponent.h>
 
 namespace DFW
 {
@@ -57,6 +58,13 @@ namespace DFW
 
     } // End of namespace ~ Detail
 
+    void TransformSystem::PreUpdate(DECS::EntityRegistry& a_registry)
+    {
+        // TODO: Should be done in Init, need to change System's Init & Terminate to passthrough
+        // the registry as well.
+        a_registry.GetHierachyRoot().AddComponent<DFW::TransformComponent>();
+    }
+
     void TransformSystem::Update(DECS::EntityRegistry& a_registry)
     {
         // TODO:
@@ -64,7 +72,7 @@ namespace DFW
         // sorting of entities, instead of using boolean dirty flags and traversing the entity hierachy.
         // This way we don't have to traverse entity trees that do not need a transform update.
         // For now this implementation works more than fine.
-        Entity root_entity(a_registry.ENTT().view<WorldRootTagComponent>().front(), a_registry);
+        Entity root_entity(a_registry.ENTT().view<DECS::EntityHierachyRootTagComponent>().front(), a_registry);
         Detail::CalculateEntityTransformFromRoot(root_entity, Entity(), false);
 
     }

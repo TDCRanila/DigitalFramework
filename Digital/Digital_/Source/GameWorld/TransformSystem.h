@@ -12,7 +12,8 @@ namespace DFW
         virtual ~TransformSystem() = default;
 
     private:
-        virtual void Update(DECS::EntityRegistry& a_registry);
+        virtual void PreUpdate(DECS::EntityRegistry& a_registry) override;
+        virtual void Update(DECS::EntityRegistry& a_registry) override;
 
     };
 

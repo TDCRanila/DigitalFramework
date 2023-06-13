@@ -41,10 +41,14 @@ namespace DFW
             DFW::DUID GetID() const { return _id; }
             entt::registry& ENTT() { return _entt_registry; }
 
+            bool operator==(EntityRegistry const& a_other) const { return this->_id == a_other._id; };
+
         public:
             Entity CreateEntity();
+            Entity CreateEntity(Entity const& a_parent_entity);
             void DestroyEntity(Entity const& a_entity);
 
+            Entity GetHierachyRoot();
             Entity GetEntity(DFW::DUID const a_entity_id);
             Entity GetEntity(std::string const& a_entity_name);
             std::vector<Entity> GetEntities();
@@ -63,6 +67,7 @@ namespace DFW
 
         private:
             entt::registry _entt_registry;
+            EntityHandle _entity_hierachy_root;
             DFW::DUID _id;
 
             EntityDUIDRegisterMap _entity_duid_register;

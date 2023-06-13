@@ -3,6 +3,7 @@
 #include <Modules/ECS/Entity.h>
 #include <Modules/ECS/Internal/EntityDataComponent.h>
 #include <Modules/ECS/Internal/EntityRelationComponent.h>
+#include <Modules/ECS/Internal/EntityHierachyRootTagComponent.h>
 
 #include <CoreSystems/Logging/Logger.h>
 
@@ -19,6 +20,9 @@ namespace DFW
             _entity_name_register.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
             _marked_entities_for_destruction.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
+
+            _entity_hierachy_root = _entt_registry.create();
+            _entt_registry.emplace<DECS::EntityHierachyRootTagComponent>(_entity_hierachy_root);
         }
 
         EntityRegistry::~EntityRegistry()
@@ -33,23 +37,36 @@ namespace DFW
 
         Entity EntityRegistry::CreateEntity()
         {
+            return CreateEntity(GetHierachyRoot());
+        }
+
+        Entity EntityRegistry::CreateEntity(Entity const& a_parent_entity)
+        {
             // Construct a new Entity.
             Entity entity(ENTT().create(), *this);
 
             // Setup additional Entity data.
             EntityDataComponent& data_component = entity.AddComponent<EntityDataComponent>();
-            data_component.id = DFW::GenerateDUID();
+            data_component.id   = DFW::GenerateDUID();
             data_component.type = GetEntityTypeID<"">();
-            data_component.name = DFW_DEFAULT_ENTITY_NAME + std::to_string(static_cast<uint32>(entity.GetHandle()));
+            data_component.name = DFW_DEFAULT_ENTITY_NAME + std::to_string(static_cast<ENTT_ID_TYPE>(entity.GetHandle()));
+
+            // Parent-Child relationship.
+            DFW_ASSERT(a_parent_entity.IsEntityValid());
+            entity.SetParent(a_parent_entity);
 
             // Register Entity in EntityRegistry registers.
             RegisterEntity(entity.GetHandle());
+
+            // TODO: If needed, should reimplement entity creation events here.
 
             return entity;
         }
 
         void EntityRegistry::DestroyEntity(Entity const& a_entity)
         {
+            DFW_ASSERT(*this == a_entity.GetRegistry());
+
             if (!a_entity.IsEntityValid())
             {
                 DFW_WARNLOG("Attempting to delete an entity that is invalid.");
@@ -57,6 +74,11 @@ namespace DFW
             }
 
             DestroyEntityAndChilderen(a_entity);
+        }
+
+        Entity EntityRegistry::GetHierachyRoot()
+        {
+            return Entity(_entity_hierachy_root, *this);
         }
 
         Entity EntityRegistry::GetEntity(DFW::DUID const a_entity_id)

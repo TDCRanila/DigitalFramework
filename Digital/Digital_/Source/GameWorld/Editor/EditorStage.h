@@ -2,13 +2,12 @@
 
 #include <Modules/Editor/EditorElementContainer.h>
 
+#include <Modules/ECS/ECSModule.h>
+
 #include <CoreSystems/Stage/Stage.h>
 
 namespace DFW
 {
-	// FW Declare.
-	class GameWorld;
-
 	namespace DEditor
 	{
 		class EditorStage : public DFW::StageBase
@@ -24,7 +23,7 @@ namespace DFW
 			virtual void OnAttached() override;
 			virtual void OnRemoved() override;
 		
-			inline SharedPtr<DFW::GameWorld> GameWorld() const { return _game_world; }
+			inline SharedPtr<DFW::DECS::ECSModule> const& ECS() const { return _ecs; }
 
 		private:
 			void SetupEditorMenubar();
@@ -32,7 +31,7 @@ namespace DFW
 
 		private:
 			EditorElementContainer _element_container;
-			SharedPtr<DFW::GameWorld> _game_world;
+			SharedPtr<DFW::DECS::ECSModule> _ecs;
 
 			bool _has_dockspace_been_created;
 
