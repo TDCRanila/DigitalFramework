@@ -62,7 +62,6 @@ namespace DFW
 
 		void ECSModule::UpdateECSImGui()
 		{
-
 			_system_manager->UpdateSystemsImGui(*_registry);
 		}
 
