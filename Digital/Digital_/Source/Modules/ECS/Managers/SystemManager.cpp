@@ -18,12 +18,21 @@ namespace DFW
 
 		SystemManager::~SystemManager() = default;
 
-		void SystemManager::Terminate()
+		void SystemManager::Init(EntityRegistry& a_registry)
+		{
+			// Calling Init of systems.
+			for (auto const& [system_type, system_ptr] : _systems)
+			{
+				system_ptr->InternalInit(a_registry);
+			}
+		}
+
+		void SystemManager::Terminate(EntityRegistry& a_registry)
 		{
 			// Calling Terminiate of systems.
 			for (auto const& [system_type, system_ptr] : _systems)
 			{
-				system_ptr->InternalTerminate();
+				system_ptr->InternalTerminate(a_registry);
 			}
 		}
 

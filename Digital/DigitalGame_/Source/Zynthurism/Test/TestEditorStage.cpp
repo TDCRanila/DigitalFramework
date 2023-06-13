@@ -61,18 +61,15 @@ namespace DGame
     {
         EditorStage::OnAttached();
 
-        DFW::SharedPtr<DFW::GameWorld>const & game_world = GameWorld();
-
         // Create Main Camera.
         {
-            DFW::SpawnInfo camera_spawn_info;
-            camera_spawn_info.name = "camera-main";
-            camera_spawn_info.transform = DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f));
+            camera_entity = ECS()->GetRegistry().CreateEntity();
+            camera_entity.SetName("camera-main");
 
-            camera_entity = game_world->SpawnGameObject<"Camera">(camera_spawn_info);
+            camera_entity.AddComponent<DFW::TransformComponent>(DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f)));
             DFW::CameraComponent& camera_component = camera_entity.AddComponent<DFW::CameraComponent>();
-            
-            DFW::CameraSystem* camera_system = game_world->GetECS().SystemManager().GetSystem<DFW::CameraSystem>();
+
+            DFW::CameraSystem* camera_system =ECS()->SystemManager().GetSystem<DFW::CameraSystem>();
             camera_system->ChangeCameraProjPerspective(camera_component, 60.f, (16.f / 9.f), DFW::ClipSpace(0.1f, 5000.f));
             camera_system->RegisterCamera(camera_component, "camera-main");
             camera_system->SetActiveCamera("camera-main");
@@ -84,12 +81,11 @@ namespace DGame
         std::string const model_dir(work_dir + DIR_SLASH + "models");
 
         {
-            // XYZ Representation.
-            DFW::SpawnInfo xyz_spawn_info;
-            xyz_spawn_info.name = "xyz-model";
-            xyz_spawn_info.transform = DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f));
-            
-            DFW::Entity xyz = game_world->SpawnGameObject(xyz_spawn_info);
+            // XYZ Representation.            
+            DFW::Entity xyz = ECS()->GetRegistry().CreateEntity();
+            xyz.SetName("xyz-model");
+
+            xyz.AddComponent<DFW::TransformComponent>(DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f)));
 
             DFW::ModelComponent& xyz_model = xyz.AddComponent<DFW::ModelComponent>();
             DFW:: FilePath filepath(model_dir + DIR_SLASH + "xyz" + DIR_SLASH + "xyz_10x10m.glb");
@@ -98,11 +94,9 @@ namespace DGame
 
         {
             // Sponza Scene.
-            DFW::SpawnInfo sponza_spawn_info;
-            sponza_spawn_info.name = "sponza";
-            sponza_spawn_info.transform = DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f));
-
-            DFW::Entity sponza = game_world->SpawnGameObject(sponza_spawn_info);
+            DFW::Entity sponza = ECS()->GetRegistry().CreateEntity();
+            sponza.SetName("sponza");
+            sponza.AddComponent<DFW::TransformComponent>(DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f)));
 
             DFW::ModelComponent& sponza_model = sponza.AddComponent<DFW::ModelComponent>();
             DFW::FilePath filepath(model_dir + DIR_SLASH + "sponza" + DIR_SLASH + "sponza.gltf");
@@ -111,12 +105,12 @@ namespace DGame
 
         {
             // Movable Entity.
-            DFW::SpawnInfo main_entity_spawn_info;
-            main_entity_spawn_info.name = "main-entity";
-            main_entity_spawn_info.transform = DFW::Transform(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f), glm::vec3(2.0f));
+            main_entity = ECS()->GetRegistry().CreateEntity();
+            main_entity.SetName("main-entity");
 
-            main_entity = game_world->SpawnGameObject(main_entity_spawn_info);
-
+            DFW::Transform transform = DFW::Transform(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f), glm::vec3(2.0f));
+            main_entity.AddComponent<DFW::TransformComponent>(transform);
+            
             DFW::ModelComponent& model = main_entity.AddComponent<DFW::ModelComponent>();
             model.mesh = DFW::Debug_CreateBasicCube();
         }

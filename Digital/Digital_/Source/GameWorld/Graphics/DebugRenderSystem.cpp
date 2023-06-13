@@ -41,7 +41,7 @@ namespace DFW
     {
     }
 
-    void DebugRenderSystem::Init()
+    void DebugRenderSystem::Init(DECS::EntityRegistry& /*a_registry*/)
     {
         SharedPtr<DRender::RenderModule> render_module = CoreService::GetRenderModule();
 
@@ -58,7 +58,7 @@ namespace DFW
         _dde->setupEncoder(_view_target->view_target_id);
     }
 
-    void DebugRenderSystem::Terminate()
+    void DebugRenderSystem::Terminate(DECS::EntityRegistry& /*a_registry*/)
     {
 
         // Unregister Callbacks.

@@ -61,7 +61,8 @@ namespace DFW
 			// TODO Implement System Dependencies / Priority.
 
 		private:
-			void Terminate();
+			void Init(EntityRegistry& a_registry);
+			void Terminate(EntityRegistry& a_registry);
 
 			void UpdateSystems(EntityRegistry& a_registry);
 			void UpdateSystemsImGui(EntityRegistry& a_registry);
@@ -96,15 +97,13 @@ namespace DFW
 			system_ptr->_name			= type.name();
 			system_ptr->_id				= DFW::GenerateDUID();
 			system_ptr->_system_manager	= this;
-			system_ptr->_entity_manager	= &_ecs->EntityManager();
 			system_ptr->_event_handler	= &_ecs->EventHandler();
 
-			DFW_ASSERT(system_ptr->_entity_manager);
 			DFW_ASSERT(system_ptr->_event_handler);
 
 			_systems.emplace(type, system_ptr);
 
-			system_ptr->InternalInit();
+			system_ptr->InternalInit(_ecs->GetRegistry());
 		}
 
 		template <typename SystemType>
@@ -112,7 +111,7 @@ namespace DFW
 			void SystemManager::RemoveSystem()
 		{
 			SystemMapIterator const& it = FindSystem<SystemType>();
-			it->second->InternalTerminate();
+			it->second->InternalTerminate(_ecs->GetRegistry());
 			_systems.erase(it);
 		}
 

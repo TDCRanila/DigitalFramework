@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameWorld/GameObject.h>
+#include <Modules/ECS/Entity.h>
 
 #include <CoreSystems/Events/EventImplementation.h>
 
@@ -17,7 +17,7 @@ namespace DFW
 	class GameObjectCreatedEvent : public Event
 	{
 	public:
-		GameObjectCreatedEvent(GameObject const& a_game_object)
+		GameObjectCreatedEvent(Entity const& a_game_object)
 			: game_object(a_game_object)
 		{}
 
@@ -34,13 +34,13 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		GameObject game_object;
+		Entity game_object;
 	};
 
 	class GameObjectDestroyedEvent : public Event
 	{
 	public:
-		GameObjectDestroyedEvent(GameObject const& a_game_object)
+		GameObjectDestroyedEvent(Entity const& a_game_object)
 			: game_object(a_game_object)
 		{}
 
@@ -57,7 +57,7 @@ namespace DFW
 			return debug_string.str();
 		}
 
-		GameObject game_object;
+		Entity game_object;
 	};
 
 #pragma endregion

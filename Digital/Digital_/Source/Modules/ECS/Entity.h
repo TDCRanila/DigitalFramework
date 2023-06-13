@@ -6,17 +6,10 @@
 #include <Modules/ECS/Utility/ECSTemplateUtility.h>
 #include <Modules/ECS/Utility/EntityTypeID.h>
 
-#include <CoreSystems/DUID.h>
-
-#include <string>
-
 namespace DFW
 {
 	namespace DECS
 	{
-		// FW Declare.
-		class EntityManager;
-
 		class Entity : public InternalEntity
 		{
 		public:
@@ -32,6 +25,10 @@ namespace DFW
 
 			std::string const& GetName() const;
 			void SetName(std::string const& a_new_name);
+			
+			EntityTypeID GetType() const;
+			template <StringLiteral entity_type>
+			void SetType();
 
 		public:
 			void AddChild(Entity a_child_to_add);
@@ -65,9 +62,19 @@ namespace DFW
 			template <typename... TArgs>
 			bool HasComponents() const;
 
+		private:
+			void SetTypeInternal(EntityTypeID const a_entity_type_id);
+
 		};
 
 #pragma region Template Function Implementation
+
+		template <StringLiteral entity_type>
+		void Entity::SetType()
+		{
+			DFW_ASSERT(IsEntityValid() && "Trying to change the type of an invalid entity.");
+			SetTypeInternal(_registry->GetEntityTypeID<entity_type>());
+		}
 
 		template <typename ComponentType, typename... TArgs>
 		ComponentType& Entity::AddComponent(TArgs&&...a_args)

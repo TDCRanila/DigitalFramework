@@ -1,9 +1,10 @@
 #include <GameWorld/TransformSystem.h>
 
-#include <GameWorld/GameWorld.h>
 #include <GameWorld/TransformComponent.h>
 
+#include <Modules/ECS/Entity.h>
 #include <Modules/ECS/Internal/EntityRelationComponent.h>
+#include <Modules/ECS/Internal/EntityHierachyRootTagComponent.h>
 
 namespace DFW
 {
@@ -12,10 +13,13 @@ namespace DFW
         void CalculateEntityTransform(Entity& a_current_entity, Entity const& a_parent, bool a_is_parent_dirty)
         {
             // Calculate the world transform if necesarry.
-            TransformComponent& transform_component = a_current_entity.GetComponent<TransformComponent>();
-            bool const is_transform_dirty = transform_component.IsDirty() || a_is_parent_dirty;
+            TransformComponent* transform_component = a_current_entity.TryGetComponent<TransformComponent>();
+            if (!transform_component)
+                return;
+
+            bool const is_transform_dirty = transform_component->IsDirty() || a_is_parent_dirty;
             if (is_transform_dirty)
-                transform_component.CalculateWorldTransform(a_parent.GetComponent<TransformComponent>().GetWorldTransformMatrix());
+                transform_component->CalculateWorldTransform(a_parent.GetComponent<TransformComponent>().GetWorldTransformMatrix());
 
             DECS::EntityRelationComponent const* relation_component = a_current_entity.TryGetComponent<DECS::EntityRelationComponent>();
             if (!relation_component)
@@ -57,6 +61,16 @@ namespace DFW
 
     } // End of namespace ~ Detail
 
+    void TransformSystem::Init(DECS::EntityRegistry& a_registry)
+    {
+        a_registry.GetHierachyRoot().AddComponent<DFW::TransformComponent>();
+    }
+
+    void TransformSystem::Terminate(DECS::EntityRegistry& a_registry)
+    {
+        a_registry.GetHierachyRoot().DeleteComponent<DFW::TransformComponent>();
+    }
+
     void TransformSystem::Update(DECS::EntityRegistry& a_registry)
     {
         // TODO:
@@ -64,7 +78,7 @@ namespace DFW
         // sorting of entities, instead of using boolean dirty flags and traversing the entity hierachy.
         // This way we don't have to traverse entity trees that do not need a transform update.
         // For now this implementation works more than fine.
-        Entity root_entity(a_registry.ENTT().view<WorldRootTagComponent>().front(), a_registry);
+        Entity root_entity(a_registry.ENTT().view<DECS::EntityHierachyRootTagComponent>().front(), a_registry);
         Detail::CalculateEntityTransformFromRoot(root_entity, Entity(), false);
 
     }

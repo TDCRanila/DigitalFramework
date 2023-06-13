@@ -16,7 +16,6 @@ namespace DFW
 	{
 		class EntityRegistry;
 		class SystemManager;
-		class EntityManager;
 
 		class System : public DFactory::AutoFactory<System>
 		{
@@ -33,8 +32,8 @@ namespace DFW
 
 		protected:
 			// Can be overwritten by derived class.
-			virtual void Init();
-			virtual void Terminate();
+			virtual void Init(EntityRegistry& a_registry);
+			virtual void Terminate(EntityRegistry& a_registry);
 
 			virtual void PreUpdate(EntityRegistry& a_registry);
 			virtual void Update(EntityRegistry& a_registry);
@@ -43,13 +42,12 @@ namespace DFW
 			virtual void UpdateSystemImGui(EntityRegistry& a_registry);
 
 			inline DFW::DECS::SystemManager& SystemManager() const { return *_system_manager; }
-			inline DFW::DECS::EntityManager& EntityManager() const { return *_entity_manager; }
 			inline DFW::EventDispatcher& ECSEventHandler() const { return *_event_handler; }
 
 		private:
 			// Called by ECSystemManager.
-			void InternalInit();
-			void InternalTerminate();
+			void InternalInit(EntityRegistry& a_registry);
+			void InternalTerminate(EntityRegistry& a_registry);
 
 			void InternalPreUpdate(EntityRegistry& a_registry);
 			void InternalUpdate(EntityRegistry& a_registry);
@@ -59,7 +57,6 @@ namespace DFW
 
 		private:
 			DFW::DECS::SystemManager* _system_manager;
-			DFW::DECS::EntityManager* _entity_manager;
 			DFW::EventDispatcher* _event_handler;
 
 			DFW::DUID	_id;

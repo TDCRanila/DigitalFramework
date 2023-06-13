@@ -5,7 +5,6 @@ namespace DFW
 	StageStackController::StageStackController()
 		:  _stage_insert_index(0)
 	{
-		// TODO If neccesarry might want to heap allocate the stages all at once.
 		_stages.reserve(MAX_SUPPORTED_STAGES);
 	}
 

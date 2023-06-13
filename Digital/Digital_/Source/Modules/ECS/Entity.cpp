@@ -77,9 +77,24 @@ namespace DFW
 			_registry->_entity_name_register.emplace(entity_name_ref, _handle);
 		}
 
+		EntityTypeID Entity::GetType() const
+		{
+			EntityDataComponent const& data_component = GetComponent<EntityDataComponent>();
+			return data_component.type;
+		}
+
+		void Entity::SetTypeInternal(EntityTypeID const a_entity_type_id)
+		{
+			EntityDataComponent& data_component = GetComponent<EntityDataComponent>();
+			data_component.type = a_entity_type_id;
+		}
+
 		void Entity::AddChild(Entity a_child_to_add)
 		{
 			if (!a_child_to_add.IsEntityValid())
+				return;
+
+			if (this->GetRegistry() != a_child_to_add.GetRegistry())
 				return;
 
 			if (IsParentOfEntity(a_child_to_add))
@@ -120,6 +135,9 @@ namespace DFW
 		void Entity::RemoveChild(Entity a_child_to_remove)
 		{
 			if (!a_child_to_remove.IsEntityValid())
+				return;
+
+			if (this->GetRegistry() != a_child_to_remove.GetRegistry())
 				return;
 
 			if (!IsParentOfEntity(a_child_to_remove))
@@ -172,13 +190,14 @@ namespace DFW
 			child_relation_component.parent = Entity();
 
 			relation_component.childeren_count--;
-
-			// TODO: Should the child have its parent be the root?
 		}
 
 		void Entity::SetParent(Entity a_parent)
 		{
 			if (!a_parent.IsEntityValid())
+				return;
+			
+			if (this->GetRegistry() != a_parent.GetRegistry())
 				return;
 
 			// Check if already is a child of the parent.

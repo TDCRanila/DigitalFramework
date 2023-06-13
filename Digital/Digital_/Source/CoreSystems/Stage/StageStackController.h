@@ -21,7 +21,6 @@ namespace DFW
 		void RenderImGuiStages();
 
 	public:
-		// TODO Provide argument documentation for user. (Basically the constructor arguments of the BaseStage class)
 		template <class TStage, class... Args>
 		requires (not IsDerivedFrom<TStage, StageBase>)
 		StageID AttachStage(Args&&... a_args);

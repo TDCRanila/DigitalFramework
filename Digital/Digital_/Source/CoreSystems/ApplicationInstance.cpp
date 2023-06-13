@@ -2,7 +2,6 @@
 
 #include <CoreSystems/Events/EventLibrary.h>
 #include <CoreSystems/Events/EventImplementation.h>
-// TODO REMOVE - Replace with some sort of EZ Use for Input
 #include <CoreSystems/Logging/Logger.h>
 
 #include <CoreSystems/CoreServices.h>

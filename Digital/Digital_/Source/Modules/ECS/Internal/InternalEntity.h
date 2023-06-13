@@ -9,14 +9,10 @@ namespace DFW
 	namespace DECS
 	{
 		// FW Declare.
-		class EntityManager;
 		class EntityRegistry;
 
 		class InternalEntity
 		{
-		private:
-			friend EntityManager;
-
 		public:
 			InternalEntity();
 			InternalEntity(EntityHandle const a_handle, EntityRegistry* a_registry);

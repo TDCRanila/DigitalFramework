@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Modules/ECS/Component.h>
-#include <Modules/ECS/Utility/EntityTypeID.h>
 
 namespace DFW
 {
