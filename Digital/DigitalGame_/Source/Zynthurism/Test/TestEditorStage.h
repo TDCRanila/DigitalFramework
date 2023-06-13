@@ -2,7 +2,7 @@
 
 #include <GameWorld/Editor/EditorStage.h>
 
-#include <GameWorld/GameWorld.h>
+#include <Modules/ECS/Entity.h>
 
 namespace DGame
 {
