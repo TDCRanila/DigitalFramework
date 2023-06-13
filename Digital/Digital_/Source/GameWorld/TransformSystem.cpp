@@ -13,10 +13,13 @@ namespace DFW
         void CalculateEntityTransform(Entity& a_current_entity, Entity const& a_parent, bool a_is_parent_dirty)
         {
             // Calculate the world transform if necesarry.
-            TransformComponent& transform_component = a_current_entity.GetComponent<TransformComponent>();
-            bool const is_transform_dirty = transform_component.IsDirty() || a_is_parent_dirty;
+            TransformComponent* transform_component = a_current_entity.TryGetComponent<TransformComponent>();
+            if (!transform_component)
+                return;
+
+            bool const is_transform_dirty = transform_component->IsDirty() || a_is_parent_dirty;
             if (is_transform_dirty)
-                transform_component.CalculateWorldTransform(a_parent.GetComponent<TransformComponent>().GetWorldTransformMatrix());
+                transform_component->CalculateWorldTransform(a_parent.GetComponent<TransformComponent>().GetWorldTransformMatrix());
 
             DECS::EntityRelationComponent const* relation_component = a_current_entity.TryGetComponent<DECS::EntityRelationComponent>();
             if (!relation_component)
