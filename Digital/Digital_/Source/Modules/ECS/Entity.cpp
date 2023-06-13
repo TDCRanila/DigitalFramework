@@ -94,6 +94,9 @@ namespace DFW
 			if (!a_child_to_add.IsEntityValid())
 				return;
 
+			if (this->GetRegistry() != a_child_to_add.GetRegistry())
+				return;
+
 			if (IsParentOfEntity(a_child_to_add))
 				return;
 
@@ -132,6 +135,9 @@ namespace DFW
 		void Entity::RemoveChild(Entity a_child_to_remove)
 		{
 			if (!a_child_to_remove.IsEntityValid())
+				return;
+
+			if (this->GetRegistry() != a_child_to_remove.GetRegistry())
 				return;
 
 			if (!IsParentOfEntity(a_child_to_remove))
@@ -191,6 +197,9 @@ namespace DFW
 		void Entity::SetParent(Entity a_parent)
 		{
 			if (!a_parent.IsEntityValid())
+				return;
+			
+			if (this->GetRegistry() != a_parent.GetRegistry())
 				return;
 
 			// Check if already is a child of the parent.
