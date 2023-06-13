@@ -265,8 +265,7 @@ namespace DFW
                 submesh.sphere.pos      = glm::vec3(0.0f);
                 submesh.sphere.radius   = glm::length(glm::max(aabb_min, aabb_max));
 
-                // TODO
-                // OBB.
+                // TODO: OBB.
 
                 // Materials
                 if (a_assimp_scene->HasMaterials())

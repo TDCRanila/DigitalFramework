@@ -190,8 +190,6 @@ namespace DFW
 			child_relation_component.parent = Entity();
 
 			relation_component.childeren_count--;
-
-			// TODO: Should the child have its parent be the root?
 		}
 
 		void Entity::SetParent(Entity a_parent)

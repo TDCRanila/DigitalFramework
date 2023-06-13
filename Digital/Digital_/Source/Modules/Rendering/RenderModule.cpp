@@ -106,7 +106,7 @@ namespace DFW
          
         void RenderModule::Debug_RendererInfo(/*RenderModuleDebugOptions& const a_debug_option*/)
         {
-            // TODO Further Implement with differnt option.s
+            // TODO Further Implement with differnt options.
             _render_module_context->Debug_DrawBasicRenderInfo();
         }
 
