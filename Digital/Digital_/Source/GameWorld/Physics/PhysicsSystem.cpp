@@ -6,6 +6,10 @@
 #include <GameWorld/Physics/PhysicsComponent.h>
 #include <GameWorld/Physics/JoltDebugRenderImpl.h>
 
+#include <Modules/ECS/EntityEvents.h>
+
+#include <CoreSystems/Events/EventDispatcher.h>
+
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
@@ -159,12 +163,18 @@ namespace DFW
         _context->Init();
         JoltPhysics().SetGravity(DFW_PHYSICS_DEFAULT_GRAVITY_VECTOR);
 
+        // Event
+        ECSEventHandler().RegisterCallback<DECS::EntityDestroyedEvent, &PhysicsSystem::OnEntityDestroyedEvent>(this);
+        
         // Debug Draw;
         _jolt_debug_renderer->Init();
     }
 
     void PhysicsSystem::Terminate(DECS::EntityRegistry& /*a_registry*/)
     {
+        // Event
+        ECSEventHandler().UnregisterCallback<DECS::EntityDestroyedEvent, &PhysicsSystem::OnEntityDestroyedEvent>(this);
+
         _context->Terminate();
     }
 
@@ -238,6 +248,12 @@ namespace DFW
             JoltPhysics().DrawBodies(draw_settings, _jolt_debug_renderer.get());
 
         }
+    }
+
+    void PhysicsSystem::OnEntityDestroyedEvent(DECS::EntityDestroyedEvent const& a_event)
+    {
+        if (RigidBodyComponent const* rigid_body_component = a_event.entity.TryGetComponent<RigidBodyComponent>())
+            DestroyRigidBody(rigid_body_component->body_id);
     }
 
 } // End of namespace ~ DFW.

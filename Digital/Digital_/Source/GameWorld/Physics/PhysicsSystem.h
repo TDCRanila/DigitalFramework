@@ -24,6 +24,11 @@ namespace DFW
     class GameClock;
     class JoltDebugRenderer;
 
+    namespace DECS
+    {
+        class EntityDestroyedEvent;
+    } // End of namespace ~ DECS.
+
     namespace DPhysics
     {
         class PhysicsSystemContext;
@@ -72,6 +77,8 @@ namespace DFW
 
         virtual void PreUpdate(DECS::EntityRegistry& a_registry) override;
         virtual void Update(DECS::EntityRegistry& a_registry) override;
+
+        void OnEntityDestroyedEvent(DECS::EntityDestroyedEvent const& a_event);
 
     private:
         UniquePtr<DPhysics::PhysicsSystemContext> _context;
