@@ -1,18 +1,22 @@
 #include <Modules/ECS/Managers/EntityRegistry.h>
 
+#include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Entity.h>
+#include <Modules/ECS/EntityEvents.h>
 #include <Modules/ECS/Internal/EntityDataComponent.h>
 #include <Modules/ECS/Internal/EntityRelationComponent.h>
 #include <Modules/ECS/Internal/EntityHierachyRootTagComponent.h>
 
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {
     namespace DECS
     {
-        EntityRegistry::EntityRegistry()
+        EntityRegistry::EntityRegistry(ECSModule& a_ecs)
             : _id(DFW::GenerateDUID())
+            , _ecs_event_handler(a_ecs.EventHandler())
         {
             _entt_registry.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
@@ -58,7 +62,8 @@ namespace DFW
             // Register Entity in EntityRegistry registers.
             RegisterEntity(entity.GetHandle());
 
-            // TODO: If needed, should reimplement entity creation events here.
+            // Broadcast Entity Creation.
+            _ecs_event_handler.get().Broadcast<EntityCreatedEvent>(entity);
 
             return entity;
         }
@@ -146,6 +151,9 @@ namespace DFW
             auto const& [it, insertion_result] = marked_entities.emplace(a_current_entity.GetHandle());
             if (!insertion_result)
                 DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
+
+            // Broadcast Entity Destruction.
+            _ecs_event_handler.get().Broadcast<EntityDestroyedEvent>(a_current_entity);
 
             DECS::EntityRelationComponent const* relation_component = a_current_entity.TryGetComponent<DECS::EntityRelationComponent>();
             if (!relation_component)

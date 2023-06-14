@@ -4,6 +4,7 @@
 #include <Modules/ECS/Utility/EntityTypeID.h>
 
 #include <CoreSystems/DUID.h>
+#include <CoreSystems/Memory.h>
 
 #include <Utility/TemplateUtility.h>
 
@@ -15,9 +16,12 @@
 
 namespace DFW
 {
+    // FW Declare.
+    class EventDispatcher;
+
     namespace DECS
     {
-        // FW Declare
+        // FW Declare.
         class ECSModule;
         class Entity;
 
@@ -35,7 +39,7 @@ namespace DFW
             friend Entity;
 
         public:
-            EntityRegistry();
+            EntityRegistry(ECSModule& a_ecs);
             ~EntityRegistry();
             
             DFW::DUID GetID() const { return _id; }
@@ -73,6 +77,8 @@ namespace DFW
             EntityDUIDRegisterMap _entity_duid_register;
             EntityNameRegisterMap _entity_name_register;
             std::unordered_set<EntityHandle> _marked_entities_for_destruction;
+
+            DFW::RefWrap<EventDispatcher> _ecs_event_handler;
 
         };
 

@@ -30,7 +30,7 @@ namespace DFW
 			// Allocate.
 			_event_handler	= MakeUnique<EventDispatcher>();
 			_system_manager = MakeUnique<DECS::SystemManager>(this);
-			_registry		= MakeUnique<EntityRegistry>();
+			_registry		= MakeUnique<EntityRegistry>(*this);
 
 			_system_manager->Init(*_registry);
 
