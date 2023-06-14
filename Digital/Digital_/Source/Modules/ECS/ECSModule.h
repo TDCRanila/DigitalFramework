@@ -30,7 +30,7 @@ namespace DFW
 		public:
 			inline SystemManager& SystemManager() const { return *_system_manager; }
 			inline EventDispatcher& EventHandler() const { return *_event_handler; }
-			inline EntityRegistry& GetRegistry() const { return *_registry; }
+			inline EntityRegistry& Registry() const { return *_registry; }
 
 		private:
 			UniquePtr<DFW::DECS::SystemManager>	_system_manager;

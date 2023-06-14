@@ -103,7 +103,7 @@ namespace DFW
 
 			_systems.emplace(type, system_ptr);
 
-			system_ptr->InternalInit(_ecs->GetRegistry());
+			system_ptr->InternalInit(_ecs->Registry());
 		}
 
 		template <typename SystemType>
@@ -111,7 +111,7 @@ namespace DFW
 			void SystemManager::RemoveSystem()
 		{
 			SystemMapIterator const& it = FindSystem<SystemType>();
-			it->second->InternalTerminate(_ecs->GetRegistry());
+			it->second->InternalTerminate(_ecs->Registry());
 			_systems.erase(it);
 		}
 
