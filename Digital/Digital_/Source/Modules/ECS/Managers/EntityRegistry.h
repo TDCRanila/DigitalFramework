@@ -69,10 +69,13 @@ namespace DFW
             void RegisterEntity(EntityHandle const a_entity_handle);
             void UnregisterEntity(EntityHandle const a_entity_handle);
 
+            void SetupHierachyRootEntity();
+
         private:
             entt::registry _entt_registry;
-            EntityHandle _entity_hierachy_root;
             DFW::DUID _id;
+
+            EntityHandle _hierachy_root_entity_handle;
 
             EntityDUIDRegisterMap _entity_duid_register;
             EntityNameRegisterMap _entity_name_register;

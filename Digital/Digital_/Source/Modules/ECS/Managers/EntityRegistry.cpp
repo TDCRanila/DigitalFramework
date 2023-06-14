@@ -25,8 +25,7 @@ namespace DFW
 
             _marked_entities_for_destruction.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
-            _entity_hierachy_root = _entt_registry.create();
-            _entt_registry.emplace<DECS::EntityHierachyRootTagComponent>(_entity_hierachy_root);
+            SetupHierachyRootEntity();
         }
 
         EntityRegistry::~EntityRegistry()
@@ -83,7 +82,7 @@ namespace DFW
 
         Entity EntityRegistry::GetHierachyRoot()
         {
-            return Entity(_entity_hierachy_root, *this);
+            return Entity(_hierachy_root_entity_handle, *this);
         }
 
         Entity EntityRegistry::GetEntity(DFW::DUID const a_entity_id)
@@ -184,6 +183,24 @@ namespace DFW
             _entt_registry.destroy(marked_entities.begin(), marked_entities.end());
 
             marked_entities.clear();
+        }
+
+        void EntityRegistry::SetupHierachyRootEntity()
+        {
+            // Construct the hierachy root.
+            Entity hierachy_root_entity(ENTT().create(), *this);
+            _hierachy_root_entity_handle = hierachy_root_entity.GetHandle();
+
+            // Setup additional Entity data.
+            EntityDataComponent& data_component = hierachy_root_entity.AddComponent<EntityDataComponent>();
+            data_component.id   = DFW::GenerateDUID();
+            data_component.type = GetEntityTypeID<"HierachyRoot">();
+            data_component.name = "HierachyRoot";
+
+            hierachy_root_entity.AddComponent<DECS::EntityHierachyRootTagComponent>();
+
+            // Register Entity in EntityRegistry registers.
+            RegisterEntity(hierachy_root_entity.GetHandle());
         }
 
     } // End of namespace ~ DECS.
