@@ -192,18 +192,45 @@ namespace DFW
 
     void PhysicsSystem::Update(DECS::EntityRegistry& a_registry)
     {
-        _context->UpdatePhysicsWorld(DFW_PHYSICS_DELTATIME, DFW_PHYSICS_COLLISION_STEPS, DFW_PHYSICS_INTEGRATION_SUBSTEPS);
+        SyncStaticRigidBodyTransforms(a_registry);
 
-        // Sync Transform
+        _context->UpdatePhysicsWorld(DFW_PHYSICS_DELTATIME, DFW_PHYSICS_COLLISION_STEPS, DFW_PHYSICS_INTEGRATION_SUBSTEPS);
+        
+        SyncDynamicAndKinematicRigidBodyTransforms(a_registry);
+
+        if (_should_debug_draw_shapes)
+        {
+            static JPH::BodyManager::DrawSettings draw_settings;
+            draw_settings.mDrawShapeWireframe = true;
+            JoltPhysics().DrawBodies(draw_settings, _jolt_debug_renderer.get());
+        }
+    }
+
+    void PhysicsSystem::PostUpdate(DECS::EntityRegistry& a_registry)
+    {
+        RemoveMarkedRigidBodies();
+    }
+
+    void PhysicsSystem::OnEntityDestroyedEvent(DECS::EntityDestroyedEvent const& a_event)
+    {
+        if (RigidBodyComponent const* rigid_body_component = a_event.entity.TryGetComponent<RigidBodyComponent>())
+            DestroyRigidBody(rigid_body_component->body_id);
+    }
+
+    void PhysicsSystem::SyncStaticRigidBodyTransforms(DECS::EntityRegistry& a_registry)
+    {
+        // Update the Static Rigidbody's transform with the Entity's transform.
         JPH::BodyInterface& body_interface = JoltBodyInterface();
         JPH::Quat quat_rotation;
         JPH::Vec3 translation;
         for (auto&& [entity, transform, rigid_body] : a_registry.ENTT().view<TransformComponent, RigidBodyComponent>().each())
         {
-            if (rigid_body.body_id.IsInvalid())
-                continue;
+            DFW_ASSERT(!rigid_body.body_id.IsInvalid());
 
             if (!body_interface.IsAdded(rigid_body.body_id))
+                continue;
+
+            if (body_interface.GetMotionType(rigid_body.body_id) != JPH::EMotionType::Static)
                 continue;
 
             glm::quat quat(transform.GetWorldRotation());
@@ -218,25 +245,28 @@ namespace DFW
 
             body_interface.SetPositionAndRotationWhenChanged(rigid_body.body_id, translation, quat_rotation, JPH::EActivation::DontActivate);
         }
+    }
 
-        if (_should_debug_draw_shapes)
+    void PhysicsSystem::SyncDynamicAndKinematicRigidBodyTransforms(DECS::EntityRegistry& a_registry)
+    {
+        // Update the Entity's transform with the Dynamic/Kinematic Rigidbody's transform.
+        JPH::BodyInterface& body_interface = JoltBodyInterface();
+        JPH::Quat quat_rotation;
+        JPH::Vec3 translation;
+        for (auto&& [entity, transform, rigid_body] : a_registry.ENTT().view<TransformComponent, RigidBodyComponent>().each())
         {
-            static JPH::BodyManager::DrawSettings draw_settings;
-            draw_settings.mDrawShapeWireframe = true;
-            JoltPhysics().DrawBodies(draw_settings, _jolt_debug_renderer.get());
+            DFW_ASSERT(!rigid_body.body_id.IsInvalid());
 
+            if (!body_interface.IsAdded(rigid_body.body_id))
+                continue;
+
+            if (body_interface.GetMotionType(rigid_body.body_id) == JPH::EMotionType::Static)
+                continue;
+
+            body_interface.GetPositionAndRotation(rigid_body.body_id, translation, quat_rotation);
+            transform.SetTranslation({ translation.GetX(), translation.GetY(), translation.GetZ() });
+            transform.SetRotation({ quat_rotation.GetX(), quat_rotation.GetY(), quat_rotation.GetZ(), quat_rotation.GetW() });
         }
-    }
-
-    void PhysicsSystem::PostUpdate(DECS::EntityRegistry& a_registry)
-    {
-        RemoveMarkedRigidBodies();
-    }
-
-    void PhysicsSystem::OnEntityDestroyedEvent(DECS::EntityDestroyedEvent const& a_event)
-    {
-        if (RigidBodyComponent const* rigid_body_component = a_event.entity.TryGetComponent<RigidBodyComponent>())
-            DestroyRigidBody(rigid_body_component->body_id);
     }
 
     void PhysicsSystem::AddAwaitingRigidBodies()

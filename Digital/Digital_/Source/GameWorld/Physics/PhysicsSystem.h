@@ -83,6 +83,9 @@ namespace DFW
 
         void OnEntityDestroyedEvent(DECS::EntityDestroyedEvent const& a_event);
 
+        void SyncStaticRigidBodyTransforms(DECS::EntityRegistry& a_registry);
+        void SyncDynamicAndKinematicRigidBodyTransforms(DECS::EntityRegistry& a_registry);
+
         void AddAwaitingRigidBodies();
         void RemoveMarkedRigidBodies();
 

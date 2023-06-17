@@ -24,6 +24,7 @@ namespace DFW
 
         void SetTranslation(glm::vec3 const& a_translation) { translation = a_translation; DirtifyFlag(); }
         void SetRotation(DMath::EulerAngles const& a_rotation) { rotation = a_rotation; DirtifyFlag(); }
+        void SetRotation(glm::quat const& a_rotation_quat) { rotation = glm::eulerAngles(a_rotation_quat); DirtifyFlag(); }
         void SetScale(glm::vec3 const& a_scale) { scale = a_scale; DirtifyFlag(); }
 
         glm::mat4 const& GetWorldTransformMatrix() const { return cached_world_transform; }
