@@ -9,14 +9,11 @@ namespace DFW
 {
     struct RigidBodyComponent : Component::StrictRegistrar<RigidBodyComponent>
     {
-        RigidBodyComponent()
-            : motion_type(JPH::EMotionType::Dynamic) 
-        {}
-
+        RigidBodyComponent() = default;
+        RigidBodyComponent(JPH::BodyID const a_body_id) : body_id(a_body_id) {}
         virtual ~RigidBodyComponent() = default;
 
         JPH::BodyID body_id;
-        JPH::EMotionType motion_type;
 
     };
 
