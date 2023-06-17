@@ -1,11 +1,13 @@
 #pragma once
 
-#include <GameWorld/Physics/PhysicsSystemContext.h>
 #include <GameWorld/Transform.h>
 
 #include <Modules/ECS/System.h>
 
 #include <Jolt/Jolt.h>
+#include <Jolt/Physics/Body/BodyID.h>
+#include <Jolt/Physics/Body/MotionType.h>
+#include <Jolt/Physics/Collision/Shape/Shape.h>
 
 #include <glm/glm.hpp>
 
@@ -81,6 +83,7 @@ namespace DFW
 
         void OnEntityDestroyedEvent(DECS::EntityDestroyedEvent const& a_event);
 
+        void AddAwaitingRigidBodies();
         void RemoveMarkedRigidBodies();
 
     private:

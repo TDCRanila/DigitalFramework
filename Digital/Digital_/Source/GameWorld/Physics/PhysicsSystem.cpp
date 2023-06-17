@@ -180,16 +180,7 @@ namespace DFW
 
     void PhysicsSystem::PreUpdate(DECS::EntityRegistry& /*a_registry*/)
     {
-        // Add rigid bodies awaiting spawn.
-        if (!_rigid_bodies_pending_spawn.empty())
-        {
-            for (JPH::BodyID const& body_id : _rigid_bodies_pending_spawn)
-                JoltBodyInterface().AddBody(body_id, JPH::EActivation::Activate);
-
-            _rigid_bodies_pending_spawn.clear();
-
-            _should_optimize_broadphase_layer = true;
-        }
+        AddAwaitingRigidBodies();
 
         if (_should_optimize_broadphase_layer)
         {
@@ -246,6 +237,19 @@ namespace DFW
     {
         if (RigidBodyComponent const* rigid_body_component = a_event.entity.TryGetComponent<RigidBodyComponent>())
             DestroyRigidBody(rigid_body_component->body_id);
+    }
+
+    void PhysicsSystem::AddAwaitingRigidBodies()
+    {
+        if (!_rigid_bodies_pending_spawn.empty())
+        {
+            for (JPH::BodyID const& body_id : _rigid_bodies_pending_spawn)
+                JoltBodyInterface().AddBody(body_id, JPH::EActivation::Activate);
+
+            _rigid_bodies_pending_spawn.clear();
+
+            _should_optimize_broadphase_layer = true;
+        }
     }
 
     void PhysicsSystem::RemoveMarkedRigidBodies()
