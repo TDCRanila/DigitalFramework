@@ -77,8 +77,11 @@ namespace DFW
 
         virtual void PreUpdate(DECS::EntityRegistry& a_registry) override;
         virtual void Update(DECS::EntityRegistry& a_registry) override;
+        virtual void PostUpdate(DECS::EntityRegistry& a_registry) override;
 
         void OnEntityDestroyedEvent(DECS::EntityDestroyedEvent const& a_event);
+
+        void RemoveMarkedRigidBodies();
 
     private:
         UniquePtr<DPhysics::PhysicsSystemContext> _context;

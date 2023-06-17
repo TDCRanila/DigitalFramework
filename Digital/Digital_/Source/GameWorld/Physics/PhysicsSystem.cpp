@@ -191,19 +191,6 @@ namespace DFW
             _should_optimize_broadphase_layer = true;
         }
 
-        // Remove rigid bodies awaiting destruction.
-        if (!_rigid_bodies_pending_despawn.empty())
-        {
-            std::vector<JPH::BodyID> body_ids;
-            body_ids.reserve(_rigid_bodies_pending_despawn.size());
-            body_ids.assign(_rigid_bodies_pending_despawn.begin(), _rigid_bodies_pending_despawn.end());
-            JoltBodyInterface().RemoveBodies(body_ids.data(), body_ids.size());
-
-            _rigid_bodies_pending_despawn.clear();
-
-            _should_optimize_broadphase_layer = true;
-        }
-
         if (_should_optimize_broadphase_layer)
         {
             JoltPhysics().OptimizeBroadPhase();
@@ -250,10 +237,72 @@ namespace DFW
         }
     }
 
+    void PhysicsSystem::PostUpdate(DECS::EntityRegistry& a_registry)
+    {
+        RemoveMarkedRigidBodies();
+    }
+
     void PhysicsSystem::OnEntityDestroyedEvent(DECS::EntityDestroyedEvent const& a_event)
     {
         if (RigidBodyComponent const* rigid_body_component = a_event.entity.TryGetComponent<RigidBodyComponent>())
             DestroyRigidBody(rigid_body_component->body_id);
+    }
+
+    void PhysicsSystem::RemoveMarkedRigidBodies()
+    {
+        class BodyCollector : public JPH::CollideShapeBodyCollector
+        {
+        public:
+            BodyCollector(JPH::PhysicsSystem& a_jolt_physics) : _jolt_physics(a_jolt_physics) {}
+
+            virtual void AddHit(const JPH::BodyID& inBodyID) override
+            {
+                JPH::BodyLockWrite lock(_jolt_physics.GetBodyLockInterface(), inBodyID);
+                JPH::Body& body = lock.GetBody();
+                if (!body.IsActive())
+                    _body_ids.emplace_back(body.GetID());
+            }
+
+            virtual void Reset() override
+            {
+                JPH::CollideShapeBodyCollector::Reset();
+                _body_ids.clear();
+            }
+
+            JPH::BodyIDVector const& GetHitBodyIDs() const { return _body_ids; }
+
+        private:
+            JPH::PhysicsSystem& _jolt_physics;
+            JPH::BodyIDVector _body_ids;
+        };
+
+        // Remove rigid bodies awaiting destruction.
+        if (!_rigid_bodies_pending_despawn.empty())
+        {
+            std::vector<JPH::BodyID> body_ids;
+            body_ids.reserve(_rigid_bodies_pending_despawn.size());
+            body_ids.assign(_rigid_bodies_pending_despawn.begin(), _rigid_bodies_pending_despawn.end());
+
+            // Wake up an intersecting bodies with the remove body using broad phase query.
+            BodyCollector collector(JoltPhysics());
+            JPH::RMat44 body_transform;
+            JPH::TransformedShape body_shape;
+            for (JPH::BodyID const body_id : body_ids)
+            {
+                body_transform = JoltBodyInterface().GetWorldTransform(body_id);
+                body_shape = JoltBodyInterface().GetTransformedShape(body_id);
+                JoltPhysics().GetBroadPhaseQuery().CollideAABox(body_shape.GetWorldSpaceBounds(), collector);
+                JoltBodyInterface().ActivateBodies(collector.GetHitBodyIDs().data(), collector.GetHitBodyIDs().size());
+                collector.Reset();
+            }
+
+            // Finally attempt to remove physics bodies.
+            JoltBodyInterface().RemoveBodies(body_ids.data(), body_ids.size());
+
+            _rigid_bodies_pending_despawn.clear();
+
+            _should_optimize_broadphase_layer = true;
+        }
     }
 
 } // End of namespace ~ DFW.
