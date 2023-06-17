@@ -19,6 +19,7 @@ namespace DFW
     ApplicationInstance::ApplicationInstance()
         : _application_name("")
         , _should_application_run(true)
+        , _should_application_start_or_reset(true)
     {
         // Event Library
         DFW::EventLibrary::ProcessEventCollection<DFW::StageEvent>();
@@ -40,24 +41,30 @@ namespace DFW
         // Logging
         Logger::Init(true, 5000);
 
-        // Application ~ Init.
-        TimeTracker application_timer(false);
-        DFW_INFOLOG("{} - Init Application.", _application_name);
-        application_timer.StartTimer();
-        InitApplication();
-        TimeUnit const elapsed_init_time = application_timer.ResetAndFetchElapsedTime(false);
-        DFW_INFOLOG("{} - Init Application Complete - Elapsed Time: {}", _application_name, elapsed_init_time);
+        while (_should_application_start_or_reset)
+        {
+            _should_application_start_or_reset = false;
+            _should_application_run = true;
 
-        // Application ~ Run.
-        DFW_INFOLOG("{} - Running Application.", _application_name);
-        UpdateApplication();
-        
-        // Application ~ Terminate.
-        DFW_INFOLOG("{} - Terminating Application.", _application_name);
-        application_timer.StartTimer();
-        TerminateApplication();
-        TimeUnit const elapsed_termination_time = application_timer.ResetAndFetchElapsedTime(false);
-        DFW_INFOLOG("{} - Terminating Application Complete - Elapsed Time: {}", _application_name, elapsed_termination_time);
+            // Application ~ Init.
+            TimeTracker application_timer(false);
+            DFW_INFOLOG("{} - Init Application.", _application_name);
+            application_timer.StartTimer();
+            InitApplication();
+            TimeUnit const elapsed_init_time = application_timer.ResetAndFetchElapsedTime(false);
+            DFW_INFOLOG("{} - Init Application Complete - Elapsed Time: {}", _application_name, elapsed_init_time);
+
+            // Application ~ Run.
+            DFW_INFOLOG("{} - Running Application.", _application_name);
+            UpdateApplication();
+
+            // Application ~ Terminate.
+            DFW_INFOLOG("{} - Terminating Application.", _application_name);
+            application_timer.StartTimer();
+            TerminateApplication();
+            TimeUnit const elapsed_termination_time = application_timer.ResetAndFetchElapsedTime(false);
+            DFW_INFOLOG("{} - Terminating Application Complete - Elapsed Time: {}", _application_name, elapsed_termination_time);
+        }
     }
 
     void ApplicationInstance::InitApplication()
@@ -100,6 +107,7 @@ namespace DFW
 
         // Register Event Callbacks.
         _application_event_handler->RegisterCallback<ApplicationCloseEvent, &ApplicationInstance::OnApplicationCloseEvent>(this);
+        _application_event_handler->RegisterCallback<ApplicationResetEvent, &ApplicationInstance::OnApplicationResetEvent>(this);
 
         // OS focusses on the main window. Make sure listeners know about this.
         _application_event_handler->InstantBroadcast(WindowFocusEvent(_window_management->GetMainWindowID(), true));
@@ -121,6 +129,7 @@ namespace DFW
 
         // Unregister Event Callbacks.
         _application_event_handler->UnregisterCallback<ApplicationCloseEvent, &ApplicationInstance::OnApplicationCloseEvent>(this);
+        _application_event_handler->UnregisterCallback<ApplicationResetEvent, &ApplicationInstance::OnApplicationResetEvent>(this);
 
         CoreService::ReleaseServices();
     }
@@ -172,6 +181,12 @@ namespace DFW
     void ApplicationInstance::OnApplicationCloseEvent(ApplicationCloseEvent& a_event)
     {
         _should_application_run = false;
+    }
+
+    void ApplicationInstance::OnApplicationResetEvent(ApplicationResetEvent& a_event)
+    {
+        _should_application_run = false;
+        _should_application_start_or_reset = true;
     }
 
     bool ApplicationInstance::Debug_CheckForEmergencyApplicationExit() const
