@@ -28,6 +28,9 @@ namespace DFW
 			{
 				if (ImGui::BeginMenu("Explore"))
 				{
+					if (ImGui::MenuItem("Reset", nullptr))
+						DFW::CoreService::GetAppEventHandler()->Broadcast<ApplicationResetEvent>();
+
 					if (ImGui::MenuItem("Exit", nullptr))
 						DFW::CoreService::GetAppEventHandler()->Broadcast<ApplicationCloseEvent>();
 

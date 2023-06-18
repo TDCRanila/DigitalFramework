@@ -63,7 +63,7 @@ namespace DGame
 
         // Create Main Camera.
         {
-            camera_entity = ECS()->GetRegistry().CreateEntity();
+            camera_entity = ECS()->Registry().CreateEntity();
             camera_entity.SetName("camera-main");
 
             camera_entity.AddComponent<DFW::TransformComponent>(DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f)));
@@ -82,7 +82,7 @@ namespace DGame
 
         {
             // XYZ Representation.            
-            DFW::Entity xyz = ECS()->GetRegistry().CreateEntity();
+            DFW::Entity xyz = ECS()->Registry().CreateEntity();
             xyz.SetName("xyz-model");
 
             xyz.AddComponent<DFW::TransformComponent>(DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f)));
@@ -94,7 +94,7 @@ namespace DGame
 
         {
             // Sponza Scene.
-            DFW::Entity sponza = ECS()->GetRegistry().CreateEntity();
+            DFW::Entity sponza = ECS()->Registry().CreateEntity();
             sponza.SetName("sponza");
             sponza.AddComponent<DFW::TransformComponent>(DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f)));
 
@@ -105,7 +105,7 @@ namespace DGame
 
         {
             // Movable Entity.
-            main_entity = ECS()->GetRegistry().CreateEntity();
+            main_entity = ECS()->Registry().CreateEntity();
             main_entity.SetName("main-entity");
 
             DFW::Transform transform = DFW::Transform(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f), glm::vec3(2.0f));

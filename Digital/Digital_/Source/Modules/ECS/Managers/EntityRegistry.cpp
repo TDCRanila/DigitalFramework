@@ -1,18 +1,22 @@
 #include <Modules/ECS/Managers/EntityRegistry.h>
 
+#include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Entity.h>
+#include <Modules/ECS/EntityEvents.h>
 #include <Modules/ECS/Internal/EntityDataComponent.h>
 #include <Modules/ECS/Internal/EntityRelationComponent.h>
 #include <Modules/ECS/Internal/EntityHierachyRootTagComponent.h>
 
+#include <CoreSystems/Events/EventDispatcher.h>
 #include <CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {
     namespace DECS
     {
-        EntityRegistry::EntityRegistry()
+        EntityRegistry::EntityRegistry(ECSModule& a_ecs)
             : _id(DFW::GenerateDUID())
+            , _ecs_event_handler(a_ecs.EventHandler())
         {
             _entt_registry.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
@@ -21,8 +25,7 @@ namespace DFW
 
             _marked_entities_for_destruction.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
-            _entity_hierachy_root = _entt_registry.create();
-            _entt_registry.emplace<DECS::EntityHierachyRootTagComponent>(_entity_hierachy_root);
+            SetupHierachyRootEntity();
         }
 
         EntityRegistry::~EntityRegistry()
@@ -58,7 +61,8 @@ namespace DFW
             // Register Entity in EntityRegistry registers.
             RegisterEntity(entity.GetHandle());
 
-            // TODO: If needed, should reimplement entity creation events here.
+            // Broadcast Entity Creation.
+            _ecs_event_handler.get().Broadcast<EntityCreatedEvent>(entity);
 
             return entity;
         }
@@ -78,7 +82,7 @@ namespace DFW
 
         Entity EntityRegistry::GetHierachyRoot()
         {
-            return Entity(_entity_hierachy_root, *this);
+            return Entity(_hierachy_root_entity_handle, *this);
         }
 
         Entity EntityRegistry::GetEntity(DFW::DUID const a_entity_id)
@@ -147,6 +151,9 @@ namespace DFW
             if (!insertion_result)
                 DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
 
+            // Broadcast Entity Destruction.
+            _ecs_event_handler.get().Broadcast<EntityDestroyedEvent>(a_current_entity);
+
             DECS::EntityRelationComponent const* relation_component = a_current_entity.TryGetComponent<DECS::EntityRelationComponent>();
             if (!relation_component)
                 return; // No childeren or siblings.
@@ -176,6 +183,24 @@ namespace DFW
             _entt_registry.destroy(marked_entities.begin(), marked_entities.end());
 
             marked_entities.clear();
+        }
+
+        void EntityRegistry::SetupHierachyRootEntity()
+        {
+            // Construct the hierachy root.
+            Entity hierachy_root_entity(ENTT().create(), *this);
+            _hierachy_root_entity_handle = hierachy_root_entity.GetHandle();
+
+            // Setup additional Entity data.
+            EntityDataComponent& data_component = hierachy_root_entity.AddComponent<EntityDataComponent>();
+            data_component.id   = DFW::GenerateDUID();
+            data_component.type = GetEntityTypeID<"HierachyRoot">();
+            data_component.name = "HierachyRoot";
+
+            hierachy_root_entity.AddComponent<DECS::EntityHierachyRootTagComponent>();
+
+            // Register Entity in EntityRegistry registers.
+            RegisterEntity(hierachy_root_entity.GetHandle());
         }
 
     } // End of namespace ~ DECS.

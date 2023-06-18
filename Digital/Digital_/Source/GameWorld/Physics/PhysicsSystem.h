@@ -1,11 +1,13 @@
 #pragma once
 
-#include <GameWorld/Physics/PhysicsSystemContext.h>
 #include <GameWorld/Transform.h>
 
 #include <Modules/ECS/System.h>
 
 #include <Jolt/Jolt.h>
+#include <Jolt/Physics/Body/BodyID.h>
+#include <Jolt/Physics/Body/MotionType.h>
+#include <Jolt/Physics/Collision/Shape/Shape.h>
 
 #include <glm/glm.hpp>
 
@@ -23,6 +25,11 @@ namespace DFW
 {
     class GameClock;
     class JoltDebugRenderer;
+
+    namespace DECS
+    {
+        class EntityDestroyedEvent;
+    } // End of namespace ~ DECS.
 
     namespace DPhysics
     {
@@ -72,6 +79,15 @@ namespace DFW
 
         virtual void PreUpdate(DECS::EntityRegistry& a_registry) override;
         virtual void Update(DECS::EntityRegistry& a_registry) override;
+        virtual void PostUpdate(DECS::EntityRegistry& a_registry) override;
+
+        void OnEntityDestroyedEvent(DECS::EntityDestroyedEvent const& a_event);
+
+        void SyncStaticRigidBodyTransforms(DECS::EntityRegistry& a_registry);
+        void SyncDynamicAndKinematicRigidBodyTransforms(DECS::EntityRegistry& a_registry);
+
+        void AddAwaitingRigidBodies();
+        void RemoveMarkedRigidBodies();
 
     private:
         UniquePtr<DPhysics::PhysicsSystemContext> _context;

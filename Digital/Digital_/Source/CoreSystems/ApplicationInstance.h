@@ -66,9 +66,11 @@ namespace DFW
  
         std::string _application_name;
         bool _should_application_run;
+        bool _should_application_start_or_reset;
 
     private:
         void OnApplicationCloseEvent(ApplicationCloseEvent& a_event);
+        void OnApplicationResetEvent(ApplicationResetEvent& a_event);
 
         bool Debug_CheckForEmergencyApplicationExit() const;
         void Debug_ReportGameClockInfo(DFW::TimeUnit const a_log_interval) const;

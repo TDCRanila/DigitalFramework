@@ -25,7 +25,7 @@ namespace DFW
         void RenderModuleContext::InitRenderModuleContext()
         {
             // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
-            bgfx::renderFrame();
+            //bgfx::renderFrame();
 
             SharedPtr<DWindow::WindowInstance> main_window_ptr = CoreService::GetWindowManagement()->GetMainWindow();
             DFW_ASSERT(main_window_ptr, "Pointer to the main window is invalid, window mangement might not have been initialised.");

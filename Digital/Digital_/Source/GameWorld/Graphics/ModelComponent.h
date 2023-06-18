@@ -20,6 +20,9 @@ namespace DFW
     struct ModelComponent : public Renderable, DECS::Component::StrictRegistrar<ModelComponent>
     {
         ModelComponent() = default;
+        ModelComponent(SharedPtr<DRender::MeshData> const& a_mesh, SharedPtr<DRender::ShaderProgram> const& a_shader) 
+            : mesh(a_mesh), shader(a_shader) {}
+
         ~ModelComponent() = default;
 
         SharedPtr<DRender::MeshData> mesh;
