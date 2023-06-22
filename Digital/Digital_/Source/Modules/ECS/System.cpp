@@ -1,5 +1,7 @@
 #include <Modules/ECS/System.h>
 
+#include <Modules/ECS/Managers/SystemManager.h>
+
 #include <CoreSystems/Logging/Logger.h>
 
 namespace DFW
@@ -9,20 +11,27 @@ namespace DFW
 		System::System()
 			: _system_manager(nullptr)
 			, _event_handler(nullptr)
-			, _id(DFW::DFW_INVALID_DUID)
+			, _id(DFW_INVALID_DUID)
+			, _type_id(DFW_INVALID_SYSTEM_TYPE_ID)
 			, _name("Default System Name.")
 			, _paused(false)
 		{
 		}
 
-		DFW::DUID System::GetID() const
+		void System::ExecuteBefore(System& a_system)
 		{
-			return _id;
+			_system_manager->AddSystemDependency(a_system, *this);
 		}
 
-		std::string System::GetName() const
+		void System::ExecuteAfter(System& a_system)
 		{
-			return _name;
+			_system_manager->AddSystemDependency(*this, a_system);
+		}
+
+		void System::RemoveDependencies(System& a_system)
+		{
+			_system_manager->RemoveSystemDependency(*this, a_system);
+			_system_manager->RemoveSystemDependency(a_system, *this);
 		}
 
 		void System::Init(EntityRegistry& /*a_registry*/)
@@ -47,11 +56,6 @@ namespace DFW
 
 		void System::UpdateSystemImGui(EntityRegistry& /*a_registry*/)
 		{
-		}
-
-		bool System::IsSystemPaused() const
-		{
-			return _paused;
 		}
 
 		void System::InternalInit(EntityRegistry& a_registry)
