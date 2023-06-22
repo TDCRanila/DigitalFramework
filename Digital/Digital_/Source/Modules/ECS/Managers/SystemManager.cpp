@@ -5,37 +5,31 @@ namespace DFW
 	namespace DECS
 	{
 		SystemManager::SystemManager(ECSModule const* a_ecs)
+			: _ecs(a_ecs)
 		{
-			_ecs = a_ecs;
 		}
 
 		SystemManager::~SystemManager() = default;
 
-		void SystemManager::Init(EntityRegistry& a_registry)
+		void SystemManager::RemoveAllSystems(EntityRegistry& a_registry)
 		{
-			// Calling Init of systems.
+			// Calling Terminiate of systems.
 			for (auto const& [system_type, system_ptr] : _systems)
-			{
-				system_ptr->InternalInit(a_registry);
-			}
+				system_ptr->InternalTerminate(a_registry);
+
+			_system_providing_dependencies_map.clear();
+			_system_relying_dependencies_map.clear();
+			_system_execution_list.clear();
+			_systems.clear();
 		}
 
 		void SystemManager::Terminate(EntityRegistry& a_registry)
 		{
-			// Calling Terminiate of systems.
-			for (auto const& [system_type, system_ptr] : _systems)
-			{
-				system_ptr->InternalTerminate(a_registry);
-			}
+			RemoveAllSystems(a_registry);
 		}
 
 		void SystemManager::UpdateSystems(EntityRegistry& a_registry)
 		{
-			if (_systems.empty())
-			{
-				return;
-			}
-
 			// Calling Init of systems.
 			for (System* system : _system_execution_list)
 			{
@@ -60,15 +54,8 @@ namespace DFW
 
 		void SystemManager::UpdateSystemsImGui(EntityRegistry& a_registry)
 		{
-			if (_systems.empty())
-			{
-				return;
-			}
-
 			for (auto const& system_ptr : _system_execution_list)
-			{
 				system_ptr->UpdateSystemImGui(a_registry);
-			}
 		}
 
 		void SystemManager::AddSystemDependency(System const& a_relying_system, System const& a_providing_system)

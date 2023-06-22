@@ -32,8 +32,6 @@ namespace DFW
 			_system_manager = MakeUnique<DECS::SystemManager>(this);
 			_registry		= MakeUnique<EntityRegistry>(*this);
 
-			_system_manager->Init(*_registry);
-
 			_initialized = true;
 		}
 
