@@ -46,9 +46,6 @@ namespace DFW
     // Do 1 collision step per 1 / 60th of a second (round up).
     constexpr uint8 DFW_PHYSICS_COLLISION_STEPS = 1;
 
-    // If you want more accurate step results you can do multiple sub steps within a collision step. Usually you would set this to 1.
-    constexpr uint8 DFW_PHYSICS_INTEGRATION_SUBSTEPS = 1;
-
     class PhysicsSystem : public DECS::System
     {
     public:

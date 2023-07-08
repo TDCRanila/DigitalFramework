@@ -194,7 +194,7 @@ namespace DFW
     {
         SyncStaticRigidBodyTransforms(a_registry);
 
-        _context->UpdatePhysicsWorld(DFW_PHYSICS_DELTATIME, DFW_PHYSICS_COLLISION_STEPS, DFW_PHYSICS_INTEGRATION_SUBSTEPS);
+        _context->UpdatePhysicsWorld(DFW_PHYSICS_DELTATIME, DFW_PHYSICS_COLLISION_STEPS);
         
         SyncDynamicAndKinematicRigidBodyTransforms(a_registry);
 

@@ -87,7 +87,7 @@ namespace DFW
             void Init();
             void Terminate();
 
-            void UpdatePhysicsWorld(float32 const a_delta_time, uint8 const a_physics_steps, uint8 const a_physics_integration_substeps);
+            void UpdatePhysicsWorld(float32 const a_delta_time, uint8 const a_physics_steps);
 
             UniquePtr<JPH::JobSystemThreadPool> jph_job_system;
             UniquePtr<JPH::PhysicsSystem> jph_physics_system;
