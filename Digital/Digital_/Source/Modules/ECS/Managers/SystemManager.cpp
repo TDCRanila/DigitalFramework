@@ -11,11 +11,10 @@ namespace DFW
 
 		SystemManager::~SystemManager() = default;
 
-		void SystemManager::RemoveAllSystems(EntityRegistry& a_registry)
+		void SystemManager::RemoveSystems(bool a_should_terminate_systems)
 		{
-			// Calling Terminiate of systems.
-			for (auto const& [system_type, system_ptr] : _systems)
-				system_ptr->InternalTerminate(a_registry);
+			if (a_should_terminate_systems)
+				TerminateSystems(_ecs->Registry());
 
 			_system_providing_dependencies_map.clear();
 			_system_relying_dependencies_map.clear();
@@ -23,9 +22,10 @@ namespace DFW
 			_systems.clear();
 		}
 
-		void SystemManager::Terminate(EntityRegistry& a_registry)
+		void SystemManager::TerminateSystems(EntityRegistry& a_registry)
 		{
-			RemoveAllSystems(a_registry);
+			for (auto const& [system_type, system_ptr] : _systems)
+				system_ptr->InternalTerminate(a_registry);
 		}
 
 		void SystemManager::UpdateSystems(EntityRegistry& a_registry)

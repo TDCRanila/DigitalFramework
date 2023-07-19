@@ -35,7 +35,7 @@ namespace DFW
 			requires IsValidSystemType<SystemType>
 				void RemoveSystem();
 
-			void RemoveAllSystems(EntityRegistry& a_registry);
+			void RemoveSystems(bool a_should_terminate_systems);
 
 			template <typename SystemType>
 			requires IsValidSystemType<SystemType>
@@ -68,7 +68,7 @@ namespace DFW
 			void CalculateSystemDependencies();
 
 		private:
-			void Terminate(EntityRegistry& a_registry);
+			void TerminateSystems(EntityRegistry& a_registry);
 
 			void UpdateSystems(EntityRegistry& a_registry);
 			void UpdateSystemsImGui(EntityRegistry& a_registry);

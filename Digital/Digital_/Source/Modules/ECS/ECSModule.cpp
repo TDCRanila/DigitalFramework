@@ -41,9 +41,11 @@ namespace DFW
 
 			DFW_INFOLOG("Terminating DECS Module.");
 
-			_system_manager->Terminate(*_registry);
+			_system_manager->TerminateSystems(*_registry);
 
 			_registry.reset();
+
+			_system_manager->RemoveSystems(false);
 
 			_initialized = false;
 		}
