@@ -9,6 +9,8 @@
 #include <Jolt/Physics/Body/MotionType.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>
 
+#include <Utility/JoltUtility.h>
+
 #include <glm/glm.hpp>
 
 #include <unordered_set>
