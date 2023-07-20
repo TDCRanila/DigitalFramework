@@ -168,6 +168,11 @@ namespace DFW
         // Event
         ECSEventHandler().UnregisterCallback<DECS::EntityDestroyedEvent, &PhysicsSystem::OnEntityDestroyedEvent>(this);
 
+        // Safely remove all bodies registered in the physcis system.
+        JPH::BodyIDVector bodies;
+        JoltPhysics().GetBodies(bodies);
+        JoltBodyInterface().RemoveBodies(bodies.data(), bodies.size());
+
         _context->Terminate();
     }
 
