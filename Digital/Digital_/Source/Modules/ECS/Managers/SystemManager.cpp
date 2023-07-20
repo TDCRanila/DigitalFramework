@@ -14,7 +14,7 @@ namespace DFW
 		void SystemManager::RemoveSystems(bool a_should_terminate_systems)
 		{
 			if (a_should_terminate_systems)
-				TerminateSystems(_ecs->Registry());
+				TerminateSystems();
 
 			_system_providing_dependencies_map.clear();
 			_system_relying_dependencies_map.clear();
@@ -22,40 +22,40 @@ namespace DFW
 			_systems.clear();
 		}
 
-		void SystemManager::TerminateSystems(EntityRegistry& a_registry)
+		void SystemManager::TerminateSystems()
 		{
 			for (auto const& [system_type, system_ptr] : _systems)
-				system_ptr->InternalTerminate(a_registry);
+				system_ptr->InternalTerminate(_ecs->Registry());
 		}
 
-		void SystemManager::UpdateSystems(EntityRegistry& a_registry)
+		void SystemManager::UpdateSystems()
 		{
 			// Calling Init of systems.
 			for (System* system : _system_execution_list)
 			{
 				if (!system->IsSystemPaused())
-					system->InternalPreUpdate(a_registry);
+					system->InternalPreUpdate(_ecs->Registry());
 			}
 
 			// Calling Init of systems.
 			for (System* system : _system_execution_list)
 			{
 				if (!system->IsSystemPaused())
-					system->InternalUpdate(a_registry);
+					system->InternalUpdate(_ecs->Registry());
 			}
 			
 			// Calling Init of systems.
 			for (System* system : _system_execution_list)
 			{
 				if (!system->IsSystemPaused())
-					system->InternalPostUpdate(a_registry);
+					system->InternalPostUpdate(_ecs->Registry());
 			}
 		}
 
-		void SystemManager::UpdateSystemsImGui(EntityRegistry& a_registry)
+		void SystemManager::UpdateSystemsImGui()
 		{
 			for (auto const& system_ptr : _system_execution_list)
-				system_ptr->UpdateSystemImGui(a_registry);
+				system_ptr->UpdateSystemImGui(_ecs->Registry());
 		}
 
 		void SystemManager::AddSystemDependency(System const& a_relying_system, System const& a_providing_system)

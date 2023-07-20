@@ -41,7 +41,7 @@ namespace DFW
 
 			DFW_INFOLOG("Terminating DECS Module.");
 
-			_system_manager->TerminateSystems(*_registry);
+			_system_manager->TerminateSystems();
 
 			_registry.reset();
 
@@ -56,7 +56,7 @@ namespace DFW
 
 			// Update systems and events.
 			_event_handler->ProcessPendingEvents();
-			_system_manager->UpdateSystems(*_registry);
+			_system_manager->UpdateSystems();
 			_event_handler->ProcessPendingEvents();
 
 			_registry->CleanDestructionMarkedEntities();
@@ -64,7 +64,7 @@ namespace DFW
 
 		void ECSModule::UpdateECSImGui()
 		{
-			_system_manager->UpdateSystemsImGui(*_registry);
+			_system_manager->UpdateSystemsImGui();
 		}
 
 	} // End of namespace ~ DECS

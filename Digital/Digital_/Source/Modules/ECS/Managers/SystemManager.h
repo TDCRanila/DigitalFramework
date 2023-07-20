@@ -68,10 +68,10 @@ namespace DFW
 			void CalculateSystemDependencies();
 
 		private:
-			void TerminateSystems(EntityRegistry& a_registry);
+			void TerminateSystems();
 
-			void UpdateSystems(EntityRegistry& a_registry);
-			void UpdateSystemsImGui(EntityRegistry& a_registry);
+			void UpdateSystems();
+			void UpdateSystemsImGui();
 
 			using SystemMapIterator = std::unordered_map<SystemTypeID, SharedPtr<System>>::iterator;
 
