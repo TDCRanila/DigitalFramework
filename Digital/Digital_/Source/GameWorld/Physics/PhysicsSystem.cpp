@@ -145,6 +145,21 @@ namespace DFW
         return CreateSphereRigidBody(Transform(), a_sphere_radius, a_rigid_body_type);
     }
 
+    JPH::Ref<JPH::Character> PhysicsSystem::CreateCharacter(Transform const& a_transform, JPH::CharacterSettings const& a_character_settings)
+    {
+        JPH::Ref<JPH::Character> character = new JPH::Character(
+            &a_character_settings
+            , DUtility::GLMToJPH(a_transform.GetWorldTranslation())
+            , DUtility::GLMToJPH(glm::quat(a_transform.GetWorldRotation()))
+            , 0
+            , &JoltPhysics()
+        );
+
+        AddRigidBodyToSystem(character->GetBodyID());
+
+        return character;
+    }
+
     void PhysicsSystem::DestroyRigidBody(JPH::BodyID const a_rigid_body_id)
     {
         if (JoltBodyInterface().IsAdded(a_rigid_body_id))
