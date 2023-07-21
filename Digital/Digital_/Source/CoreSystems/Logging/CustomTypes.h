@@ -5,19 +5,15 @@
 
 #pragma region CoreTypes
 
-    // TODO Need to look into this again regarding operators for custom logging types.
+#include <CoreSystems/DUID.h>
 
-    //template<typename OStream>
-    //OStream& operator<<(OStream& os, const DFW::DUID& c)
-    //{
-    //    return os << "DUID-" << c.operator std::string();
-    //}
-
-    //template<typename OStream>
-    //OStream& operator<<(OStream& os, const DFW::DObject& c)
-    //{
-    //    return os << "DObject-" << c.operator std::string();
-    //}
+template <> struct fmt::formatter<DFW::DUID> : fmt::formatter<std::string>
+{
+    auto format(DFW::DUID a_duid, format_context& ctx) const
+    {
+        return formatter<std::string>::format(a_duid.operator std::string(), ctx);
+    }
+};
 
 #pragma endregion
 
