@@ -16,7 +16,7 @@ namespace DFW
 
         inline glm::vec3 JPHToGLM(JPH::Vec3 const& a_vector) { return { a_vector.GetX(), a_vector.GetY(), a_vector.GetZ() }; }
         inline glm::vec4 JPHToGLM(JPH::Vec4 const& a_vector) { return { a_vector.GetX(), a_vector.GetY(), a_vector.GetZ(), a_vector.GetW() }; }
-        inline glm::quat JPHToGLM(JPH::Quat const& a_quat) { return { a_quat.GetX(), a_quat.GetY(), a_quat.GetZ(), a_quat.GetW() }; }
+        inline glm::quat JPHToGLM(JPH::Quat const& a_quat) { return { a_quat.GetW(), a_quat.GetX(), a_quat.GetY(), a_quat.GetZ() }; }
 
     } // End of namespace ~ DUtility.
 
