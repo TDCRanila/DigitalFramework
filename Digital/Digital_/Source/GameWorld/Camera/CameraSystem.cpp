@@ -217,29 +217,29 @@ namespace DFW
             if (a_camera.has_enabled_six_degrees_rotation)
             {
                 DMath::EulerAngles const angle_delta(mouse_delta.y, mouse_delta.x, mouse_scroll_delta.y);
-                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.pitch()), Detail::world_right);
-                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.yaw()), Detail::world_up);
-                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.roll()), Detail::world_front);
+                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.x), Detail::world_right);
+                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.y), Detail::world_up);
+                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.z), Detail::world_front);
                 a_camera.angles = glm::degrees(glm::eulerAngles(a_camera.orientation));
             }
             else
             {
-                a_camera.angles.pitch() += mouse_delta.y;
-                a_camera.angles.yaw() += mouse_delta.x;
+                a_camera.angles.x += mouse_delta.y;
+                a_camera.angles.y += mouse_delta.x;
 
                 // Prevent Gimbal Lock.
-                if (a_camera.angles.pitch() > 90.f)
-                    a_camera.angles.pitch() = 90.f;
-                if (a_camera.angles.pitch() < -90.f)
-                    a_camera.angles.pitch() = -90.f;
+                if (a_camera.angles.x > 90.f)
+                    a_camera.angles.x = 90.f;
+                if (a_camera.angles.x < -90.f)
+                    a_camera.angles.x = -90.f;
 
                 // Wrap Yaw Angle.
-                if (a_camera.angles.yaw() > 180.f)
-                    a_camera.angles.yaw() = -180.f;
-                if (a_camera.angles.yaw() < -180.f)
-                    a_camera.angles.yaw() = 180.f;
+                if (a_camera.angles.y > 180.f)
+                    a_camera.angles.y = -180.f;
+                if (a_camera.angles.y < -180.f)
+                    a_camera.angles.y = 180.f;
 
-                glm::vec3 const pitch_yaw_angles(a_camera.angles.pitch(), a_camera.angles.yaw(), 0.0f);
+                glm::vec3 const pitch_yaw_angles(a_camera.angles.x, a_camera.angles.y, 0.0f);
                 glm::quat const orientation_offset(glm::radians(pitch_yaw_angles));
                 a_camera.orientation = orientation_offset;
             }

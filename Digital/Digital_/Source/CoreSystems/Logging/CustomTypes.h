@@ -67,14 +67,6 @@ template <> struct fmt::formatter<glm::vec3>
     }
 };
 
-template <> struct fmt::formatter<DFW::DMath::EulerAngles> : formatter<glm::vec3>
-{
-    format_context::iterator format(DFW::DMath::EulerAngles const& a_eulerangle, format_context& ctx)
-    {
-        return formatter<glm::vec3>::format(a_eulerangle, ctx);
-    }
-};
-
 template <> struct fmt::formatter<glm::vec4>
 {
     char presentation = 'f';

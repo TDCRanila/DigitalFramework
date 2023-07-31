@@ -19,7 +19,7 @@ namespace DFW
 
     public:
         void Translate(glm::vec3 const& a_translation_vector) { translation += a_translation_vector; DirtifyFlag(); }
-        void Rotate(DMath::EulerAngles const& a_rotation_vector) { rotation += static_cast<glm::vec3>(a_rotation_vector); DirtifyFlag(); }
+        void Rotate(DMath::EulerAngles const& a_rotation_vector) { rotation += a_rotation_vector; DirtifyFlag(); }
         void Scale(glm::vec3 const& a_scale_vector) { scale += a_scale_vector; DirtifyFlag(); }
 
         void SetTranslation(glm::vec3 const& a_translation) { translation = a_translation; DirtifyFlag(); }
