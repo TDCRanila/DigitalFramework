@@ -22,7 +22,6 @@ template <> struct fmt::formatter<DFW::DUID> : fmt::formatter<std::string>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
-#include <Modules/Math/EulerAngles.h>
 #include <glm/gtc/quaternion.hpp>
 
 template <> struct fmt::formatter<glm::vec2>
@@ -41,8 +40,8 @@ template <> struct fmt::formatter<glm::vec2>
     format_context::iterator format(glm::vec3 const& a_vec2, format_context& ctx)
     {
         return presentation == 'f'
-            ? fmt::format_to(ctx.out(), "({:.1f}, {:.1f})", a_vec2.x, a_vec2.y)
-            : fmt::format_to(ctx.out(), "({:.1e}, {:.1e})", a_vec2.x, a_vec2.y);
+            ? fmt::format_to(ctx.out(), "({:.3f}, {:.3f})", a_vec2.x, a_vec2.y)
+            : fmt::format_to(ctx.out(), "({:.3e}, {:.3e})", a_vec2.x, a_vec2.y);
     }
 };
 
@@ -63,8 +62,8 @@ template <> struct fmt::formatter<glm::vec3>
     {
         // ctx.out() is an output iterator to write to.
         return presentation == 'f'
-            ? fmt::format_to(ctx.out(), "({:.1f}, {:.1f}, {:.1f})", a_vec3.x, a_vec3.y, a_vec3.z)
-            : fmt::format_to(ctx.out(), "({:.1e}, {:.1e}, {:.1e})", a_vec3.x, a_vec3.y, a_vec3.z);
+            ? fmt::format_to(ctx.out(), "({:.3f}, {:.3f}, {:.3f})", a_vec3.x, a_vec3.y, a_vec3.z)
+            : fmt::format_to(ctx.out(), "({:.3e}, {:.3e}, {:.3e})", a_vec3.x, a_vec3.y, a_vec3.z);
     }
 };
 
@@ -84,8 +83,8 @@ template <> struct fmt::formatter<glm::vec4>
     format_context::iterator format(glm::vec4 const& a_vec4, format_context& ctx) const 
     {
         return presentation == 'f'
-            ? fmt::format_to(ctx.out(), "({:.1f}, {:.1f}, {:.1f}, {:.1f})", a_vec4.x, a_vec4.y, a_vec4.z, a_vec4.w)
-            : fmt::format_to(ctx.out(), "({:.1e}, {:.1e}, {:.1e}, {:.1e})", a_vec4.x, a_vec4.y, a_vec4.z, a_vec4.w);
+            ? fmt::format_to(ctx.out(), "({:.3f}, {:.3f}, {:.3f}, {:.3f})", a_vec4.x, a_vec4.y, a_vec4.z, a_vec4.w)
+            : fmt::format_to(ctx.out(), "({:.3e}, {:.3e}, {:.3e}, {:.3e})", a_vec4.x, a_vec4.y, a_vec4.z, a_vec4.w);
     }
 };
 
