@@ -186,7 +186,8 @@ namespace DFW
         // Safely remove all bodies registered in the physcis system.
         JPH::BodyIDVector bodies;
         JoltPhysics().GetBodies(bodies);
-        JoltBodyInterface().RemoveBodies(bodies.data(), bodies.size());
+        if (bodies.size() > 0)
+            JoltBodyInterface().RemoveBodies(bodies.data(), bodies.size());
 
         _context->Terminate();
     }
