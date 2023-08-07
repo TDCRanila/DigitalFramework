@@ -28,8 +28,11 @@ namespace DFW
         glm::vec3   up;
         glm::vec3   right;
 
-        DMath::EulerAngles  angles;
-        glm::quat           orientation;
+        glm::vec3   world_front;
+        glm::vec3   world_up;
+        glm::vec3   world_right;
+
+        DMath::EulerAngles angles; // Pitch(x), Yaw(y), Roll(z); in degrees.
 
         ClipSpace   clip;
         float32     fov;
