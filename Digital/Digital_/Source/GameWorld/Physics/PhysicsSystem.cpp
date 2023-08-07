@@ -79,7 +79,7 @@ namespace DFW
         JPH::BodyCreationSettings mesh_settings(
             &a_mesh_shape_settings
             , DUtility::GLMToJPH(a_transform.GetWorldTranslation())
-            , DUtility::GLMToJPH(glm::quat(a_transform.GetWorldRotation()))
+            , DUtility::GLMToJPH(a_transform.GetWorldOrientation())
             , a_rigid_body_type
             , Detail::GetPhysicsLayerIDFromMotionType(a_rigid_body_type)
         );
@@ -100,7 +100,7 @@ namespace DFW
             // BoxShape gets deleted by JPH itself.
             new JPH::BoxShape(DUtility::GLMToJPH(a_extend))
             , DUtility::GLMToJPH(a_transform.GetWorldTranslation())
-            , DUtility::GLMToJPH(glm::quat(a_transform.GetWorldRotation()))
+            , DUtility::GLMToJPH(a_transform.GetWorldOrientation())
             , a_rigid_body_type
             , Detail::GetPhysicsLayerIDFromMotionType(a_rigid_body_type)
         );
@@ -126,7 +126,7 @@ namespace DFW
             // SphereShape gets deleted by JPH itself.
             new JPH::SphereShape(a_sphere_radius)
             , DUtility::GLMToJPH(a_transform.GetWorldTranslation())
-            , DUtility::GLMToJPH(glm::quat(a_transform.GetWorldRotation()))
+            , DUtility::GLMToJPH(a_transform.GetWorldOrientation())
             , a_rigid_body_type
             , Detail::GetPhysicsLayerIDFromMotionType(a_rigid_body_type)
         );
@@ -150,7 +150,7 @@ namespace DFW
         JPH::Ref<JPH::Character> character = new JPH::Character(
             &a_character_settings
             , DUtility::GLMToJPH(a_transform.GetWorldTranslation())
-            , DUtility::GLMToJPH(glm::quat(a_transform.GetWorldRotation()))
+            , DUtility::GLMToJPH(a_transform.GetWorldOrientation())
             , 0
             , &JoltPhysics()
         );
@@ -247,7 +247,7 @@ namespace DFW
             if (body_interface.GetMotionType(rigid_body.body_id) != JPH::EMotionType::Static)
                 continue;
 
-            quat_rotation = DUtility::GLMToJPH(glm::quat(transform.GetWorldRotation()));
+            quat_rotation = DUtility::GLMToJPH(transform.GetWorldOrientation());
             translation = DUtility::GLMToJPH(transform.GetWorldTranslation());
 
             body_interface.SetPositionAndRotationWhenChanged(rigid_body.body_id, translation, quat_rotation, JPH::EActivation::DontActivate);
@@ -272,7 +272,7 @@ namespace DFW
 
             body_interface.GetPositionAndRotation(rigid_body.body_id, translation, quat_rotation);
             transform.SetTranslation(DUtility::JPHToGLM(translation));
-            transform.SetRotation(DUtility::JPHToGLM(quat_rotation));
+            transform.SetOrientation(DUtility::JPHToGLM(quat_rotation));
         }
     }
 
