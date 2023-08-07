@@ -35,11 +35,11 @@ namespace DFW
 
         glm::vec3 const& GetWorldTranslation() const { return cached_world_translation; }
         glm::quat const& GetWorldOrientation() const { return cached_world_orientation; }
-        DMath::EulerAngles const& GetWorldRotation() const { return glm::eulerAngles(cached_world_orientation); }
+        DMath::EulerAngles const GetWorldRotation() const { return glm::eulerAngles(cached_world_orientation); }
 
         glm::vec3 const& GetTranslation() const { return translation; }
         glm::quat const& GetOrientation() const { return orientation; }
-        DMath::EulerAngles const& GetRotation() const { return glm::eulerAngles(orientation); };
+        DMath::EulerAngles const GetRotation() const { return glm::eulerAngles(orientation); };
         glm::vec3 const& GetScale() const { return scale; }
 
     public:
