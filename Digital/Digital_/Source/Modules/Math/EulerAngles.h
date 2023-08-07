@@ -6,7 +6,7 @@ namespace DFW
 {
     namespace DMath
     {
-        using EulerAngles = glm::vec3;
+        using EulerAngles = glm::vec3; // Pitch(x), Yaw(y), Roll(z).
 
     } // End of namespace ~ DMath.
 
