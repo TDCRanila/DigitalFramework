@@ -37,7 +37,7 @@ template <> struct fmt::formatter<glm::vec2>
         return it;
     }
 
-    format_context::iterator format(glm::vec3 const& a_vec2, format_context& ctx)
+    format_context::iterator format(glm::vec2 const& a_vec2, format_context& ctx)
     {
         return presentation == 'f'
             ? fmt::format_to(ctx.out(), "({:.3f}, {:.3f})", a_vec2.x, a_vec2.y)
