@@ -12,6 +12,7 @@
 
 #include <Modules/ECS/ECSModule.h>
 #include <Modules/ECS/Entity.h>
+#include <Modules/ECS/Internal/EntityRelationComponent.h>
 
 #include <glm/glm.hpp>
 
@@ -30,13 +31,33 @@ namespace DFW
             return !(a_camera_name == "" || a_camera_name.empty());
         }
 
-        void UpdateCameraMatrix(CameraComponent& a_camera, Transform& a_transform)
+        void ResetCamera(CameraComponent& a_camera)
         {
-            a_camera.right  = glm::rotate(a_camera.orientation, Detail::world_right);
-            a_camera.up     = glm::rotate(a_camera.orientation, Detail::world_up);
-            a_camera.front  = glm::rotate(a_camera.orientation, Detail::world_front);
+            Transform& transform = a_camera.GetOwner().GetComponent<TransformComponent>();
+            transform.SetOrientation(glm::vec3(0.0f));
 
-            a_camera.view   = glm::inverse(a_transform.GetWorldTransformMatrix() * glm::toMat4(a_camera.orientation));
+            a_camera.angles = glm::vec3(0.0f);
+
+            a_camera.front  = Detail::world_front;
+            a_camera.up     = Detail::world_up;
+            a_camera.right  = Detail::world_right;
+
+            a_camera.world_up    = Detail::world_front;
+            a_camera.world_up    = Detail::world_up;
+            a_camera.world_right = Detail::world_right;
+        }
+
+        void CalculateCameraViewMatrix(CameraComponent& a_camera, Transform& a_transform)
+        {
+            a_camera.view = glm::lookAtLH(a_transform.GetWorldTranslation(), a_transform.GetWorldTranslation() + a_camera.world_front, a_camera.world_up);
+        }
+
+        void CalculateCameraWorldVectors(CameraComponent& a_camera, Entity const& a_camera_parent)
+        {
+            TransformComponent const& parent_transform = a_camera_parent.GetComponent<TransformComponent>();
+            a_camera.world_front = parent_transform.GetWorldOrientation() * a_camera.front;
+            a_camera.world_right = parent_transform.GetWorldOrientation() * a_camera.right;
+            a_camera.world_up    = parent_transform.GetWorldOrientation() * a_camera.up;
         }
 
     } // End of namespace ~ Detail.
@@ -169,12 +190,7 @@ namespace DFW
 
         a_camera_component.has_enabled_six_degrees_rotation = false;
 
-        // TODO: Might want to implement a smoother transition to horizon-locked
-        // plane instead and remove the roll component.
-
-        // Reset angles and orientation to nill.
-        a_camera_component.orientation = glm::quat();
-        a_camera_component.angles = DMath::EulerAngles();
+        Detail::ResetCamera(a_camera_component);
     }
 
     void CameraSystem::EnableAdvancedCameraControlMode(CameraComponent& a_camera_component)
@@ -182,6 +198,8 @@ namespace DFW
         EnableCameraControl(a_camera_component);
 
         a_camera_component.has_enabled_six_degrees_rotation = true;
+
+        Detail::ResetCamera(a_camera_component);
     }
 
     void CameraSystem::Init(DECS::EntityRegistry& /*a_registry*/)
@@ -198,12 +216,17 @@ namespace DFW
             ControlCamera(*_active_camera);
         }
 
-        for (auto&& [entity, camera_comp, transform_comp] : a_registry.ENTT().view<CameraComponent, TransformComponent>().each())
-            Detail::UpdateCameraMatrix(camera_comp, transform_comp);
+        for (auto&& [entity, camera_comp, transform_comp, entity_relation_comp] : a_registry.ENTT().view<CameraComponent, TransformComponent, DECS::EntityRelationComponent>().each())
+        {
+            Detail::CalculateCameraViewMatrix(camera_comp, transform_comp);
+            Detail::CalculateCameraWorldVectors(camera_comp, entity_relation_comp.parent);
+        }
     }
 
     void CameraSystem::ControlCamera(CameraComponent& a_camera)
     {
+        Transform& camera_transform = a_camera.GetOwner().GetComponent<TransformComponent>();
+
         if (_input_management->IsKeyDown(DFW::DInput::DMouse::BUTTON_RIGHT))
         {
             // TODO: Input: Implement sensitivity into input/mouse system.
@@ -216,35 +239,46 @@ namespace DFW
             // Camera Orientation.
             if (a_camera.has_enabled_six_degrees_rotation)
             {
-                DMath::EulerAngles const angle_delta(mouse_delta.y, mouse_delta.x, mouse_scroll_delta.y);
-                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.pitch()), Detail::world_right);
-                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.yaw()), Detail::world_up);
-                a_camera.orientation *= glm::angleAxis(glm::radians(angle_delta.roll()), Detail::world_front);
-                a_camera.angles = glm::degrees(glm::eulerAngles(a_camera.orientation));
+                glm::vec2 mouse_delta_rad(glm::radians(glm::vec2(mouse_delta.y, mouse_delta.x)));
+                glm::vec2 scroll_delta_rad(glm::radians(mouse_scroll_delta));
+
+                glm::quat orientation = camera_transform.GetOrientation();
+                orientation *= glm::angleAxis(mouse_delta_rad.x, Detail::world_right);
+                orientation *= glm::angleAxis(mouse_delta_rad.y, Detail::world_up);
+                orientation *= glm::angleAxis(scroll_delta_rad.y, Detail::world_front);
+                camera_transform.SetOrientation(glm::normalize(orientation));
+
+                a_camera.right  = glm::rotate(orientation, Detail::world_right);
+                a_camera.up     = glm::rotate(orientation, Detail::world_up);
+                a_camera.front  = glm::rotate(orientation, Detail::world_front);
             }
             else
             {
-                a_camera.angles.pitch() += mouse_delta.y;
-                a_camera.angles.yaw() += mouse_delta.x;
+                // Accumlate mouse movement.
+                a_camera.angles.x += -mouse_delta.y;
+                a_camera.angles.y += mouse_delta.x;
 
-                // Prevent Gimbal Lock.
-                if (a_camera.angles.pitch() > 90.f)
-                    a_camera.angles.pitch() = 90.f;
-                if (a_camera.angles.pitch() < -90.f)
-                    a_camera.angles.pitch() = -90.f;
+                // Limit pitch at 90 and -90 degrees.
+                float32 constexpr pitch_limit = 89.5f;
+                a_camera.angles.x = glm::clamp(a_camera.angles.x, -pitch_limit, pitch_limit);
 
-                // Wrap Yaw Angle.
-                if (a_camera.angles.yaw() > 180.f)
-                    a_camera.angles.yaw() = -180.f;
-                if (a_camera.angles.yaw() < -180.f)
-                    a_camera.angles.yaw() = 180.f;
+                // Calculate camera vectors using pitch and yaw.
+                DMath::EulerAngles const angles_rad(glm::radians(a_camera.angles));
+                a_camera.front.x = cos(angles_rad.x) * sin(angles_rad.y);
+                a_camera.front.y = sin(angles_rad.x);
+                a_camera.front.z = cos(angles_rad.x) * cos(angles_rad.y);
+                
+                a_camera.right  = glm::cross(Detail::world_up, a_camera.front);
+                a_camera.up     = glm::cross(a_camera.front, a_camera.right);
+                
+                a_camera.front  = glm::normalize(a_camera.front);
+                a_camera.right  = glm::normalize(a_camera.right);
+                a_camera.up     = glm::normalize(a_camera.up);
 
-                glm::vec3 const pitch_yaw_angles(a_camera.angles.pitch(), a_camera.angles.yaw(), 0.0f);
-                glm::quat const orientation_offset(glm::radians(pitch_yaw_angles));
-                a_camera.orientation = orientation_offset;
+                glm::quat const pitch_quat = glm::angleAxis(angles_rad.x, a_camera.right);
+                glm::quat const yaw_quat = glm::angleAxis(angles_rad.y, a_camera.up);
+                camera_transform.SetOrientation(glm::normalize(pitch_quat * yaw_quat));
             }
-
-            a_camera.orientation = glm::normalize(a_camera.orientation);
         }
 
         // Camera Speed.
@@ -272,9 +306,8 @@ namespace DFW
             dir.z += -1.0f;
 
         TimeUnit const dt = DFW::CoreService().GetGameClock()->GetLastFrameDeltaTime();
-        Transform& transform = a_camera.GetOwner().GetComponent<TransformComponent>();
-        transform.Translate(a_camera.right * (dir.x * dt * a_camera.fly_speed));
-        transform.Translate(a_camera.front * (dir.z * dt * a_camera.fly_speed));
+        camera_transform.Translate(a_camera.right * (dir.x * dt * a_camera.fly_speed));
+        camera_transform.Translate(a_camera.front * (dir.z * dt * a_camera.fly_speed));
     }
 
     void CameraSystem::Debug_ToggleCameraMode()

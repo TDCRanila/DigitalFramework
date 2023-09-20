@@ -183,6 +183,9 @@ endif()
 
 add_subdirectory(${JOLT_DIR}/Build ${JOLT_LIB_NAME})
 target_link_libraries(${LIB_NAME} ${JOLT_LIB_NAME})
+
+target_compile_definitions(${LIB_NAME} PUBLIC JPH_DISABLE_CUSTOM_ALLOCATOR)
+
 set_target_properties(${JOLT_LIB_NAME}  PROPERTIES FOLDER ${JOLT_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC ${JOLT_INCLUDE_DIR} ${JOLT_INCLUDE_GEN_DIR})
 

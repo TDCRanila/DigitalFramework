@@ -8,6 +8,9 @@
 #include <Jolt/Physics/Body/BodyID.h>
 #include <Jolt/Physics/Body/MotionType.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>
+#include <Jolt/Physics/Character/Character.h>
+
+#include <Utility/JoltUtility.h>
 
 #include <glm/glm.hpp>
 
@@ -46,9 +49,6 @@ namespace DFW
     // Do 1 collision step per 1 / 60th of a second (round up).
     constexpr uint8 DFW_PHYSICS_COLLISION_STEPS = 1;
 
-    // If you want more accurate step results you can do multiple sub steps within a collision step. Usually you would set this to 1.
-    constexpr uint8 DFW_PHYSICS_INTEGRATION_SUBSTEPS = 1;
-
     class PhysicsSystem : public DECS::System
     {
     public:
@@ -63,6 +63,8 @@ namespace DFW
         void Debug_DisableDebugDraw();
 
     public:
+        void AddRigidBodyToSystem(JPH::BodyID const a_body_id) { _rigid_bodies_pending_spawn.emplace_back(a_body_id); }
+
         JPH::BodyID CreateMeshRigidBody(Transform const& a_transform, JPH::ShapeSettings const& a_mesh_shape_settings, JPH::EMotionType const a_rigid_body_type);
 
         JPH::BodyID CreateBoxRigidBody(Transform const& a_transform, glm::vec3 const& a_extend, JPH::EMotionType const a_rigid_body_type);
@@ -70,6 +72,8 @@ namespace DFW
 
         JPH::BodyID CreateSphereRigidBody(Transform const& a_transform, float32 const a_sphere_radius, JPH::EMotionType const a_rigid_body_type);
         JPH::BodyID CreateSphereRigidBody(float32 const a_sphere_radius, JPH::EMotionType const a_rigid_body_type);
+
+        JPH::Ref<JPH::Character> CreateCharacter(Transform const& a_transform, JPH::CharacterSettings const& a_charachter_settings);
 
         void DestroyRigidBody(JPH::BodyID const a_rigid_body_id);
 

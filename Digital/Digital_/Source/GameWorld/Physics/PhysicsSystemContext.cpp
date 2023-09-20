@@ -172,9 +172,9 @@ namespace DFW
         JPH::UnregisterTypes();
     }
 
-    void PhysicsSystemContext::UpdatePhysicsWorld(float32 const a_delta_time, uint8 const a_physics_steps, uint8 const a_physics_integration_substeps)
+    void PhysicsSystemContext::UpdatePhysicsWorld(float32 const a_delta_time, uint8 const a_physics_steps)
     {
-        jph_physics_system->Update(a_delta_time, a_physics_steps, a_physics_integration_substeps, &_temp_allocator, jph_job_system.get());
+        jph_physics_system->Update(a_delta_time, a_physics_steps, &_temp_allocator, jph_job_system.get());
     }
 
     } // End of namespace ~ DPhysics.

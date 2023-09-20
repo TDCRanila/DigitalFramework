@@ -1,9 +1,10 @@
 #pragma once
 
+#include <Modules/ECS/Utility/SystemTypeID.h>
+
 #include <Utility/AutoFactory/AutoFactory.h>
 
 #include <CoreSystems/DUID.h>
-#include <CoreSystems/Memory.h>
 
 #include <string>
 
@@ -26,9 +27,15 @@ namespace DFW
 			System();
 			virtual ~System() = default;
 
-			DFW::DUID GetID() const;
-			std::string GetName() const;
-			bool IsSystemPaused() const;
+			DFW::DUID GetID() const { return _id; }
+			SystemTypeID GetTypeID() const { return _type_id; }
+			std::string const& GetName() const { return _name; }
+			bool IsSystemPaused() const { return _paused; }
+
+		public:
+			void ExecuteBefore(System& a_system);
+			void ExecuteAfter(System& a_system);
+			void RemoveDependencies(System& a_system);
 
 		protected:
 			// Can be overwritten by derived class.
@@ -60,6 +67,7 @@ namespace DFW
 			DFW::EventDispatcher* _event_handler;
 
 			DFW::DUID	_id;
+			SystemTypeID _type_id;
 			std::string _name;
 			bool		_paused;
 
