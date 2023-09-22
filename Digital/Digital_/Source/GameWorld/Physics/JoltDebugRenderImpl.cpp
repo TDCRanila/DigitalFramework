@@ -20,7 +20,7 @@ namespace DFW
         dde->pop();
     }
 
-    void JoltDebugRenderer::DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor)
+    void JoltDebugRenderer::DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor, ECastShadow /*inCastShadow*/)
     {
         DebugDrawEncoder* dde = DebugRenderSystem::_dde;
         std::array<DdVertex, 3> vertices;
