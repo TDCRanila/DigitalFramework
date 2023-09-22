@@ -45,7 +45,7 @@ namespace DFW
         class MoveCommand : public Command
         {
         public:
-            MoveCommand(CharacterComponent& a_character, glm::vec3 a_move_direction) : character(a_character), move_direction(a_move_direction) {}
+            MoveCommand(CharacterComponent& a_character, glm::vec3 const& a_move_direction) : character(a_character), move_direction(a_move_direction) {}
 
             virtual void Execute() override
             {
