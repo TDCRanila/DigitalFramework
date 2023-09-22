@@ -50,3 +50,18 @@ namespace DFW
 	ColourRGBA RandomColourRGBA();
 
 } // End of namespace ~ DFW.
+
+namespace std
+{
+	// Custom std::hash functionality for ColourRGBA.
+	template<>
+	struct hash<DFW::ColourRGBA>
+	{
+		std::size_t operator()(DFW::ColourRGBA const& a_colour_rgba) const
+		{
+			std::size_t hash_val = boost::hash<uint32>()(a_colour_rgba.GetRGBAHex());
+			return hash_val;
+		}
+	};
+}
+
