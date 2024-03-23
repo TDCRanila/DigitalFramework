@@ -84,18 +84,29 @@ namespace DFW
             // GameWorld and ECS.
             _ecs->Init();
 
-            _ecs->SystemManager().AddSystem<DFW::TransformSystem>();
-            _ecs->SystemManager().AddSystem<DFW::RenderSystem>();
-            _ecs->SystemManager().AddSystem<DFW::SpriteSystem>();
-            _ecs->SystemManager().AddSystem<DFW::DebugRenderSystem>();
-            _ecs->SystemManager().AddSystem<DFW::CameraSystem>();
-            _ecs->SystemManager().AddSystem<DFW::PhysicsSystem>();
+            DFW::DECS::ECSModule& ecs = *_ecs;
+            auto& render_system         = ecs.SystemManager().AddSystem<DFW::RenderSystem>();
+            auto& debug_render_system   = ecs.SystemManager().AddSystem<DFW::DebugRenderSystem>();
+            auto& sprite_system         = ecs.SystemManager().AddSystem<DFW::SpriteSystem>();
+            auto& camera_system         = ecs.SystemManager().AddSystem<DFW::CameraSystem>();
+            auto& transform_system      = ecs.SystemManager().AddSystem<DFW::TransformSystem>();
+            auto& physics_system        = ecs.SystemManager().AddSystem<DFW::PhysicsSystem>();
+            
+            render_system.ExecuteAfter(camera_system);
+            debug_render_system.ExecuteAfter(camera_system);
+            sprite_system.ExecuteAfter(camera_system);
+            transform_system.ExecuteAfter(camera_system);
+            camera_system.ExecuteAfter(physics_system);
+
+            ecs.SystemManager().CalculateSystemDependencies();
 
             // Set Render Targets of render systems.
             SharedPtr<DRender::RenderTarget const> viewport_render_target = game_viewport.GetViewportRenderTarget();
-            _ecs->SystemManager().GetSystem<DFW::RenderSystem>()->RenderToRenderTarget(viewport_render_target);
-            _ecs->SystemManager().GetSystem<DFW::SpriteSystem>()->RenderToRenderTarget(viewport_render_target);
-            _ecs->SystemManager().GetSystem<DFW::DebugRenderSystem>()->RenderToRenderTarget(viewport_render_target);
+            render_system.RenderToRenderTarget(viewport_render_target);
+            sprite_system.RenderToRenderTarget(viewport_render_target);
+            debug_render_system.RenderToRenderTarget(viewport_render_target);
+
+            physics_system.Debug_EnableDebugDraw();
         }
 
         void EditorStage::OnRemoved()
