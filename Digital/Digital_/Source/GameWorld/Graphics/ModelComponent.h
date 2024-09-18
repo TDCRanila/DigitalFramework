@@ -6,6 +6,8 @@
 
 #include <CoreSystems/Memory.h>
 
+#include <Utility/ColourUtility.h>
+
 namespace DFW
 {
     // FW Declare.
@@ -16,6 +18,7 @@ namespace DFW
     }
 
     SharedPtr<DRender::MeshData> Debug_CreateBasicCube();
+    SharedPtr<DRender::MeshData> Debug_CreateBasicCube(DFW::ColourRGBA const& a_cube_colour);
 
     struct ModelComponent : public Renderable, DECS::Component::StrictRegistrar<ModelComponent>
     {

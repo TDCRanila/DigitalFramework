@@ -65,6 +65,7 @@ namespace DGame
         {
             camera_entity = ECS()->Registry().CreateEntity();
             camera_entity.SetName("camera-main");
+            camera_entity.SetType<"Camera">();
 
             camera_entity.AddComponent<DFW::TransformComponent>(DFW::Transform(glm::vec3(0.0f, 0.0f, 0.0f)));
             DFW::CameraComponent& camera_component = camera_entity.AddComponent<DFW::CameraComponent>();

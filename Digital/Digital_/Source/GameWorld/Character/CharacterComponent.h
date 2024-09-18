@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Jolt/Jolt.h>
+#include <Jolt/Physics/Collision/ObjectLayer.h>
 #include <Jolt/Physics/Character/Character.h>
 
 #include <Modules/ECS/Component.h>
