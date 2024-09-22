@@ -64,6 +64,8 @@ namespace DFW
 		DImGui::ImGui_ImplBGFX_ShutdownGraphics();
 		DImGui::ImGui_ImplBGFX_ShutdownWindowPlatform();
 
+		ImGui_ImplGlfw_Shutdown();
+
 		// Context
 		ImGui::DestroyContext();
 
