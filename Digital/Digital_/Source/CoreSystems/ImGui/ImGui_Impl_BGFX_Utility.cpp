@@ -81,18 +81,11 @@ namespace ImGui
     }
 
     // Helper function for passing bgfx::TextureHandle to ImGui::ImageButton.
-    bool ImageButton(bgfx::TextureHandle a_handle, uint8 a_flags, uint8 a_mip, const ImVec2& a_size
-        , const ImVec2& a_uv0, const ImVec2& a_uv1, int32 a_frame_padding
+    bool ImageButton(std::string const& a_button_id, bgfx::TextureHandle a_handle, uint8 a_flags, uint8 a_mip, const ImVec2& a_size
+        , const ImVec2& a_uv0, const ImVec2& a_uv1
         , const ImVec4& a_backgroundg_colour, const ImVec4& a_tint_colour)
     {
-        return ImageButton(ToID(a_handle, a_flags, a_mip), a_size, a_uv0, a_uv1, a_frame_padding, a_backgroundg_colour, a_tint_colour);
-    }
-
-    // Helper function for passing bgfx::TextureHandle to ImGui::ImageButton.
-    bool ImageButton(bgfx::TextureHandle a_handle, const ImVec2& a_size, const ImVec2& a_uv0, const ImVec2& a_uv1, int32 a_frame_padding
-        , const ImVec4& a_backgroundg_colour, const ImVec4& a_tint_colour)
-    {
-        return ImageButton(a_handle, IMGUI_FLAGS_ALPHA_BLEND, 0, a_size, a_uv0, a_uv1, a_frame_padding, a_backgroundg_colour, a_tint_colour);
+        return ImageButton(a_button_id.c_str(), ToID(a_handle, a_flags, a_mip), a_size, a_uv0, a_uv1, a_backgroundg_colour, a_tint_colour);
     }
 
 } // End of namespace ~ ImGui.

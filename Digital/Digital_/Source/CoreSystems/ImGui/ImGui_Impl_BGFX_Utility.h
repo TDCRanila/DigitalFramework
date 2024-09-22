@@ -131,22 +131,13 @@ namespace ImGui
 		, const ImVec4& a_border_colour = ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 	// Helper function for passing bgfx::TextureHandle to ImGui::ImageButton.
-	bool ImageButton(bgfx::TextureHandle a_handle
+	bool ImageButton(std::string const& a_button_id, 
+		bgfx::TextureHandle a_handle
 		, uint8 a_flags
 		, uint8 a_mip
 		, const ImVec2& a_size
 		, const ImVec2& a_uv0 = ImVec2(0.0f, 0.0f)
 		, const ImVec2& a_uv1 = ImVec2(1.0f, 1.0f)
-		, int32 a_frame_padding = -1
-		, const ImVec4& a_backgroundg_colour = ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
-		, const ImVec4& a_tint_colour = ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-
-	// Helper function for passing bgfx::TextureHandle to ImGui::ImageButton.
-	bool ImageButton(bgfx::TextureHandle a_handle
-		, const ImVec2& a_size
-		, const ImVec2& a_uv0 = ImVec2(0.0f, 0.0f)
-		, const ImVec2& a_uv1 = ImVec2(1.0f, 1.0f)
-		, int32 a_frame_padding = -1
 		, const ImVec4& a_backgroundg_colour = ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
 		, const ImVec4& a_tint_colour = ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
