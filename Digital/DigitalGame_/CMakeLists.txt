@@ -32,14 +32,6 @@ function( add_bgfx_shader FILE FOLDER )
 		set( OUTPUTS_PRETTY "" )
 
 		if( WIN32 )
-			# dx9
-			if( NOT "${TYPE}" STREQUAL "COMPUTE" )
-				set( DX9_OUTPUT ${FOLDER}/dx9/${FILENAME}.bin )
-				_bgfx_shaderc_parse ( DX9 ${COMMON} WINDOWS PROFILE ${D3D_PREFIX}_3_0 O 3 OUTPUT ${DX9_OUTPUT} )
-				list( APPEND OUTPUTS "DX9" )
-				set( OUTPUTS_PRETTY "${OUTPUTS_PRETTY}DX9, " )
-			endif()
-
 			# dx11
 			set( DX11_OUTPUT ${FOLDER}/dx11/${FILENAME}.bin )
 			if( NOT "${TYPE}" STREQUAL "COMPUTE" )
@@ -62,7 +54,7 @@ function( add_bgfx_shader FILE FOLDER )
 		# essl
 		if( NOT "${TYPE}" STREQUAL "COMPUTE" )
 			set( ESSL_OUTPUT ${FOLDER}/essl/${FILENAME}.bin )
-			_bgfx_shaderc_parse ( ESSL ${COMMON} ANDROID OUTPUT ${ESSL_OUTPUT} )
+			_bgfx_shaderc_parse ( ESSL ${COMMON} ANDROID PROFILE 100_es OUTPUT ${ESSL_OUTPUT} )
 			list( APPEND OUTPUTS "ESSL" )
 			set( OUTPUTS_PRETTY "${OUTPUTS_PRETTY}ESSL, " )
 		endif()
@@ -70,7 +62,7 @@ function( add_bgfx_shader FILE FOLDER )
 		# glsl
 		set( GLSL_OUTPUT ${FOLDER}/glsl/${FILENAME}.bin )
 		if( NOT "${TYPE}" STREQUAL "COMPUTE" )
-			_bgfx_shaderc_parse ( GLSL ${COMMON} LINUX PROFILE 120 OUTPUT ${GLSL_OUTPUT} )
+			_bgfx_shaderc_parse ( GLSL ${COMMON} LINUX PROFILE 140 OUTPUT ${GLSL_OUTPUT} )
 		else()
 			_bgfx_shaderc_parse ( GLSL ${COMMON} LINUX PROFILE 430 OUTPUT ${GLSL_OUTPUT} )
 		endif()
