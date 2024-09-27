@@ -217,7 +217,7 @@ namespace DFW
                 if (auto it = std::find(viewport_vec.begin(), viewport_vec.end(), viewport_data); it != viewport_vec.end())
                     viewport_vec.erase(it);
                 else
-                    DFW_ASSERT(false, "Attempting to destroy viewport window, but not registered.");
+                    DFW_ASSERT(false && "Attempting to destroy viewport window, but not registered.");
 
                 if (bgfx::isValid(viewport_data->_framebuffer_handle))
                     bgfx::destroy(viewport_data->_framebuffer_handle);

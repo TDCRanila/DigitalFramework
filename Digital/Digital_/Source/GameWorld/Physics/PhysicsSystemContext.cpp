@@ -28,7 +28,7 @@ namespace DFW
         static bool AssertFailedImplementation(const char* a_expression, const char* a_message, const char* a_file, uint32 a_line)
         {
             const char* message = a_message != nullptr ? a_message : "";
-            DFW_ASSERT(false, message);
+            DFW_ASSERT(false && message);
 
             return true;
         }

@@ -85,7 +85,7 @@ namespace DFW
         );
 
         JPH::Body* const body = JoltBodyInterface().CreateBody(mesh_settings);
-        DFW_ASSERT(body, "Failed to create rigid body.");
+        DFW_ASSERT(body && "Failed to create rigid body.");
         JPH::BodyID const& body_id = body->GetID();
 
         _rigid_bodies_pending_spawn.emplace_back(body_id);
@@ -106,7 +106,7 @@ namespace DFW
         );
 
         JPH::Body* const body = JoltBodyInterface().CreateBody(box_settings);
-        DFW_ASSERT(body, "Failed to create rigid body.");
+        DFW_ASSERT(body && "Failed to create rigid body.");
         JPH::BodyID const& body_id = body->GetID();
 
         _rigid_bodies_pending_spawn.emplace_back(body_id);
@@ -132,7 +132,7 @@ namespace DFW
         );
 
         JPH::Body* const body = JoltBodyInterface().CreateBody(sphere_settings);
-        DFW_ASSERT(body, "Failed to create rigid body.");
+        DFW_ASSERT(body && "Failed to create rigid body.");
 
         JPH::BodyID const& body_id = body->GetID();
         _rigid_bodies_pending_spawn.emplace_back(body_id);

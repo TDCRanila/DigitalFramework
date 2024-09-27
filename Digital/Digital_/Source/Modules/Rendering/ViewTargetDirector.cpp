@@ -203,7 +203,7 @@ namespace DFW
         {
             if (_view_target_registration.empty())
             {
-                DFW_ASSERT(false, "Cannot retrieve main ViewTarget.");
+                DFW_ASSERT(false && "Cannot retrieve main ViewTarget.");
                 return nullptr;
             }
             else

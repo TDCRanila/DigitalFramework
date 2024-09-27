@@ -221,7 +221,7 @@ namespace DFW
             {
                 if (auto const& it = _window_instances.find(window_id); it == _window_instances.end())
                 {
-                    DFW_ASSERT(false, "Attempting to close a window that does not excist.");
+                    DFW_ASSERT(false && "Attempting to close a window that does not excist.");
                 }
                 else
                 {
@@ -240,7 +240,7 @@ namespace DFW
         {
             const char* name = a_window_parameters.name.c_str();
             GLFWwindow* glfw_window = glfwCreateWindow(a_window_parameters.width, a_window_parameters.height, name, NULL, NULL);
-            DFW_ASSERT(!glfw_window, "Unable to create a new glfw window.");
+            DFW_ASSERT(glfw_window && "Unable to create a new glfw window.");
 
             // Setting-Up GLFW Window Callbacks
             {
