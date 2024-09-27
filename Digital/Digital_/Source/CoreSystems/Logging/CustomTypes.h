@@ -32,8 +32,7 @@ template <> struct fmt::formatter<glm::vec2>
     {
         auto it = a_ctx.begin(), end = a_ctx.end();
         if (it != end && (*it == 'f' || *it == 'e')) presentation = *it++;
-        if (it != end && *it != '}') a_ctx.on_error("invalid format");
-
+        if (it != end && *it != '}') detail::throw_format_error("invalid format");
         return it;
     }
 
@@ -53,7 +52,7 @@ template <> struct fmt::formatter<glm::vec3>
     {
         auto it = a_ctx.begin(), end = a_ctx.end();
         if (it != end && (*it == 'f' || *it == 'e')) presentation = *it++;
-        if (it != end && *it != '}') a_ctx.on_error("invalid format");
+        if (it != end && *it != '}') detail::throw_format_error("invalid format");
 
         return it;
     }
@@ -75,7 +74,7 @@ template <> struct fmt::formatter<glm::vec4>
     {
         auto it = a_ctx.begin(), end = a_ctx.end();
         if (it != end && (*it == 'f' || *it == 'e')) presentation = *it++;
-        if (it != end && *it != '}') a_ctx.on_error("invalid format");
+        if (it != end && *it != '}') detail::throw_format_error("invalid format");
 
         return it;
     }
@@ -96,7 +95,7 @@ template <> struct fmt::formatter<glm::quat>
     {
         auto it = a_ctx.begin(), end = a_ctx.end();
         if (it != end && (*it == 'f' || *it == 'e')) presentation = *it++;
-        if (it != end && *it != '}') a_ctx.on_error("invalid format");
+        if (it != end && *it != '}') detail::throw_format_error("invalid format");
 
         return it;
     }
