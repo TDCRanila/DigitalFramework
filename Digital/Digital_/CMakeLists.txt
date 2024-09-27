@@ -130,6 +130,8 @@ target_include_directories(${LIB_NAME} PUBLIC "${GLFW_INCLUDE_DIR}")
 AnnounceLibraryAddition("glm")
 set(GLM_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glm)
 
+target_compile_definitions(${LIB_NAME} PUBLIC GLM_ENABLE_EXPERIMENTAL)
+
 target_include_directories(${LIB_NAME} PUBLIC "${GLM_INCLUDE_DIR}")
 
 ## spdlog
