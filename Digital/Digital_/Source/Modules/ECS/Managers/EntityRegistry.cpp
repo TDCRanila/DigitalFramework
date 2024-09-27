@@ -18,7 +18,7 @@ namespace DFW
             : _id(DFW::GenerateDUID())
             , _ecs_event_handler(a_ecs.EventHandler())
         {
-            _entt_registry.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
+            _entt_registry.storage<Entity>().reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
 
             _entity_duid_register.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
             _entity_name_register.reserve(DFW_REGISTRY_ENTITY_RESERVATION_SIZE);
@@ -105,11 +105,13 @@ namespace DFW
 
         std::vector<Entity> EntityRegistry::GetEntities()
         {           
-            std::vector<Entity> entities;
-            entities.resize(_entt_registry.size());
+            entt::registry::storage_for_type<Entity> const& entity_registry_storage = _entt_registry.storage<Entity>();
 
-            EntityHandle const* entity_data = _entt_registry.data();
-            for (uint32 entity_handle_index(0); entity_handle_index < _entt_registry.size(); entity_handle_index++)
+            std::vector<Entity> entities;
+            entities.resize(entity_registry_storage.size());
+
+            EntityHandle const* entity_data = entity_registry_storage.data();
+            for (uint32 entity_handle_index(0); entity_handle_index < entity_registry_storage.size(); entity_handle_index++)
             {
                 entities.emplace_back(entity_data[entity_handle_index], *this);
             }
