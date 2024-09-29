@@ -35,7 +35,7 @@ namespace DFW
 		if (!CoreService::GetRenderModule()->GetRenderTargetDirector().IsRenderTargetValid(*a_render_target))
 		{
 			DFW_ERRORLOG("Attempting to set the RenderTarget for RenderSystem, but the render target is invalid.");
-			DFW_ASSERT(false, "Attempting to set the RenderTarget for RenderSystem, but the render target is invalid.");
+			DFW_ASSERT(false && "Attempting to set the RenderTarget for RenderSystem, but the render target is invalid.");
 			return;
 		}
 

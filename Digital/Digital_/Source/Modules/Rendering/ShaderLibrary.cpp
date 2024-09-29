@@ -23,7 +23,6 @@ namespace DFW
 				switch (render_type)
 				{
 					case bgfx::RendererType::Noop:
-					case bgfx::RendererType::Direct3D9:  shader_type = "dx9";   break;
 					case bgfx::RendererType::Direct3D11:
 					case bgfx::RendererType::Direct3D12: shader_type = "dx11";  break;
 					case bgfx::RendererType::Agc:
@@ -33,9 +32,11 @@ namespace DFW
 					case bgfx::RendererType::OpenGL:     shader_type = "glsl";  break;
 					case bgfx::RendererType::OpenGLES:   shader_type = "essl";  break;
 					case bgfx::RendererType::Vulkan:     shader_type = "spirv"; break;
-					case bgfx::RendererType::WebGPU:     shader_type = "spirv"; break;
 
-					case bgfx::RendererType::Count: DFW_ASSERT(false, "Failed to load shader, as the requested type is not supported. RenderAPI: {}", render_type); break;
+					case bgfx::RendererType::Count:						
+						DFW_ERRORLOG("Failed to load shader, as the requested type is not supported." /* RenderAPI:" // TODO: STRINGIFY ENUM; render_type*/);
+						DFW_ASSERT(false);
+						break;
 				}
 
 				return shader_type;
