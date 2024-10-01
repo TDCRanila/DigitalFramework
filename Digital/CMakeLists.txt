@@ -51,5 +51,5 @@ else()
 endif()
 
 add_subdirectory(Digital_)
-add_subdirectory(DigitalGame_)
-add_subdirectory(DigitalTestBench_)
+add_subdirectory(ExampleProjects/DigitalGame)
+add_subdirectory(ExampleProjects/DigitalTestBench)
