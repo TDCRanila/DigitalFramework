@@ -2,18 +2,18 @@
 # Edit at https://www.gitignore.io/?templates=c,c++,cmake,visualstudio,visualstudiocode
 
 # DigitalFramework
-Digital/Resources/shaders/**/*.bin
-Digital/Resources/sample-models
-Digital/Resources/temp
-Digital/Tools/**/*.lnk
+Resources/shaders/**/*.bin
+Resources/sample-models
+Resources/temp
+Tools/**/*.lnk
 
 # Blender
 *.blend
 *.blend1
 
 # CMAKE
-Digital/build
-Digital/build-clean
+build
+build-clean
 
 ### C ###
 # Prerequisites
@@ -467,6 +467,6 @@ MigrationBackup/
 !**/boost/boost/predef/**
 
 # DigitalFramework
-!Digital/Resources/**/*.map
+!Resources/**/*.map
 
 # End of https://www.gitignore.io/api/c,c++,cmake,visualstudio,visualstudiocode
