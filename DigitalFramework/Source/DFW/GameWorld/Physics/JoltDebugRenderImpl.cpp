@@ -1,6 +1,6 @@
-#include <GameWorld/Physics/JoltDebugRenderImpl.h>
+#include <DFW/GameWorld/Physics/JoltDebugRenderImpl.h>
 
-#include <GameWorld/Graphics/DebugRenderSystem.h>
+#include <DFW/GameWorld/Graphics/DebugRenderSystem.h>
 
 #include <unordered_map>
 

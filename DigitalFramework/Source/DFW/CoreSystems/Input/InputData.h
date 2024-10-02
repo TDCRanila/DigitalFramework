@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CoreSystems/Input/InputKeys.h>
+#include <DFW/CoreSystems/Input/InputKeys.h>
 
 #include <glm/glm.hpp>
 

@@ -2,34 +2,34 @@
 
 #include <Zynthurism/Game/Level.h>
 
-#include <GameWorld/TransformComponent.h>
-#include <GameWorld/Camera/CameraComponent.h>
-#include <GameWorld/Camera/CameraSystem.h>
-#include <GameWorld/Graphics/ModelComponent.h>
-#include <GameWorld/Graphics/SpriteComponent.h>
-#include <GameWorld/Physics/PhysicsComponent.h>
+#include <DFW/GameWorld/TransformComponent.h>
+#include <DFW/GameWorld/Camera/CameraComponent.h>
+#include <DFW/GameWorld/Camera/CameraSystem.h>
+#include <DFW/GameWorld/Graphics/ModelComponent.h>
+#include <DFW/GameWorld/Graphics/SpriteComponent.h>
+#include <DFW/GameWorld/Physics/PhysicsComponent.h>
 
-#include <GameWorld/TransformSystem.h>
-#include <GameWorld/Editor/GameViewport.h>
-#include <GameWorld/Camera/CameraSystem.h>
-#include <GameWorld/Graphics/RenderSystem.h>
-#include <GameWorld/Graphics/SpriteSystem.h>
-#include <GameWorld/Physics/PhysicsSystem.h>
-#include <GameWorld/Physics/PhysicsLayers.h>
-#include <GameWorld/Graphics/DebugRenderSystem.h>
+#include <DFW/GameWorld/TransformSystem.h>
+#include <DFW/GameWorld/Editor/GameViewport.h>
+#include <DFW/GameWorld/Camera/CameraSystem.h>
+#include <DFW/GameWorld/Graphics/RenderSystem.h>
+#include <DFW/GameWorld/Graphics/SpriteSystem.h>
+#include <DFW/GameWorld/Physics/PhysicsSystem.h>
+#include <DFW/GameWorld/Physics/PhysicsLayers.h>
+#include <DFW/GameWorld/Graphics/DebugRenderSystem.h>
 
-#include <GameWorld/Controller/ControllerSystem.h>
-#include <GameWorld/Character/MovementSystem.h>
+#include <DFW/GameWorld/Controller/ControllerSystem.h>
+#include <DFW/GameWorld/Character/MovementSystem.h>
 
-#include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/SystemManager.h>
-#include <Modules/Resource/Mesh/MeshLoader.h>
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/GameClock.h>
-#include <CoreSystems/Input/InputManagement.h>
-#include <CoreSystems/Input/InputKeys.h>
+#include <DFW/Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/Managers/SystemManager.h>
+#include <DFW/Modules/Resource/Mesh/MeshLoader.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/GameClock.h>
+#include <DFW/CoreSystems/Input/InputManagement.h>
+#include <DFW/CoreSystems/Input/InputKeys.h>
 
-#include <Utility/FilePath.h>
+#include <DFW/Utility/FilePath.h>
 
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/PhysicsSystem.h>

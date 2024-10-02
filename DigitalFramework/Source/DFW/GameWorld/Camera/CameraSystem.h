@@ -1,11 +1,11 @@
 #pragma once
 
-#include <GameWorld/Camera/ClipSpace.h>
+#include <DFW/GameWorld/Camera/ClipSpace.h>
 
-#include <Modules/ECS/System.h>
-#include <Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/System.h>
+#include <DFW/Modules/ECS/Entity.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
 #include <unordered_map>
 #include <string>

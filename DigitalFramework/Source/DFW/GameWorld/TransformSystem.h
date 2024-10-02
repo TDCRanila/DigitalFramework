@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Modules/ECS/System.h>
-#include <Modules/ECS/Managers/EntityRegistry.h>
+#include <DFW/Modules/ECS/System.h>
+#include <DFW/Modules/ECS/Managers/EntityRegistry.h>
 
 namespace DFW
 {

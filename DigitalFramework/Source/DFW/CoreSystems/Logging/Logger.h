@@ -10,10 +10,10 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/details/null_mutex.h>
 
-#include <CoreSystems/Logging/CustomTypes.h>
+#include <DFW/CoreSystems/Logging/CustomTypes.h>
 
-#include <CoreSystems/DUID.h>
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/DUID.h>
+#include <DFW/CoreSystems/Memory.h>
 
 #include <mutex>
 #include <unordered_map>

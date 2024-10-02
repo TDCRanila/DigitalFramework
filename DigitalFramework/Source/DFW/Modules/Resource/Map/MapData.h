@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Modules/Rendering/MeshData.h>
+#include <DFW/Modules/Rendering/MeshData.h>
 
-#include <Modules/Resource/Resource.h>
+#include <DFW/Modules/Resource/Resource.h>
 
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>

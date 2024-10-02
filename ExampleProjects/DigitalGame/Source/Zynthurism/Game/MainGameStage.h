@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/Entity.h>
 
-#include <GameWorld/Controller/CharacterController.h>
+#include <DFW/GameWorld/Controller/CharacterController.h>
 
-#include <CoreSystems/Stage/Stage.h>
+#include <DFW/CoreSystems/Stage/Stage.h>
 
 namespace DGame
 {

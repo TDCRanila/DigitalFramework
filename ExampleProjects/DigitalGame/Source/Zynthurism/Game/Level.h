@@ -1,11 +1,11 @@
 #pragma once
 
-#include <GameWorld/SpawnInfo.h>
+#include <DFW/GameWorld/SpawnInfo.h>
 
-#include <Modules/ECS/Entity.h>
-#include <Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/ECSModule.h>
 
-#include <Utility/FilePath.h>
+#include <DFW/Utility/FilePath.h>
 
 namespace DGame
 {

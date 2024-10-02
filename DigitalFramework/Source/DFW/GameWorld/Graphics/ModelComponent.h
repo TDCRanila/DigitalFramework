@@ -1,12 +1,12 @@
 #pragma once
 
-#include <GameWorld/Graphics/Renderable.h>
+#include <DFW/GameWorld/Graphics/Renderable.h>
 
-#include <Modules/ECS/Component.h>
+#include <DFW/Modules/ECS/Component.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
-#include <Utility/ColourUtility.h>
+#include <DFW/Utility/ColourUtility.h>
 
 namespace DFW
 {

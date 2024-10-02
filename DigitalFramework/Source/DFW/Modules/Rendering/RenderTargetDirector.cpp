@@ -1,8 +1,8 @@
-#include <Modules/Rendering/RenderTargetDirector.h>
+#include <DFW/Modules/Rendering/RenderTargetDirector.h>
 
-#include <Modules/Rendering/RenderTarget.h>
+#include <DFW/Modules/Rendering/RenderTarget.h>
 
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {

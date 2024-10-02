@@ -1,6 +1,6 @@
-#include <Modules/Editor/EditorElement.h>
+#include <DFW/Modules/Editor/EditorElement.h>
 
-#include <Modules/Editor/EditorElementContainer.h>
+#include <DFW/Modules/Editor/EditorElementContainer.h>
 
 namespace DFW
 {

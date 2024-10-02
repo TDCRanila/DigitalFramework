@@ -1,9 +1,9 @@
 #pragma once
 
-#include <CoreSystems/Stage/StageID.h>
-#include <CoreSystems/Events/EventImplementation.h>
+#include <DFW/CoreSystems/Stage/StageID.h>
+#include <DFW/CoreSystems/Events/EventImplementation.h>
 
-#include <Utility/AutoFactory/AutoFactory.h>
+#include <DFW/Utility/AutoFactory/AutoFactory.h>
 
 #include <string>
 #include <sstream>

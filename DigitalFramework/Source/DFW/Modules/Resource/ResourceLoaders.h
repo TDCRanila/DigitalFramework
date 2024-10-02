@@ -1,13 +1,13 @@
 #pragma once
 
-#include <Modules/Resource/Image/ImageLoader.h>
-#include <Modules/Resource/Mesh/MeshLoader.h>
-#include <Modules/Resource/Map/MapBuilder.h>
+#include <DFW/Modules/Resource/Image/ImageLoader.h>
+#include <DFW/Modules/Resource/Mesh/MeshLoader.h>
+#include <DFW/Modules/Resource/Map/MapBuilder.h>
 
-#include <Modules/Rendering/RenderModule.h>
-#include <Modules/Rendering/TextureLibrary.h>
+#include <DFW/Modules/Rendering/RenderModule.h>
+#include <DFW/Modules/Rendering/TextureLibrary.h>
 
-#include <CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/CoreServices.h>
 
 namespace DFW
 {

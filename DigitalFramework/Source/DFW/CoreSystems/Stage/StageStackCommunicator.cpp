@@ -1,8 +1,8 @@
-#include <CoreSystems/Stage/StageStackCommunicator.h>
+#include <DFW/CoreSystems/Stage/StageStackCommunicator.h>
 
-#include <CoreSystems/Stage/StageStackController.h>
+#include <DFW/CoreSystems/Stage/StageStackController.h>
 
-#include <Coresystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {

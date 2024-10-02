@@ -1,18 +1,18 @@
-#include <GameWorld/Camera/CameraSystem.h>
+#include <DFW/GameWorld/Camera/CameraSystem.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Events/EventDispatcher.h>
-#include <CoreSystems/Input/InputManagement.h>
-#include <CoreSystems/Input/InputKeys.h>
-#include <CoreSystems/GameClock.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/Input/InputManagement.h>
+#include <DFW/CoreSystems/Input/InputKeys.h>
+#include <DFW/CoreSystems/GameClock.h>
 
-#include <GameWorld/Camera/CameraComponent.h>
-#include <GameWorld/Camera/CameraEvents.h>
-#include <GameWorld/TransformComponent.h>
+#include <DFW/GameWorld/Camera/CameraComponent.h>
+#include <DFW/GameWorld/Camera/CameraEvents.h>
+#include <DFW/GameWorld/TransformComponent.h>
 
-#include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Entity.h>
-#include <Modules/ECS/Internal/EntityRelationComponent.h>
+#include <DFW/Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/Internal/EntityRelationComponent.h>
 
 #include <glm/glm.hpp>
 

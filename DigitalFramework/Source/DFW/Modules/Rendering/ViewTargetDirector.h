@@ -2,9 +2,9 @@
 
 #include <bgfx/bgfx.h>
 
-#include <Modules/Rendering/ViewTarget.h>
+#include <DFW/Modules/Rendering/ViewTarget.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
 #include <vector>
 

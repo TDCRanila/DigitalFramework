@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Modules/Rendering/TextureData.h>
+#include <DFW/Modules/Rendering/TextureData.h>
 
-#include <Modules/Resource/Image/ImageData.h>
+#include <DFW/Modules/Resource/Image/ImageData.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
 namespace DFW
 {

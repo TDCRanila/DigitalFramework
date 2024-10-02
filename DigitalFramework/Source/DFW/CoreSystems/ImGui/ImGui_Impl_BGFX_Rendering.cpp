@@ -1,6 +1,6 @@
-#include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
+#include <DFW/CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
 
-#include <CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
+#include <DFW/CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
 
 #include <bgfx/embedded_shader.h>
 #include <bx/math.h>

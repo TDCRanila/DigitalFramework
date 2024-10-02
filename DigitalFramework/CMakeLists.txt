@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.17.2)
 
+message("######################")
+message("Configuring - DigitalFramework\n")
+
 ### Generate a list of all Header & Source Files.
 execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR}/Source ${CMAKE_CURRENT_BINARY_DIR})
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_source.txt SOURCE_FILES)
@@ -10,11 +13,11 @@ string(REPLACE "\\" "/" HEADER_FILES    "${HEADER_FILES}")
 string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
 
 ### Library Definition
-set(LIB_NAME Digital_)
+set(LIB_NAME DigitalFramework)
 project(${LIB_NAME} VERSION 1.0.0)
 
+### Library Source
 add_library(${LIB_NAME} STATIC)
-add_library(LIB:${LIB_NAME} ALIAS ${LIB_NAME})
 target_sources(${LIB_NAME}
     PRIVATE 
     ${ALL_FILES}
@@ -31,44 +34,28 @@ target_include_directories(${LIB_NAME}
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-### CPP Standard
+# CPP Standard
 SetCPPVersion(${LIB_NAME})
+
+### PreCompiled Headers
+find_file(PCH_FILE_FOUND NAMES DFWPCH.h PATHS "${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/DFW")
+if (PCH_FILE_FOUND)
+    target_precompile_headers(${LIB_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/DFW/DFWPCH.h")
+    message("Adding PCH file(s)")
+else()
+    message("Cannot Find PCH file(s)")
+endif()
 
 ### Set Work Directory
 set_property(TARGET ${LIB_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
-
-### PreCompiled Headers
-find_file(PCH_FILE_FOUND NAMES DFWPCH.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/DFW")
-if (PCH_FILE_FOUND)
-    if(MSVC)
-        target_precompile_headers(${LIB_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/Digital_/Source/DFW/DFWPCH.h")
-	    message("Adding PCH file(s)")
-    else()
-	    message("Unsupported PCH Implementation.")
-    endif()
-else()
-	message("Cannot Find PCH file(s)")
-endif()
-
-### Forced Includes
-find_file(DEFINES_FILE_FOUND NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/Defines")
-if (DEFINES_FILE_FOUND)
-    if(MSVC)
-        message("Adding Force Include file(s)")
-        target_compile_options(${LIB_NAME} PRIVATE /FI"${CMAKE_SOURCE_DIR}/Digital_/Source/Defines/Defines.h")
-    else()
-	    message("Unsupported Force Include Implementation.")
-    endif()
-endif()
 
 ### File Management
 set_target_properties(${LIB_NAME} PROPERTIES FOLDER _MainTargets)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ALL_FILES})
 
-
 ### EXTERNALS/LIBRARIES
 macro(AnnounceLibraryAddition LibraryName)
-    message("\n----------------------")
+    message("----------------------")
     message("Adding Library: ${LibraryName}")
 endmacro()
 
@@ -165,7 +152,6 @@ set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER ${AS
 set_target_properties(zlibstatic PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
 
 # JoltPhysics
-
 AnnounceLibraryAddition("JoltPhysics")
 
 include(CMake/JoltPhysicsSettings.cmake)
@@ -191,8 +177,6 @@ target_compile_definitions(${LIB_NAME} PUBLIC JPH_DISABLE_CUSTOM_ALLOCATOR)
 set_target_properties(${JOLT_LIB_NAME}  PROPERTIES FOLDER ${JOLT_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC ${JOLT_INCLUDE_DIR} ${JOLT_INCLUDE_GEN_DIR})
 
-message("\n")
-
 # libmap
 AnnounceLibraryAddition("libmap")
 set (LIBMAP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/libmap-cpp)
@@ -209,8 +193,6 @@ AnnounceLibraryAddition("boost")
 set(BOOST_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/boost)
 
 target_include_directories(${LIB_NAME} PUBLIC ${BOOST_INCLUDE_DIR})
-
-message("\n")
 
 # stb
 AnnounceLibraryAddition("stb")

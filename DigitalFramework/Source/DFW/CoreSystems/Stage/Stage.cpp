@@ -1,6 +1,6 @@
-#include <CoreSystems/Stage/Stage.h>
+#include <DFW/CoreSystems/Stage/Stage.h>
 
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {

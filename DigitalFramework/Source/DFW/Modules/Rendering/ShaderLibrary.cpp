@@ -1,10 +1,10 @@
-#include <Modules/Rendering/ShaderLibrary.h>
+#include <DFW/Modules/Rendering/ShaderLibrary.h>
 
-#include <CoreSystems/Logging/Logger.h>
-#include <Utility/FileSystemUtility.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
+#include <DFW/Utility/FileSystemUtility.h>
 
-#include <Modules/Rendering/ShaderProgram.h>
-#include <Modules/Rendering/ShaderObject.h>
+#include <DFW/Modules/Rendering/ShaderProgram.h>
+#include <DFW/Modules/Rendering/ShaderObject.h>
 
 #include <bgfx/bgfx.h>
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreSystems/Memory.h>
-#include <CoreSystems/DUID.h>
+#include <DFW/CoreSystems/Memory.h>
+#include <DFW/CoreSystems/DUID.h>
 
 #include <unordered_map>
 #include <vector>

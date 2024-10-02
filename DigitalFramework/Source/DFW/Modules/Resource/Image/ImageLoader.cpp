@@ -1,8 +1,8 @@
-#include <Modules/Resource/Image/ImageLoader.h>
+#include <DFW/Modules/Resource/Image/ImageLoader.h>
 
-#include <Modules/Resource/Image/ImageData.h>
+#include <DFW/Modules/Resource/Image/ImageData.h>
 
-#include <Utility/FileSystemUtility.h>
+#include <DFW/Utility/FileSystemUtility.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>

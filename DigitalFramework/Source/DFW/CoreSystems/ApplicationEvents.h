@@ -1,8 +1,8 @@
 #pragma once
 
-#include <CoreSystems/Events/EventImplementation.h>
+#include <DFW/CoreSystems/Events/EventImplementation.h>
 
-#include <CoreSystems/Window/WindowID.h>
+#include <DFW/CoreSystems/Window/WindowID.h>
 
 #include <sstream>
 #include <functional>

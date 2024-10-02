@@ -1,6 +1,6 @@
-#include <Modules/Resource/Image/ImageData.h>
+#include <DFW/Modules/Resource/Image/ImageData.h>
 
-#include <Modules/Resource/Image/ImageLoader.h>
+#include <DFW/Modules/Resource/Image/ImageLoader.h>
 
 namespace DFW
 {

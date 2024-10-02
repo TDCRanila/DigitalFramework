@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Modules/Rendering/Uniform.h>
+#include <DFW/Modules/Rendering/Uniform.h>
 
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
- #include <Utility/TemplateUtility.h>
+ #include <DFW/Utility/TemplateUtility.h>
 
 #include <bgfx/bgfx.h>
 

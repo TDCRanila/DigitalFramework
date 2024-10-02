@@ -3,10 +3,10 @@
 #include <Zynthurism/Test/TestEditorStage.h>
 #include <Zynthurism/Game/MainGameStage.h>
 
-#include <Modules/Editor/Console/MainConsole.h>
-#include <Modules/Editor/MainMenuBar.h>
+#include <DFW/Modules/Editor/Console/MainConsole.h>
+#include <DFW/Modules/Editor/MainMenuBar.h>
 
-#include <CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/CoreServices.h>
 
 namespace DGame
 {

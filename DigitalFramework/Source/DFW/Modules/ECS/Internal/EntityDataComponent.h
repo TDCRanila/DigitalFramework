@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Modules/ECS/Component.h>
-#include <Modules/ECS/Utility/EntityTypeID.h>
+#include <DFW/Modules/ECS/Component.h>
+#include <DFW/Modules/ECS/Utility/EntityTypeID.h>
 
-#include <CoreSystems/DUID.h>
+#include <DFW/CoreSystems/DUID.h>
 
 #include <string>
 

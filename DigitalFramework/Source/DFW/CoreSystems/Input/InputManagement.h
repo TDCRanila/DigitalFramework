@@ -1,15 +1,15 @@
 #pragma once
 
-#include <CoreSystems/ApplicationEvents.h>
+#include <DFW/CoreSystems/ApplicationEvents.h>
 
-#include <CoreSystems/Input/InputKeys.h>
-#include <CoreSystems/Input/InputData.h>
-#include <CoreSystems/Input/RawInputEvents.h>
+#include <DFW/CoreSystems/Input/InputKeys.h>
+#include <DFW/CoreSystems/Input/InputData.h>
+#include <DFW/CoreSystems/Input/RawInputEvents.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
-#include <CoreSystems/Window/WindowData.h>
-#include <CoreSystems/Window/WindowID.h>
+#include <DFW/CoreSystems/Window/WindowData.h>
+#include <DFW/CoreSystems/Window/WindowID.h>
 
 #include <glm/glm.hpp>
 

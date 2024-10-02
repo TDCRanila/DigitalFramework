@@ -1,14 +1,14 @@
-#include <Modules/Rendering/RenderModule.h>
+#include <DFW/Modules/Rendering/RenderModule.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
 
-#include <Modules/Rendering/ShaderLibrary.h>
-#include <Modules/Rendering/UniformLibrary.h>
-#include <Modules/Rendering/TextureLibrary.h>
-#include <Modules/Rendering/ViewTargetDirector.h>
-#include <Modules/Rendering/RenderModuleContext.h>
-#include <Modules/Rendering/RenderTargetDirector.h>
+#include <DFW/Modules/Rendering/ShaderLibrary.h>
+#include <DFW/Modules/Rendering/UniformLibrary.h>
+#include <DFW/Modules/Rendering/TextureLibrary.h>
+#include <DFW/Modules/Rendering/ViewTargetDirector.h>
+#include <DFW/Modules/Rendering/RenderModuleContext.h>
+#include <DFW/Modules/Rendering/RenderTargetDirector.h>
 
 namespace DFW
 {

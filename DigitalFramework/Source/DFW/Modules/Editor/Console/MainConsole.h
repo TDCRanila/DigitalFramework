@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreSystems/Logging/Logger.h>
-#include <CoreSystems/Stage/Stage.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Stage/Stage.h>
 
 #include <string>
 #include <vector>

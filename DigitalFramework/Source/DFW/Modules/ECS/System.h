@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Modules/ECS/Utility/SystemTypeID.h>
+#include <DFW/Modules/ECS/Utility/SystemTypeID.h>
 
-#include <Utility/AutoFactory/AutoFactory.h>
+#include <DFW/Utility/AutoFactory/AutoFactory.h>
 
-#include <CoreSystems/DUID.h>
+#include <DFW/CoreSystems/DUID.h>
 
 #include <string>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines/InputDefines.h>
+#include <DFW/Defines/InputDefines.h>
 
 namespace DFW
 {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GameWorld/Editor/EditorStage.h>
+#include <DFW/GameWorld/Editor/EditorStage.h>
 
-#include <Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/Entity.h>
 
 namespace DGame
 {

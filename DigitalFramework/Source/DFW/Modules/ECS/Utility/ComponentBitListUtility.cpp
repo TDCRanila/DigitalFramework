@@ -1,10 +1,10 @@
-#include <Modules/ECS/Utility/ComponentBitListUtility.h>
+#include <DFW/Modules/ECS/Utility/ComponentBitListUtility.h>
 
-#include <Modules/ECS/Component.h>
+#include <DFW/Modules/ECS/Component.h>
 
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
-#include <Utility/AutoFactory/AutoFactory.h>
+#include <DFW/Utility/AutoFactory/AutoFactory.h>
 
 namespace DFW
 {
