@@ -1,18 +1,18 @@
-#include <CoreSystems/ApplicationInstance.h>
+#include <DFW/CoreSystems/ApplicationInstance.h>
 
-#include <CoreSystems/Events/EventLibrary.h>
-#include <CoreSystems/Events/EventImplementation.h>
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Events/EventLibrary.h>
+#include <DFW/CoreSystems/Events/EventImplementation.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/ImGui/ImGuiLayer.h>
-#include <CoreSystems/Input/InputManagement.h>
-#include <CoreSystems/Window/WindowManagement.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/ImGui/ImGuiLayer.h>
+#include <DFW/CoreSystems/Input/InputManagement.h>
+#include <DFW/CoreSystems/Window/WindowManagement.h>
 
-#include <Modules/Rendering/RenderModule.h>
-#include <Modules/Resource/ResourceManager.h>
+#include <DFW/Modules/Rendering/RenderModule.h>
+#include <DFW/Modules/Resource/ResourceManager.h>
 
-#include <Defines/InputDefines.h>
+#include <DFW/Defines/InputDefines.h>
 
 namespace DFW
 {    

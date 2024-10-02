@@ -1,13 +1,13 @@
-#include <Modules/Resource/Mesh/MeshLoader.h>
+#include <DFW/Modules/Resource/Mesh/MeshLoader.h>
 
-#include <Modules/Resource/ResourceManager.h>
-#include <Modules/Rendering/TextureData.h>
+#include <DFW/Modules/Resource/ResourceManager.h>
+#include <DFW/Modules/Rendering/TextureData.h>
 
-#include <CoreSystems/Logging/Logger.h>
-#include <CoreSystems/CoreServices.h>
-#include <Utility/FileSystemUtility.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/Utility/FileSystemUtility.h>
 
-#include <Defines/MathDefines.h>
+#include <DFW/Defines/MathDefines.h>
 
 #include <assimp/mesh.h>
 #include <assimp/scene.h>

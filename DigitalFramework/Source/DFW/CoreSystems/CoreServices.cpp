@@ -1,8 +1,8 @@
-#include <CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/CoreServices.h>
 
-#include <Utility/TemplateUtility.h>
+#include <DFW/Utility/TemplateUtility.h>
 
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {

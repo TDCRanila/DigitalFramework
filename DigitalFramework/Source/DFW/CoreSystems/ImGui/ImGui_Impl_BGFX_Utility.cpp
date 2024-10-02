@@ -1,6 +1,6 @@
-#include <CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
+#include <DFW/CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
 
-#include <Defines/MathDefines.h>
+#include <DFW/Defines/MathDefines.h>
 
 namespace DFW
 {

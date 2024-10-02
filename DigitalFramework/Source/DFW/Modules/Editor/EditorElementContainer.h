@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Modules/Editor/EditorElement.h>
+#include <DFW/Modules/Editor/EditorElement.h>
 
-#include <Utility/TemplateUtility.h>
+#include <DFW/Utility/TemplateUtility.h>
 
-#include <CoreSystems/DUID.h>
-#include <CoreSystems/Memory.h>
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/DUID.h>
+#include <DFW/CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 #include <unordered_map>
 #include <string>

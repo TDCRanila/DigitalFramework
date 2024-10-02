@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Modules/Rendering/TextureData.h>
-#include <Modules/Math/Geometry.h>
+#include <DFW/Modules/Rendering/TextureData.h>
+#include <DFW/Modules/Math/Geometry.h>
 
-#include <Modules/Resource/Resource.h>
+#include <DFW/Modules/Resource/Resource.h>
 
 #include <bgfx/bgfx.h>
 

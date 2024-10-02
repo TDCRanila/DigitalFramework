@@ -1,4 +1,4 @@
-#include <GameWorld/Graphics/SpriteComponent.h>
+#include <DFW/GameWorld/Graphics/SpriteComponent.h>
 
 namespace DFW
 {

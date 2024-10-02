@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Modules/ECS/Managers/EntityRegistry.h>
-#include <Modules/ECS/Internal/InternalComponent.h>
-#include <Modules/ECS/Internal/InternalEntity.h>
-#include <Modules/ECS/Utility/ECSTemplateUtility.h>
-#include <Modules/ECS/Utility/EntityTypeID.h>
+#include <DFW/Modules/ECS/Managers/EntityRegistry.h>
+#include <DFW/Modules/ECS/Internal/InternalComponent.h>
+#include <DFW/Modules/ECS/Internal/InternalEntity.h>
+#include <DFW/Modules/ECS/Utility/ECSTemplateUtility.h>
+#include <DFW/Modules/ECS/Utility/EntityTypeID.h>
 
 namespace DFW
 {

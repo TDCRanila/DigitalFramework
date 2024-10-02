@@ -1,10 +1,10 @@
 #pragma once
 
-#include <GameWorld/Graphics/BaseRenderSystem.h>
+#include <DFW/GameWorld/Graphics/BaseRenderSystem.h>
 
-#include <Modules/ECS/System.h>
+#include <DFW/Modules/ECS/System.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
 namespace DFW
 {

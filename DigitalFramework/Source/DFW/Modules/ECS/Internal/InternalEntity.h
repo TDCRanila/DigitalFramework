@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Modules/ECS/EntityHandle.h>
+#include <DFW/Modules/ECS/EntityHandle.h>
 
-#include <CoreSystems/DUID.h>
+#include <DFW/CoreSystems/DUID.h>
 
 namespace DFW
 {

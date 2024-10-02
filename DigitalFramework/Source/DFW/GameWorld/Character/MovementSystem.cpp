@@ -1,13 +1,13 @@
-#include <GameWorld/Character/MovementSystem.h>
+#include <DFW/GameWorld/Character/MovementSystem.h>
 
-#include <Modules/ECS/Managers/EntityRegistry.h>
+#include <DFW/Modules/ECS/Managers/EntityRegistry.h>
 
-#include <GameWorld/Character/CharacterComponent.h>
+#include <DFW/GameWorld/Character/CharacterComponent.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/GameClock.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/GameClock.h>
 
-#include <Utility/JoltUtility.h>
+#include <DFW/Utility/JoltUtility.h>
 
 namespace DFW
 {

@@ -1,11 +1,11 @@
 #pragma once
 
-#include <CoreSystems/Logging/Logger.h>
-#include <CoreSystems/Stage/Stage.h>
-#include <CoreSystems/Stage/StageEvents.h>
-#include <CoreSystems/Stage/StageStackCommunicator.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Stage/Stage.h>
+#include <DFW/CoreSystems/Stage/StageEvents.h>
+#include <DFW/CoreSystems/Stage/StageStackCommunicator.h>
 
-#include <Utility/TemplateUtility.h>
+#include <DFW/Utility/TemplateUtility.h>
 
 namespace DFW
 {

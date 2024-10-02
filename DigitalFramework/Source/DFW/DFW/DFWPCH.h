@@ -4,8 +4,8 @@
 	#include <Windows.h>
 #endif 
 
-#include <Defines/Defines.h>
-#include <CoreSystems/Memory.h>
+#include <DFW/Defines/Defines.h>
+#include <DFW/CoreSystems/Memory.h>
 
 // Boost
 #include <boost/uuid/uuid.hpp>

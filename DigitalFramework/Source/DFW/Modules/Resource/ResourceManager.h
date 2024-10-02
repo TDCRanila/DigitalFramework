@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Modules/Resource/Resource.h>
-#include <Modules/Resource/ResourceLoaders.h>
+#include <DFW/Modules/Resource/Resource.h>
+#include <DFW/Modules/Resource/ResourceLoaders.h>
 
-#include <Utility/TemplateUtility.h>
+#include <DFW/Utility/TemplateUtility.h>
 
 #include <entt/resource/cache.hpp>
 

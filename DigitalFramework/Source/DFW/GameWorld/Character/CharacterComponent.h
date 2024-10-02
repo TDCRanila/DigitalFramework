@@ -4,9 +4,9 @@
 #include <Jolt/Physics/Collision/ObjectLayer.h>
 #include <Jolt/Physics/Character/Character.h>
 
-#include <Modules/ECS/Component.h>
+#include <DFW/Modules/ECS/Component.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
 #include <glm/glm.hpp>
 

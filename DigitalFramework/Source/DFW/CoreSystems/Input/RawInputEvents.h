@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreSystems/Window/WindowID.h>
-#include <CoreSystems/Window/WindowData.h>
+#include <DFW/CoreSystems/Window/WindowID.h>
+#include <DFW/CoreSystems/Window/WindowData.h>
 
 namespace DFW
 {

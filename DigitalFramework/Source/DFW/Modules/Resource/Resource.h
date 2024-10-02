@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Defines/MathDefines.h>
+#include <DFW/Defines/MathDefines.h>
 
-#include <Utility/FilePath.h>
+#include <DFW/Utility/FilePath.h>
 
 #include <boost/container_hash/hash.hpp>
 

@@ -1,20 +1,20 @@
 #include <Zynthurism/Test/TestEditorStage.h>
 
-#include <GameWorld/TransformComponent.h>
-#include <GameWorld/Camera/CameraComponent.h>
-#include <GameWorld/Camera/CameraSystem.h>
-#include <GameWorld/Graphics/ModelComponent.h>
-#include <GameWorld/Graphics/SpriteComponent.h>
+#include <DFW/GameWorld/TransformComponent.h>
+#include <DFW/GameWorld/Camera/CameraComponent.h>
+#include <DFW/GameWorld/Camera/CameraSystem.h>
+#include <DFW/GameWorld/Graphics/ModelComponent.h>
+#include <DFW/GameWorld/Graphics/SpriteComponent.h>
 
-#include <Modules/ECS/Managers/SystemManager.h>
-#include <Modules/Resource/Mesh/MeshLoader.h>
+#include <DFW/Modules/ECS/Managers/SystemManager.h>
+#include <DFW/Modules/Resource/Mesh/MeshLoader.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/GameClock.h>
-#include <CoreSystems/Input/InputManagement.h>
-#include <CoreSystems/Input/InputKeys.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/GameClock.h>
+#include <DFW/CoreSystems/Input/InputManagement.h>
+#include <DFW/CoreSystems/Input/InputKeys.h>
 
-#include <Utility/FileSystemUtility.h>
+#include <DFW/Utility/FileSystemUtility.h>
 
 namespace DGame
 {

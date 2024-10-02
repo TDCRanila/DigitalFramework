@@ -1,8 +1,8 @@
-#include <Modules/Rendering/ViewTargetDirector.h>
+#include <DFW/Modules/Rendering/ViewTargetDirector.h>
 
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
-#include <Defines/MathDefines.h>
+#include <DFW/Defines/MathDefines.h>
 
 #include <algorithm>
 

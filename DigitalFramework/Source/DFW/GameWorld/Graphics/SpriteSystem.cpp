@@ -1,23 +1,23 @@
-#include <GameWorld/Graphics/SpriteSystem.h>
+#include <DFW/GameWorld/Graphics/SpriteSystem.h>
 
-#include <GameWorld/TransformComponent.h>
-#include <GameWorld/Camera/CameraComponent.h>
-#include <GameWorld/Graphics/SpriteComponent.h>
+#include <DFW/GameWorld/TransformComponent.h>
+#include <DFW/GameWorld/Camera/CameraComponent.h>
+#include <DFW/GameWorld/Graphics/SpriteComponent.h>
 
-#include <Modules/ECS/Managers/EntityRegistry.h>
+#include <DFW/Modules/ECS/Managers/EntityRegistry.h>
 
-#include <Modules/Rendering/RenderModule.h>
-#include <Modules/Rendering/ShaderLibrary.h>
-#include <Modules/Rendering/UniformLibrary.h>
-#include <Modules/Rendering/ViewTargetDirector.h>
+#include <DFW/Modules/Rendering/RenderModule.h>
+#include <DFW/Modules/Rendering/ShaderLibrary.h>
+#include <DFW/Modules/Rendering/UniformLibrary.h>
+#include <DFW/Modules/Rendering/ViewTargetDirector.h>
 
-#include <Modules/Rendering/RenderTarget.h>
-#include <Modules/Rendering/ViewTarget.h>
-#include <Modules/Rendering/ShaderProgram.h>
-#include <Modules/Rendering/Uniform.h>
+#include <DFW/Modules/Rendering/RenderTarget.h>
+#include <DFW/Modules/Rendering/ViewTarget.h>
+#include <DFW/Modules/Rendering/ShaderProgram.h>
+#include <DFW/Modules/Rendering/Uniform.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
 
 #include <bgfx/bgfx.h>
 #include <bx/math.h>

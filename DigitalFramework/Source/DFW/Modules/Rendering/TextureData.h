@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Modules/Resource/Resource.h>
+#include <DFW/Modules/Resource/Resource.h>
 
 #include <bgfx/bgfx.h>
 

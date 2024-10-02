@@ -1,10 +1,10 @@
 #pragma once
 
-#include <GameWorld/GameEvents.h>
-#include <GameWorld/Camera/CameraSystem.h>
-#include <GameWorld/Camera/CameraEvents.h>
+#include <DFW/GameWorld/GameEvents.h>
+#include <DFW/GameWorld/Camera/CameraSystem.h>
+#include <DFW/GameWorld/Camera/CameraEvents.h>
 
-#include <CoreSystems/Events/EventImplementation.h>
+#include <DFW/CoreSystems/Events/EventImplementation.h>
 
 namespace DFW
 {

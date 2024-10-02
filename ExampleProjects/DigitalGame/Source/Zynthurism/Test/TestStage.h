@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CoreSystems/Stage/Stage.h>
+#include <DFW/CoreSystems/Stage/Stage.h>
 
 namespace DGame
 {

@@ -1,4 +1,4 @@
-#include <CoreSystems/Imgui/ImGui_Impl_BGFX_Window.h>
+#include <DFW/CoreSystems/Imgui/ImGui_Impl_BGFX_Window.h>
 
 #include <bgfx/embedded_shader.h>
 #include <bx/bx.h>
@@ -11,13 +11,13 @@
 
 #include <imgui/backends/imgui_impl_glfw.h>
 
-#include <CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
-#include <CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
+#include <DFW/CoreSystems/ImGui/ImGui_Impl_BGFX_Utility.h>
+#include <DFW/CoreSystems/ImGui/ImGui_Impl_BGFX_Rendering.h>
 
-#include <CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/CoreServices.h>
 
-#include <Modules/Rendering/RenderModule.h>
-#include <Modules/Rendering/ViewTargetDirector.h>
+#include <DFW/Modules/Rendering/RenderModule.h>
+#include <DFW/Modules/Rendering/ViewTargetDirector.h>
 
 namespace DFW
 {

@@ -1,7 +1,7 @@
-#include <CoreSystems/GameClock.h>
+#include <DFW/CoreSystems/GameClock.h>
 
-#include <CoreSystems/Logging/Logger.h>
-#include <Defines/MathDefines.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
+#include <DFW/Defines/MathDefines.h>
 
 // TODO : Adapt code for mutli platform.
 #include <Windows.h>

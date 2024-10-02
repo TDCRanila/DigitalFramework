@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/Entity.h>
 
-#include <CoreSystems/Events/EventImplementation.h>
+#include <DFW/CoreSystems/Events/EventImplementation.h>
 
 namespace DFW
 {

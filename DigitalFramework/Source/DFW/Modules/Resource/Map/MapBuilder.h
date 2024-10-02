@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Modules/Resource/Map/MapData.h>
+#include <DFW/Modules/Resource/Map/MapData.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
 #include <unordered_map>
 #include <string>

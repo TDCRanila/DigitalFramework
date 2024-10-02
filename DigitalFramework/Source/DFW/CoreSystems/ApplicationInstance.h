@@ -1,11 +1,11 @@
 #pragma once
 
-#include <CoreSystems/ApplicationEvents.h>
-#include <CoreSystems/Events/EventDispatcher.h>
-#include <CoreSystems/GameClock.h>
-#include <CoreSystems/TimeTracker.h>
-#include <CoreSystems/Stage/StageStackController.h>
-#include <CoreSystems/Stage/StageStackCommunicator.h>
+#include <DFW/CoreSystems/ApplicationEvents.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/GameClock.h>
+#include <DFW/CoreSystems/TimeTracker.h>
+#include <DFW/CoreSystems/Stage/StageStackController.h>
+#include <DFW/CoreSystems/Stage/StageStackCommunicator.h>
 
 namespace DFW
 {

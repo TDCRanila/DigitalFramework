@@ -1,10 +1,10 @@
-#include <Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/ECSModule.h>
 		 
-#include <Modules/ECS/Managers/SystemManager.h>
-#include <Modules/ECS/Managers/EntityRegistry.h>
+#include <DFW/Modules/ECS/Managers/SystemManager.h>
+#include <DFW/Modules/ECS/Managers/EntityRegistry.h>
 
-#include <CoreSystems/Events/EventDispatcher.h>
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {

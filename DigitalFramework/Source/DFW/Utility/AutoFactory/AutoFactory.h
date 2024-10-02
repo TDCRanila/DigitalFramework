@@ -1,9 +1,9 @@
 #pragma once
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
-#include <Utility/StringUtility.h>
-#include <Utility/TemplateUtility.h>
+#include <DFW/Utility/StringUtility.h>
+#include <DFW/Utility/TemplateUtility.h>
 
 #include <boost/functional/hash.hpp>
 

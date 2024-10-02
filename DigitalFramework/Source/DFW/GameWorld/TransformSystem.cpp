@@ -1,10 +1,10 @@
-#include <GameWorld/TransformSystem.h>
+#include <DFW/GameWorld/TransformSystem.h>
 
-#include <GameWorld/TransformComponent.h>
+#include <DFW/GameWorld/TransformComponent.h>
 
-#include <Modules/ECS/Entity.h>
-#include <Modules/ECS/Internal/EntityRelationComponent.h>
-#include <Modules/ECS/Internal/EntityHierachyRootTagComponent.h>
+#include <DFW/Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/Internal/EntityRelationComponent.h>
+#include <DFW/Modules/ECS/Internal/EntityHierachyRootTagComponent.h>
 
 namespace DFW
 {

@@ -1,9 +1,9 @@
-#include <CoreSystems/Input/InputManagement.h>
+#include <DFW/CoreSystems/Input/InputManagement.h>
 
-#include <CoreSystems/Events/EventDispatcher.h>
-#include <CoreSystems/Window/WindowManagement.h>
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/Window/WindowManagement.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GameWorld/Transform.h>
+#include <DFW/GameWorld/Transform.h>
 
-#include <Modules/ECS/System.h>
+#include <DFW/Modules/ECS/System.h>
 
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Body/BodyID.h>
@@ -11,7 +11,7 @@
 #include <Jolt/Physics/Collision/ObjectLayer.h>
 #include <Jolt/Physics/Character/Character.h>
 
-#include <Utility/JoltUtility.h>
+#include <DFW/Utility/JoltUtility.h>
 
 #include <glm/glm.hpp>
 

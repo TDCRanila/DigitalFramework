@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Modules/ECS/Entity.h>
-#include <Modules/ECS/Internal/InternalComponent.h>
+#include <DFW/Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/Internal/InternalComponent.h>
 
-#include <Utility/AutoFactory/AutoFactory.h>
+#include <DFW/Utility/AutoFactory/AutoFactory.h>
 
 namespace DFW
 {
