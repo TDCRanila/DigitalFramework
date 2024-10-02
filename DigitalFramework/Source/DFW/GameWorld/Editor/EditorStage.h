@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Modules/Editor/EditorElementContainer.h>
+#include <DFW/Modules/Editor/EditorElementContainer.h>
 
-#include <Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/ECSModule.h>
 
-#include <CoreSystems/Stage/Stage.h>
+#include <DFW/CoreSystems/Stage/Stage.h>
 
 namespace DFW
 {

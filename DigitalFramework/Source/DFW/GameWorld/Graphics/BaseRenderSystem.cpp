@@ -1,17 +1,17 @@
-#include <GameWorld/Graphics/BaseRenderSystem.h>
+#include <DFW/GameWorld/Graphics/BaseRenderSystem.h>
 
-#include <GameWorld/Camera/CameraSystem.h>
-#include <GameWorld/Camera/CameraComponent.h>
+#include <DFW/GameWorld/Camera/CameraSystem.h>
+#include <DFW/GameWorld/Camera/CameraComponent.h>
 
-#include <Modules/ECS/Managers/SystemManager.h>
-#include <Modules/Rendering/RenderModule.h>
-#include <Modules/Rendering/RenderTargetDirector.h>
-#include <Modules/Rendering/ViewTargetDirector.h>
-#include <Modules/Rendering/RenderTarget.h>
+#include <DFW/Modules/ECS/Managers/SystemManager.h>
+#include <DFW/Modules/Rendering/RenderModule.h>
+#include <DFW/Modules/Rendering/RenderTargetDirector.h>
+#include <DFW/Modules/Rendering/ViewTargetDirector.h>
+#include <DFW/Modules/Rendering/RenderTarget.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Logging/Logger.h>
-#include <CoreSystems/Window/WindowManagement.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Window/WindowManagement.h>
 
 #include <glm/gtc/type_ptr.hpp>
 

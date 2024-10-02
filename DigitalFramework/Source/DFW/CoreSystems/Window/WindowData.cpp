@@ -1,6 +1,6 @@
-#include <CoreSystems/Window/WindowData.h>
+#include <DFW/CoreSystems/Window/WindowData.h>
 
-#include <CoreSystems/Window/WindowManagement.h>
+#include <DFW/CoreSystems/Window/WindowManagement.h>
 
 namespace DFW
 {

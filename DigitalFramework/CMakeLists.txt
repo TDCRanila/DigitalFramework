@@ -10,7 +10,7 @@ string(REPLACE "\\" "/" HEADER_FILES    "${HEADER_FILES}")
 string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
 
 ### Library Definition
-set(LIB_NAME Digital_)
+set(LIB_NAME DigitalFramework)
 project(${LIB_NAME} VERSION 1.0.0)
 
 add_library(${LIB_NAME} STATIC)
@@ -38,10 +38,10 @@ SetCPPVersion(${LIB_NAME})
 set_property(TARGET ${LIB_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
 
 ### PreCompiled Headers
-find_file(PCH_FILE_FOUND NAMES DFWPCH.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/DFW")
+find_file(PCH_FILE_FOUND NAMES DFWPCH.h PATHS "${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/DFW")
 if (PCH_FILE_FOUND)
     if(MSVC)
-        target_precompile_headers(${LIB_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/Digital_/Source/DFW/DFWPCH.h")
+        target_precompile_headers(${LIB_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/DFW/DFWPCH.h")
 	    message("Adding PCH file(s)")
     else()
 	    message("Unsupported PCH Implementation.")
@@ -51,11 +51,11 @@ else()
 endif()
 
 ### Forced Includes
-find_file(DEFINES_FILE_FOUND NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/Defines")
+find_file(DEFINES_FILE_FOUND NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/Defines")
 if (DEFINES_FILE_FOUND)
     if(MSVC)
         message("Adding Force Include file(s)")
-        target_compile_options(${LIB_NAME} PRIVATE /FI"${CMAKE_SOURCE_DIR}/Digital_/Source/Defines/Defines.h")
+        target_compile_options(${LIB_NAME} PRIVATE /FI"${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/Defines/Defines.h")
     else()
 	    message("Unsupported Force Include Implementation.")
     endif()

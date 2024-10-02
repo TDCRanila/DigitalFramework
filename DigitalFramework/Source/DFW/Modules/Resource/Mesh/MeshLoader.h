@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Modules/Rendering/MeshData.h>
+#include <DFW/Modules/Rendering/MeshData.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
 namespace DFW
 {

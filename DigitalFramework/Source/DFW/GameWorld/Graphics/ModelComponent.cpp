@@ -1,10 +1,10 @@
-#include <GameWorld/Graphics/ModelComponent.h>
+#include <DFW/GameWorld/Graphics/ModelComponent.h>
 
-#include <Modules/Rendering/MeshData.h>
-#include <Modules/Rendering/TextureData.h>
-#include <Modules/Rendering/ShaderProgram.h>
+#include <DFW/Modules/Rendering/MeshData.h>
+#include <DFW/Modules/Rendering/TextureData.h>
+#include <DFW/Modules/Rendering/ShaderProgram.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
 namespace DFW
 {

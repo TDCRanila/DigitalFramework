@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GameWorld/Transform.h>
+#include <DFW/GameWorld/Transform.h>
 
-#include <Modules/ECS/Component.h>
+#include <DFW/Modules/ECS/Component.h>
 
 namespace DFW
 {

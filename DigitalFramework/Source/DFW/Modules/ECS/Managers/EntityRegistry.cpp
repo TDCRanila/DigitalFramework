@@ -1,14 +1,14 @@
-#include <Modules/ECS/Managers/EntityRegistry.h>
+#include <DFW/Modules/ECS/Managers/EntityRegistry.h>
 
-#include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Entity.h>
-#include <Modules/ECS/EntityEvents.h>
-#include <Modules/ECS/Internal/EntityDataComponent.h>
-#include <Modules/ECS/Internal/EntityRelationComponent.h>
-#include <Modules/ECS/Internal/EntityHierachyRootTagComponent.h>
+#include <DFW/Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/EntityEvents.h>
+#include <DFW/Modules/ECS/Internal/EntityDataComponent.h>
+#include <DFW/Modules/ECS/Internal/EntityRelationComponent.h>
+#include <DFW/Modules/ECS/Internal/EntityHierachyRootTagComponent.h>
 
-#include <CoreSystems/Events/EventDispatcher.h>
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {

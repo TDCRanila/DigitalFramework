@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Modules/Rendering/ShaderObject.h>
+#include <DFW/Modules/Rendering/ShaderObject.h>
 
 #include <bgfx/bgfx.h>
 

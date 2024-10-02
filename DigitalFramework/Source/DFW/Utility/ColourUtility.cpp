@@ -1,8 +1,8 @@
-#include <Utility/ColourUtility.h>
+#include <DFW/Utility/ColourUtility.h>
 
-#include <Utility/RandomUtility.h>
+#include <DFW/Utility/RandomUtility.h>
 
-#include <Defines/MathDefines.h>
+#include <DFW/Defines/MathDefines.h>
 
 namespace DFW
 {

@@ -1,4 +1,4 @@
-#include <GameWorld/Camera/CameraComponent.h>
+#include <DFW/GameWorld/Camera/CameraComponent.h>
 
 namespace DFW
 {

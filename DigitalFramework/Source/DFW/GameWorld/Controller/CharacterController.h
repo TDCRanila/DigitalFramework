@@ -1,9 +1,9 @@
 #pragma once
 
-#include <GameWorld/Character/CharacterComponent.h>
+#include <DFW/GameWorld/Character/CharacterComponent.h>
 
-#include <CoreSystems/Command.h>
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Command.h>
+#include <DFW/CoreSystems/Memory.h>
 
 namespace DFW
 {

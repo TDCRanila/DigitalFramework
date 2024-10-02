@@ -1,14 +1,14 @@
-#include <GameWorld/Editor/GameViewport.h>
+#include <DFW/GameWorld/Editor/GameViewport.h>
 
-#include <Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/ECSModule.h>
 
-#include <Modules/Rendering/RenderModule.h>
-#include <Modules/Rendering/RenderTargetDirector.h>
-#include <Modules/Rendering/ViewTargetDirector.h>
-#include <Modules/Rendering/RenderTarget.h>
-#include <Modules/Rendering/ViewTarget.h>
+#include <DFW/Modules/Rendering/RenderModule.h>
+#include <DFW/Modules/Rendering/RenderTargetDirector.h>
+#include <DFW/Modules/Rendering/ViewTargetDirector.h>
+#include <DFW/Modules/Rendering/RenderTarget.h>
+#include <DFW/Modules/Rendering/ViewTarget.h>
 
-#include <CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/CoreServices.h>
 
 #include <bgfx/bgfx.h>
 

@@ -1,8 +1,8 @@
-#include <Modules/ECS/System.h>
+#include <DFW/Modules/ECS/System.h>
 
-#include <Modules/ECS/Managers/SystemManager.h>
+#include <DFW/Modules/ECS/Managers/SystemManager.h>
 
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 namespace DFW
 {

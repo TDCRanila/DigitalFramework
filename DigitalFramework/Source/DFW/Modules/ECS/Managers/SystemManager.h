@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/System.h>
-#include <Modules/ECS/Utility/ECSTemplateUtility.h>
+#include <DFW/Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/System.h>
+#include <DFW/Modules/ECS/Utility/ECSTemplateUtility.h>
 
-#include <CoreSystems/Memory.h>
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Memory.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
 #include <unordered_map>
 

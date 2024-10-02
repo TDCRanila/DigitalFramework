@@ -1,7 +1,7 @@
-#include <Modules/ECS/Entity.h>
+#include <DFW/Modules/ECS/Entity.h>
 
-#include <Modules/ECS/Internal/EntityDataComponent.h>
-#include <Modules/ECS/Internal/EntityRelationComponent.h>
+#include <DFW/Modules/ECS/Internal/EntityDataComponent.h>
+#include <DFW/Modules/ECS/Internal/EntityRelationComponent.h>
 
 namespace DFW
 {

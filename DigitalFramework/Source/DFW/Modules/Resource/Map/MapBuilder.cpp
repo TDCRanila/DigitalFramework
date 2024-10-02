@@ -1,10 +1,10 @@
-#include <Modules/Resource/Map/MapBuilder.h>
+#include <DFW/Modules/Resource/Map/MapBuilder.h>
 
-#include <Modules/Resource/ResourceManager.h>
+#include <DFW/Modules/Resource/ResourceManager.h>
 
-#include <CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/CoreServices.h>
 
-#include <Utility/FileSystemUtility.h>
+#include <DFW/Utility/FileSystemUtility.h>
 
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>

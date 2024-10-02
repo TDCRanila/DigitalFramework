@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameWorld/Graphics/BaseRenderSystem.h>
-#include <Utility/ColourUtility.h>
+#include <DFW/GameWorld/Graphics/BaseRenderSystem.h>
+#include <DFW/Utility/ColourUtility.h>
 
 #include <glm/glm.hpp>
 

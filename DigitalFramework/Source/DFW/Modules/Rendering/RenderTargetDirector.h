@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreSystems/DUID.h>
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/DUID.h>
+#include <DFW/CoreSystems/Memory.h>
 
 #include <bgfx/bgfx.h>
 

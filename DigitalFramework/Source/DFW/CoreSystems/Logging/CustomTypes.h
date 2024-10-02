@@ -5,7 +5,7 @@
 
 #pragma region CoreTypes
 
-#include <CoreSystems/DUID.h>
+#include <DFW/CoreSystems/DUID.h>
 
 template <> struct fmt::formatter<DFW::DUID> : fmt::formatter<std::string>
 {

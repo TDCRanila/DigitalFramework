@@ -1,18 +1,18 @@
 #include <Zynthurism/Game/Level.h>
 
-#include <GameWorld/TransformComponent.h>
-#include <GameWorld/Graphics/ModelComponent.h>
-#include <GameWorld/Physics/PhysicsComponent.h>
+#include <DFW/GameWorld/TransformComponent.h>
+#include <DFW/GameWorld/Graphics/ModelComponent.h>
+#include <DFW/GameWorld/Physics/PhysicsComponent.h>
 
-#include <GameWorld/Physics/PhysicsSystem.h>
+#include <DFW/GameWorld/Physics/PhysicsSystem.h>
 
-#include <Modules/Resource/ResourceManager.h>
-#include <Modules/Resource/Map/MapData.h>
+#include <DFW/Modules/Resource/ResourceManager.h>
+#include <DFW/Modules/Resource/Map/MapData.h>
 
-#include <Modules/ECS/ECSModule.h>
-#include <Modules/ECS/Managers/SystemManager.h>
+#include <DFW/Modules/ECS/ECSModule.h>
+#include <DFW/Modules/ECS/Managers/SystemManager.h>
 
-#include <CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/CoreServices.h>
 
 namespace DGame
 {

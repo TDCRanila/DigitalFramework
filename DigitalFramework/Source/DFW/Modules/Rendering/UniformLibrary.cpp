@@ -1,4 +1,4 @@
-#include <Modules/Rendering/UniformLibrary.h>
+#include <DFW/Modules/Rendering/UniformLibrary.h>
 
 namespace DFW
 {

@@ -1,16 +1,16 @@
-#include <CoreSystems/Window/Windows/WindowManagementGLFW.h>
+#include <DFW/CoreSystems/Window/Windows/WindowManagementGLFW.h>
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Events/EventDispatcher.h>
-#include <CoreSystems/Input/InputManagement.h>
-#include <CoreSystems/Logging/Logger.h>
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/Input/InputManagement.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Memory.h>
 
-#include <Defines/Defines.h>
+#include <DFW/Defines/Defines.h>
 
 namespace DFW
 {

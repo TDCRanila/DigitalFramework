@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Modules/ECS/EntityHandle.h>
-#include <Modules/ECS/Utility/EntityTypeID.h>
+#include <DFW/Modules/ECS/EntityHandle.h>
+#include <DFW/Modules/ECS/Utility/EntityTypeID.h>
 
-#include <CoreSystems/DUID.h>
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/DUID.h>
+#include <DFW/CoreSystems/Memory.h>
 
-#include <Utility/TemplateUtility.h>
+#include <DFW/Utility/TemplateUtility.h>
 
 #include <entt/entity/registry.hpp>
 

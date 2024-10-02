@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Modules/ECS/Utility/ECSTemplateUtility.h>
-#include <Modules/ECS/Utility/ComponentBitList.h>
+#include <DFW/Modules/ECS/Utility/ECSTemplateUtility.h>
+#include <DFW/Modules/ECS/Utility/ComponentBitList.h>
 
-#include <CoreSystems/Logging/Logger.h>
+#include <DFW/CoreSystems/Logging/Logger.h>
 
-#include <Defines/Defines.h>
+#include <DFW/Defines/Defines.h>
 
 #include <unordered_map>
 #include <typeindex>

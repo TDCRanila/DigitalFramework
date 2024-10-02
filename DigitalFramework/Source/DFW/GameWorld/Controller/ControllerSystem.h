@@ -1,10 +1,10 @@
 #pragma once
 
-#include <GameWorld/Controller/CharacterController.h>
+#include <DFW/GameWorld/Controller/CharacterController.h>
 
-#include <Modules/ECS/System.h>
+#include <DFW/Modules/ECS/System.h>
 
-#include <CoreSystems/Memory.h>
+#include <DFW/CoreSystems/Memory.h>
 
 #include <vector>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Modules/Math/EulerAngles.h>
+#include <DFW/Modules/Math/EulerAngles.h>
 
 #include <glm/glm.hpp>
 #include <glm/matrix.hpp>

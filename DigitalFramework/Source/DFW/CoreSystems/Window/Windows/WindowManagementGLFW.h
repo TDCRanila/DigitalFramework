@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreSystems/Window/WindowManagement.h>
-#include <CoreSystems/Window/WindowData.h>
+#include <DFW/CoreSystems/Window/WindowManagement.h>
+#include <DFW/CoreSystems/Window/WindowData.h>
 
 // Forward Declare(s)
 struct GLFWwindow;

@@ -1,6 +1,6 @@
-#include <CoreSystems/Input/RawInputEvents.h>
+#include <DFW/CoreSystems/Input/RawInputEvents.h>
 
-#include <CoreSystems/Input/InputKeys.h>
+#include <DFW/CoreSystems/Input/InputKeys.h>
 
 namespace DFW
 {

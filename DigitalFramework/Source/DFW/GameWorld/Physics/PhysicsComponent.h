@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Modules/ECS/Component.h>
+#include <DFW/Modules/ECS/Component.h>
 
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Body/Body.h>

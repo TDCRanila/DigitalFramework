@@ -1,11 +1,11 @@
 #pragma once
 
-#include <GameWorld/Camera/ClipSpace.h>
+#include <DFW/GameWorld/Camera/ClipSpace.h>
 
-#include <Modules/ECS/Component.h>
-#include <Modules/Math/EulerAngles.h>
+#include <DFW/Modules/ECS/Component.h>
+#include <DFW/Modules/Math/EulerAngles.h>
 
-#include <CoreSystems/DUID.h>
+#include <DFW/CoreSystems/DUID.h>
 
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>

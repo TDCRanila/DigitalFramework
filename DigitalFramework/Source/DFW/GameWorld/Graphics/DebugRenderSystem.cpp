@@ -1,13 +1,13 @@
-#include <GameWorld/Graphics/DebugRenderSystem.h>
+#include <DFW/GameWorld/Graphics/DebugRenderSystem.h>
 
-#include <GameWorld/TransformComponent.h>
+#include <DFW/GameWorld/TransformComponent.h>
 
-#include <Modules/Rendering/RenderModule.h>
-#include <Modules/Rendering/DebugDraw/debugdraw.h> 
-#include <Modules/Rendering/ViewTargetDirector.h>
+#include <DFW/Modules/Rendering/RenderModule.h>
+#include <DFW/Modules/Rendering/DebugDraw/debugdraw.h> 
+#include <DFW/Modules/Rendering/ViewTargetDirector.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
 
 #include <glm/gtc/type_ptr.hpp>
 

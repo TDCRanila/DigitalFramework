@@ -1,11 +1,11 @@
-#include <Modules/Rendering/RenderModuleContext.h>
+#include <DFW/Modules/Rendering/RenderModuleContext.h>
 
-#include <CoreSystems/CoreServices.h>
-#include <CoreSystems/Events/EventDispatcher.h>
-#include <CoreSystems/Input/InputManagement.h>
-#include <CoreSystems/Window/WindowManagement.h>
+#include <DFW/CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/Input/InputManagement.h>
+#include <DFW/CoreSystems/Window/WindowManagement.h>
 
-#include <Modules/Rendering/ViewTarget.h>
+#include <DFW/Modules/Rendering/ViewTarget.h>
 
 #include <bgfx/platform.h>
 

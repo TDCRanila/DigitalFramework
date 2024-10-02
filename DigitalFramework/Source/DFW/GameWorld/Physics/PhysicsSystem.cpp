@@ -1,14 +1,14 @@
-#include <GameWorld/Physics/PhysicsSystem.h>
+#include <DFW/GameWorld/Physics/PhysicsSystem.h>
 
-#include <GameWorld/TransformComponent.h>
-#include <GameWorld/Physics/PhysicsLayers.h>
-#include <GameWorld/Physics/PhysicsSystemContext.h>
-#include <GameWorld/Physics/PhysicsComponent.h>
-#include <GameWorld/Physics/JoltDebugRenderImpl.h>
+#include <DFW/GameWorld/TransformComponent.h>
+#include <DFW/GameWorld/Physics/PhysicsLayers.h>
+#include <DFW/GameWorld/Physics/PhysicsSystemContext.h>
+#include <DFW/GameWorld/Physics/PhysicsComponent.h>
+#include <DFW/GameWorld/Physics/JoltDebugRenderImpl.h>
 
-#include <Modules/ECS/EntityEvents.h>
+#include <DFW/Modules/ECS/EntityEvents.h>
 
-#include <CoreSystems/Events/EventDispatcher.h>
+#include <DFW/CoreSystems/Events/EventDispatcher.h>
 
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>

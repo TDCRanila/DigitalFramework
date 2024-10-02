@@ -1,17 +1,17 @@
-#include <GameWorld/Editor/EditorStage.h>
+#include <DFW/GameWorld/Editor/EditorStage.h>
 
-#include <GameWorld/Editor/GameViewport.h>
-#include <GameWorld/TransformSystem.h>
-#include <GameWorld/Camera/CameraSystem.h>
-#include <GameWorld/Graphics/RenderSystem.h>
-#include <GameWorld/Graphics/SpriteSystem.h>
-#include <GameWorld/Physics/PhysicsSystem.h>
-#include <GameWorld/Graphics/DebugRenderSystem.h>
+#include <DFW/GameWorld/Editor/GameViewport.h>
+#include <DFW/GameWorld/TransformSystem.h>
+#include <DFW/GameWorld/Camera/CameraSystem.h>
+#include <DFW/GameWorld/Graphics/RenderSystem.h>
+#include <DFW/GameWorld/Graphics/SpriteSystem.h>
+#include <DFW/GameWorld/Physics/PhysicsSystem.h>
+#include <DFW/GameWorld/Graphics/DebugRenderSystem.h>
 
-#include <Modules/Editor/EditorElementFiller.h>
-#include <Modules/ECS/Managers/SystemManager.h>
+#include <DFW/Modules/Editor/EditorElementFiller.h>
+#include <DFW/Modules/ECS/Managers/SystemManager.h>
 
-#include <CoreSystems/CoreServices.h>
+#include <DFW/CoreSystems/CoreServices.h>
 
 #include <imgui/imgui_internal.h>
 

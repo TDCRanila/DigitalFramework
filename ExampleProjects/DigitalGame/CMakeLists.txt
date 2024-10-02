@@ -115,7 +115,7 @@ endif()
 source_group("Shader Files" FILES ${SHADER_FILES})
 
 ### Executable Definition
-set(EXE_NAME DigitalGame_)
+set(EXE_NAME DigitalGame)
 project(${EXE_NAME} VERSION 1.0.0)
 
 # Make sure to make {SHADER_FILES} a dependency for the target.
@@ -130,10 +130,10 @@ target_include_directories(${EXE_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Source
 )
 
-target_link_libraries(${EXE_NAME} PRIVATE LIB:Digital_)
+target_link_libraries(${EXE_NAME} PRIVATE LIB:DigitalFramework)
 target_include_directories(${EXE_NAME} 
     PRIVATE 
-    ${CMAKE_SOURCE_DIR}/Digital_/Source
+    ${CMAKE_SOURCE_DIR}/DigitalFramework/Source
 )
 
 ### CPP Standard
@@ -143,11 +143,11 @@ SetCPPVersion(${EXE_NAME})
 set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
 
 ### Forced Includes
-find_file(DEFINES_FILE_FOUND NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/Digital_/Source/Defines")
+find_file(DEFINES_FILE_FOUND NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/Defines")
 if (DEFINES_FILE_FOUND)
     if(MSVC)
         message("Adding Force Include file(s)")
-        target_compile_options(${EXE_NAME} PRIVATE /FI"${CMAKE_SOURCE_DIR}/Digital_/Source/Defines/Defines.h")
+        target_compile_options(${EXE_NAME} PRIVATE /FI"${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/Defines/Defines.h")
     else()
 	    message("Unsupported Force Include Implementation.")
     endif()
