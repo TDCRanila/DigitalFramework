@@ -4,7 +4,6 @@
 - Windows / VisualStudio / MSVC
   - CMD
     - git clone https://github.com/TDCRanila/DigitalFramework
-    - cd _'DigitalFramework/Digital'_
     - git submodule update --init --recursive
     - mkdir _'build'_
     - cd _'build'_
