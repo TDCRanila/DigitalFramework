@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17.2)
 
 ### Generate a list of all Header & Source Files.
-execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR}/Source ${CMAKE_CURRENT_BINARY_DIR})
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_source.txt SOURCE_FILES)
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_header.txt HEADER_FILES)
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_all.txt ALL_FILES)
@@ -77,13 +77,13 @@ message("Configuring Libraries & Includes:")
 
 ## bgfx.cmake
 AnnounceLibraryAddition("bgfx")
-set(BGFX_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake)
-set(BGFX_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake/bgfx/include)
-set(BIMG_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake/bimg/include)
-set(BX_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake/bx/include)
+set(BGFX_CMAKE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/bgfx.cmake)
+set(BGFX_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/bgfx.cmake/bgfx/include)
+set(BIMG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/bgfx.cmake/bimg/include)
+set(BX_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/bgfx.cmake/bx/include)
 set(BGFX_LIB_NAME bgfx)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/bgfx.cmake bgfx.cmake)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/bgfx.cmake bgfx.cmake)
 
 target_link_libraries(${LIB_NAME} ${BGFX_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC "${BGFX_INCLUDE_DIR}")
@@ -96,18 +96,18 @@ target_compile_definitions(bx PUBLIC
 
 ## entt
 AnnounceLibraryAddition("entt")
-set(ENTT_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/entt)
-set(ENTT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/entt/src)
+set(ENTT_CMAKE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/entt)
+set(ENTT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/entt/src)
 
 target_include_directories(${LIB_NAME} PUBLIC "${ENTT_INCLUDE_DIR}")
 
 ## imgui
 AnnounceLibraryAddition("Dear ImGui")
-set(IMGUI_CMAKE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui)
-set(IMGUI_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/imgui)
+set(IMGUI_CMAKE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/imgui)
+set(IMGUI_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/imgui)
 set(IMGUI_LIB_NAME imgui)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/imgui imgui)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/imgui imgui)
 
 target_link_libraries(${LIB_NAME} ${IMGUI_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC "${IMGUI_INCLUDE_DIR}")
@@ -118,17 +118,17 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-set(GLFW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glfw/include)
+set(GLFW_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/glfw/include)
 set(GLFW_LIB_NAME glfw)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/glfw ${GLFW_LIB_NAME})
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/glfw ${GLFW_LIB_NAME})
 
 target_link_libraries(${LIB_NAME} ${GLFW_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC "${GLFW_INCLUDE_DIR}")
 
 ## GLM - https://github.com/g-truc/glm.git
 AnnounceLibraryAddition("glm")
-set(GLM_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/glm)
+set(GLM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/glm)
 
 target_compile_definitions(${LIB_NAME} PUBLIC GLM_ENABLE_EXPERIMENTAL)
 
@@ -136,10 +136,10 @@ target_include_directories(${LIB_NAME} PUBLIC "${GLM_INCLUDE_DIR}")
 
 ## spdlog
 AnnounceLibraryAddition("spdlog")
-set(SPDLOG_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/spdlog/include)
+set(SPDLOG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/spdlog/include)
 set(SPDLOG_LIB_NAME spdlog)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/External/spdlog spdlog)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/spdlog spdlog)
 
 target_include_directories(${LIB_NAME} PUBLIC "${SPDLOG_INCLUDE_DIR}")
 
@@ -151,8 +151,8 @@ AnnounceLibraryAddition("assimp")
 include(CMake/ASSIMPSettings.cmake)
 
 set(ASSIMP_LIB_NAME assimp)
-set(ASSIMP_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/assimp)
-set(ASSIMP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/assimp/include)
+set(ASSIMP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/assimp)
+set(ASSIMP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/assimp/include)
 set(ASSIMP_INCLUDE_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(${ASSIMP_DIR} ${ASSIMP_LIB_NAME})
@@ -171,8 +171,8 @@ AnnounceLibraryAddition("JoltPhysics")
 include(CMake/JoltPhysicsSettings.cmake)
 
 set(JOLT_LIB_NAME Jolt)
-set(JOLT_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/JoltPhysics)
-set(JOLT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/External/JoltPhysics)
+set(JOLT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/JoltPhysics)
+set(JOLT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/External/JoltPhysics)
 set(JOLT_INCLUDE_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 find_path(JOLT_FOUND NAMES "Jolt.h" PATHS "${JOLT_INCLUDE_DIR}/Jolt")
@@ -195,10 +195,10 @@ message("\n")
 
 # libmap
 AnnounceLibraryAddition("libmap")
-set (LIBMAP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/libmap-cpp)
+set (LIBMAP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/libmap-cpp)
 set(LIBMAP_LIB_NAME libmap)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/Dependency/libmap-cpp ${LIBMAP_LIB_NAME})
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Dependency/libmap-cpp ${LIBMAP_LIB_NAME})
 
 target_link_libraries(${LIB_NAME} ${LIBMAP_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC ${LIBMAP_INCLUDE_DIR})
@@ -206,7 +206,7 @@ set_target_properties(${LIBMAP_LIB_NAME}  PROPERTIES FOLDER ${LIBMAP_LIB_NAME})
 
 ## Boost - 
 AnnounceLibraryAddition("boost")
-set(BOOST_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/boost)
+set(BOOST_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/boost)
 
 target_include_directories(${LIB_NAME} PUBLIC ${BOOST_INCLUDE_DIR})
 
@@ -214,6 +214,6 @@ message("\n")
 
 # stb
 AnnounceLibraryAddition("stb")
-set (STB_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Dependency/stb)
+set (STB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dependency/stb)
 
 target_include_directories(${LIB_NAME} PUBLIC ${STB_INCLUDE_DIR})
