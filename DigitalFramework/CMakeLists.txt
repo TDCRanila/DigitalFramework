@@ -14,7 +14,6 @@ set(LIB_NAME DigitalFramework)
 project(${LIB_NAME} VERSION 1.0.0)
 
 add_library(${LIB_NAME} STATIC)
-add_library(LIB:${LIB_NAME} ALIAS ${LIB_NAME})
 target_sources(${LIB_NAME}
     PRIVATE 
     ${ALL_FILES}
@@ -48,17 +47,6 @@ if (PCH_FILE_FOUND)
     endif()
 else()
 	message("Cannot Find PCH file(s)")
-endif()
-
-### Forced Includes
-find_file(DEFINES_FILE_FOUND NAMES Defines.h PATHS "${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/Defines")
-if (DEFINES_FILE_FOUND)
-    if(MSVC)
-        message("Adding Force Include file(s)")
-        target_compile_options(${LIB_NAME} PRIVATE /FI"${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/Defines/Defines.h")
-    else()
-	    message("Unsupported Force Include Implementation.")
-    endif()
 endif()
 
 ### File Management
