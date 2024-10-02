@@ -1,24 +1,24 @@
 [submodule "Digital/Dependency/External/glm"]
-	path = Digital/Digital_/Dependency/External/glm
+	path = Digital/DigitalFramework/Dependency/External/glm
 	url = https://github.com/g-truc/glm.git
 [submodule "Digital/Dependency/External/glfw"]
-	path = Digital/Digital_/Dependency/External/glfw
+	path = Digital/DigitalFramework/Dependency/External/glfw
 	url = https://github.com/glfw/glfw.git
 [submodule "Digital/Dependency/External/spdlog"]
-	path = Digital/Digital_/Dependency/External/spdlog
+	path = Digital/DigitalFramework/Dependency/External/spdlog
 	url = https://github.com/gabime/spdlog.git
 [submodule "Digital/Dependency/External/entt"]
-	path = Digital/Digital_/Dependency/External/entt
+	path = Digital/DigitalFramework/Dependency/External/entt
 	url = https://github.com/skypjack/entt.git
 [submodule "Digital/Dependency/External/bgfx.cmake"]
-	path = Digital/Digital_/Dependency/External/bgfx.cmake
+	path = Digital/DigitalFramework/Dependency/External/bgfx.cmake
 	url = https://github.com/TDCRanila/bgfx.cmake.git
 [submodule "Digital/Dependency/External/imgui/imgui"]
-	path = Digital/Digital_/Dependency/External/imgui/imgui
+	path = Digital/DigitalFramework/Dependency/External/imgui/imgui
 	url = https://github.com/TDCRanila/imgui.git
 [submodule "Digital/Dependency/External/assimp"]
-	path = Digital/Digital_/Dependency/External/assimp
+	path = Digital/DigitalFramework/Dependency/External/assimp
 	url = https://github.com/assimp/assimp.git
 [submodule "Digital/Dependency/External/JoltPhysics"]
-	path = Digital/Digital_/Dependency/External/JoltPhysics
+	path = Digital/DigitalFramework/Dependency/External/JoltPhysics
 	url = https://github.com/jrouwe/JoltPhysics

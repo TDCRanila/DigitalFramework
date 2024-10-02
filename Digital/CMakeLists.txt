@@ -50,6 +50,6 @@ else()
     message("Unsupported Build Configurations.")
 endif()
 
-add_subdirectory(Digital_)
+add_subdirectory(DigitalFramework)
 add_subdirectory(ExampleProjects/DigitalGame)
 add_subdirectory(ExampleProjects/DigitalTestBench)
