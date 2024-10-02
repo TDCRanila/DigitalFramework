@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.17.2)
 
+message("######################")
+message("Configuring - DigitalTestBench\n")
+
 ### Generate a list of all Header & Source Files.
 execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_source.txt SOURCE_FILES)
@@ -13,6 +16,7 @@ string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
 set(EXE_NAME DigitalTestBench)
 project(${EXE_NAME} VERSION 1.0.0)
 
+### Executable Source
 add_executable(${EXE_NAME})
 target_sources(${EXE_NAME}
     PRIVATE 
@@ -24,6 +28,10 @@ target_include_directories(${EXE_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Source
 )
 
+# CPP Standard
+SetCPPVersion(${EXE_NAME})
+
+### Libraries
 target_link_libraries(${EXE_NAME} PRIVATE DigitalFramework)
 target_include_directories(${EXE_NAME} 
     PRIVATE 
@@ -31,9 +39,6 @@ target_include_directories(${EXE_NAME}
 )
 
 target_precompile_headers(${EXE_NAME} REUSE_FROM DigitalFramework)
-
-### CPP Standard
-SetCPPVersion(${EXE_NAME})
 
 ### Set Work Directory
 set_property(TARGET ${EXE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources)
