@@ -38,9 +38,9 @@ target_include_directories(${LIB_NAME}
 SetCPPVersion(${LIB_NAME})
 
 ### PreCompiled Headers
-find_file(PCH_FILE_FOUND NAMES DFWPCH.h PATHS "${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/DFW")
+find_file(PCH_FILE_FOUND NAMES DFWPCH.h PATHS "${CMAKE_CURRENT_SOURCE_DIR}/Source/DFW/DFW")
 if (PCH_FILE_FOUND)
-    target_precompile_headers(${LIB_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/DigitalFramework/Source/DFW/DFW/DFWPCH.h")
+    target_precompile_headers(${LIB_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Source/DFW/DFW/DFWPCH.h")
     message("Adding PCH file(s)")
 else()
     message("Cannot Find PCH file(s)")

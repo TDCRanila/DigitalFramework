@@ -303,12 +303,13 @@ namespace DFW
         void WindowManagementGLFW::ChangeWindowParameters(WindowID const a_window_id, WindowParameters const& a_window_parameters)
         {
             SharedPtr<WindowInstanceGLFW> const& window_ptr = std::static_pointer_cast<WindowInstanceGLFW>(GetWindowInternal(a_window_id));
+            GLFWwindow* const glfw_window = window_ptr->_glfw_window;
 
-            // Name
+            // Window Name
             window_ptr->_name = a_window_parameters.name;
+            glfwSetWindowTitle(glfw_window, window_ptr->_name.c_str());
 
             // Window Resize
-            GLFWwindow* const glfw_window = window_ptr->_glfw_window;            
             glfwSetWindowSize(glfw_window, a_window_parameters.width, a_window_parameters.height);
         }
 
