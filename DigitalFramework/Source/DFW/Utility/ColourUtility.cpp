@@ -4,6 +4,8 @@
 
 #include <DFW/Defines/MathDefines.h>
 
+#include <cmath>
+
 namespace DFW
 {
     void ColourRGBA::RandomizeRGB()
@@ -17,6 +19,16 @@ namespace DFW
     {
         RandomizeRGB();
         this->a = DUtility::RandomIntRange<uint8>(0, 255);
+    }
+
+    ColourRGBA ColourRGBA::Mix(ColourRGBA const& a_other_colour) const
+    {
+        return ColourRGBA(
+            static_cast<uint8>(std::floor((r + a_other_colour.r) * 0.5f)),
+            static_cast<uint8>(std::floor((g + a_other_colour.g) * 0.5f)),
+            static_cast<uint8>(std::floor((b + a_other_colour.b) * 0.5f)),
+            static_cast<uint8>(std::floor((a + a_other_colour.a) * 0.5f))
+        );
     }
 
     const ColourRGBA ColourRGBA::Black(0, 0, 0);
@@ -35,6 +47,11 @@ namespace DFW
     const ColourRGBA ColourRGBA::DarkGrey(64, 64, 64);
     const ColourRGBA ColourRGBA::LightGrey(192, 192, 192);
     const ColourRGBA ColourRGBA::White(255, 255, 255);
+
+    ColourRGBA MixColours(ColourRGBA const& a_colour_one, ColourRGBA const& a_colour_two)
+    {
+        return a_colour_one.Mix(a_colour_two);
+    }
 
     ColourRGBA RandomColour()
     {
