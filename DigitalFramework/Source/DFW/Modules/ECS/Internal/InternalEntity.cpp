@@ -1,5 +1,6 @@
 #include <DFW/Modules/ECS/Internal/InternalEntity.h>
 
+#include <DFW/Modules/ECS/Entity.h>
 #include <DFW/Modules/ECS/Managers/EntityRegistry.h>
 
 namespace DFW
@@ -32,6 +33,11 @@ namespace DFW
                 return false;
 
             return true;
+        }
+
+        void InternalEntity::DestroySelf()
+        {
+            _registry->DestroyEntity(Entity(_handle, *_registry));
         }
 
         bool InternalEntity::IsMarkedForDestruction() const

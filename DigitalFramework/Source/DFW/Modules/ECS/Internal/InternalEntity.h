@@ -2,8 +2,6 @@
 
 #include <DFW/Modules/ECS/EntityHandle.h>
 
-#include <DFW/CoreSystems/DUID.h>
-
 namespace DFW
 {
 	namespace DECS
@@ -18,14 +16,15 @@ namespace DFW
 			InternalEntity(EntityHandle const a_handle, EntityRegistry* a_registry);
 			~InternalEntity() = default;
 
+			bool IsEntityValid() const;
 			operator bool() const { return IsEntityValid(); }
+
+			void DestroySelf();
+			bool IsMarkedForDestruction() const;	
 
 		public:
 			EntityHandle GetHandle() const { return _handle; }
 			EntityRegistry& GetRegistry() const { DFW_ASSERT(_registry); return *_registry; }
-
-			bool IsEntityValid() const;
-			bool IsMarkedForDestruction() const;
 
 		protected:
 			EntityHandle	_handle;
