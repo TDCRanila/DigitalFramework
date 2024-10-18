@@ -89,7 +89,7 @@ namespace DFW
 		ImGuiIO const& io = ImGui::GetIO();
 		ImGui::GetForegroundDrawList()->AddCircleFilled(io.MousePos, 4.0f, 0xFFFFFFFF);
 		
-		Debug_DrawViewportRenderingInformation();
+		//Debug_DisplayViewportRenderInformation();
 
 		ImGui::Render();
 
@@ -193,7 +193,7 @@ namespace DFW
 		}
 	}
 
-	void ImGuiLayer::Debug_DrawViewportRenderingInformation() const
+	void ImGuiLayer::Debug_DisplayViewportRenderInformation() const
 	{
 		ImGuiIO const& io = ImGui::GetIO();
 		ImGui::Text("DisplaySize: [%f | %f]", io.DisplaySize.x, io.DisplaySize.y);
