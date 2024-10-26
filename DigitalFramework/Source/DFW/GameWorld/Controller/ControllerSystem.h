@@ -1,6 +1,6 @@
 #pragma once
 
-#include <DFW/GameWorld/Controller/CharacterController.h>
+#include <DFW/GameWorld/Controller/BaseController.h>
 
 #include <DFW/Modules/ECS/System.h>
 
@@ -21,13 +21,13 @@ namespace DFW
         ControllerSystem() = default;
         virtual ~ControllerSystem() = default;
 
-        void RegisterController(SharedPtr<CharacterController> const& a_controller) { _controllers.emplace_back(a_controller); }
+        void RegisterController(SharedPtr<BaseController> const& a_controller) { _controllers.emplace_back(a_controller); }
 
     private:
         virtual void Update(DECS::EntityRegistry& a_registry) override;
 
     private:
-        std::vector<SharedPtr<CharacterController>> _controllers;
+        std::vector<SharedPtr<BaseController>> _controllers;
 
     };
 

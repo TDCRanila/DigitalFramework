@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DFW/GameWorld/Controller/BaseController.h>
 #include <DFW/GameWorld/Character/CharacterComponent.h>
 
 #include <DFW/CoreSystems/Command.h>
@@ -7,13 +8,8 @@
 
 namespace DFW
 {
-    class CharacterController
+    class CharacterController : public BaseController
     {
-    public:
-        void ExecuteActions();
-        void EraseActionList();
-        void QueueAction(Command* a_command);
-
     public:
         void PossesCharacter(Entity& a_entity) { _controlled_character = &a_entity.GetComponent<CharacterComponent>(); }
         void ReleaseCharacter() { _controlled_character = nullptr; }
@@ -21,7 +17,6 @@ namespace DFW
         CharacterComponent& GetCharacter() const { return *_controlled_character; }
 
     private:
-        std::vector<Command*> command_list;
         CharacterComponent* _controlled_character;
 
     };

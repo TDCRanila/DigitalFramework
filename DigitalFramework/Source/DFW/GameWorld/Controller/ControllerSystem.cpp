@@ -4,7 +4,7 @@ namespace DFW
 {
     void ControllerSystem::Update(DECS::EntityRegistry& a_registry)
     {
-        for (SharedPtr<CharacterController>& controller : _controllers)
+        for (SharedPtr<BaseController>& controller : _controllers)
         {
             controller->ExecuteActions();
             controller->EraseActionList();
