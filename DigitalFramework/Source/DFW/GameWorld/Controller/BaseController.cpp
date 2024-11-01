@@ -4,7 +4,7 @@ namespace DFW
 {
     void BaseController::ExecuteActions()
     {
-        for (Command* command : _command_list)
+        for (UniquePtr<Command>& command : _command_list)
         {
             command->Execute();
         }
@@ -12,17 +12,18 @@ namespace DFW
 
     void BaseController::EraseActionList()
     {
-        for (Command* command : _command_list)
+        for (UniquePtr<Command>& command : _command_list)
         {
-            delete command;
+            command.reset();
         }
 
         _command_list.clear();
     }
 
-    void BaseController::QueueAction(Command* a_command)
+    void BaseController::QueueAction(UniquePtr<Command> a_command)
     {
-        _command_list.emplace_back(a_command);
+        DFW_ASSERT(a_command);
+        _command_list.emplace_back(std::move(a_command));
     }
 
 } // End of namespace ~ DFW.

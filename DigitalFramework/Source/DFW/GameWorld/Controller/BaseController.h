@@ -22,10 +22,10 @@ namespace DFW
     protected:
         void ExecuteActions();
         void EraseActionList();
-        void QueueAction(Command* a_command);
+        void QueueAction(UniquePtr<Command> a_command);
 
     private:
-        std::vector<Command*> _command_list;
+        std::vector<UniquePtr<Command>> _command_list;
         ControllerNameID _name_id;
     };
 

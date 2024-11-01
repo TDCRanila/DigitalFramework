@@ -27,13 +27,13 @@ namespace DFW
         void HandleDirectionalMoveInput(glm::vec3 const& a_move_direction)
         {
             // TODO: Not great allocating and freeing a command, might look into a better solution.
-            QueueAction(new MoveCommand(GetCharacter(), a_move_direction));
+            QueueAction(DFW::MakeUnique<MoveCommand>(GetCharacter(), a_move_direction));
         }
 
         void Jump()
         {
             // TODO: Not great allocating and freeing a command, might look into a better solution.
-            QueueAction(new JumpCommand(GetCharacter()));
+            QueueAction(DFW::MakeUnique<JumpCommand>(GetCharacter()));
         }
 
     private:
