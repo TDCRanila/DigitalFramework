@@ -55,11 +55,6 @@ namespace DFW
 			return GetComponent<EntityDataComponent>().id;
 		}
 
-		EntityTypeID Entity::GetTypeID() const
-		{
-			return GetComponent<EntityDataComponent>().type;
-		}
-
 		std::string const& Entity::GetName() const
 		{
 			return GetComponent<EntityDataComponent>().name;
@@ -79,8 +74,7 @@ namespace DFW
 
 		EntityTypeID Entity::GetType() const
 		{
-			EntityDataComponent const& data_component = GetComponent<EntityDataComponent>();
-			return data_component.type;
+			return GetComponent<EntityDataComponent>().type;
 		}
 
 		void Entity::SetTypeInternal(EntityTypeID const a_entity_type_id)

@@ -21,7 +21,6 @@ namespace DFW
 
 		public:
 			DFW::DUID GetID() const;
-			EntityTypeID GetTypeID() const;
 
 			std::string const& GetName() const;
 			void SetName(std::string const& a_new_name);
