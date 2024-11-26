@@ -117,12 +117,13 @@ namespace DFW
         DrawBox(a_transform, glm::vec3(a_box_extend), a_settings);
     }
 
-    void DebugRenderSystem::DrawBox(Transform a_transform, glm::vec3 const& a_extend, DebugDrawSettings const& a_settings)
+    void DebugRenderSystem::DrawBox(Transform const& a_transform, glm::vec3 const& a_extend, DebugDrawSettings const& a_settings)
     {
+        glm::mat4 const scaled_transform = glm::scale(a_transform.GetWorldTransformMatrix(), a_extend);
+
         bx::Obb obb;
-        a_transform.SetScale(a_transform.GetScale() * a_extend);
-        bx::memCopy(obb.mtx, glm::value_ptr(a_transform.GetWorldTransformMatrix()), sizeof(glm::mat4));
-        
+        bx::memCopy(obb.mtx, glm::value_ptr(scaled_transform), sizeof(glm::mat4));
+
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
         _dde->setDepthTestLess(!a_settings.enable_depthtest);
