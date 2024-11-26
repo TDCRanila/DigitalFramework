@@ -57,7 +57,6 @@ namespace DFW
 			// Update systems and events.
 			_event_handler->ProcessPendingEvents();
 			_system_manager->UpdateSystems();
-			_event_handler->ProcessPendingEvents();
 
 			_registry->CleanDestructionMarkedEntities();
 		}
