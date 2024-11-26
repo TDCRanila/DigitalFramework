@@ -41,7 +41,7 @@ namespace DFW
             TransformComponent& transform_component = a_current_entity.GetComponent<TransformComponent>();
             bool const is_transform_dirty = transform_component.IsDirty() || a_is_parent_dirty;
             if (is_transform_dirty)
-                transform_component.CalculateWorldTransform();
+                transform_component.CalculateWorldTransform(glm::identity<glm::mat4>());
 
             DECS::EntityRelationComponent const* relation_component = a_current_entity.TryGetComponent<DECS::EntityRelationComponent>();
             if (!relation_component)
