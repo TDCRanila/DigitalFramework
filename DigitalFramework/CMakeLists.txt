@@ -14,7 +14,6 @@ string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
 
 ### Library Definition
 set(LIB_NAME DigitalFramework)
-project(${LIB_NAME} VERSION 1.0.0)
 
 ### Library Source
 add_library(${LIB_NAME} STATIC)
