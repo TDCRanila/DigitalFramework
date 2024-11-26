@@ -42,11 +42,11 @@ namespace DFW
         {
             DFW_ASSERT(a_x >= 0 && a_x < Width && "Attempting to access out-of-range elements with this coordinate.");
 
-            std::array<DataType, Height> copy_array{ DataType() };
+            std::array<DataType, Height> array_copy{ DataType() };
             for (size_t index(0); index < Height; index++)
-                copy_array[index] = data[GetIndex(a_x, index)];
+                array_copy[index] = data[GetIndex(a_x, index)];
 
-            return std::move(copy_array);
+            return array_copy;
         }
 
         template <typename DataType, size_t Width, size_t Height>
@@ -54,11 +54,11 @@ namespace DFW
         {
             DFW_ASSERT(a_y >= 0 && a_y < Height && "Attempting to access out-of-range elements with this coordinate.");
 
-            std::array<DataType, Width> copy_array{ DataType() };
+            std::array<DataType, Width> array_copy{ DataType() };
             for (size_t index(0); index < Width; index++)
-                copy_array[index] = data[GetIndex(index, a_y)];
+                array_copy[index] = data[GetIndex(index, a_y)];
 
-            return std::move(copy_array);
+            return array_copy;
         }
 
         template <typename DataType, size_t Width, size_t Height>
@@ -66,11 +66,11 @@ namespace DFW
         {
             DFW_ASSERT(a_x >= 0 && a_x < Width && "Attempting to access out-of-range elements with this coordinate.");
 
-            std::array<DataType*, Height> copy_array{ nullptr };
+            std::array<DataType*, Height> array_copy{ nullptr };
             for (size_t index(0); index < Height; index++)
-                copy_array[index] = &data[GetIndex(a_x, index)];
+                array_copy[index] = &data[GetIndex(a_x, index)];
 
-            return std::move(copy_array);
+            return array_copy;
         }
 
         template <typename DataType, size_t Width, size_t Height>
@@ -78,11 +78,11 @@ namespace DFW
         {
             DFW_ASSERT(a_y >= 0 && a_y < Height && "Attempting to access out-of-range elements with this coordinate.");
 
-            std::array<DataType*, Width> copy_array{ nullptr };
+            std::array<DataType*, Width> array_copy{ nullptr };
             for (size_t index(0); index < Width; index++)
-                copy_array[index] = &data[GetIndex(index, a_y)];
+                array_copy[index] = &data[GetIndex(index, a_y)];
 
-            return std::move(copy_array);
+            return array_copy;
         }
 
         template <typename DataType, size_t Width, size_t Height>
