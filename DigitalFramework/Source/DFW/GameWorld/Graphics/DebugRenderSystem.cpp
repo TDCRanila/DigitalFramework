@@ -80,8 +80,6 @@ namespace DFW
 
     void DebugRenderSystem::DrawLine(glm::vec3 const& a_start_pos, glm::vec3 const& a_end_pos, DebugDrawSettings const& a_settings)
     {
-        a_settings.colour;
-
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->moveTo(a_start_pos.x, a_start_pos.y, a_start_pos.z);
         _dde->lineTo(a_end_pos.x, a_end_pos.y, a_end_pos.z);
