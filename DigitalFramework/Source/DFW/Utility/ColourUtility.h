@@ -32,6 +32,7 @@ namespace DFW
 		static const ColourRGBA Black;
 		static const ColourRGBA DarkRed;
 		static const ColourRGBA Red;
+		static const ColourRGBA Magenta;
 		static const ColourRGBA DarkGreen;
 		static const ColourRGBA Green;
 		static const ColourRGBA DarkBlue;
