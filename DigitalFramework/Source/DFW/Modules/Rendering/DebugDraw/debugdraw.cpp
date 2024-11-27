@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2021 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2024 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include <bgfx/bgfx.h>
@@ -646,7 +646,7 @@ struct DebugDrawShared
 			const uint8_t  tess = uint8_t(3-mesh);
 			const uint32_t numVertices = genSphere(tess);
 			const uint32_t numIndices  = numVertices;
-			
+
 			vertices[id] = bx::alloc(m_allocator, numVertices*stride);
 			bx::memSet(vertices[id], 0, numVertices*stride);
 			genSphere(tess, vertices[id], stride);
@@ -1035,20 +1035,21 @@ struct DebugDrawEncoderImpl
 	{
 		m_defaultEncoder = _encoder;
 		m_state = State::Count;
-
-		reset();
 	}
 
 	void shutdown()
 	{
 	}
 
-	void reset()
+	void begin(bgfx::ViewId _viewId, bool _depthTestLess, bgfx::Encoder* _encoder)
 	{
 		BX_ASSERT(State::Count == m_state, "");
 
+		m_viewId        = _viewId;
+		m_encoder       = _encoder == NULL ? m_defaultEncoder : _encoder;
 		m_state         = State::None;
 		m_stack         = 0;
+		m_depthTestLess = _depthTestLess;
 
 		m_pos       = 0;
 		m_indexPos  = 0;
@@ -1081,6 +1082,7 @@ struct DebugDrawEncoderImpl
 		flushQuad();
 		flush();
 
+		m_encoder = NULL;
 		m_state   = State::Count;
 	}
 
@@ -2332,24 +2334,14 @@ DebugDrawEncoder::~DebugDrawEncoder()
 	reinterpret_cast<DebugDrawEncoderImpl*>(this)->shutdown();
 }
 
-void DebugDrawEncoder::setupEncoder(uint16_t _viewId, bool _depthTestLess , bgfx::Encoder* _encoder)
+void DebugDrawEncoder::begin(uint16_t _viewId, bool _depthTestLess, bgfx::Encoder* _encoder)
 {
-	DebugDrawEncoderImpl* ptr = reinterpret_cast<DebugDrawEncoderImpl*>(this);
-	ptr->m_viewId = _viewId;
-	ptr->m_depthTestLess = _depthTestLess;
-	ptr->m_encoder = _encoder == NULL ? ptr->m_defaultEncoder : _encoder;
+	reinterpret_cast<DebugDrawEncoderImpl*>(this)->begin(_viewId, _depthTestLess, _encoder);
 }
 
-void DebugDrawEncoder::reset()
+void DebugDrawEncoder::end()
 {
-	reinterpret_cast<DebugDrawEncoderImpl*>(this)->reset();
-}
-
-void DebugDrawEncoder::finalizeFrame()
-{
-	DebugDrawEncoderImpl* ptr = reinterpret_cast<DebugDrawEncoderImpl*>(this);
-	ptr->end();
-	ptr->reset();
+	reinterpret_cast<DebugDrawEncoderImpl*>(this)->end();
 }
 
 void DebugDrawEncoder::push()

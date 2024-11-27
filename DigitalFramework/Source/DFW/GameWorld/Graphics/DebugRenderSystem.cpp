@@ -63,7 +63,7 @@ namespace DFW
         // Initialize Debug Drawer.
         ddInit();
         _dde = new DebugDrawEncoder();
-        _dde->setupEncoder(_view_target->view_target_id);
+        _dde->begin(_view_target->view_target_id);
     }
 
     void DebugRenderSystem::Terminate(DECS::EntityRegistry& /*a_registry*/)
@@ -81,8 +81,12 @@ namespace DFW
     {
         PrepareRenderTarget();
         PrepareViewTarget();
-        
-        _dde->finalizeFrame();
+
+        // Flush all submitted primitives.
+        _dde->end();
+
+        // Setup & Clean for next frame.
+        _dde->begin(_view_target->view_target_id);
     }
 
     void DebugRenderSystem::DrawLine(glm::vec3 const& a_start_pos, glm::vec3 const& a_end_pos, DebugDrawSettings const& a_settings)
