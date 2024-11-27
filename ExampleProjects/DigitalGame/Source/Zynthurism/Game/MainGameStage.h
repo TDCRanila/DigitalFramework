@@ -3,7 +3,7 @@
 #include <DFW/Modules/ECS/ECSModule.h>
 #include <DFW/Modules/ECS/Entity.h>
 
-#include <DFW/GameWorld/Controller/CharacterController.h>
+#include <DFW/GameWorld/Controller/FPSCharacterController.h>
 
 #include <DFW/CoreSystems/Stage/Stage.h>
 
