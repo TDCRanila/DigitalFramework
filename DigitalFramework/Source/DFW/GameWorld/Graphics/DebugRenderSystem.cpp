@@ -33,6 +33,14 @@ namespace DFW
     {
     }
 
+    DebugDrawSettings::DebugDrawSettings(ColourRGBA a_colour)
+        : colour(a_colour)
+        , shape_complexity_lod(2)
+        , enable_wireframe(true)
+        , enable_depthtest(true)
+    {
+    }
+
     DebugDrawSettings::DebugDrawSettings(ColourRGBA a_colour, bool a_enable_wireframe)
         : colour(a_colour)
         , shape_complexity_lod(2)

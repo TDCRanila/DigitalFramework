@@ -20,6 +20,7 @@ namespace DFW
     struct DebugDrawSettings
     {
         DebugDrawSettings();
+        DebugDrawSettings(ColourRGBA a_colour);
         DebugDrawSettings(ColourRGBA a_colour, bool a_enable_wireframe);
         DebugDrawSettings(ColourRGBA a_colour, bool a_enable_wireframe, bool a_enable_depthtest, uint8 a_shape_complexity);
 
