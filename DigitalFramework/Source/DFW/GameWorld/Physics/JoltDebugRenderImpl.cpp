@@ -6,6 +6,15 @@
 
 namespace DFW
 {
+    namespace Detail
+    {
+        static constexpr bool ENABLE_DEPTH_LESS_TEST = true;
+        static constexpr bool ENABLE_DEPTH_TEST = true;
+        static constexpr bool ENABLE_DEPTH_WRITE = true;
+        static constexpr bool ENABLE_CW_CULLING = false;
+
+    } // End of namespace ~ Detail.
+
     void JoltDebugRenderer::Init()
     {
         JPH::DebugRenderer::Initialize();
@@ -14,9 +23,15 @@ namespace DFW
     void JoltDebugRenderer::DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor)
     {
         DebugDrawEncoder* dde = DebugRenderSystem::_dde;
+        dde->push();
+
         dde->setColor(inColor.GetUInt32());
         dde->moveTo(inFrom.GetX(), inFrom.GetY(), inFrom.GetZ());
         dde->lineTo(inTo.GetX(), inTo.GetY(), inTo.GetZ());
+
+        dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        dde->setState(Detail::ENABLE_DEPTH_TEST, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         dde->pop();
     }
 
@@ -36,8 +51,16 @@ namespace DFW
         vertices[2].y = inV1.GetY();
         vertices[2].z = inV1.GetZ();
 
+        dde->push();
+
         dde->setColor(inColor.GetUInt32());
         dde->drawTriList(3, vertices.data());
+
+        dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        dde->setState(Detail::ENABLE_DEPTH_TEST, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
+        dde->pop();
+
     }
 
     JPH::DebugRenderer::Batch JoltDebugRenderer::CreateTriangleBatch(const Triangle* inTriangles, int inTriangleCount)
@@ -113,20 +136,25 @@ namespace DFW
         }
 
         batch->geometry_handle = ddCreateGeometry(vertices.size(), vertices.data(), inIndexCount, inIndices, true);
-        return batch;        
+        return batch;
     }
 
     void JoltDebugRenderer::DrawGeometry(JPH::RMat44Arg inModelMatrix, const JPH::AABox& inWorldSpaceBounds, float inLODScaleSq, JPH::ColorArg inModelColor, const GeometryRef& inGeometry, ECullMode inCullMode, ECastShadow inCastShadow, EDrawMode inDrawMode)
     {
         BatchImpl* batch = static_cast<BatchImpl*>(inGeometry->mLODs[0].mTriangleBatch.GetPtr());
-        
+
         DebugDrawEncoder* dde = DebugRenderSystem::_dde;
+        dde->push();
+
         dde->setTransform(&inModelMatrix);
         dde->setColor(inModelColor.GetUInt32());
         dde->setWireframe(inDrawMode == EDrawMode::Wireframe ? true : false);
-        dde->setState(true, false, inCullMode == ECullMode::CullFrontFace ? true : false);
+        dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        dde->setState(Detail::ENABLE_DEPTH_TEST, Detail::ENABLE_DEPTH_WRITE, inCullMode == ECullMode::CullFrontFace ? true : false);
 
         dde->draw(batch->geometry_handle);
+
+        dde->pop();
     }
 
     void  JoltDebugRenderer::DrawText3D(JPH::RVec3Arg inPosition, const std::string_view& inString, JPH::ColorArg inColor, float inHeight)

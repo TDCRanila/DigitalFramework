@@ -17,11 +17,19 @@ namespace DFW
 {
     DebugDrawEncoder* DebugRenderSystem::_dde = nullptr;
 
+    namespace Detail
+    {
+        static constexpr bool ENABLE_DEPTH_LESS_TEST = true;
+        static constexpr bool ENABLE_DEPTH_WRITE = true;
+        static constexpr bool ENABLE_CW_CULLING = true;
+
+    } // End of namespace ~ Detail.
+
     DebugDrawSettings::DebugDrawSettings()
         : colour({255, 255, 255 ,255})
         , shape_complexity_lod(2)
         , enable_wireframe(true)
-        , enable_depthtest(false)
+        , enable_depthtest(true)
     {
     }
 
@@ -29,7 +37,7 @@ namespace DFW
         : colour(a_colour)
         , shape_complexity_lod(2)
         , enable_wireframe(a_enable_wireframe)
-        , enable_depthtest(false)
+        , enable_depthtest(true)
     {
     }
 
@@ -60,7 +68,6 @@ namespace DFW
 
     void DebugRenderSystem::Terminate(DECS::EntityRegistry& /*a_registry*/)
     {
-
         // Unregister Callbacks.
         CoreService::GetAppEventHandler()->UnregisterCallback<WindowResizeEvent, &BaseRenderSystem::OnWindowResizeEvent>(this);
         ECSEventHandler().UnregisterCallback<CameraNewActiveEvent, &BaseRenderSystem::OnCameraNewActiveEvent>(this);
@@ -80,34 +87,60 @@ namespace DFW
 
     void DebugRenderSystem::DrawLine(glm::vec3 const& a_start_pos, glm::vec3 const& a_end_pos, DebugDrawSettings const& a_settings)
     {
+        _dde->push();
+
         _dde->setColor(a_settings.colour.GetABGRHex());
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+        
         _dde->moveTo(a_start_pos.x, a_start_pos.y, a_start_pos.z);
         _dde->lineTo(a_end_pos.x, a_end_pos.y, a_end_pos.z);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawLine(glm::vec3 const& a_start_pos, glm::vec3 const& a_end_pos, float32 a_line_thickness, DebugDrawSettings const& a_settings)
     {
         if (a_line_thickness <= 0.0f)
             a_line_thickness = 0.5f;
+        
+        _dde->push();
 
         _dde->setColor(a_settings.colour.GetABGRHex());
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->drawCylinder(bx::Vec3(a_start_pos.x, a_start_pos.y, a_start_pos.z), bx::Vec3(a_end_pos.x, a_end_pos.y, a_end_pos.z), a_line_thickness * 0.01f);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawCircle(glm::vec3 const& a_center_pos, glm::vec3 const& a_normal, float32 a_circle_radius, DebugDrawSettings const& a_settings)
     {
+        _dde->push();
+
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->drawCircle(bx::normalize({ a_normal.x, a_normal.y, a_normal.z }), { a_center_pos.x, a_center_pos.y, a_center_pos.z }, a_circle_radius);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawRectangle(glm::vec3 const& a_center_pos, glm::vec3 const& a_normal, float32 a_size, DebugDrawSettings const& a_settings)
     {
+        _dde->push();
+
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->drawQuad({ a_normal.x, a_normal.y, a_normal.z }, { a_center_pos.x, a_center_pos.y, a_center_pos.z }, a_size);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawCube(Transform const& a_transform, float32 a_box_extend, DebugDrawSettings const& a_settings)
@@ -122,10 +155,16 @@ namespace DFW
         bx::Obb obb;
         bx::memCopy(obb.mtx, glm::value_ptr(scaled_transform), sizeof(glm::mat4));
 
+        _dde->push();
+
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->draw(obb);
+
+        _dde->pop();
 
     }
 
@@ -135,13 +174,19 @@ namespace DFW
         sphere.center = { 0.0f, 0.0f, 0.0f };
         sphere.radius = a_sphere_radius;
         
+        _dde->push();
+
         _dde->setTransform(glm::value_ptr(a_transform.GetWorldTransformMatrix()));
         _dde->setLod(a_settings.shape_complexity_lod);
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->draw(sphere);
         _dde->setTransform(nullptr);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawCylinder(Transform const& a_transform, float32 a_cylinder_height, float32 a_cylinder_radius, DebugDrawSettings const& a_settings)
@@ -151,13 +196,19 @@ namespace DFW
         cylinder.end = bx::Vec3(0.0f,  (a_cylinder_height * 0.5f), 0.0f);
         cylinder.radius = a_cylinder_radius;
 
+        _dde->push();
+
         _dde->setTransform(glm::value_ptr(a_transform.GetWorldTransformMatrix()));
         _dde->setLod(a_settings.shape_complexity_lod);
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->draw(cylinder);
         _dde->setTransform(nullptr);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawCapsule(Transform const& a_transform, float32 a_capsule_height, float32 a_capsule_radius, DebugDrawSettings const& a_settings)
@@ -167,13 +218,20 @@ namespace DFW
         capsule.end = bx::Vec3(0.0f,  (a_capsule_height * 0.5f), 0.0f);
         capsule.radius = a_capsule_radius;
 
+        _dde->push();
+
         _dde->setTransform(glm::value_ptr(a_transform.GetWorldTransformMatrix()));
         _dde->setLod(a_settings.shape_complexity_lod);
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+        
         _dde->draw(capsule);
         _dde->setTransform(nullptr);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawCone(Transform const& a_transform, float32 a_cone_height, float32 a_cone_radius, DebugDrawSettings const& a_settings)
@@ -183,29 +241,47 @@ namespace DFW
         cone.end = bx::Vec3(0.0f, a_cone_height , 0.0f);
         cone.radius = a_cone_radius;
 
+        _dde->push();
+
         _dde->setTransform(glm::value_ptr(a_transform.GetWorldTransformMatrix()));
         _dde->setLod(a_settings.shape_complexity_lod);
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+        
         _dde->draw(cone);
         _dde->setTransform(nullptr);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawOrb(Transform const& a_transform, float32 a_orb_radius, DebugDrawSettings const& a_settings)
     {
+        _dde->push();
+
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->drawOrb(a_transform.GetWorldTranslation().x, a_transform.GetWorldTranslation().y, a_transform.GetWorldTranslation().z, a_orb_radius);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawAxis(Transform const& a_transform, float32 a_axis_length, DebugDrawSettings const& a_settings)
     {
+        _dde->push();
+
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->drawAxis(a_transform.GetWorldTranslation().x, a_transform.GetWorldTranslation().y, a_transform.GetWorldTranslation().z, a_axis_length);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawGridX(glm::vec3 const& a_center_pos, uint32 a_grid_size, float32 a_grid_step, DebugDrawSettings const& a_settings)
@@ -225,15 +301,28 @@ namespace DFW
 
     void DebugRenderSystem::DrawGrid(glm::vec3 const& a_center_pos, glm::vec3 const& a_normal, uint32 a_grid_size, float32 a_grid_step, DebugDrawSettings const& a_settings)
     {
+        _dde->push();
+
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->drawGrid(bx::normalize({a_normal.x, a_normal.y, a_normal.z }), { a_center_pos.x, a_center_pos.y, a_center_pos.z }, a_grid_size, a_grid_step);
+
+        _dde->pop();
     }
 
     void DebugRenderSystem::DrawFrustum(glm::mat4 const& a_view_projection_matrix, DebugDrawSettings const& a_settings)
     {
+        _dde->push();
+
         _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setWireframe(a_settings.enable_wireframe);
-        _dde->setDepthTestLess(!a_settings.enable_depthtest);
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
         _dde->drawFrustum(glm::value_ptr(a_view_projection_matrix));
+
+        _dde->pop();
     }
 
 } // End of namespace ~ DFW.

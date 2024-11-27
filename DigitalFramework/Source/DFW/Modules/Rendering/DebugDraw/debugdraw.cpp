@@ -2173,7 +2173,7 @@ struct DebugDrawEncoderImpl
 				m_encoder->setState(0
 					| BGFX_STATE_WRITE_RGB
 					| BGFX_STATE_PT_LINES
-					/*| attrib.m_state*/
+					| attrib.m_state
 					| BGFX_STATE_LINEAA
 					| BGFX_STATE_BLEND_ALPHA
 					);
