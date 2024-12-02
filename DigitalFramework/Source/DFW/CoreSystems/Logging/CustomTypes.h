@@ -109,3 +109,17 @@ template <> struct fmt::formatter<glm::quat>
 };
 
 #pragma endregion
+
+#pragma region ECS/ENTT
+
+#include <DFW/Modules/ECS/EntityHandle.h>
+
+template <> struct fmt::formatter<DFW::EntityHandle> : fmt::formatter<std::string>
+{
+    auto format(DFW::EntityHandle a_handle, format_context& a_ctx) const
+    {
+        return formatter<std::string>::format(std::to_string(static_cast<uint32>(a_handle)), a_ctx);
+    }
+};
+
+#pragma endregion
