@@ -315,6 +315,7 @@ namespace DFW
     {
         _dde->push();
 
+        _dde->setColor(a_settings.colour.GetABGRHex());
         _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
         _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
 
