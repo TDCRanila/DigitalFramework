@@ -169,13 +169,11 @@ namespace DFW
                 return; // No childeren or siblings.
 
             // Traverse entity hierachy.
-            Entity current_child = relation_component->first;
-            while (current_child.IsEntityValid())
+            Entity const* current_child = &relation_component->first;
+            while (current_child->IsEntityValid())
             {
-                DestroyEntityAndChilderen(current_child);
-
-                if (DECS::EntityRelationComponent const* child_relation_component = current_child.TryGetComponent<DECS::EntityRelationComponent>())
-                    current_child = child_relation_component->next;
+                DestroyEntityAndChilderen(*current_child);
+                current_child = &current_child->GetComponent<DECS::EntityRelationComponent>().next;
             }
         }
 

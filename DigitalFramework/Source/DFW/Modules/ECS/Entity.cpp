@@ -19,14 +19,13 @@ namespace DFW
 					return false; // No childeren or siblings.
 
 				// Traverse entity hierachy.
-				Entity current_child = relation_component->first;
-				while (current_child.IsEntityValid())
+				Entity const* current_child = &relation_component->first;
+				while (current_child->IsEntityValid())
 				{
-					if (CheckForEntityInHierachy(current_child, a_entity_to_check))
+					if (CheckForEntityInHierachy(*current_child, a_entity_to_check))
 						return true; // Found entity, no further traversal needed.
 					
-					if (DECS::EntityRelationComponent const* child_relation_component = current_child.TryGetComponent<DECS::EntityRelationComponent>())
-						current_child = child_relation_component->next;
+					current_child = &current_child->GetComponent<DECS::EntityRelationComponent>().next;
 				}
 
 				return false;
