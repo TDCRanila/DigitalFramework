@@ -77,6 +77,14 @@ namespace DFW
                 return;
             }
 
+            DECS::EntityRelationComponent const* relation_component = a_entity.TryGetComponent<DECS::EntityRelationComponent>();
+            if (!relation_component)
+                return; // No parent, nor childeren, nor siblings.
+            
+            // Adjust the parent-child relation.
+            if (Entity parent = relation_component->parent)
+                parent.RemoveChild(a_entity);
+
             DestroyEntityAndChilderen(a_entity);
         }
 
