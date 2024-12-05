@@ -122,6 +122,7 @@ namespace DFW
 			// Now set the parent of the child to this entity;
 			child_relation_component.parent = *this;
 
+			// Update parent's children count.
 			relation_component.childeren_count++;
 		}
 
@@ -153,35 +154,38 @@ namespace DFW
 			// Adjust sibling relationships if there are any.
 			if (relation_component.childeren_count >= 2)
 			{
-				Entity previous_sibling = child_relation_component.previous;
-				Entity next_sibling = child_relation_component.next;
-				EntityRelationComponent* previous_sibling_relation_component = previous_sibling ? previous_sibling.TryGetComponent<EntityRelationComponent>() : nullptr;
-				EntityRelationComponent* next_sibling_relation_component = next_sibling ? next_sibling.TryGetComponent<EntityRelationComponent>() : nullptr;
+				Entity& previous_sibling	= child_relation_component.previous;
+				Entity& next_sibling		= child_relation_component.next;
 
-				if (previous_sibling && !next_sibling)
+				bool const is_previous_sibling_valid	= previous_sibling.IsEntityValid();
+				bool const is_next_sibling_valid		= next_sibling.IsEntityValid();
+
+				if (is_previous_sibling_valid && !is_next_sibling_valid)
 				{
-					previous_sibling_relation_component->next = Entity();
+					// From: 'Previous' <-> 'Removed' | To: 'Previous' <-> Empty.
+					previous_sibling.GetComponent<EntityRelationComponent>().next = Entity();
 				}
-
-				if (previous_sibling && next_sibling)
+				else if (is_previous_sibling_valid && is_next_sibling_valid)
 				{
-					previous_sibling_relation_component->next = next_sibling;
-					next_sibling_relation_component->previous = previous_sibling;
+					// From: 'Previous' <-> 'Removed' <-> 'Next' | To: 'Previous' <-> 'Next'.
+					previous_sibling.GetComponent<EntityRelationComponent>().next = next_sibling;
+					next_sibling.GetComponent<EntityRelationComponent>().previous = previous_sibling;
 				}
-
-				if (!previous_sibling && next_sibling)
+				else if (!is_previous_sibling_valid && is_next_sibling_valid)
 				{
-					next_sibling_relation_component->previous = Entity();
+					// From: 'Removed' <-> 'Next' | To: 'Empty' <-> 'Next'.
+					next_sibling.GetComponent<EntityRelationComponent>().previous = Entity();
 				}
 
 				// Wipe sibling data of the child.
-				child_relation_component.previous = Entity();
-				child_relation_component.next = Entity();
+				child_relation_component.previous	= Entity();
+				child_relation_component.next		= Entity();
 			}
 
 			// Adjust parential data of child.
 			child_relation_component.parent = Entity();
 
+			// Update parent's children count.
 			relation_component.childeren_count--;
 		}
 
