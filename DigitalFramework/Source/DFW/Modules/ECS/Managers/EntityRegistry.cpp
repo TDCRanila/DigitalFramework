@@ -207,6 +207,9 @@ namespace DFW
 
             hierachy_root_entity.AddComponent<DECS::EntityHierachyRootTagComponent>();
 
+            DFW::DECS::EntityRelationComponent& relation_component = hierachy_root_entity.AddComponent<EntityRelationComponent>();
+            relation_component.hierarchy_depth = 0;
+
             // Register Entity in EntityRegistry registers.
             RegisterEntity(hierachy_root_entity.GetHandle());
         }

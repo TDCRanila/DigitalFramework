@@ -31,6 +31,21 @@ namespace DFW
 				return false;
 			}
 
+			void UpdateEntityHierarchyDepthValuesFromEntity(Entity& a_current_entity, uint32 const a_parent_hierarchy_depth, bool const a_is_first_traversal)
+			{
+				DECS::EntityRelationComponent& relation_component = a_current_entity.GetComponent<DECS::EntityRelationComponent>();
+				if (!a_is_first_traversal)
+					relation_component.hierarchy_depth = a_parent_hierarchy_depth + 1;
+
+				// Traverse entity hierachy.
+				Entity* current_child = &relation_component.first;
+				while (current_child->IsEntityValid())
+				{
+					UpdateEntityHierarchyDepthValuesFromEntity(*current_child, relation_component.hierarchy_depth, false);
+					current_child = &current_child->GetComponent<DECS::EntityRelationComponent>().next;
+				}
+			}
+
 		} // End of namespace ~ Detail.
 
 		Entity::Entity(EntityHandle a_entity_handle, EntityRegistry& a_registry)
@@ -122,6 +137,9 @@ namespace DFW
 			// Now set the parent of the child to this entity;
 			child_relation_component.parent = *this;
 
+			// Update hierarchy values.
+			Detail::UpdateEntityHierarchyDepthValuesFromEntity(*this, relation_component.hierarchy_depth, true);
+
 			// Update parent's children count.
 			relation_component.childeren_count++;
 		}
@@ -184,6 +202,9 @@ namespace DFW
 
 			// Adjust parential data of child.
 			child_relation_component.parent = Entity();
+
+			// Reset hierarchy depth value on the removed child.
+			child_relation_component.hierarchy_depth = DFW::DMath::uint16_max;
 
 			// Update parent's children count.
 			relation_component.childeren_count--;
