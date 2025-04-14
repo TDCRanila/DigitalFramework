@@ -105,14 +105,14 @@ namespace DGame
         auto& physics_system = ecs.SystemManager().AddSystem<DFW::PhysicsSystem>();
         physics_system.Debug_EnableDebugDraw();
         
-        render_system.ExecuteAfter(camera_system);
-        debug_render_system.ExecuteAfter(camera_system);
-        sprite_system.ExecuteAfter(camera_system);
+        render_system.ExecuteAfter<DFW::CameraSystem>();
+        debug_render_system.ExecuteAfter<DFW::CameraSystem>();
+        sprite_system.ExecuteAfter<DFW::CameraSystem>();
 
-        transform_system.ExecuteAfter(camera_system);
-        camera_system.ExecuteAfter(physics_system);
-        physics_system.ExecuteAfter(movement_system);
-        movement_system.ExecuteAfter(controller_system);
+        transform_system.ExecuteAfter<DFW::CameraSystem>();
+        camera_system.ExecuteAfter<DFW::PhysicsSystem>();
+        physics_system.ExecuteAfter<DFW::MovementSystem>();
+        movement_system.ExecuteAfter<DFW::ControllerSystem>();
 
         ecs.SystemManager().CalculateSystemDependencies();
 
