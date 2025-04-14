@@ -31,21 +31,21 @@ namespace DFW
 		void SystemManager::UpdateSystems()
 		{
 			// Calling Init of systems.
-			for (System* system : _system_execution_list)
+			for (InternalSystem* system : _system_execution_list)
 			{
 				if (!system->IsSystemPaused())
 					system->InternalPreUpdate(_ecs->Registry());
 			}
 
 			// Calling Init of systems.
-			for (System* system : _system_execution_list)
+			for (InternalSystem* system : _system_execution_list)
 			{
 				if (!system->IsSystemPaused())
 					system->InternalUpdate(_ecs->Registry());
 			}
 			
 			// Calling Init of systems.
-			for (System* system : _system_execution_list)
+			for (InternalSystem* system : _system_execution_list)
 			{
 				if (!system->IsSystemPaused())
 					system->InternalPostUpdate(_ecs->Registry());
@@ -58,36 +58,32 @@ namespace DFW
 				system_ptr->UpdateSystemImGui(_ecs->Registry());
 		}
 
-		void SystemManager::AddSystemDependency(System const& a_relying_system, System const& a_providing_system)
+		void SystemManager::AddSystemDependency(SystemTypeID const a_relying_system_type_id, SystemTypeID const a_providing_system_type_id)
 		{
-			SystemTypeID const relying_system_id = a_relying_system.GetTypeID();
-			SystemTypeID const providing_system_id = a_providing_system.GetTypeID();
+			std::vector<SystemTypeID>& system_relying_dependencies = _system_relying_dependencies_map[a_relying_system_type_id];
+			system_relying_dependencies.emplace_back(a_providing_system_type_id);
 
-			std::vector<SystemTypeID>& system_relying_dependencies = _system_relying_dependencies_map[relying_system_id];
-			system_relying_dependencies.emplace_back(providing_system_id);
-
-			std::vector<SystemTypeID>& system_providing_dependencies = _system_providing_dependencies_map[providing_system_id];
-			system_providing_dependencies.emplace_back(relying_system_id);
+			std::vector<SystemTypeID>& system_providing_dependencies = _system_providing_dependencies_map[a_providing_system_type_id];
+			system_providing_dependencies.emplace_back(a_relying_system_type_id);
 		}
 
-		void SystemManager::RemoveSystemDependency(System const& a_relying_system, System const& a_providing_system)
+		void SystemManager::RemoveSystemDependency(SystemTypeID const a_relying_system_type_id, SystemTypeID const a_providing_system_type_id)
 		{
-			SystemTypeID const relying_system_id = a_relying_system.GetTypeID();
-			SystemTypeID const providing_system_id = a_providing_system.GetTypeID();
-
-			if (auto const it = _system_relying_dependencies_map.find(relying_system_id); it != _system_relying_dependencies_map.end())
+			if (auto const it = _system_relying_dependencies_map.find(a_relying_system_type_id); it != _system_relying_dependencies_map.end())
 			{
 				std::vector<SystemTypeID>& outgoing_dependencies = it->second;
-				std::erase_if(outgoing_dependencies, [&providing_system_id](SystemTypeID const& a_system_type_id) { return a_system_type_id == providing_system_id; });
+				std::erase_if(outgoing_dependencies, [&a_providing_system_type_id](SystemTypeID const& a_system_type_id) 
+					{ return a_system_type_id == a_providing_system_type_id; });
 
 				if (outgoing_dependencies.empty())
 					_system_relying_dependencies_map.erase(it);
 			}
 
-			if (auto const it = _system_providing_dependencies_map.find(providing_system_id); it != _system_providing_dependencies_map.end())
+			if (auto const it = _system_providing_dependencies_map.find(a_providing_system_type_id); it != _system_providing_dependencies_map.end())
 			{
 				std::vector<SystemTypeID>& incoming_dependencies = it->second;
-				std::erase_if(incoming_dependencies, [&relying_system_id](SystemTypeID const& a_system_type_id) { return a_system_type_id == relying_system_id; });
+				std::erase_if(incoming_dependencies, [&a_relying_system_type_id](SystemTypeID const& a_system_type_id) 
+					{ return a_system_type_id == a_relying_system_type_id; });
 
 				if (incoming_dependencies.empty())
 					_system_providing_dependencies_map.erase(it);

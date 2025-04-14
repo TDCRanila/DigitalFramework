@@ -1,7 +1,7 @@
 #pragma once
 
 #include <DFW/Modules/ECS/ECSModule.h>
-#include <DFW/Modules/ECS/System.h>
+#include <DFW/Modules/ECS/Internal/InternalSystem.h>
 #include <DFW/Modules/ECS/Utility/ECSTemplateUtility.h>
 
 #include <DFW/CoreSystems/Memory.h>
@@ -62,8 +62,8 @@ namespace DFW
 				SystemTypeID GetSystemTypeID() const;
 
 		public:
-			void AddSystemDependency(System const& a_relying_system, System const& a_providing_system);
-			void RemoveSystemDependency(System const& a_relying_system, System const& a_providing_system);
+			void AddSystemDependency(SystemTypeID const a_relying_system_type_id, SystemTypeID const a_providing_system_type_id);
+			void RemoveSystemDependency(SystemTypeID const a_relying_system_type_id, SystemTypeID const a_providing_system_type_id);
 			
 			void CalculateSystemDependencies();
 
@@ -73,15 +73,15 @@ namespace DFW
 			void UpdateSystems();
 			void UpdateSystemsImGui();
 
-			using SystemMapIterator = std::unordered_map<SystemTypeID, SharedPtr<System>>::iterator;
+			using SystemMapIterator = std::unordered_map<SystemTypeID, SharedPtr<InternalSystem>>::iterator;
 
 			template <typename SystemType>
 			requires IsValidSystemType<SystemType>
 			SystemMapIterator FindSystem();
 
 		private:
-			std::unordered_map<SystemTypeID, SharedPtr<System>> _systems;
-			std::vector<System*> _system_execution_list;
+			std::unordered_map<SystemTypeID, SharedPtr<InternalSystem>> _systems;
+			std::vector<InternalSystem*> _system_execution_list;
 
 			std::unordered_map<SystemTypeID, std::vector<SystemTypeID>> _system_relying_dependencies_map;
 			std::unordered_map<SystemTypeID, std::vector<SystemTypeID>> _system_providing_dependencies_map;
@@ -183,8 +183,8 @@ namespace DFW
 		}
 
 		template <typename SystemType>
-			requires IsValidSystemType<SystemType>
-		SystemTypeID SystemManager::GetSystemTypeID() const
+		requires IsValidSystemType<SystemType>
+			SystemTypeID SystemManager::GetSystemTypeID() const
 		{
 			return DUtility::FamilyClassType<System>::GetTypeID<SystemType>();
 		}

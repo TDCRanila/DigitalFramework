@@ -1,41 +1,38 @@
 #pragma once
 
-#include <DFW/Modules/ECS/Utility/SystemTypeID.h>
+#include <DFW/Modules/ECS/Internal/InternalSystem.h>
+#include <DFW/Modules/ECS/Managers/SystemManager.h>
+
+#include <DFW/Modules/ECS/Utility/ECSTemplateUtility.h>
 
 #include <DFW/Utility/AutoFactory/AutoFactory.h>
-
-#include <DFW/CoreSystems/DUID.h>
 
 #include <string>
 
 namespace DFW
 {
-	// FW Declare
-	class EventDispatcher;
-	
 	namespace DECS
 	{
 		class EntityRegistry;
-		class SystemManager;
 
-		class System : public DFactory::AutoFactory<System>
+		class System : public InternalSystem, public DFactory::AutoFactory<System>
 		{
-		private:
-			friend SystemManager;
-
 		public:
-			System();
+			System() = default;
 			virtual ~System() = default;
 
-			DFW::DUID GetID() const { return _id; }
-			SystemTypeID GetTypeID() const { return _type_id; }
-			std::string const& GetName() const { return _name; }
-			bool IsSystemPaused() const { return _paused; }
-
 		public:
-			void ExecuteBefore(System& a_system);
-			void ExecuteAfter(System& a_system);
-			void RemoveDependencies(System& a_system);
+			template <typename ReliedOnSystemType>
+			requires IsValidSystemType<ReliedOnSystemType>
+				void ExecuteBefore();
+
+			template <typename ReliedOnSystemType>
+			requires IsValidSystemType<ReliedOnSystemType>
+				void ExecuteAfter();
+
+			template <typename ReliedOnSystemType>
+			requires IsValidSystemType<ReliedOnSystemType>
+				void RemoveDependencies();
 
 		protected:
 			// Can be overwritten by derived class.
@@ -48,30 +45,36 @@ namespace DFW
 
 			virtual void UpdateSystemImGui(EntityRegistry& a_registry);
 
-			inline DFW::DECS::SystemManager& SystemManager() const { return *_system_manager; }
-			inline DFW::EventDispatcher& ECSEventHandler() const { return *_event_handler; }
-
-		private:
-			// Called by ECSystemManager.
-			void InternalInit(EntityRegistry& a_registry);
-			void InternalTerminate(EntityRegistry& a_registry);
-
-			void InternalPreUpdate(EntityRegistry& a_registry);
-			void InternalUpdate(EntityRegistry& a_registry);
-			void InternalPostUpdate(EntityRegistry& a_registry);
-
-			void InternalPauseSystem(bool a_pause_on_true);
-
-		private:
-			DFW::DECS::SystemManager* _system_manager;
-			DFW::EventDispatcher* _event_handler;
-
-			DFW::DUID	_id;
-			SystemTypeID _type_id;
-			std::string _name;
-			bool		_paused;
-
 		};
+
+#pragma region Template Function Implementation
+
+		template <typename ReliedOnSystemType>
+		requires IsValidSystemType<ReliedOnSystemType>
+			void System::ExecuteBefore()
+		{
+			DFW::DECS::SystemManager& system_manager = SystemManager();
+			system_manager.AddSystemDependency(system_manager.GetSystemTypeID<ReliedOnSystemType>(), GetTypeID());
+		}
+
+		template <typename ReliedOnSystemType>
+		requires IsValidSystemType<ReliedOnSystemType>
+			void System::ExecuteAfter()
+		{
+			DFW::DECS::SystemManager& system_manager = SystemManager();
+			system_manager.AddSystemDependency(GetTypeID(), system_manager.GetSystemTypeID<ReliedOnSystemType>());
+		}
+
+		template <typename ReliedOnSystemType>
+		requires IsValidSystemType<ReliedOnSystemType>
+			void System::RemoveDependencies()
+		{
+			DFW::DECS::SystemManager& system_manager = SystemManager();
+			system_manager.RemoveSystemDependency(GetTypeID(), system_manager.GetSystemTypeID<ReliedOnSystemType>());
+			system_manager.RemoveSystemDependency(system_manager.GetSystemTypeID<ReliedOnSystemType>(), GetTypeID());
+		}
+
+#pragma region
 
 	} // End of namespace ~ DECS
 

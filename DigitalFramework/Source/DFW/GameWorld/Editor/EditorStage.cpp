@@ -88,15 +88,16 @@ namespace DFW
             auto& render_system         = ecs.SystemManager().AddSystem<DFW::RenderSystem>();
             auto& debug_render_system   = ecs.SystemManager().AddSystem<DFW::DebugRenderSystem>();
             auto& sprite_system         = ecs.SystemManager().AddSystem<DFW::SpriteSystem>();
+
             auto& camera_system         = ecs.SystemManager().AddSystem<DFW::CameraSystem>();
             auto& transform_system      = ecs.SystemManager().AddSystem<DFW::TransformSystem>();
             auto& physics_system        = ecs.SystemManager().AddSystem<DFW::PhysicsSystem>();
             
-            render_system.ExecuteAfter(camera_system);
-            debug_render_system.ExecuteAfter(camera_system);
-            sprite_system.ExecuteAfter(camera_system);
-            transform_system.ExecuteAfter(camera_system);
-            camera_system.ExecuteAfter(physics_system);
+            render_system.ExecuteAfter<DFW::CameraSystem>();
+            debug_render_system.ExecuteAfter<DFW::CameraSystem>();
+            sprite_system.ExecuteAfter<DFW::CameraSystem>();
+            transform_system.ExecuteAfter<DFW::CameraSystem>();
+            camera_system.ExecuteAfter<DFW::PhysicsSystem>();
 
             ecs.SystemManager().CalculateSystemDependencies();
 
