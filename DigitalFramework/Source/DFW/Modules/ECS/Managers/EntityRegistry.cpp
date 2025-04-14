@@ -161,9 +161,6 @@ namespace DFW
             if (!insertion_result)
                 DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
 
-            // Broadcast Entity Destruction.
-            _ecs_event_handler.get().Broadcast<EntityDestroyedEvent>(a_current_entity);
-
             DECS::EntityRelationComponent const* relation_component = a_current_entity.TryGetComponent<DECS::EntityRelationComponent>();
             if (!relation_component)
                 return; // No childeren or siblings.
@@ -185,6 +182,9 @@ namespace DFW
 
             for (EntityHandle const handle : marked_entities)
             {
+                // Broadcast Entity Destruction.
+                _ecs_event_handler.get().Broadcast<EntityDestroyedEvent>(Entity(handle, *this));
+
                 UnregisterEntity(handle);
             }
 
