@@ -190,6 +190,9 @@ struct DebugDrawEncoder
 	void drawGrid(const bx::Vec3& _normal, const bx::Vec3& _center, uint32_t _size = 20, float _step = 1.0f);
 
 	///
+	void drawGrid(const bx::Vec3& _normal, const bx::Vec3& _center, uint32_t _sizeX = 20, uint32_t _sizeY = 20, float _step = 1.0f);
+
+	///
 	void drawGrid(Axis::Enum _axis, const bx::Vec3& _center, uint32_t _size = 20, float _step = 1.0f);
 
 	///
