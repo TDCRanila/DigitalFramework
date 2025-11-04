@@ -19,17 +19,31 @@ namespace DFW
 					return false; // No childeren or siblings.
 
 				// Traverse entity hierachy.
-				Entity current_child = relation_component->first;
-				while (current_child.IsEntityValid())
+				Entity const* current_child = &relation_component->first;
+				while (current_child->IsEntityValid())
 				{
-					if (CheckForEntityInHierachy(current_child, a_entity_to_check))
+					if (CheckForEntityInHierachy(*current_child, a_entity_to_check))
 						return true; // Found entity, no further traversal needed.
 					
-					if (DECS::EntityRelationComponent const* child_relation_component = current_child.TryGetComponent<DECS::EntityRelationComponent>())
-						current_child = child_relation_component->next;
+					current_child = &current_child->GetComponent<DECS::EntityRelationComponent>().next;
 				}
 
 				return false;
+			}
+
+			void UpdateEntityHierarchyDepthValuesFromEntity(Entity& a_current_entity, uint32 const a_parent_hierarchy_depth, bool const a_is_first_traversal)
+			{
+				DECS::EntityRelationComponent& relation_component = a_current_entity.GetComponent<DECS::EntityRelationComponent>();
+				if (!a_is_first_traversal)
+					relation_component.hierarchy_depth = a_parent_hierarchy_depth + 1;
+
+				// Traverse entity hierachy.
+				Entity* current_child = &relation_component.first;
+				while (current_child->IsEntityValid())
+				{
+					UpdateEntityHierarchyDepthValuesFromEntity(*current_child, relation_component.hierarchy_depth, false);
+					current_child = &current_child->GetComponent<DECS::EntityRelationComponent>().next;
+				}
 			}
 
 		} // End of namespace ~ Detail.
@@ -55,11 +69,6 @@ namespace DFW
 			return GetComponent<EntityDataComponent>().id;
 		}
 
-		EntityTypeID Entity::GetTypeID() const
-		{
-			return GetComponent<EntityDataComponent>().type;
-		}
-
 		std::string const& Entity::GetName() const
 		{
 			return GetComponent<EntityDataComponent>().name;
@@ -79,8 +88,7 @@ namespace DFW
 
 		EntityTypeID Entity::GetType() const
 		{
-			EntityDataComponent const& data_component = GetComponent<EntityDataComponent>();
-			return data_component.type;
+			return GetComponent<EntityDataComponent>().type;
 		}
 
 		void Entity::SetTypeInternal(EntityTypeID const a_entity_type_id)
@@ -129,6 +137,10 @@ namespace DFW
 			// Now set the parent of the child to this entity;
 			child_relation_component.parent = *this;
 
+			// Update hierarchy values.
+			Detail::UpdateEntityHierarchyDepthValuesFromEntity(*this, relation_component.hierarchy_depth, true);
+
+			// Update parent's children count.
 			relation_component.childeren_count++;
 		}
 
@@ -160,35 +172,41 @@ namespace DFW
 			// Adjust sibling relationships if there are any.
 			if (relation_component.childeren_count >= 2)
 			{
-				Entity previous_sibling = child_relation_component.previous;
-				Entity next_sibling = child_relation_component.next;
-				EntityRelationComponent* previous_sibling_relation_component = previous_sibling ? previous_sibling.TryGetComponent<EntityRelationComponent>() : nullptr;
-				EntityRelationComponent* next_sibling_relation_component = next_sibling ? next_sibling.TryGetComponent<EntityRelationComponent>() : nullptr;
+				Entity& previous_sibling	= child_relation_component.previous;
+				Entity& next_sibling		= child_relation_component.next;
 
-				if (previous_sibling && !next_sibling)
+				bool const is_previous_sibling_valid	= previous_sibling.IsEntityValid();
+				bool const is_next_sibling_valid		= next_sibling.IsEntityValid();
+
+				if (is_previous_sibling_valid && !is_next_sibling_valid)
 				{
-					previous_sibling_relation_component->next = Entity();
+					// From: 'Previous' <-> 'Removed' | To: 'Previous' <-> Empty.
+					previous_sibling.GetComponent<EntityRelationComponent>().next = Entity();
 				}
-
-				if (previous_sibling && next_sibling)
+				else if (is_previous_sibling_valid && is_next_sibling_valid)
 				{
-					previous_sibling_relation_component->next = next_sibling;
-					next_sibling_relation_component->previous = previous_sibling;
+					// From: 'Previous' <-> 'Removed' <-> 'Next' | To: 'Previous' <-> 'Next'.
+					previous_sibling.GetComponent<EntityRelationComponent>().next = next_sibling;
+					next_sibling.GetComponent<EntityRelationComponent>().previous = previous_sibling;
 				}
-
-				if (!previous_sibling && next_sibling)
+				else if (!is_previous_sibling_valid && is_next_sibling_valid)
 				{
-					next_sibling_relation_component->previous = Entity();
+					// From: 'Removed' <-> 'Next' | To: 'Empty' <-> 'Next'.
+					next_sibling.GetComponent<EntityRelationComponent>().previous = Entity();
 				}
 
 				// Wipe sibling data of the child.
-				child_relation_component.previous = Entity();
-				child_relation_component.next = Entity();
+				child_relation_component.previous	= Entity();
+				child_relation_component.next		= Entity();
 			}
 
 			// Adjust parential data of child.
 			child_relation_component.parent = Entity();
 
+			// Reset hierarchy depth value on the removed child.
+			child_relation_component.hierarchy_depth = DFW::DMath::uint16_max;
+
+			// Update parent's children count.
 			relation_component.childeren_count--;
 		}
 

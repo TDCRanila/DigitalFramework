@@ -26,10 +26,13 @@ namespace DFW
 		void RandomizeRGB();
 		void RandomizeRGBA();
 
+		ColourRGBA Mix(ColourRGBA const& a_other_colour) const;
+
 	public:
 		static const ColourRGBA Black;
 		static const ColourRGBA DarkRed;
 		static const ColourRGBA Red;
+		static const ColourRGBA Magenta;
 		static const ColourRGBA DarkGreen;
 		static const ColourRGBA Green;
 		static const ColourRGBA DarkBlue;
@@ -45,6 +48,8 @@ namespace DFW
 		static const ColourRGBA White;
 
     };
+
+	ColourRGBA MixColours(ColourRGBA const& a_colour_one, ColourRGBA const& a_colour_two);
 
 	ColourRGBA RandomColour();
 	ColourRGBA RandomColourRGBA();

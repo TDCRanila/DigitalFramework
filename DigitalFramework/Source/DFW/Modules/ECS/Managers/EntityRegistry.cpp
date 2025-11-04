@@ -77,6 +77,14 @@ namespace DFW
                 return;
             }
 
+            DECS::EntityRelationComponent const* relation_component = a_entity.TryGetComponent<DECS::EntityRelationComponent>();
+            if (!relation_component)
+                return; // No parent, nor childeren, nor siblings.
+            
+            // Adjust the parent-child relation.
+            if (Entity parent = relation_component->parent)
+                parent.RemoveChild(a_entity);
+
             DestroyEntityAndChilderen(a_entity);
         }
 
@@ -153,21 +161,16 @@ namespace DFW
             if (!insertion_result)
                 DFW_WARNLOG("Attemping to delete an entity that is already marked for deletion.");
 
-            // Broadcast Entity Destruction.
-            _ecs_event_handler.get().Broadcast<EntityDestroyedEvent>(a_current_entity);
-
             DECS::EntityRelationComponent const* relation_component = a_current_entity.TryGetComponent<DECS::EntityRelationComponent>();
             if (!relation_component)
                 return; // No childeren or siblings.
 
             // Traverse entity hierachy.
-            Entity current_child = relation_component->first;
-            while (current_child.IsEntityValid())
+            Entity const* current_child = &relation_component->first;
+            while (current_child->IsEntityValid())
             {
-                DestroyEntityAndChilderen(current_child);
-
-                if (DECS::EntityRelationComponent const* child_relation_component = current_child.TryGetComponent<DECS::EntityRelationComponent>())
-                    current_child = child_relation_component->next;
+                DestroyEntityAndChilderen(*current_child);
+                current_child = &current_child->GetComponent<DECS::EntityRelationComponent>().next;
             }
         }
 
@@ -179,6 +182,9 @@ namespace DFW
 
             for (EntityHandle const handle : marked_entities)
             {
+                // Broadcast Entity Destruction.
+                _ecs_event_handler.get().Broadcast<EntityDestroyedEvent>(Entity(handle, *this));
+
                 UnregisterEntity(handle);
             }
 
@@ -200,6 +206,9 @@ namespace DFW
             data_component.name = "HierachyRoot";
 
             hierachy_root_entity.AddComponent<DECS::EntityHierachyRootTagComponent>();
+
+            DFW::DECS::EntityRelationComponent& relation_component = hierachy_root_entity.AddComponent<EntityRelationComponent>();
+            relation_component.hierarchy_depth = 0;
 
             // Register Entity in EntityRegistry registers.
             RegisterEntity(hierachy_root_entity.GetHandle());

@@ -2,6 +2,8 @@
 
 #include <DFW/Utility/TemplateUtility.h>
 
+#include <algorithm>
+
 namespace DFW
 {
     namespace DUtility
@@ -35,7 +37,9 @@ namespace DFW
         template <StringLiteral derived_family_name>
         FamilyTypeID FamilyNameType<base_family_name>::GetTypeID()
         {
-            if constexpr (base_family_name.value == derived_family_name.value)
+            if constexpr (std::equal(
+                std::begin(base_family_name.value), std::end(base_family_name.value),
+                std::begin(derived_family_name.value), std::end(derived_family_name.value)))
             {
                 return FamilyTypeID(0);
             }

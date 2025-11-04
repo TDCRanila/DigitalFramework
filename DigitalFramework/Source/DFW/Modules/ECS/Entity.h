@@ -21,11 +21,12 @@ namespace DFW
 
 		public:
 			DFW::DUID GetID() const;
-			EntityTypeID GetTypeID() const;
 
 			std::string const& GetName() const;
 			void SetName(std::string const& a_new_name);
 			
+			template <StringLiteral entity_type>
+			bool IsOfType() const;
 			EntityTypeID GetType() const;
 			template <StringLiteral entity_type>
 			void SetType();
@@ -68,6 +69,13 @@ namespace DFW
 		};
 
 #pragma region Template Function Implementation
+
+		template <StringLiteral entity_type>
+		bool Entity::IsOfType() const
+		{
+			DFW_ASSERT(IsEntityValid() && "Trying to check the type of an invalid entity.");
+			return GetType() == _registry->GetEntityTypeID<entity_type>();
+		}
 
 		template <StringLiteral entity_type>
 		void Entity::SetType()

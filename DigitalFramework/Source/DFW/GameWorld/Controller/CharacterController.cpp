@@ -2,28 +2,19 @@
 
 namespace DFW
 {
-    void CharacterController::ExecuteActions()
-    { 
-        for (Command* command : command_list) 
-        { 
-            command->Execute(); 
-        } 
-    }
-
-    void CharacterController::EraseActionList()
-    { 
-        for (Command* command : command_list)
-        {
-            delete command;
-        }
-
-        command_list.clear(); 
-    }
-
-    void CharacterController::QueueAction(Command* a_command)
+    CharacterController::CharacterController()
+        : _controlled_character(nullptr)
     {
-        DFW_ASSERT(_controlled_character); 
-        command_list.emplace_back(a_command);
+    }
+
+    void CharacterController::PossesCharacter(Entity& a_entity)
+    { 
+        _controlled_character = &a_entity.GetComponent<CharacterComponent>(); 
+    }
+    
+    void CharacterController::ReleaseCharacter()
+    { 
+        _controlled_character = nullptr; 
     }
 
 } // End of namespace ~ DFW.

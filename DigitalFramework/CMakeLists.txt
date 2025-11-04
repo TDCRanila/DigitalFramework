@@ -14,7 +14,6 @@ string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
 
 ### Library Definition
 set(LIB_NAME DigitalFramework)
-project(${LIB_NAME} VERSION 1.0.0)
 
 ### Library Source
 add_library(${LIB_NAME} STATIC)
@@ -33,6 +32,20 @@ target_include_directories(${LIB_NAME}
     # External Headers for external projects.
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
+target_compile_definitions(${LIB_NAME} PUBLIC "$<$<CONFIG:DEBUG>:DFW_DEBUG64>")
+target_compile_definitions(${LIB_NAME} PUBLIC "$<$<CONFIG:RELWITHDEBINFO>:DFW_PRERELEASE64>")
+target_compile_definitions(${LIB_NAME} PUBLIC "$<$<CONFIG:RELEASE>:DFW_RELEASE64>")
+target_compile_definitions(${LIB_NAME} PUBLIC "$<$<CONFIG:MINSIZEREL>:DFW_RELEASE64>")
+
+### Platform Specific Defines
+if(WIN32 AND NOT UNIX AND NOT APPLE)
+    target_compile_definitions(${LIB_NAME} PUBLIC DFW_PLATFORM_WINDOWS)
+elseif(UNIX AND NOT WIN32 AND NOT APPLE)
+    target_compile_definitions(${LIB_NAME} PUBLIC DFW_PLATFORM_UNIX)
+else()
+    target_compile_definitions(${LIB_NAME} PUBLIC DFW_PLATFORM_UNSUPPORTED)
+endif()
 
 # CPP Standard
 SetCPPVersion(${LIB_NAME})

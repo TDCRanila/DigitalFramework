@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2021 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2024 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #ifndef DEBUGDRAW_H_HEADER_GUARD
@@ -61,13 +61,10 @@ struct DebugDrawEncoder
 	~DebugDrawEncoder();
 
 	///
-	void setupEncoder(uint16_t _viewId, bool _depthTestLess = true, bgfx::Encoder* _encoder = nullptr);
+	void begin(uint16_t _viewId, bool _depthTestLess = true, bgfx::Encoder* _encoder = NULL);
 
 	///
-	void reset();
-
-	///
-	void finalizeFrame();
+	void end();
 
 	///
 	void push();

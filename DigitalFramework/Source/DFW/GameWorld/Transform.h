@@ -33,17 +33,17 @@ namespace DFW
         glm::mat4 const& GetWorldTransformMatrix() const { return cached_world_transform; }
         glm::mat4 GetTransformMatrix() const;
 
-        glm::vec3 const& GetWorldTranslation() const { return cached_world_translation; }
-        glm::quat const& GetWorldOrientation() const { return cached_world_orientation; }
-        DMath::EulerAngles const GetWorldRotation() const { return glm::eulerAngles(cached_world_orientation); }
+        glm::vec3 GetWorldTranslation() const { return { cached_world_transform[3][0], cached_world_transform[3][1], cached_world_transform[3][2] }; }
+        glm::quat GetWorldOrientation() const { return glm::quat(cached_world_transform); }
+        DMath::EulerAngles GetWorldRotation() const { return glm::eulerAngles(GetWorldOrientation()); }
+        glm::vec3 GetWorldScale() const { return { glm::length(cached_world_transform[0]), glm::length(cached_world_transform[1]), glm::length(cached_world_transform[2]) }; }
 
         glm::vec3 const& GetTranslation() const { return translation; }
         glm::quat const& GetOrientation() const { return orientation; }
-        DMath::EulerAngles const GetRotation() const { return glm::eulerAngles(orientation); };
+        DMath::EulerAngles GetRotation() const { return glm::eulerAngles(orientation); };
         glm::vec3 const& GetScale() const { return scale; }
 
     public:
-        void CalculateWorldTransform();
         void CalculateWorldTransform(glm::mat4 const& a_parent_transform);
         bool IsDirty() const { return is_dirty; }
 
@@ -52,8 +52,6 @@ namespace DFW
         void CleanFlag() { is_dirty = false; }
 
         glm::mat4 cached_world_transform;
-        glm::vec3 cached_world_translation;
-        glm::quat cached_world_orientation;
 
         glm::vec3 translation;
         glm::quat orientation;

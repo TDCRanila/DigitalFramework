@@ -14,10 +14,12 @@ namespace DFW
 		void BeginFrame(float32 const a_delta_time);
 		void EndFrame();
 	
+	public:
+		void Debug_DisplayViewportRenderInformation() const;
+
 	private:
 		void SetupStyle();
 
-		void Debug_DrawViewportRenderingInformation() const;
 	};
 
 } // End of namespace ~ DFW.

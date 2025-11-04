@@ -20,6 +20,7 @@ namespace DFW
     struct DebugDrawSettings
     {
         DebugDrawSettings();
+        DebugDrawSettings(ColourRGBA a_colour);
         DebugDrawSettings(ColourRGBA a_colour, bool a_enable_wireframe);
         DebugDrawSettings(ColourRGBA a_colour, bool a_enable_wireframe, bool a_enable_depthtest, uint8 a_shape_complexity);
 
@@ -51,7 +52,7 @@ namespace DFW
         void DrawSprite(glm::vec3 const& a_center_pos, glm::vec3 const& a_normal, DRender::TextureData const& a_texture, DebugDrawSettings const& a_settings);
 
         void DrawCube(Transform const& a_transform, float32 a_box_extend, DebugDrawSettings const& a_settings);
-        void DrawBox(Transform a_transform, glm::vec3 const& a_extend, DebugDrawSettings const& a_settings);
+        void DrawBox(Transform const& a_transform, glm::vec3 const& a_extend, DebugDrawSettings const& a_settings);
 
         void DrawSphere(Transform const& a_transform, float32 a_sphere_radius, DebugDrawSettings const& a_settings);
         void DrawCylinder(Transform const& a_transform, float32 a_cylinder_height, float32 a_cylinder_radius, DebugDrawSettings const& a_settings);
