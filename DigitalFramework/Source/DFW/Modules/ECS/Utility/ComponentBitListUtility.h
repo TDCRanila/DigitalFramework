@@ -9,6 +9,7 @@
 
 #include <unordered_map>
 #include <typeindex>
+#include <typeinfo>
 
 namespace DFW
 {
@@ -57,7 +58,7 @@ namespace DFW
 #pragma region Template Function Implementation
 
 		template <typename... TArgs>
-		static ComponentBitList ComponentBitListUtility::ConstructComponentBitList()
+		ComponentBitList ComponentBitListUtility::ConstructComponentBitList()
 		{
 			if constexpr ((not IsValidComponentType<TArgs> || ...))
 			{
@@ -74,7 +75,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static bool ComponentBitListUtility::IsComponentBitTrue(ComponentBitList const& a_bit_var)
+		bool ComponentBitListUtility::IsComponentBitTrue(ComponentBitList const& a_bit_var)
 		{
 			int8 component_bit_placement(0);
 			GetComponentBitPlacement<TComponent>(component_bit_placement);
@@ -92,7 +93,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static void ComponentBitListUtility::SetComponentBits(ComponentBitList& a_bit_var)
+		void ComponentBitListUtility::SetComponentBits(ComponentBitList& a_bit_var)
 		{
 			int64 temp(1);
 			int8 component_bit_placement(0);
@@ -103,7 +104,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static void ComponentBitListUtility::ResetComponentBits(ComponentBitList& a_bit_var)
+		void ComponentBitListUtility::ResetComponentBits(ComponentBitList& a_bit_var)
 		{
 			int64 temp(1);
 			int8 component_bit_placement(0);
@@ -114,7 +115,7 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static int8 ComponentBitListUtility::GetComponentBitPlacement()
+		int8 ComponentBitListUtility::GetComponentBitPlacement()
 		{
 			int8 temp_bit_list(0);
 			GetComponentBitPlacement<TComponent>(temp_bit_list);
@@ -123,9 +124,9 @@ namespace DFW
 
 		template <typename TComponent>
 		requires IsValidComponentType<TComponent>
-		static void ComponentBitListUtility::GetComponentBitPlacement(int8& a_component_bit_list)
+		void ComponentBitListUtility::GetComponentBitPlacement(int8& a_component_bit_list)
 		{
-			const type_info& type = typeid(TComponent);
+			std::type_info const& type = typeid(TComponent);
 			auto it = _component_bit_placement.find(type);
 			if (it != _component_bit_placement.end())
 			{
