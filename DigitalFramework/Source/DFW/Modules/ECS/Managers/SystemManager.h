@@ -130,13 +130,13 @@ namespace DFW
 			if (_system_providing_dependencies_map.contains(it->first))
 			{
 				for (SystemTypeID const system_type : _system_providing_dependencies_map.at(it->first))
-					RemoveSystemDependency(*it->second, *_systems.at(system_type));
+					RemoveSystemDependency(it->first, _systems.at(system_type)->GetTypeID());
 			}
 
 			if (_system_relying_dependencies_map.contains(it->first))
 			{
 				for (SystemTypeID const system_type : _system_relying_dependencies_map.at(it->first))
-					RemoveSystemDependency(*it->second, *_systems.at(system_type));
+					RemoveSystemDependency(it->first, _systems.at(system_type)->GetTypeID());
 			}
 
 			it->second->InternalTerminate(_ecs->Registry());
