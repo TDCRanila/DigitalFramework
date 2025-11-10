@@ -21,11 +21,9 @@ namespace DFW
 
 		std::string GetTimeAndDateStamp()
 		{
-			std::time_t const t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+			std::time_t t = time(nullptr);
 			std::ostringstream oss;
-			tm time_struct;
-			localtime_s(&time_struct, &t);
-			oss << std::put_time(&time_struct, "%F-%T");
+			oss << std::put_time(std::localtime(&t), "%F-%H%M%S");
 			return oss.str();
 		}
 
