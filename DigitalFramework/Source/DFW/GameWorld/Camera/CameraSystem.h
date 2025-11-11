@@ -38,11 +38,9 @@ namespace DFW
 		void ChangeCameraProjPerspective(CameraComponent& a_camera_component, float32 a_fov, float32 a_viewport_aspect, ClipSpace a_clip);
 		void ChangeCameraProjOrthographic(CameraComponent& a_camera_component, float32 a_view_width, float32 a_view_height, ClipSpace a_clip, bool a_center_ortho);
 
-		void EnableCameraControl(CameraComponent& a_camera_component);
-		void DisableCameraControl(CameraComponent& a_camera_component);
-
-		void EnableSimpleCameraControlMode(CameraComponent& a_camera_component);
-		void EnableAdvancedCameraControlMode(CameraComponent& a_camera_component);
+		void EnableSimpleCameraControlMode();
+		void EnableAdvancedCameraControlMode();
+		void DisableCameraControl();
 
     private:
 		virtual void Init(DECS::EntityRegistry& a_registry) override;
