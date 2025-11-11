@@ -34,6 +34,8 @@ namespace DFW
 		public:
 			void AddChild(Entity a_child_to_add);
 			void RemoveChild(Entity a_child_to_remove);
+
+			Entity GetParent() const;
 			void SetParent(Entity a_parent);
 
 			bool IsParentOfEntity(Entity const& a_child) const;
