@@ -225,11 +225,11 @@ namespace DFW
 
         for (auto&& [entity, camera_comp, transform_comp, entity_relation_comp] : a_registry.ENTT().view<CameraComponent, TransformComponent, DECS::EntityRelationComponent>().each())
         {
-            Detail::CalculateCameraViewMatrix(camera_comp, transform_comp);
             if (!camera_comp.has_enabled_controls)
                 Detail::CalculateCameraLocalVectors(camera_comp, transform_comp);
 
             Detail::CalculateCameraWorldVectors(camera_comp, entity_relation_comp.parent);
+            Detail::CalculateCameraViewMatrix(camera_comp, transform_comp);
         }
     }
 
