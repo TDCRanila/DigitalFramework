@@ -47,9 +47,16 @@ namespace DFW
             a_camera.world_right = Detail::world_right;
         }
 
-        void CalculateCameraViewMatrix(CameraComponent& a_camera, Transform& a_transform)
+        void CalculateCameraViewMatrix(CameraComponent& a_camera, Transform const& a_transform)
         {
             a_camera.view = glm::lookAtLH(a_transform.GetWorldTranslation(), a_transform.GetWorldTranslation() + a_camera.world_front, a_camera.world_up);
+        }
+
+        void CalculateCameraLocalVectors(CameraComponent& a_camera, Transform const& a_camera_transform)
+        {
+            a_camera.right  = glm::rotate(a_camera_transform.GetOrientation(), Detail::world_right);
+            a_camera.up     = glm::rotate(a_camera_transform.GetOrientation(), Detail::world_up);
+            a_camera.front  = glm::rotate(a_camera_transform.GetOrientation(), Detail::world_front);
         }
 
         void CalculateCameraWorldVectors(CameraComponent& a_camera, Entity const& a_camera_parent)
@@ -219,6 +226,9 @@ namespace DFW
         for (auto&& [entity, camera_comp, transform_comp, entity_relation_comp] : a_registry.ENTT().view<CameraComponent, TransformComponent, DECS::EntityRelationComponent>().each())
         {
             Detail::CalculateCameraViewMatrix(camera_comp, transform_comp);
+            if (!camera_comp.has_enabled_controls)
+                Detail::CalculateCameraLocalVectors(camera_comp, transform_comp);
+
             Detail::CalculateCameraWorldVectors(camera_comp, entity_relation_comp.parent);
         }
     }
