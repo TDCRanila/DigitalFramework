@@ -26,11 +26,11 @@ namespace DFW
         dde->push();
 
         dde->setColor(inColor.GetUInt32());
-        dde->moveTo(inFrom.GetX(), inFrom.GetY(), inFrom.GetZ());
-        dde->lineTo(inTo.GetX(), inTo.GetY(), inTo.GetZ());
-
         dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
         dde->setState(Detail::ENABLE_DEPTH_TEST, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
+        dde->moveTo(inFrom.GetX(), inFrom.GetY(), inFrom.GetZ());
+        dde->lineTo(inTo.GetX(), inTo.GetY(), inTo.GetZ());
 
         dde->pop();
     }
@@ -43,21 +43,22 @@ namespace DFW
         vertices[0].y = inV1.GetY();
         vertices[0].z = inV1.GetZ();
 
-        vertices[1].x = inV1.GetX();
-        vertices[1].y = inV1.GetY();
-        vertices[1].z = inV1.GetZ();
+        vertices[1].x = inV2.GetX();
+        vertices[1].y = inV2.GetY();
+        vertices[1].z = inV2.GetZ();
 
-        vertices[2].x = inV1.GetX();
-        vertices[2].y = inV1.GetY();
-        vertices[2].z = inV1.GetZ();
+        vertices[2].x = inV3.GetX();
+        vertices[2].y = inV3.GetY();
+        vertices[2].z = inV3.GetZ();
 
         dde->push();
 
         dde->setColor(inColor.GetUInt32());
-        dde->drawTriList(3, vertices.data());
-
         dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
         dde->setState(Detail::ENABLE_DEPTH_TEST, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
+        dde->drawTriList(3, vertices.data());
+        dde->setTransform(nullptr);
 
         dde->pop();
 
