@@ -10,14 +10,13 @@ namespace DFW
 {
     namespace Detail
     {
-        void CalculateEntityTransform(Entity& a_current_entity, glm::mat4 const& a_parent_transform, bool const a_is_parent_dirty)
+        void CalculateEntityTransform(Entity& a_current_entity, glm::mat4 const& a_parent_transform, bool const a_was_parent_transform_dirty)
         {
-            bool is_transform_dirty(true);
+            bool was_transform_dirty(false);
             glm::mat4 current_transform(glm::identity<glm::mat4>());
             if (TransformComponent* transform_component = a_current_entity.TryGetComponent<TransformComponent>())
             {
-                is_transform_dirty = transform_component->IsDirty() || a_is_parent_dirty;
-                if (is_transform_dirty)
+                if (was_transform_dirty = transform_component->IsDirty() || a_was_parent_transform_dirty)
                 {
                     transform_component->CalculateWorldTransform(a_parent_transform);
                     current_transform = transform_component->GetWorldTransformMatrix();
@@ -32,7 +31,7 @@ namespace DFW
             Entity* current_child = &relation_component->first;
             while (current_child->IsEntityValid())
             {
-                CalculateEntityTransform(*current_child, current_transform, is_transform_dirty);
+                CalculateEntityTransform(*current_child, current_transform, was_transform_dirty);
                 current_child = &current_child->GetComponent<DECS::EntityRelationComponent>().next;
             }
         }
@@ -41,7 +40,8 @@ namespace DFW
         {
             // Calculate the world transform if necesarry.
             TransformComponent& transform_component = a_root_entity.GetComponent<TransformComponent>();
-            if (transform_component.IsDirty())
+            bool was_transform_dirty(false);
+            if (was_transform_dirty = transform_component.IsDirty())
                 transform_component.CalculateWorldTransform(glm::identity<glm::mat4>());
 
             DECS::EntityRelationComponent* relation_component = a_root_entity.TryGetComponent<DECS::EntityRelationComponent>();
@@ -52,7 +52,7 @@ namespace DFW
             Entity* current_child = &relation_component->first;
             while (current_child->IsEntityValid())
             {
-                CalculateEntityTransform(*current_child, transform_component.GetWorldTransformMatrix(), transform_component.IsDirty());
+                CalculateEntityTransform(*current_child, transform_component.GetWorldTransformMatrix(), was_transform_dirty);
                 current_child = &current_child->GetComponent<DECS::EntityRelationComponent>().next;
             }
         }
