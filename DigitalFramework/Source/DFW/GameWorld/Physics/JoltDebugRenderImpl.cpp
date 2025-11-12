@@ -141,7 +141,7 @@ namespace DFW
 
     void JoltDebugRenderer::DrawGeometry(JPH::RMat44Arg inModelMatrix, const JPH::AABox& inWorldSpaceBounds, float inLODScaleSq, JPH::ColorArg inModelColor, const GeometryRef& inGeometry, ECullMode inCullMode, ECastShadow inCastShadow, EDrawMode inDrawMode)
     {
-        BatchImpl* batch = static_cast<BatchImpl*>(inGeometry->mLODs[0].mTriangleBatch.GetPtr());
+        BatchImpl* batch = static_cast<BatchImpl*>(inGeometry->mLODs[inGeometry->mLODs.size() - 1].mTriangleBatch.GetPtr());
 
         DebugDrawEncoder* dde = DebugRenderSystem::_dde;
         dde->push();
