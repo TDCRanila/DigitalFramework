@@ -153,6 +153,7 @@ namespace DFW
         dde->setState(Detail::ENABLE_DEPTH_TEST, Detail::ENABLE_DEPTH_WRITE, inCullMode == ECullMode::CullFrontFace ? true : false);
 
         dde->draw(batch->geometry_handle);
+        dde->setTransform(nullptr);
 
         dde->pop();
     }
