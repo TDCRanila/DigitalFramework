@@ -31,6 +31,8 @@ namespace DFW
             switch (a_motion_type) {
             case (JPH::EMotionType::Dynamic):
                 return PhysicsLayers::MOVING;
+            case (JPH::EMotionType::Kinematic):
+                return PhysicsLayers::MOVING;
             case (JPH::EMotionType::Static):
                 return PhysicsLayers::NON_MOVING;
             default:
