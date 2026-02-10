@@ -23,16 +23,6 @@ namespace DFW
 		{
 		}
 
-		operator boost::uuids::uuid()
-		{
-			return static_cast<boost::uuids::uuid&>(*this);
-		}
-
-		operator boost::uuids::uuid() const
-		{
-			return static_cast<boost::uuids::uuid const&>(*this);
-		}
-
 		operator std::string() const
 		{
 			return boost::uuids::to_string(*this);
