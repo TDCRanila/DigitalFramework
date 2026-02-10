@@ -2,6 +2,7 @@
 
 #include <DFW/CoreSystems/Logging/Logger.h>
 #include <DFW/Defines/MathDefines.h>
+#include <ctime>
 
 // TODO : Adapt code for mutli platform.
 #include <Windows.h>

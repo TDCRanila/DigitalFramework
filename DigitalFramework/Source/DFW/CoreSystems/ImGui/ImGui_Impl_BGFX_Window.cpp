@@ -1,4 +1,4 @@
-#include <DFW/CoreSystems/Imgui/ImGui_Impl_BGFX_Window.h>
+#include <DFW/CoreSystems/ImGui/ImGui_Impl_BGFX_Window.h>
 
 #include <bgfx/embedded_shader.h>
 #include <bx/bx.h>

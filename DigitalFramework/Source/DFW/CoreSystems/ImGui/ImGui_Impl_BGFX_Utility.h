@@ -16,7 +16,7 @@
 #include <imgui-resources/icons_kenney.ttf.h>
 #include <imgui-resources/icons_font_awesome.ttf.h>
 
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include <vector>
 #include <array>
