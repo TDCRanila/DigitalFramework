@@ -2,4 +2,9 @@
 
 #include <Zynthurism/GameApplication.h>
 
-DFW_APP_ENTRY(Zynthurism, DGame::GameApplication);
+int main()
+{
+    DGame::GameApplication game;
+    game.RunApplication("Zynthurism");
+
+}
