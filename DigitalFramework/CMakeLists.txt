@@ -1,16 +1,12 @@
-cmake_minimum_required(VERSION 3.17.2)
+cmake_minimum_required(VERSION 3.25)
 
 message("######################")
 message("Configuring - DigitalFramework\n")
 
 ### Generate a list of all Header & Source Files.
-execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR}/Source ${CMAKE_CURRENT_BINARY_DIR})
-file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_source.txt SOURCE_FILES)
-file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_header.txt HEADER_FILES)
-file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_all.txt ALL_FILES)
-string(REPLACE "\\" "/" SOURCE_FILES    "${SOURCE_FILES}")
-string(REPLACE "\\" "/" HEADER_FILES    "${HEADER_FILES}")
-string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
+file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Source/*.h")
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp")
+set(ALL_FILES ${HEADER_FILES} ${SOURCE_FILES})
 
 ### Library Definition
 set(LIB_NAME DigitalFramework)
@@ -42,7 +38,7 @@ target_compile_definitions(${LIB_NAME} PUBLIC "$<$<CONFIG:MINSIZEREL>:DFW_RELEAS
 if(WIN32 AND NOT UNIX AND NOT APPLE)
     target_compile_definitions(${LIB_NAME} PUBLIC DFW_PLATFORM_WINDOWS)
 elseif(UNIX AND NOT WIN32 AND NOT APPLE)
-    target_compile_definitions(${LIB_NAME} PUBLIC DFW_PLATFORM_UNIX)
+    target_compile_definitions(${LIB_NAME} PUBLIC DFW_PLATFORM_LINUX)
 else()
     target_compile_definitions(${LIB_NAME} PUBLIC DFW_PLATFORM_UNSUPPORTED)
 endif()
@@ -161,8 +157,10 @@ target_link_libraries(${LIB_NAME} ${ASSIMP_LIB_NAME})
 target_include_directories(${LIB_NAME} PUBLIC ${ASSIMP_INCLUDE_DIR} ${ASSIMP_INCLUDE_GEN_DIR})
 
 set_target_properties(${ASSIMP_LIB_NAME}  PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
-set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
 set_target_properties(zlibstatic PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
+if (MSVC)
+    set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER ${ASSIMP_LIB_NAME})
+endif()
 
 # JoltPhysics
 AnnounceLibraryAddition("JoltPhysics")

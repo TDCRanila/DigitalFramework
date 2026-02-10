@@ -5,6 +5,7 @@
 Resources/shaders/**/*.bin
 Resources/sample-models
 Resources/temp
+Resources/logs
 Tools/**/*.lnk
 
 # Blender
@@ -14,6 +15,7 @@ Tools/**/*.lnk
 # CMAKE
 build
 build-clean
+build-output
 
 ### C ###
 # Prerequisites
