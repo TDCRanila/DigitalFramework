@@ -1,6 +1,8 @@
 #pragma once
 
+#ifndef SPDLOG_ACTIVE_LEVEL
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#endif
 
 #include <spdlog/common.h>
 #include <spdlog/spdlog.h>
@@ -76,12 +78,21 @@ namespace DFW
 		static void RemoveSubscriber(DUID const a_subscriber_id);
 
 	private:
+		#ifdef DFW_PLATFORM_WINDOWS
+			using PlatformConsoleSink = spdlog::sinks::wincolor_stdout_sink_st;
+		#elif DFW_PLATFORM_LINUX
+			using PlatformConsoleSink  = spdlog::sinks::ansicolor_stdout_sink_st;
+		#else
+		#error unsupported
+		#endif
+
+	private:
 		static spdlog::logger _main_logger;
 
 		static std::unordered_map<DUID, LogSubscriberMessageFunc> _dfw_sink_subscribers;
 
 		// TODO ST -> MT
-		static SharedPtr<spdlog::sinks::wincolor_stdout_sink_st> _console_sink;
+		static SharedPtr<PlatformConsoleSink> _console_sink;
 		static SharedPtr<DFWSink_st> _framework_sink;
 		static SharedPtr<spdlog::sinks::basic_file_sink_st> _file_sink;
 
