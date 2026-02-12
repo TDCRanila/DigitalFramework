@@ -1,46 +1,75 @@
 #include <DFW/CoreSystems/GameClock.h>
 
 #include <DFW/CoreSystems/Logging/Logger.h>
-#include <DFW/Defines/MathDefines.h>
-#include <ctime>
 
-// TODO : Adapt code for mutli platform.
+#ifdef DFW_PLATFORM_WINDOWS
 #include <Windows.h>
-
+#elif DFW_PLATFORM_LINUX
 #include <chrono>
+#include <ratio>
+#include <type_traits>
+#else
+#error unsupported
+#endif
 
 namespace DFW
 {
     namespace Detail
     {
-        int64 cpu_cycles_per_second;
+        int64 cycles_per_second;
 
-        void QueryCPUClockFreq(int64& a_ref_value)
+        #ifdef DFW_PLATFORM_WINDOWS
+            void QueryClockFreq(int64& a_ref_value)
+            {
+                LARGE_INTEGER cpu_freq;
+                if (!QueryPerformanceFrequency(&cpu_freq))
+                    DFW_ERRORLOG("Couldn't determine CPU frequency for the game clock.");
+                else
+                    a_ref_value = static_cast<int64>(cpu_freq.QuadPart);
+            }
+
+            void QueryClockCounter(int64& a_ref_value)
+            {
+                LARGE_INTEGER measurement;
+                if (!QueryPerformanceCounter(&measurement))
+                    DFW_ERRORLOG("Couldn't query CPU Cycle Counter for the game clock.");
+                else
+                    a_ref_value = static_cast<int64>(measurement.QuadPart);
+            }
+        #elif DFW_PLATFORM_LINUX
+            void QueryClockFreq(clock_t& a_ref_value)
+            {
+                using ClockType = std::conditional_t<
+                  std::chrono::high_resolution_clock::is_steady
+                , std::chrono::high_resolution_clock
+                , std::chrono::steady_clock>;
+
+                using ClockFrequency = std::ratio_divide<std::ratio<1>, ClockType::duration::period>;
+
+                static_assert(ClockFrequency::den == 1);
+
+                a_ref_value = ClockFrequency::num;
+            }
+
+            void QueryClockCounter(clock_t& a_ref_value)
+            {
+                using ClockType = std::conditional_t<
+                  std::chrono::high_resolution_clock::is_steady
+                , std::chrono::high_resolution_clock
+                , std::chrono::steady_clock>;
+
+                a_ref_value = ClockType::now().time_since_epoch().count();
+            }
+        #endif
+
+        TimeUnit CyclesToSeconds(int64 a_cpu_cycles)
         {
-            LARGE_INTEGER cpu_freq;
-            if (!QueryPerformanceFrequency(&cpu_freq))
-                DFW_ERRORLOG("Couldn't determine CPU frequency for the game clock.");
-            else
-                a_ref_value = static_cast<int64>(cpu_freq.QuadPart);
+            return static_cast<TimeUnit>(a_cpu_cycles / static_cast<float64>(cycles_per_second));
         }
 
-        void QueryCPUClockCounter(int64& a_ref_value)
+        int64 SecondsToCycles(TimeUnit a_seconds)
         {
-            LARGE_INTEGER measurement;
-            if (!QueryPerformanceCounter(&measurement))
-                DFW_ERRORLOG("Couldn't query CPU Cycle Counter for the game clock.");
-            else
-                a_ref_value = static_cast<int64>(measurement.QuadPart);
-        }
-
-        TimeUnit CPUCyclesToSeconds(int64 a_cpu_cycles)
-        {
-            return static_cast<TimeUnit>(a_cpu_cycles / static_cast<float64>(cpu_cycles_per_second));
-        }
-
-        int64 SecondsToCPUCycles(TimeUnit a_seconds)
-        {
-            return static_cast<int64>(a_seconds * static_cast<float64>(cpu_cycles_per_second));
+            return static_cast<int64>(a_seconds * static_cast<float64>(cycles_per_second));
         }
 
     } // End of namespace ~ DFW.
@@ -49,28 +78,28 @@ namespace DFW
         : _start_frame_cycle_count(0)
         , _end_frame_cycle_count(0)
 
-        , _elapsed_cpu_cycles(0)
+        , _elapsed_cycles(0)
 
         , _timescale_modifier(1.0f)
         , _last_frame_delta_time(0.0f)
         , _is_clock_paused(a_start_paused)
         , _has_requested_single_step(false)
     {
-        Detail::QueryCPUClockFreq(Detail::cpu_cycles_per_second);
-        DFW_ASSERT(Detail::cpu_cycles_per_second != 0);
+        Detail::QueryClockFreq(Detail::cycles_per_second);
+        DFW_ASSERT(Detail::cycles_per_second != 0);
 
         if (a_start_time_in_seconds > 0)
-            _elapsed_cpu_cycles = Detail::SecondsToCPUCycles(a_start_time_in_seconds);
+            _elapsed_cycles = Detail::SecondsToCycles(a_start_time_in_seconds);
     }
 
     void GameClock::BeginGameFrame()
     {
-        Detail::QueryCPUClockCounter(_start_frame_cycle_count);
+        Detail::QueryClockCounter(_start_frame_cycle_count);
     }
 
     void GameClock::EndGameFrame()
     {
-        Detail::QueryCPUClockCounter(_end_frame_cycle_count);
+        Detail::QueryClockCounter(_end_frame_cycle_count);
 
         UpdateClock();
     }
@@ -82,21 +111,21 @@ namespace DFW
 
     int64 GameClock::GetElapsedCycleCount() const
     {
-        return _elapsed_cpu_cycles;
+        return _elapsed_cycles;
     }
 
     TimeUnit GameClock::GetElapsedTimeInSeconds() const
     {
-        return Detail::CPUCyclesToSeconds(_elapsed_cpu_cycles);
+        return Detail::CyclesToSeconds(_elapsed_cycles);
     }
 
     void GameClock::UpdateClock()
     {
         if (_has_requested_single_step)
         {
-            TimeUnit const single_step_time  = (1.0f / 60.0f) * _timescale_modifier;
-            _last_frame_delta_time          = single_step_time;
-            _elapsed_cpu_cycles             += Detail::SecondsToCPUCycles(single_step_time);
+            TimeUnit const single_step_time = (1.0f / 60.0f) * _timescale_modifier;
+            _last_frame_delta_time = single_step_time;
+            _elapsed_cycles += Detail::SecondsToCycles(single_step_time);
             
             _has_requested_single_step = false;
         }
@@ -107,8 +136,8 @@ namespace DFW
         else
         {
             int64 delta_counter = static_cast<int64>((_end_frame_cycle_count - _start_frame_cycle_count) * _timescale_modifier);
-            _last_frame_delta_time = delta_counter / static_cast<TimeUnit>(Detail::cpu_cycles_per_second);
-            _elapsed_cpu_cycles += delta_counter;
+            _last_frame_delta_time = delta_counter / static_cast<TimeUnit>(Detail::cycles_per_second);
+            _elapsed_cycles += delta_counter;
         }
     }
 
@@ -138,7 +167,7 @@ namespace DFW
         _start_frame_cycle_count    = 0;
         _end_frame_cycle_count      = 0;
 
-        _elapsed_cpu_cycles         = 0;
+        _elapsed_cycles         = 0;
 
         _timescale_modifier         = 1.0f;
         _last_frame_delta_time      = 0.0f;
