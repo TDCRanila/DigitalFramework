@@ -180,7 +180,9 @@ else()
 message("Found Submodule: ${JOLT_LIB_NAME}")
 endif()
 
+set(CPP_RTTI_ENABLED ON)
 add_subdirectory(${JOLT_DIR}/Build ${JOLT_LIB_NAME})
+set(CPP_RTTI_ENABLED OFF)
 target_link_libraries(${LIB_NAME} ${JOLT_LIB_NAME})
 
 target_compile_definitions(${LIB_NAME} PUBLIC JPH_DISABLE_CUSTOM_ALLOCATOR)
