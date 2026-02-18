@@ -47,6 +47,9 @@ namespace DFW
             main_viewport->PlatformHandle = static_cast<void*>(a_main_window);
             main_viewport->PlatformHandleRaw = GetNativePlatformRawWindowHandle(a_main_window);
 
+            DRender::ViewTargetDirector& director = CoreService::GetRenderModule()->GetViewDirector();
+		    DImGui::main_view_id = director.AllocateViewTarget(DRender::ViewTargetInsertion::Back)->view_target_id;
+
             // Set ImGui IOs.
             ImGuiIO& io = ImGui::GetIO();
 
