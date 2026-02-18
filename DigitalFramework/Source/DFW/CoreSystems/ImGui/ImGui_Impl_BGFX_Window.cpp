@@ -35,7 +35,7 @@ namespace DFW
         #elif DFW_PLATFORM_LINUX
             return reinterpret_cast<void*>(glfwGetX11Window(a_window_handle));
         #else
-        #error "Unsupported Platform."
+        #error DFW_PLATFORM_UNSUPPORTED
         #endif
         }
 

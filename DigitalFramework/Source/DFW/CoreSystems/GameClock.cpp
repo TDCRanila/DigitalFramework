@@ -9,7 +9,7 @@
 #include <ratio>
 #include <type_traits>
 #else
-#error unsupported
+#error DFW_PLATFORM_UNSUPPORTED
 #endif
 
 namespace DFW

@@ -83,7 +83,7 @@ namespace DFW
 		#elif DFW_PLATFORM_LINUX
 			using PlatformConsoleSink  = spdlog::sinks::ansicolor_stdout_sink_st;
 		#else
-		#error unsupported
+		#error DFW_PLATFORM_UNSUPPORTED
 		#endif
 
 	private:

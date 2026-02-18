@@ -173,7 +173,7 @@ namespace DFW
         }
 
 #else // OTHER PLATFORMS
-#error unsupported
+#error DFW_PLATFORM_UNSUPPORTED
 #endif // Other PLATFORMS
 
     } // End of namspace ~ DUtility.

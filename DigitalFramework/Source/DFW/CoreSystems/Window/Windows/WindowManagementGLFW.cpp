@@ -310,7 +310,7 @@ namespace DFW
             Window windowPWH = glfwGetX11Window(std::static_pointer_cast<WindowInstanceGLFW>(GetWindow(a_window_id))->_glfw_window);
             return reinterpret_cast<void*>(windowPWH);
         #else
-        #error unsupported
+        #error DFW_PLATFORM_UNSUPPORTED
         #endif
         }
 
