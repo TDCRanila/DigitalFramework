@@ -5,7 +5,12 @@
 #include <bx/allocator.h>
 #include <bx/math.h>
 
+#ifdef DFW_PLATFORM_WINDOWS
 #define GLFW_EXPOSE_NATIVE_WIN32
+#elif DFW_PLATFORM_LINUX
+#define GLFW_EXPOSE_NATIVE_X11
+#endif
+
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
@@ -23,18 +28,24 @@ namespace DFW
 {
     namespace DImGui
     {
+        void* GetNativePlatformRawWindowHandle(GLFWwindow* a_window_handle)
+        {
+        #ifdef DFW_PLATFORM_WINDOWS
+            return glfwGetWin32Window(a_window_handle);
+        #elif DFW_PLATFORM_LINUX
+            return reinterpret_cast<void*>(glfwGetX11Window(a_window_handle));
+        #else
+        #error "Unsupported Platform."
+        #endif
+        }
+
         bool ImGui_ImplBGFX_InitWindowPlatform(GLFWwindow* a_main_window)
         {
             DImGui::main_application_window = a_main_window;
 
             ImGuiViewport* main_viewport = ImGui::GetMainViewport();
             main_viewport->PlatformHandle = static_cast<void*>(a_main_window);
-
-#ifdef _WIN32
-            main_viewport->PlatformHandleRaw = glfwGetWin32Window(a_main_window);
-#else
-#error "Unsupported Platform."
-#endif
+            main_viewport->PlatformHandleRaw = GetNativePlatformRawWindowHandle(a_main_window);
 
             // Set ImGui IOs.
             ImGuiIO& io = ImGui::GetIO();
@@ -179,9 +190,7 @@ namespace DFW
             viewport_data->_window_owned = true;
             a_viewport->PlatformHandle = static_cast<void*>(viewport_data->_window);
             a_viewport->PlatformUserData = viewport_data;
-
-#ifdef _WIN32
-            a_viewport->PlatformHandleRaw = glfwGetWin32Window(viewport_data->_window);
+            a_viewport->PlatformHandleRaw = GetNativePlatformRawWindowHandle(viewport_data->_window);
 
             if (bgfx::isValid(viewport_data->_framebuffer_handle))
                 bgfx::destroy(viewport_data->_framebuffer_handle);
@@ -191,10 +200,6 @@ namespace DFW
                 , static_cast<uint16>(a_viewport->Size.x)
                 , static_cast<uint16>(a_viewport->Size.y)
             );
-
-#else
-#error "Unsupported Platform"
-#endif
 
             glfwSetWindowPos(viewport_data->_window, static_cast<int>(a_viewport->Pos.x), static_cast<int>(a_viewport->Pos.y));
 

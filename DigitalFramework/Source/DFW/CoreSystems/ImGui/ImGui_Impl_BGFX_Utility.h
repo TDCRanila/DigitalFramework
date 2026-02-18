@@ -30,8 +30,8 @@ namespace DFW
 		{
 			ImGuiViewportDataBGFX();
 
-			GLFWwindow* _window;
-			bgfx::ViewId			_view_id;
+			GLFWwindow* 	_window;
+			bgfx::ViewId	_view_id;
 
 			bgfx::FrameBufferHandle _framebuffer_handle;
 			int32					_ignore_window_pos_event_frame;

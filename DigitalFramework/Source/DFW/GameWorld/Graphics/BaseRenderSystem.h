@@ -29,12 +29,12 @@ namespace DFW
         void RenderToRenderTarget(SharedPtr<DRender::RenderTarget const> const& a_render_target);
         void RenderToDefault();
 
+        void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
+        void OnCameraNewActiveEvent(CameraNewActiveEvent const& a_camera_event);
+    
     protected:
         void PrepareViewTarget();
         void PrepareRenderTarget();
-
-        void OnWindowResizeEvent(WindowResizeEvent const& a_window_event);
-        void OnCameraNewActiveEvent(CameraNewActiveEvent const& a_camera_event);
 
     protected:
         SharedPtr<DRender::ViewTarget const> _view_target;

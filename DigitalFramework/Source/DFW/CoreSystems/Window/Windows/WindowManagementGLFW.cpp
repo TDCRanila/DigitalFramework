@@ -1,6 +1,12 @@
 #include <DFW/CoreSystems/Window/Windows/WindowManagementGLFW.h>
 
+#ifdef DFW_PLATFORM_WINDOWS
 #define GLFW_EXPOSE_NATIVE_WIN32
+#elif DFW_PLATFORM_LINUX
+// TODO Wayland?
+#define GLFW_EXPOSE_NATIVE_X11
+#endif
+
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
@@ -297,8 +303,23 @@ namespace DFW
 
         void* WindowManagementGLFW::GetWindowPWH(WindowID const a_window_id) const
         {
+        #ifdef DFW_PLATFORM_WINDOWS
             return glfwGetWin32Window(std::static_pointer_cast<WindowInstanceGLFW>(GetWindow(a_window_id))->_glfw_window);
+        #elif DFW_PLATFORM_LINUX
+            // TODO Wayland?
+            Window windowPWH = glfwGetX11Window(std::static_pointer_cast<WindowInstanceGLFW>(GetWindow(a_window_id))->_glfw_window);
+            return reinterpret_cast<void*>(windowPWH);
+        #else
+        #error unsupported
+        #endif
         }
+
+#ifdef DFW_PLATFORM_LINUX
+        void* WindowManagementGLFW::GetNativeDisplay() const
+        {
+            return reinterpret_cast<void*>(glfwGetX11Display());
+        }
+#endif
 
         void WindowManagementGLFW::ChangeWindowParameters(WindowID const a_window_id, WindowParameters const& a_window_parameters)
         {
