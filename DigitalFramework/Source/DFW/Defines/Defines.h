@@ -2,7 +2,8 @@
 
 #include <iostream>
 #include <limits>
-#include <stdint.h>
+#include <cmath>
+#include <cstdint>
 
 // POD Definitions.
 using float32	= float_t;

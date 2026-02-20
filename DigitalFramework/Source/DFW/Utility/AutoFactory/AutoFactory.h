@@ -45,7 +45,7 @@ namespace DFW
 				// Check if type was registered in the map or not.
 				if (it == fac.end())
 				{
-					_ASSERT(false); // -> Element has not been found in factory_map.
+					DFW_ASSERT(false && "Element has not been found in factory_map.");
 					return UniquePtr<BaseType>();
 				}
 				else

@@ -74,7 +74,7 @@ namespace DGame
             camera_system->ChangeCameraProjPerspective(camera_component, 60.f, (16.f / 9.f), DFW::ClipSpace(0.1f, 5000.f));
             camera_system->RegisterCamera(camera_component, "camera-main");
             camera_system->SetActiveCamera("camera-main");
-            camera_system->EnableCameraControl(camera_component);
+            camera_system->EnableSimpleCameraControlMode();
         }
 
         std::string work_dir;

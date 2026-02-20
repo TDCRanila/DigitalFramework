@@ -210,6 +210,15 @@ namespace DFW
 			relation_component.childeren_count--;
 		}
 
+		Entity Entity::GetParent() const
+		{
+			EntityRelationComponent const& relation_component = GetComponent<EntityRelationComponent>();
+			if (relation_component.parent.IsEntityValid())
+				return relation_component.parent;
+
+			return Entity();
+		}
+
 		void Entity::SetParent(Entity a_parent)
 		{
 			if (!a_parent.IsEntityValid())

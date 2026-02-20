@@ -7,6 +7,7 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Body/BodyID.h>
 #include <Jolt/Physics/Body/MotionType.h>
+#include <Jolt/Physics/Body/BodyManager.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>
 #include <Jolt/Physics/Collision/ObjectLayer.h>
 #include <Jolt/Physics/Character/Character.h>
@@ -62,6 +63,7 @@ namespace DFW
 
         void Debug_EnableDebugDraw();
         void Debug_DisableDebugDraw();
+        JPH::BodyManager::DrawSettings debug_draw_settings;
 
     public:
         void AddRigidBodyToSystem(JPH::BodyID const a_body_id) { _rigid_bodies_pending_spawn.emplace_back(a_body_id); }
@@ -102,7 +104,7 @@ namespace DFW
         std::unordered_set<JPH::BodyID> _rigid_bodies_pending_despawn;
         bool _should_optimize_broadphase_layer;
 
-        bool _should_debug_draw_shapes;
+        bool debug_should_debug_draw;
     };
 
 

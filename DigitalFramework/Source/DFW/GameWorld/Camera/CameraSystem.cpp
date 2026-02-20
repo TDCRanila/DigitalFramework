@@ -47,9 +47,16 @@ namespace DFW
             a_camera.world_right = Detail::world_right;
         }
 
-        void CalculateCameraViewMatrix(CameraComponent& a_camera, Transform& a_transform)
+        void CalculateCameraViewMatrix(CameraComponent& a_camera, Transform const& a_transform)
         {
             a_camera.view = glm::lookAtLH(a_transform.GetWorldTranslation(), a_transform.GetWorldTranslation() + a_camera.world_front, a_camera.world_up);
+        }
+
+        void CalculateCameraLocalVectors(CameraComponent& a_camera, Transform const& a_camera_transform)
+        {
+            a_camera.right  = glm::rotate(a_camera_transform.GetOrientation(), Detail::world_right);
+            a_camera.up     = glm::rotate(a_camera_transform.GetOrientation(), Detail::world_up);
+            a_camera.front  = glm::rotate(a_camera_transform.GetOrientation(), Detail::world_front);
         }
 
         void CalculateCameraWorldVectors(CameraComponent& a_camera, Entity const& a_camera_parent)
@@ -133,8 +140,17 @@ namespace DFW
 
     void CameraSystem::SetActiveCamera(std::string const& a_camera_name)
     {
+        if (_active_camera && _active_camera->name == a_camera_name)
+        {
+            DFW_WARNLOG("Attempting to set the active camera [{}], which is already the current active camera.", a_camera_name);
+            return;
+        }
+
         if (auto const& it = registered_cameras.find(a_camera_name); it != registered_cameras.end())
         {
+            // Disable previous active camera controls.
+            DisableCameraControl();
+
             CameraComponent* camera_component = it->second;
             _active_camera = camera_component;
 
@@ -174,32 +190,38 @@ namespace DFW
             a_camera_component.projection = glm::orthoLH_ZO(left, right, bottom, top, a_clip.z_near, a_clip.z_far);
     }
 
-    void CameraSystem::EnableCameraControl(CameraComponent& a_camera_component)
+    void CameraSystem::EnableSimpleCameraControlMode()
     {
-        a_camera_component.has_enabled_controls = true;
+        if (!_active_camera)
+        {
+            DFW_WARNLOG("Attempting to enable simple camera controls while no active camera is set!");
+            return;
+        }
+
+        _active_camera->has_enabled_controls = true;
+        _active_camera->has_enabled_six_degrees_rotation = false;
+
+        Detail::ResetCamera(*_active_camera);
     }
 
-    void CameraSystem::DisableCameraControl(CameraComponent& a_camera_component)
+    void CameraSystem::EnableAdvancedCameraControlMode()
     {
-        a_camera_component.has_enabled_controls = false;
+        if (!_active_camera)
+        {
+            DFW_WARNLOG("Attempting to enable advanced camera controls while no active camera is set!");
+            return;
+        }
+
+        _active_camera->has_enabled_controls = true;
+        _active_camera->has_enabled_six_degrees_rotation = true;
+
+        Detail::ResetCamera(*_active_camera);
     }
 
-    void CameraSystem::EnableSimpleCameraControlMode(CameraComponent& a_camera_component)
+    void CameraSystem::DisableCameraControl()
     {
-        EnableCameraControl(a_camera_component);
-
-        a_camera_component.has_enabled_six_degrees_rotation = false;
-
-        Detail::ResetCamera(a_camera_component);
-    }
-
-    void CameraSystem::EnableAdvancedCameraControlMode(CameraComponent& a_camera_component)
-    {
-        EnableCameraControl(a_camera_component);
-
-        a_camera_component.has_enabled_six_degrees_rotation = true;
-
-        Detail::ResetCamera(a_camera_component);
+        if (_active_camera)
+            _active_camera->has_enabled_controls = false;
     }
 
     void CameraSystem::Init(DECS::EntityRegistry& /*a_registry*/)
@@ -218,8 +240,11 @@ namespace DFW
 
         for (auto&& [entity, camera_comp, transform_comp, entity_relation_comp] : a_registry.ENTT().view<CameraComponent, TransformComponent, DECS::EntityRelationComponent>().each())
         {
-            Detail::CalculateCameraViewMatrix(camera_comp, transform_comp);
+            if (!camera_comp.has_enabled_controls)
+                Detail::CalculateCameraLocalVectors(camera_comp, transform_comp);
+
             Detail::CalculateCameraWorldVectors(camera_comp, entity_relation_comp.parent);
+            Detail::CalculateCameraViewMatrix(camera_comp, transform_comp);
         }
     }
 
@@ -319,12 +344,12 @@ namespace DFW
             if (camera_mode_toggle)
             {
                 camera_mode_toggle = false;
-                EnableSimpleCameraControlMode(*_active_camera);
+                EnableSimpleCameraControlMode();
             }
             else
             {
                 camera_mode_toggle = true;
-                EnableAdvancedCameraControlMode(*_active_camera);
+                EnableAdvancedCameraControlMode();
             }
         }
     }
