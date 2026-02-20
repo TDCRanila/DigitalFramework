@@ -35,6 +35,11 @@ namespace DFW
             // Platform Window Handle, e.g. HWND;
             virtual void* GetWindowPWH(WindowID const a_window_id) const override;
 
+#ifdef DFW_PLATFORM_LINUX
+            // Linux Wayland / X11 Display
+            virtual void* GetNativeDisplay() const override;
+#endif
+
             virtual void ChangeWindowParameters(WindowID const a_window_id, WindowParameters const& a_window_parameters) override;
 
             virtual void RequestMouseCursorCapture() override;

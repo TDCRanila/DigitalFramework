@@ -1,20 +1,15 @@
-cmake_minimum_required(VERSION 3.17.2)
+cmake_minimum_required(VERSION 3.25)
 
 message("######################")
 message("Configuring - DigitalTestBench\n")
 
 ### Generate a list of all Header & Source Files.
-execute_process(COMMAND ${CMAKE_SOURCE_DIR}/Tools/GenerateSourceFilesList.bat ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_source.txt SOURCE_FILES)
-file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_header.txt HEADER_FILES)
-file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/files_all.txt ALL_FILES)
-string(REPLACE "\\" "/" SOURCE_FILES    "${SOURCE_FILES}")
-string(REPLACE "\\" "/" HEADER_FILES    "${HEADER_FILES}")
-string(REPLACE "\\" "/" ALL_FILES       "${ALL_FILES}")
+file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/**/*.h")
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/**/*.cpp")
+set(ALL_FILES ${HEADER_FILES} ${SOURCE_FILES})
 
 ### Executable Definition
 set(EXE_NAME DigitalTestBench)
-project(${EXE_NAME} VERSION 1.0.0)
 
 ### Executable Source
 add_executable(${EXE_NAME})

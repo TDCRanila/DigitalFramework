@@ -4,8 +4,6 @@
 
 namespace DFW
 {
-    // TODO Make GameClock an interface for multiplatform implementations later on.
-    // TODO Make multi-platform, because this class now uses windows api to querry cpu cycles.
     // TODO Implement Minimum DeltaTime Setting.
     // TODO Implement SingleStep Frametime Setting.
     class GameClock
@@ -36,9 +34,9 @@ namespace DFW
     private:
         void UpdateClock();
 
-        int64          _elapsed_cpu_cycles;
-        int64          _start_frame_cycle_count;
-        int64          _end_frame_cycle_count;
+        int64           _elapsed_cycles;
+        int64           _start_frame_cycle_count;
+        int64           _end_frame_cycle_count;
 
         TimeModifier    _timescale_modifier;
         TimeUnit        _last_frame_delta_time;

@@ -1,6 +1,12 @@
 #include <DFW/CoreSystems/Window/WindowManagement.h>
 
+#ifdef DFW_PLATFORM_WINDOWS
 #define GLFW_EXPOSE_NATIVE_WIN32
+#elif DFW_PLATFORM_LINUX
+// TODO Wayland?
+#define GLFW_EXPOSE_NATIVE_X11
+#endif
+
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 

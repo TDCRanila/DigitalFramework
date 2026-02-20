@@ -98,7 +98,7 @@ namespace DFW
             }
             else
             {
-                static_assert(IsAlwaysFalse<DerivedType>, __FUNCTION__ " - Trying to get FamilyTypeID of Type, but it isn't derived from the BaseFamilyType.");
+                static_assert(IsAlwaysFalse<DerivedType>, __FUNCTION__ + " - Trying to get FamilyTypeID of Type, but it isn't derived from the BaseFamilyType.");
                 return DFW_INVALID_FAMILY_TYPE_ID;
             }
         }
