@@ -48,6 +48,7 @@ namespace DFW
 
     PhysicsSystem::PhysicsSystem()
         : _should_optimize_broadphase_layer(false)
+        , _should_step_physics(true)
         , _debug_should_debug_draw(false)
     {
         _context = MakeUnique<DPhysics::PhysicsSystemContext>();
@@ -67,7 +68,17 @@ namespace DFW
     { 
         return _context->jph_physics_system->GetBodyInterface(); 
     }
-       
+
+    void PhysicsSystem::PausePhysics()
+    {
+        _should_step_physics = false;
+    }
+    
+    void PhysicsSystem::UnpausePhysics()
+    {
+        _should_step_physics = true;
+    }
+
     void PhysicsSystem::Debug_EnableDebugDraw()
     {
         if (!_jolt_debug_renderer->IsInitialized())
@@ -212,7 +223,10 @@ namespace DFW
     {
         SyncStaticRigidBodyTransforms(a_registry);
 
-        _context->UpdatePhysicsWorld(DFW_PHYSICS_DELTATIME, DFW_PHYSICS_COLLISION_STEPS);
+        if (_should_step_physics)
+        {
+            _context->UpdatePhysicsWorld(DFW::CoreService::GetGameClock()->GetLastFrameDeltaTime(), DFW_PHYSICS_COLLISION_STEPS);
+        }
         
         SyncDynamicAndKinematicRigidBodyTransforms(a_registry);
 
