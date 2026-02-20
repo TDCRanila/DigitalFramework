@@ -104,7 +104,7 @@ namespace DFW
         std::unordered_set<JPH::BodyID> _rigid_bodies_pending_despawn;
         bool _should_optimize_broadphase_layer;
 
-        bool debug_should_debug_draw;
+        bool _debug_should_debug_draw;
     };
 
 

@@ -48,7 +48,7 @@ namespace DFW
 
     PhysicsSystem::PhysicsSystem()
         : _should_optimize_broadphase_layer(false)
-        , debug_should_debug_draw(false)
+        , _debug_should_debug_draw(false)
     {
         _context = MakeUnique<DPhysics::PhysicsSystemContext>();
         _jolt_debug_renderer = MakeUnique<JoltDebugRenderer>();
@@ -70,12 +70,15 @@ namespace DFW
        
     void PhysicsSystem::Debug_EnableDebugDraw()
     {
-        debug_should_debug_draw = true;
+        if (!_jolt_debug_renderer->IsInitialized())
+            _jolt_debug_renderer->Init();
+
+        _debug_should_debug_draw = true;
     }
 
     void PhysicsSystem::Debug_DisableDebugDraw()
     {
-        debug_should_debug_draw = false;
+        _debug_should_debug_draw = false;
     }
 
     JPH::BodyID PhysicsSystem::CreateMeshRigidBody(Transform const& a_transform, JPH::ShapeSettings const& a_mesh_shape_settings, JPH::EMotionType const a_rigid_body_type)
@@ -177,9 +180,6 @@ namespace DFW
 
         // Event
         ECSEventHandler().RegisterCallback<DECS::EntityDestroyedEvent, &PhysicsSystem::OnEntityDestroyedEvent>(this);
-        
-        // Debug Draw;
-        _jolt_debug_renderer->Init();
     }
 
     void PhysicsSystem::Terminate(DECS::EntityRegistry& /*a_registry*/)
@@ -216,7 +216,7 @@ namespace DFW
         
         SyncDynamicAndKinematicRigidBodyTransforms(a_registry);
 
-        if (debug_should_debug_draw)
+        if (_debug_should_debug_draw)
         {
             JoltPhysics().DrawBodies(debug_draw_settings, _jolt_debug_renderer.get());
         }
