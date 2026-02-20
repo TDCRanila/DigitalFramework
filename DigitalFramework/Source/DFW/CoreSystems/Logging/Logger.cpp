@@ -9,8 +9,8 @@ namespace DFW
 	spdlog::logger Logger::_main_logger("Main Log");
 
 	std::unordered_map<DUID, LogSubscriberMessageFunc> Logger::_dfw_sink_subscribers;
-	
-	SharedPtr<spdlog::sinks::wincolor_stdout_sink_st> Logger::_console_sink;
+	SharedPtr<Logger::PlatformConsoleSink> Logger::_console_sink;
+
 	SharedPtr<DFWSink_st> Logger::_framework_sink;
 	SharedPtr<spdlog::sinks::basic_file_sink_st> Logger::_file_sink;
 
@@ -28,16 +28,16 @@ namespace DFW
 		_main_logger.set_level(spdlog::level::trace);
 
 		// Console Logger.
-		_console_sink = MakeShared<spdlog::sinks::wincolor_stdout_sink_st>();
-		_main_logger.sinks().emplace_back(_console_sink);
+		_console_sink = MakeShared<PlatformConsoleSink>();
 		_console_sink->set_level(spdlog::level::debug);
 		_console_sink->set_pattern("[%H:%M:%S] [%n] [%^%l%$] %v (%s@%#)"); // "[23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
+		_main_logger.sinks().emplace_back(_console_sink);
 
 		// Framework Logger.
 		_framework_sink = MakeShared<DFWSink_st>();
-		_main_logger.sinks().emplace_back(_framework_sink);
 		_framework_sink->set_level(spdlog::level::debug);
 		_framework_sink->set_pattern("[%H:%M:%S] [%n] [%^%l%$] %v (%s@%#)"); // "[23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
+		_main_logger.sinks().emplace_back(_framework_sink);
 
 		// File Logger.
 		// TODO Proper File Path Set.
@@ -50,9 +50,9 @@ namespace DFW
 		std::string const log_file_extension(".txt");
 		std::string const log_file_name("DFW-debuglog-" + log_file_date + log_file_extension);
 		_file_sink = MakeShared<spdlog::sinks::basic_file_sink_st>(std::string(log_folder_name + DIR_SLASH + log_file_name));
-		_main_logger.sinks().emplace_back(_file_sink);
 		_file_sink->set_level(spdlog::level::debug);
 		_file_sink->set_pattern("[%D %H:%M:%S] [%n] [%l] %v (%s@%#)"); //"[2014-10-31 23:46:59.678] [mylogger] [info] Some message (main.cpp@21)"
+		_main_logger.sinks().emplace_back(std::move(_file_sink));
 
 		if (a_enable_automatic_flush)
 		{

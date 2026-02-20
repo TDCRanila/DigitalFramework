@@ -56,7 +56,7 @@ namespace DFW
         {
             if constexpr (not IsValidUniformType<TypeValue>)
             {
-                static_assert(always_false<TypeValue>::value, __FUNCTION__ " - Attempting to set a uniform value of type that is not supported.");
+                static_assert(always_false<TypeValue>::value, __FUNCTION__ + " - Attempting to set a uniform value of type that is not supported.");
                 return;
             }
             else
@@ -71,7 +71,7 @@ namespace DFW
         {
             if constexpr (not IsValidUniformType<TypeValue>)
             {
-                static_assert(always_false<TypeValue>::value, __FUNCTION__ " - Attempting to set a uniform value of type that is not supported.");
+                static_assert(always_false<TypeValue>::value, __FUNCTION__ + " - Attempting to set a uniform value of type that is not supported.");
                 return;
             }
             else

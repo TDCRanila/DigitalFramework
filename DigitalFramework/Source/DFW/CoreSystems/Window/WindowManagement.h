@@ -47,7 +47,12 @@ namespace DFW
             // Platform Window Handle, e.g. HWND;
             virtual void* GetWindowPWH(WindowID const a_window_id) const = 0;
             void* GetMainWindowPWH();
-            
+
+        #ifdef DFW_PLATFORM_LINUX
+            // Linux Wayland / X11 Display
+            virtual void* GetNativeDisplay() const = 0;
+        #endif
+
             bool IsWindowFocussed(WindowID const a_window_id) const;
             bool IsWindowMinimized(WindowID const a_window_id) const;
 

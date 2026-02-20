@@ -16,7 +16,7 @@
 #include <imgui-resources/icons_kenney.ttf.h>
 #include <imgui-resources/icons_font_awesome.ttf.h>
 
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include <vector>
 #include <array>
@@ -30,8 +30,8 @@ namespace DFW
 		{
 			ImGuiViewportDataBGFX();
 
-			GLFWwindow* _window;
-			bgfx::ViewId			_view_id;
+			GLFWwindow* 	_window;
+			bgfx::ViewId	_view_id;
 
 			bgfx::FrameBufferHandle _framebuffer_handle;
 			int32					_ignore_window_pos_event_frame;

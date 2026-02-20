@@ -28,9 +28,9 @@ namespace DFW
 			using  FactoryMapIt		= std::unordered_map<StringTypePair, FuncType, boost::hash<StringTypePair>>::iterator;
 
 			friend BaseType;
-
-			template <typename... Args>
-			static UniquePtr<BaseType> Construct(const std::string& a_type_name, Args&&...a_args)
+			
+			template <typename... ArgsTwo>
+			static UniquePtr<BaseType> Construct(const std::string& a_type_name, ArgsTwo&&...a_args)
 			{
 
 				// Create Compare Lambda used to find the type_name in the factories map.
@@ -50,7 +50,7 @@ namespace DFW
 				}
 				else
 				{
-					return it->second(std::forward<Args>(a_args)...);
+					return it->second(std::forward<ArgsTwo>(a_args)...);
 				}
 			}
 

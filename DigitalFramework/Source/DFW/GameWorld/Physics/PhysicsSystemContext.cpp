@@ -5,6 +5,7 @@
 
 #include <DFW/CoreSystems/Logging/Logger.h>
 
+#include <cstdarg>
 #include <thread>
 
 namespace DFW

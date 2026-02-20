@@ -78,10 +78,3 @@ namespace DFW
     };
 
 } // End of namespace ~ DFW.
-
-#define DFW_APP_ENTRY(a_name, a_app_class)      \
-    int main(int /*argc*/, char** /*argv*/)     \
-    {                                           \
-    a_app_class app;                            \
-    app.RunApplication(#a_name);                \
-    }                                           \

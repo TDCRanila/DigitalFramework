@@ -15,8 +15,9 @@ namespace DFW
     {
         RenderModuleContext::RenderModuleContext()
         {
-            // Set default initialization settings. 
+            // Set default initialization settings.
             _bgfx_init_settings.type                = bgfx::RendererType::Count;
+            _bgfx_init_settings.platformData.type   = bgfx::NativeWindowHandleType::Default;
             _bgfx_init_settings.resolution.width    = DWindow::DFW_DEFAULT_WINDOW_WIDTH;
             _bgfx_init_settings.resolution.height   = DWindow::DFW_DEFAULT_WINDOW_HEIGHT;
             _bgfx_init_settings.resolution.reset    = BGFX_RESET_VSYNC;
@@ -25,12 +26,17 @@ namespace DFW
         void RenderModuleContext::InitRenderModuleContext()
         {
             // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
-            //bgfx::renderFrame();
+            // TODO Implement Render MultiThread
+            bgfx::renderFrame();
 
             SharedPtr<DWindow::WindowInstance> main_window_ptr = CoreService::GetWindowManagement()->GetMainWindow();
             DFW_ASSERT(main_window_ptr && "Pointer to the main window is invalid, window mangement might not have been initialised.");
 
             _bgfx_init_settings.platformData.nwh = CoreService::GetWindowManagement()->GetMainWindowPWH();
+        #ifdef DFW_PLATFORM_LINUX
+            _bgfx_init_settings.platformData.ndt = CoreService::GetWindowManagement()->GetNativeDisplay();
+        #endif
+        
             bgfx::init(_bgfx_init_settings);
 
             // Register Event Callbacks.
