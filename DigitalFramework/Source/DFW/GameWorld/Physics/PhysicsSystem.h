@@ -61,6 +61,9 @@ namespace DFW
         JPH::PhysicsSystem& JoltPhysics();
         JPH::BodyInterface& JoltBodyInterface();
 
+        void PausePhysics();
+        void UnpausePhysics();
+
         void Debug_EnableDebugDraw();
         void Debug_DisableDebugDraw();
         JPH::BodyManager::DrawSettings debug_draw_settings;
@@ -103,8 +106,9 @@ namespace DFW
         std::vector<JPH::BodyID> _rigid_bodies_pending_spawn;
         std::unordered_set<JPH::BodyID> _rigid_bodies_pending_despawn;
         bool _should_optimize_broadphase_layer;
+        bool _should_step_physics;
 
-        bool debug_should_debug_draw;
+        bool _debug_should_debug_draw;
     };
 
 

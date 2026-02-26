@@ -15,9 +15,20 @@ namespace DFW
 
     } // End of namespace ~ Detail.
 
+    JoltDebugRenderer::JoltDebugRenderer() :
+        _is_initialized(false)
+    {
+    }
+
     void JoltDebugRenderer::Init()
     {
-        JPH::DebugRenderer::Initialize();
+        Initialize();
+        _is_initialized = true;
+    }
+
+    bool JoltDebugRenderer::IsInitialized() const
+    {
+        return _is_initialized;
     }
 
     void JoltDebugRenderer::DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor)

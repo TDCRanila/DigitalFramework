@@ -12,10 +12,11 @@ namespace DFW
     class JoltDebugRenderer final : public JPH::DebugRenderer
     {
     public:
-        JoltDebugRenderer() = default;
+        JoltDebugRenderer();
         virtual ~JoltDebugRenderer() = default;
 
         void Init();
+        bool IsInitialized() const;
 
         virtual void DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor) override;
         virtual void DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor, ECastShadow inCastShadow = ECastShadow::Off) override;
@@ -33,6 +34,8 @@ namespace DFW
                 , geometry_handle() 
             {}
 
+            virtual ~BatchImpl() = default;
+
             GeometryHandle geometry_handle;
 
         private:
@@ -41,6 +44,8 @@ namespace DFW
 
             std::atomic<uint32> _ref_count;
         };
+        
+        bool _is_initialized;
     };
 
 } // End of namespace ~ DFW.
