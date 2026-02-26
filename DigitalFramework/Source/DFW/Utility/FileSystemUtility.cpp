@@ -11,8 +11,7 @@ namespace DFW
 {
     namespace DUtility
     {
-#if defined (DFW_PLATFORM_WINDOWS)
-
+#if defined (DFW_PLATFORM_WINDOWS) || (DFW_PLATFORM_LINUX)
         std::vector<std::string> LoadFilesInDirectory(std::string const& a_directory_path)
         {
             std::vector<std::string> file_path;
@@ -173,81 +172,9 @@ namespace DFW
             return reinterpret_cast<uint8*>(buffer);
         }
 
-#else // OTHER SYSTEMS
-
-        std::vector<std::string> LoadFilesInDirectory(std::string a_directory_path)
-        {
-            std::vector<std::string> file_path;
-
-            return file_path;
-        }
-
-        bool DoesFileExistInDir(std::string const& a_directory_path, std::string const& a_file)
-        {
-            return false;
-        }
-
-        bool CreateNewDirectory(std::string const& a_directory_path)
-        {
-            return true;
-        }
-
-        bool DoesDirectoryExist(std::string const& a_directory_path)
-        {
-            return false;
-        }
-
-        void RemoveLineEndings(std::string& a_string)
-        {
-            a_string.erase(std::remove(a_string.begin(), a_string.end(), '\n'), a_string.end());
-            a_string.erase(std::remove(a_string.begin(), a_string.end(), '\r'), a_string.end());
-        }
-
-        bool DeleteFile(std::string const& a_file_path)
-        {
-            RemoveLineEndings(a_file_path);
-            return false;
-        }
-
-
-        std::string GetFileName(std::string const& a_file_path)
-        {
-            return ("");
-        }
-
-        std::string GetFileStem(std::string const& a_file_path)
-        {
-            return ("");
-        }
-
-        std::string GetFileExtension(std::string const& a_string)
-        {
-            return ("");
-        }
-
-        bool ContainsChar(std::string const& a_string, char const a_chararcter)
-        {
-            return a_string.find(a_chararcter) != std::string::npos;
-        }
-
-        bool StringToBool(std::string const& a_string)
-        {
-            if (a_string == "0") { return false; }
-            else if (a_string == "1") { return true; }
-            else { return false; }
-        }
-
-        std::istringstream ReadTextFileIntoStringStream(std::string const& a_path);
-        {
-            return std::istringstream("");
-        }
-
-        uint8* ReadBinaryFileIntoBuffer(std::size_t& a_buffersize, std::string const& a_path)
-        {
-            return uint8*();
-        }
-
-#endif // Other Systems
+#else // OTHER PLATFORMS
+#error DFW_PLATFORM_UNSUPPORTED
+#endif // Other PLATFORMS
 
     } // End of namspace ~ DUtility.
 

@@ -25,6 +25,8 @@ using uint64	= uint64_t;
 	#define DFW_ASSERT(...)
 #endif
 
+#define DFW_PLATFORM_UNSUPPORTED Unsupported Platform
+
 // Directory Slashes Defines
 #if defined(DFW_PLATFORM_WINDOWS) && defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(DFW_PLATFORM_UNIX) && !defined(__CYGWIN__)
 	#define DIR_SLASH_CHAR	'\\'

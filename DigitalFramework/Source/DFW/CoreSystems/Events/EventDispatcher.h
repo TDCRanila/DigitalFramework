@@ -76,25 +76,25 @@ namespace DFW
     template <typename EventType, auto CallbackType, typename RegistrarType>
     void EventDispatcher::RegisterCallback(RegistrarType&& a_value_or_instance)
     {
-        _dispatcher.sink<EventType>().connect<CallbackType>(std::forward<RegistrarType&&>(a_value_or_instance));
+        _dispatcher.sink<EventType>().template connect<CallbackType>(std::forward<RegistrarType&&>(a_value_or_instance));
     }
 
     template <typename EventType, auto CallbackType>
     void EventDispatcher::RegisterCallback()
     {
-        _dispatcher.sink<EventType>().connect<CallbackType>();
+        _dispatcher.sink<EventType>().template connect<CallbackType>();
     }
 
     template <typename EventType, auto CallbackType, typename RegistrarType>
     void EventDispatcher::UnregisterCallback(RegistrarType&& a_value_or_instance)
     {
-        _dispatcher.sink<EventType>().disconnect<CallbackType>(std::forward<RegistrarType&&>(a_value_or_instance));
+        _dispatcher.sink<EventType>().template disconnect<CallbackType>(std::forward<RegistrarType&&>(a_value_or_instance));
     }
 
     template <typename EventType, auto CallbackType>
     void EventDispatcher::UnregisterCallback()
     {
-        _dispatcher.sink<EventType>().disconnect<CallbackType>();
+        _dispatcher.sink<EventType>().template disconnect<CallbackType>();
     }
 
     template <typename... EventType>

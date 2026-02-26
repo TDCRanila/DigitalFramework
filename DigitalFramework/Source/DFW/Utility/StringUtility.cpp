@@ -20,7 +20,8 @@ namespace DFW
 
 		void FindAndRemoveChar(std::string& a_original_string, char a_char_to_remove)
 		{
-			a_original_string.erase(std::remove(a_original_string.begin(), a_original_string.end(), a_char_to_remove));
+			std::string& s = a_original_string;
+			s.erase(std::remove_if(s.begin(), s.end(), [&a_char_to_remove](char& c) { return c == a_char_to_remove; }), s.end());
 		}
 
 		bool FindAndReplaceChar(std::string& a_original_string, char a_char_to_remove, char a_char_to_replace)
