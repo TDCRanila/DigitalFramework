@@ -66,6 +66,7 @@ namespace DFW
         void DrawGridY(glm::vec3 const& a_center_pos, uint32 a_grid_size, float32 a_grid_step, DebugDrawSettings const& a_settings);
         void DrawGridZ(glm::vec3 const& a_center_pos, uint32 a_grid_size, float32 a_grid_step, DebugDrawSettings const& a_settings);
         void DrawGrid(glm::vec3 const& a_center_pos, glm::vec3 const& a_normal, uint32 a_grid_size, float32 a_grid_step, DebugDrawSettings const& a_settings);
+        void DrawGrid(glm::vec3 const& a_center_pos, glm::vec3 const& a_normal, glm::ivec2 const& a_grid_size, float32 a_grid_step, DebugDrawSettings const& a_settings);
 
         void DrawFrustum(glm::mat4 const& a_view_projection_matrix, DebugDrawSettings const& a_settings);
         

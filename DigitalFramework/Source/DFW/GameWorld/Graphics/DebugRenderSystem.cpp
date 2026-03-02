@@ -324,6 +324,19 @@ namespace DFW
         _dde->pop();
     }
 
+    void DebugRenderSystem::DrawGrid(glm::vec3 const& a_center_pos, glm::vec3 const& a_normal, glm::ivec2 const& a_grid_size, float32 a_grid_step, DebugDrawSettings const& a_settings)
+    {
+        _dde->push();
+
+        _dde->setColor(a_settings.colour.GetABGRHex());
+        _dde->setDepthTestLess(Detail::ENABLE_DEPTH_LESS_TEST);
+        _dde->setState(a_settings.enable_depthtest, Detail::ENABLE_DEPTH_WRITE, Detail::ENABLE_CW_CULLING);
+
+        _dde->drawGrid(bx::normalize({ a_normal.x, a_normal.y, a_normal.z }), { a_center_pos.x, a_center_pos.y, a_center_pos.z }, a_grid_size.x, a_grid_size.y, a_grid_step);
+
+        _dde->pop();
+    }
+
     void DebugRenderSystem::DrawFrustum(glm::mat4 const& a_view_projection_matrix, DebugDrawSettings const& a_settings)
     {
         _dde->push();

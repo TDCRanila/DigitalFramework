@@ -2066,6 +2066,49 @@ struct DebugDrawEncoderImpl
 		}
 	}
 
+	void drawGrid(const bx::Vec3& _normal, const bx::Vec3& _center, const uint32_t _sizeX, const uint32_t _sizeY, float _step)
+	{
+		const Attrib& attrib = m_attrib[m_stack];
+
+		bx::Vec3 udir(bx::InitNone);
+		bx::Vec3 vdir(bx::InitNone);
+		bx::calcTangentFrame(udir, vdir, _normal, attrib.m_spin);
+
+		udir = bx::mul(udir, _step);
+		vdir = bx::mul(vdir, _step);
+
+		const uint32_t numX = (_sizeX / 2) * 2 + 1;
+		const uint32_t numY = (_sizeY / 2) * 2 + 1;
+		const float halfExtentX = float(_sizeX / 2);
+		const float halfExtentY = float(_sizeY / 2);
+
+		const bx::Vec3 umin = bx::mul(udir, -halfExtentY);
+		const bx::Vec3 umax = bx::mul(udir, halfExtentY);
+		const bx::Vec3 vmin = bx::mul(vdir, -halfExtentX);
+		const bx::Vec3 vmax = bx::mul(vdir, halfExtentX);
+
+		bx::Vec3 xs = bx::add(_center, bx::add(umin, vmin));
+		bx::Vec3 xe = bx::add(_center, bx::add(umax, vmin));
+		bx::Vec3 ys = bx::add(_center, bx::add(umin, vmin));
+		bx::Vec3 ye = bx::add(_center, bx::add(umin, vmax));
+
+		for (uint32_t ii = 0; ii < numX; ++ii)
+		{
+			moveTo(xs);
+			lineTo(xe);
+			xs = bx::add(xs, vdir);
+			xe = bx::add(xe, vdir);
+		}
+
+		for (uint32_t ii = 0; ii < numY; ++ii)
+		{
+			moveTo(ys);
+			lineTo(ye);
+			ys = bx::add(ys, udir);
+			ye = bx::add(ye, udir);
+		}
+	}
+
 	void drawGrid(Axis::Enum _axis, const bx::Vec3& _center, uint32_t _size, float _step)
 	{
 		push();
@@ -2547,6 +2590,11 @@ void DebugDrawEncoder::drawAxis(float _x, float _y, float _z, float _len, Axis::
 void DebugDrawEncoder::drawGrid(const bx::Vec3& _normal, const bx::Vec3& _center, uint32_t _size, float _step)
 {
 	reinterpret_cast<DebugDrawEncoderImpl*>(this)->drawGrid(_normal, _center, _size, _step);
+}
+
+void DebugDrawEncoder::drawGrid(const bx::Vec3& _normal, const bx::Vec3& _center, uint32_t _sizeX, uint32_t _sizeY, float _step)
+{
+	reinterpret_cast<DebugDrawEncoderImpl*>(this)->drawGrid(_normal, _center, _sizeX, _sizeY, _step);
 }
 
 void DebugDrawEncoder::drawGrid(Axis::Enum _axis, const bx::Vec3& _center, uint32_t _size, float _step)
