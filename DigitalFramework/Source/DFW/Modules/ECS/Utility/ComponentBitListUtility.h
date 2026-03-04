@@ -62,7 +62,7 @@ namespace DFW
 		{
 			if constexpr ((not IsValidComponentType<TArgs> || ...))
 			{
-				static_assert(always_false<TArgs...>::value, __FUNCTION__ + " - Trying to construct bitlist with a Component of type T that isn't derived from DECS::Component.");
+				static_assert(always_false<TArgs...>::value, "Trying to construct bitlist with a Component of type T that isn't derived from DECS::Component.");
 				return ComponentBitList();
 			}
 			else

@@ -91,7 +91,7 @@ namespace DFW
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
-				static_assert(always_false<ComponentType>::value, __FUNCTION__ + " - Trying to add a ComponentType that isn't derived from DECS::Component.");
+				static_assert(always_false<ComponentType>::value, "Trying to add a ComponentType that isn't derived from DECS::Component.");
 			}
 			else
 			{
@@ -116,7 +116,7 @@ namespace DFW
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
-				static_assert(always_false<ComponentType>::value, __FUNCTION__ + " - Trying to delete a ComponentType that isn't derived from DECS::Component.");
+				static_assert(always_false<ComponentType>::value, "Trying to delete a ComponentType that isn't derived from DECS::Component.");
 			}
 			else
 			{
@@ -138,7 +138,7 @@ namespace DFW
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
-				static_assert(always_false<ComponentType>::value, __FUNCTION__ + " - Trying to get a ComponentType that isn't derived from DECS::Component.");
+				static_assert(always_false<ComponentType>::value, "Trying to get a ComponentType that isn't derived from DECS::Component.");
 			}
 			else
 			{
@@ -159,7 +159,7 @@ namespace DFW
 		{
 			if constexpr (not IsValidComponentType<ComponentType>)
 			{
-				static_assert(always_false<ComponentType>::value, __FUNCTION__ + " - Trying to get a ComponentType that isn't derived from DECS::Component.");
+				static_assert(always_false<ComponentType>::value, "Trying to get a ComponentType that isn't derived from DECS::Component.");
 			}
 			else if constexpr (IsValidComponentType<ComponentType>)
 			{
@@ -179,11 +179,11 @@ namespace DFW
 		{
 			if constexpr (sizeof...(TArgs) <= 0)
 			{
-				static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ + " - Trying to check component information of entity, but no template arguments provided.");
+				static_assert(IsAlwaysFalse<TArgs...>, "Trying to check component information of entity, but no template arguments provided.");
 			}
 			else if constexpr ((not IsValidComponentType<TArgs> || ...))
 			{
-				static_assert(IsAlwaysFalse<TArgs...>, __FUNCTION__ + " - Trying to check for a ComponentType that isn't derived from DECS::Component.");
+				static_assert(IsAlwaysFalse<TArgs...>, "Trying to check for a ComponentType that isn't derived from DECS::Component.");
 			}
 			else
 			{

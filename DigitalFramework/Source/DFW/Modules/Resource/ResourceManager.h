@@ -50,7 +50,7 @@ namespace DFW
         template <typename ResourceType>
         ResourceHandle<ResourceType> ResourceManager::Load(FilePath const& a_filepath)
         {
-            static_assert(IsAlwaysFalse<ResourceType>, __FUNCTION__ + " - Trying to load of ResourceType which is not supported.");
+            static_assert(IsAlwaysFalse<ResourceType>, "Trying to load of ResourceType which is not supported.");
             return ResourceHandle<ResourceType>();
         }
 
