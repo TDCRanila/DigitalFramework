@@ -39,7 +39,7 @@ target_precompile_headers(${EXE_NAME} REUSE_FROM DigitalFramework)
 include(${CMAKE_SOURCE_DIR}/DigitalFramework/CMake/BGFXUtility.cmake)
 
 # Gather Shaders
-file(GLOB SHADER_FILES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/resources/*.sc)
+file(GLOB SHADER_FILES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/resources/shaders/*.sc)
 
 # Configure Shaders
 if( NOT ARG_COMMON AND NOT IOS AND NOT EMSCRIPTEN)
