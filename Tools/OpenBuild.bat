@@ -1,3 +1,7 @@
 cd ..
 cd build
-start ProjectSolution.sln
+if exist ProjectSolution.sln (
+	start ProjectSolution.sln
+) else (
+	start ProjectSolution.slnx
+)
